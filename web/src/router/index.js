@@ -34,7 +34,8 @@ const routes =[
 		component:Profile
 	},
 	{
-		path: '/detail/:product_id',
+		//路由传参
+		path: '/detail/:product_type/:product_id',
 		component:Detail
 	}
 ]

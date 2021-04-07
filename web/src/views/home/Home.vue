@@ -7,7 +7,7 @@
       <swiper :banner="banner" @swiperImageLoad="swiperImageLoad"></swiper>
       <menu-list :iconList="iconList"></menu-list>
       <tab-control :class="{fixed: isTabFixed}" ref="tabControlTwo" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
-      <goods-data :goods="goods[this.currentType].list"></goods-data>
+      <goods-data :goods="goods[currentType].list" :current-type="currentType"></goods-data>
     </Scroll>
     <back-top v-show="isShowBackTop" @click.native="backTop"></back-top>
 	</div>
@@ -91,7 +91,7 @@
       },
       swiperImageLoad(){
        this.tabOffsetTop = this.$refs.tabControlTwo.$el.offsetTop
-        console.log(this.tabOffsetTop)
+        //console.log(this.tabOffsetTop)
       },
       /*
       * 请求数据事件
@@ -181,6 +181,7 @@
     position: absolute;
     top:0;
     bottom: 50px;
+    width: 100vw;
     overflow: hidden;
   }
 </style>

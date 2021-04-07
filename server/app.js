@@ -13,6 +13,7 @@ const app = express()
 //导入home路由模块
 require('./router/home/multiData')(app)
 require('./router/home/goodsData')(app)
+require('./router/home/detail')(app)
 
 app.get('/',(req,res) => {
     res.setHeader('Access-Control-Allow-Origin', '*')

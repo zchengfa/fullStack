@@ -16,3 +16,13 @@ export function getGoodsData(type, page){
     }
   })
 }
+
+export function getGoodsDetail(product_type,product_id){
+  return request({
+    url:'/detail',
+    params:{
+      product_type,
+      product_id
+    }
+  })
+}

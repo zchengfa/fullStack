@@ -1,7 +1,7 @@
 <template>
-  <div class="goods-data-item" @click="itemClick">
+  <div class="goods-data-item" >
     <div class="list-box">
-      <div class="list-image"><img :src="list.imagePath" alt="itemImage" @load="imageLoad"></div>
+      <div class="list-image" @click="itemClick"><img :src="list.imagePath" alt="itemImage" @load="imageLoad"></div>
       <div class="list-content">
         <div class="title">{{list.title}}</div>
         <div class="list-others">
@@ -22,18 +22,24 @@
 <script>
   export default {
     name: "GoodsDtaItem",
-    data(){
-      return {
-        isLove:false,
-        clickCount:0
-      }
-    },
     props:{
       list:{
         type:Object,
         default(){
           return {}
         }
+      },
+      type:{
+        type:String,
+        default() {
+          return ''
+        }
+      }
+    },
+    data(){
+      return {
+        isLove:false,
+        clickCount:0
       }
     },
     computed:{
@@ -50,7 +56,7 @@
         }
         else {
           this.isLove = !this.isLove
-          this.list.favorite +=1
+          this.list.favorite = parseInt(this.list.favorite) +1
         }
       },
       //监听图片是否加载完成(原生的js监听img.onLoad = function())
@@ -60,8 +66,8 @@
         this.$bus.$emit('itemImageLoad')
       },
       itemClick(){
-        //动态路由传参
-        this.$router.push('/detail/'+ this.list.product_id)
+        //动态路由传参(先要从父组件传入id和type给子组件)
+        this.$router.push('/detail'+this.type +'/'+this.list.product_id)
       }
     }
   }

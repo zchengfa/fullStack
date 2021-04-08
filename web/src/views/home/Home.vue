@@ -91,14 +91,14 @@
       },
       swiperImageLoad(){
        this.tabOffsetTop = this.$refs.tabControlTwo.$el.offsetTop
-        //console.log(this.tabOffsetTop)
+
       },
       /*
       * 请求数据事件
       */
       getHomeMultiData(){
         getHomeMultiData().then(res =>{
-          //console.log(res)
+
           this.banner =res.data[0].multiData[0].banner
           this.iconList = res.data[0].multiData[0].iconList
         })
@@ -106,6 +106,7 @@
       getGoodsData(type){
         const page = this.goods[type].page +1
         getGoodsData(type, page).then(res => {
+
          if(res.data.length===0){
            console.log('没有数据！')
          }

@@ -49,6 +49,11 @@
   .active{
     color: #e02929;
   }
+  .detail-nav-bar{
+    position: fixed;
+    width: 100%;
+    background-color: #ffffff;
+  }
   .back{
     height: 100%;
   }

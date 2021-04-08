@@ -67,7 +67,7 @@
       },
       itemClick(){
         //动态路由传参(先要从父组件传入id和type给子组件)
-        this.$router.push('/detail'+this.type +'/'+this.list.product_id)
+        this.$router.push('/detail/'+this.type +'/'+this.list.product_id)
       }
     }
   }

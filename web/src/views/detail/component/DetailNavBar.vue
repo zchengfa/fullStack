@@ -50,9 +50,10 @@
     color: #e02929;
   }
   .detail-nav-bar{
-    position: fixed;
+    position: relative;
     width: 100%;
     background-color: #ffffff;
+    z-index: 10;
   }
   .back{
     height: 100%;

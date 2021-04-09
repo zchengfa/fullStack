@@ -117,14 +117,9 @@
 
            //上拉加载一次掉用一次结束上拉
            this.$refs.scroll.finishPullUp()
-
          }
-
         })
       }
-
-
-
     },
     created() {
 		  this.getHomeMultiData()

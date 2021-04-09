@@ -14,7 +14,7 @@
         <div class="image-detail">
           <div class="image-detail-title"><h4>图文详情</h4></div>
           <div class="image-detail-box" v-for="(item, index) in detailData.imageDetail" :key="index">
-            <img :src="item.imagePath" alt="image_detail">
+            <img :src="item.imagePath" alt="image_detail" @load="loadOver">
           </div>
         </div>
       </div>
@@ -41,11 +41,21 @@
       return {
 
       }
+    },
+    methods:{
+      loadOver(){
+        this.$emit('imageLoadOver')
+      }
     }
   }
 </script>
 
 <style scoped>
+  .detail-content{
+    position: relative;
+    z-index: 9;
+    background-color: #fff;
+  }
   .content{
     width: 100vw;
     overflow: hidden;

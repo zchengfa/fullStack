@@ -25,7 +25,7 @@ export default {
     pullUpLoad:{
       type:Boolean,
       default() {
-        return 0;
+        return false;
       }
     }
   },

@@ -1,6 +1,6 @@
 <template>
   <div class="detail">
-    <detail-nav-bar :nav-list="nav_list"></detail-nav-bar>
+    <detail-nav-bar :nav-list="nav_list" @scrollThere="scrollThere"></detail-nav-bar>
     <Scroll class="content" ref="scroll">
       <div class="shop-show" v-if="Object.keys(detailData).length !==0">
         <detail-shop ref="shop" :base-data="detailData"></detail-shop>
@@ -34,7 +34,9 @@
         id:null,
         type:null,
         detailData: {},
-        comment_num:0
+        comment_num:0,
+        contentTopYs:null,
+        scrollToTopY:[]
       }
     },
     components:{
@@ -56,6 +58,23 @@
       imageLoad(){
         const refresh = debounce(this.$refs.scroll.refresh, 300)
         refresh()
+
+        this.contentTopYs = debounce(()=>{
+          this.scrollToTopY = []
+          this.scrollToTopY.push(0)
+          this.scrollToTopY.push(this.$refs.shop.$el.offsetTop)
+          this.scrollToTopY.push(this.$refs.params.$el.offsetTop)
+          this.scrollToTopY.push(this.$refs.image.$el.offsetTop)
+          this.scrollToTopY.push(this.$refs.recommend.$el.offsetTop)
+        },300)
+
+        this.contentTopYs()
+
+
+      },
+      scrollThere(index){
+        this.$refs.scroll.scrollTo(0,-this.scrollToTopY[index],300)
+
       }
     }
     ,

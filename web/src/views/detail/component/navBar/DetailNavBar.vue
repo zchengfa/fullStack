@@ -69,6 +69,6 @@
   }
   .nav-title{
     flex:1;
-    font-size: 14px;
+    font-size: .8rem;
   }
 </style>

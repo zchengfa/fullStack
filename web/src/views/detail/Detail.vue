@@ -2,14 +2,26 @@
   <div class="detail">
     <detail-nav-bar :nav-list="nav_list"></detail-nav-bar>
     <Scroll class="content" ref="scroll">
-      <detail-content :detail-data="detailData" @imageLoadOver="imageLoad"></detail-content>
+      <div class="shop-show" v-if="Object.keys(detailData).length !==0">
+        <detail-shop ref="shop" :base-data="detailData"></detail-shop>
+        <detail-params ref="params" :params="detailData.shop_detail_params"></detail-params>
+        <detail-image ref="image" :images-data="detailData.images" @imageLoadOver="imageLoad"></detail-image>
+        <detail-recommend ref="recommend" :recommend-data="detailData.shop_recommend"></detail-recommend>
+      </div>
+      <div class="shop-hidden" v-else>
+        <detail-empty></detail-empty>
+      </div>
     </Scroll>
   </div>
 </template>
 
 <script>
-  import DetailNavBar from "@/views/detail/component/DetailNavBar";
-  import DetailContent from "@/views/detail/component/DetailContent";
+  import DetailNavBar from "@/views/detail/component/navBar/DetailNavBar";
+  import DetailShop from "@/views/detail/component/content/DetailShop";
+  import DetailParams from "@/views/detail/component/content/DetailParams";
+  import DetailImage from "@/views/detail/component/content/DetailImage";
+  import DetailRecommend from "@/views/detail/component/content/DetailRecommend";
+  import DetailEmpty from "@/views/detail/component/content/DetailEmpty";
   import Scroll from "@/components/common/scroll/Scroll";
 
   import {getGoodsDetail} from "@/network/home"
@@ -27,11 +39,16 @@
     },
     components:{
       DetailNavBar,
-      DetailContent,
+      DetailShop,
+      DetailParams,
+      DetailImage,
+      DetailRecommend,
+      DetailEmpty,
       Scroll
     },
     computed:{
       nav_list(){
+        if (this.comment_num>99) return ["商品","参数",`评论(99+)`,"推荐"]
         return ["商品","参数",`评论(${this.comment_num})`,"推荐"]
       }
     },
@@ -51,6 +68,7 @@
       getGoodsDetail(this.type,this.id).then(res=> {
 
         this.detailData = res.data[0].product_detail[0]
+
         this.comment_num = this.detailData.comment_num
       }).catch(() => {
         this.detailData = {}

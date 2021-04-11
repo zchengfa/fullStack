@@ -1,6 +1,6 @@
 <template>
   <div class="detail">
-    <detail-nav-bar :nav-list="nav_list" @scrollThere="scrollThere"></detail-nav-bar>
+    <detail-nav-bar :nav-list="nav_list" @scrollThere="scrollThere" ref="detailNav"></detail-nav-bar>
     <Scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll">
       <div class="shop-show" v-if="Object.keys(detailData).length !==0">
         <detail-shop ref="shop" :base-data="detailData"></detail-shop>
@@ -44,7 +44,8 @@
         detailData: {},
         comment_num:0,
         contentTopYs:null,
-        scrollToTopY:[]
+        scrollToTopY:[],
+        currentRefsIndex:0
       }
     },
     components:{
@@ -73,6 +74,21 @@
         refresh()
         //每次图片加载完就获取各元素位置
         this.contentTopYs()
+      },
+      contentScroll(position) {
+        //根据position位置来控制backTop组件的显示或隐藏(position时负数，需先转成正数再做比较)
+        this.isShowBackTop = (- position.y)>1000
+
+        //判断页面滚动的位置来决定navbar中title颜色
+        let positionY = - position.y
+        let length = this.scrollToTopY.length
+        for (let i = 0; i<this.scrollToTopY.length; i++){
+          if (this.currentRefsIndex !==i && (i < length -1 && positionY >= this.scrollToTopY[i])||(i === length -1 && positionY >= this.scrollToTopY[i])){
+            this.currentRefsIndex = i
+            //将i值赋给navbar中的currentIndex
+            this.$refs.detailNav.currentIndex = this.currentRefsIndex
+          }
+        }
       },
       scrollThere(index){
         //根据点击的选项来滚动到相应选项的位置

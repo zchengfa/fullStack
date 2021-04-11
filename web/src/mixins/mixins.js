@@ -25,6 +25,7 @@ export default {
 
             //根据position的位置控制tabControl是否吸顶
             this.isTabFixed = (- position.y) > (this.tabOffsetTop - 48)
+
         },
         backTop(){
             //回到顶部

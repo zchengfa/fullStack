@@ -22,5 +22,10 @@ export default {
 </script>
 
 <style scoped>
-
+  .err{
+    margin: 0 auto;
+    width: 96%;
+    text-indent: 1rem;
+    color: #e2dcdc;
+  }
 </style>

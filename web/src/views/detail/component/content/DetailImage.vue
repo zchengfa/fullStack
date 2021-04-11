@@ -1,6 +1,6 @@
 <template>
   <div class="image-detail">
-    <div class="title"><h4>图文详情</h4></div>
+    <div class="title"><h4>详情介绍</h4></div>
     <div class="image-detail-box" v-for="(item, index) in imagesData" :key="index">
       <img :src="item.imagePath" alt="image_detail" @load="loadOver">
     </div>

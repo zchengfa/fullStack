@@ -4,9 +4,9 @@
     <Scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll">
       <div class="shop-show" v-if="Object.keys(detailData).length !==0">
         <detail-shop ref="shop" :base-data="detailData"></detail-shop>
+        <detail-image ref="image" :images-data="detailData.images" @imageLoadOver="imageLoad"></detail-image>
         <detail-params ref="params" :params="detailData.shop_detail_params"></detail-params>
         <detail-comment ref="comment" :comment-num="Number(comment_num)"></detail-comment>
-        <detail-image ref="image" :images-data="detailData.images" @imageLoadOver="imageLoad"></detail-image>
         <detail-recommend ref="recommend" :recommend-data="detailData.shop_recommend"></detail-recommend>
       </div>
       <div class="shop-hidden" v-else>
@@ -14,6 +14,7 @@
       </div>
     </Scroll>
     <back-top v-show="isShowBackTop" @click.native="backTop"></back-top>
+    <detail-bottom-bar></detail-bottom-bar>
   </div>
 </template>
 
@@ -25,6 +26,7 @@
   import DetailImage from "@/views/detail/component/content/DetailImage";
   import DetailRecommend from "@/views/detail/component/content/DetailRecommend";
   import DetailEmpty from "@/views/detail/component/content/DetailEmpty";
+  import DetailBottomBar from "@/views/detail/component/bottom/DetailBottomBar";
 
   import BackTop from "@/components/content/backTop/BackTop";
   import Scroll from "@/components/common/scroll/Scroll";
@@ -57,6 +59,7 @@
       DetailRecommend,
       DetailEmpty,
       BackTop,
+      DetailBottomBar,
       Scroll
     },
     computed:{
@@ -130,9 +133,11 @@
 <style scoped>
   .detail{
     height: 100vh;
+    background-color: #FFF;
   }
   .content{
     position: relative;
+    bottom: 6rem;
     height: calc(100% - 44px);
     overflow: hidden;
     z-index: 9;

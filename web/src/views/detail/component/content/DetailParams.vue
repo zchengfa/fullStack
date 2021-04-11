@@ -29,7 +29,7 @@ export default {
   .params-box{
     columns: 2;
     column-rule:thick outset orangered ;
-    background-color: #e0dbdb;
+    background-color: #ece6e6;
     box-shadow:2px 2px #e0dbdb;
   }
   .params{

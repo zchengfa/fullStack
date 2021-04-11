@@ -1,6 +1,6 @@
 <template>
   <div class="image-detail">
-    <div class="image-detail-title"><h4>图文详情</h4></div>
+    <div class="title"><h4>图文详情</h4></div>
     <div class="image-detail-box" v-for="(item, index) in imagesData" :key="index">
       <img :src="item.imagePath" alt="image_detail" @load="loadOver">
     </div>
@@ -20,6 +20,7 @@ export default {
   },
   methods:{
     loadOver(){
+      //每次图片加载完后就把事件发送给父组件，让父组件对事件作出处理
       this.$emit('imageLoadOver')
     }
   }
@@ -33,9 +34,6 @@ export default {
   border-top: .1rem solid #e3dede;
   border-bottom: .1rem solid #e3dede;
   overflow: hidden;
-}
-.image-detail-title h4{
-  text-indent: 1rem;
 }
 .image-detail-box img{
   width: 100%;

@@ -42,7 +42,7 @@ export default {
     if(this.probeType ===2 || this.probeType ===3){
       //监听滚动位置,监听之前需开启probeType：3
       this.scroll.on('scroll', (position)=> {
-        //将滚动事件以及position发送到外部，让需要使用scroll监听的组件使用
+        //将滚动事件以及position发送给父组件，让父组件对事件作出处理
         this.$emit('scroll', position)
       })
     }
@@ -51,7 +51,7 @@ export default {
     if(this.pullUpLoad){
       //监听上拉加载，需先开启监听
       this.scroll.on('pullingUp', ()=> {
-        //将上拉加载事件发送到外部，让需要使用上拉加载的组件使用
+        //将上拉加载事件发送给父组件，让父组件对事件作出处理
         this.$emit('pullingUp')
       })
     }

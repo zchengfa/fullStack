@@ -26,9 +26,6 @@ export default {
     margin: 0 auto;
     width: 96%;
   }
-  .title h4{
-    text-indent: 1rem;
-  }
   .params-box{
     columns: 2;
     column-rule:thick outset orangered ;

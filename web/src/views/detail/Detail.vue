@@ -1,10 +1,11 @@
 <template>
   <div class="detail">
     <detail-nav-bar :nav-list="nav_list" @scrollThere="scrollThere"></detail-nav-bar>
-    <Scroll class="content" ref="scroll">
+    <Scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll">
       <div class="shop-show" v-if="Object.keys(detailData).length !==0">
         <detail-shop ref="shop" :base-data="detailData"></detail-shop>
         <detail-params ref="params" :params="detailData.shop_detail_params"></detail-params>
+        <detail-comment ref="comment" :comment-num="Number(comment_num)"></detail-comment>
         <detail-image ref="image" :images-data="detailData.images" @imageLoadOver="imageLoad"></detail-image>
         <detail-recommend ref="recommend" :recommend-data="detailData.shop_recommend"></detail-recommend>
       </div>
@@ -12,6 +13,7 @@
         <detail-empty></detail-empty>
       </div>
     </Scroll>
+    <back-top v-show="isShowBackTop" @click.native="backTop"></back-top>
   </div>
 </template>
 
@@ -19,16 +21,22 @@
   import DetailNavBar from "@/views/detail/component/navBar/DetailNavBar";
   import DetailShop from "@/views/detail/component/content/DetailShop";
   import DetailParams from "@/views/detail/component/content/DetailParams";
+  import DetailComment from "@/views/detail/component/content/DetailComment";
   import DetailImage from "@/views/detail/component/content/DetailImage";
   import DetailRecommend from "@/views/detail/component/content/DetailRecommend";
   import DetailEmpty from "@/views/detail/component/content/DetailEmpty";
+
+  import BackTop from "@/components/content/backTop/BackTop";
   import Scroll from "@/components/common/scroll/Scroll";
 
   import {getGoodsDetail} from "@/network/home"
   import {debounce} from "@/common/utils"
 
+  import mixins from "@/mixins/mixins";
+
   export default {
     name: "detail",
+    mixins:[mixins],
     data(){
       return {
         id:null,
@@ -43,38 +51,32 @@
       DetailNavBar,
       DetailShop,
       DetailParams,
+      DetailComment,
       DetailImage,
       DetailRecommend,
       DetailEmpty,
+      BackTop,
       Scroll
     },
     computed:{
       nav_list(){
+        //当评论数量大于99的时候让评论数量为99+，反之则为原评论数
         if (this.comment_num>99) return ["商品","参数",`评论(99+)`,"推荐"]
         return ["商品","参数",`评论(${this.comment_num})`,"推荐"]
       }
     },
     methods:{
       imageLoad(){
+        //防抖函数处理scroll组件的刷新
         const refresh = debounce(this.$refs.scroll.refresh, 300)
+        //每次加载完图片都让scroll组件进行刷新
         refresh()
-
-        this.contentTopYs = debounce(()=>{
-          this.scrollToTopY = []
-          this.scrollToTopY.push(0)
-          this.scrollToTopY.push(this.$refs.shop.$el.offsetTop)
-          this.scrollToTopY.push(this.$refs.params.$el.offsetTop)
-          this.scrollToTopY.push(this.$refs.image.$el.offsetTop)
-          this.scrollToTopY.push(this.$refs.recommend.$el.offsetTop)
-        },300)
-
+        //每次图片加载完就获取各元素位置
         this.contentTopYs()
-
-
       },
       scrollThere(index){
+        //根据点击的选项来滚动到相应选项的位置
         this.$refs.scroll.scrollTo(0,-this.scrollToTopY[index],300)
-
       }
     }
     ,
@@ -85,13 +87,23 @@
 
       //将id和type作为参数进行请求
       getGoodsDetail(this.type,this.id).then(res=> {
-
+        //将请求到的数据赋给detailData
         this.detailData = res.data[0].product_detail[0]
-
+        //获取detailData中的评论数据
         this.comment_num = this.detailData.comment_num
       }).catch(() => {
+        //当请求的数据为空时，detailData的数据为空对象
         this.detailData = {}
       })
+
+      //防抖函数处理获取页面元素位置函数
+      this.contentTopYs = debounce(()=>{
+        this.scrollToTopY = []
+        this.scrollToTopY.push(0)
+        this.scrollToTopY.push(this.$refs.params.$el.offsetTop)
+        this.scrollToTopY.push(this.$refs.comment.$el.offsetTop)
+        this.scrollToTopY.push(this.$refs.recommend.$el.offsetTop)
+      },100)
     },
     mounted() {
 

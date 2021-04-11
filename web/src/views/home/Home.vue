@@ -14,7 +14,7 @@
 </template>
 
 <script>
-  //引入NavBar组件
+  //引入组件
 	import NavBar from '@/components/common/navbar/NavBar.vue'
   import Swiper from '@/components/common/swiper/Swiper.vue'
   import Scroll from "@/components/common/scroll/Scroll"
@@ -25,6 +25,7 @@
 
   import MenuList from "@/views/home/components/MenuList"
 
+  import mixins from "@/mixins/mixins";
   //引入获取首页数据方法
   import {getHomeMultiData, getGoodsData} from "@/network/home"
 
@@ -32,19 +33,18 @@
 
   export default {
 		name:'Home',
+    mixins:[mixins],
     data(){
 		  return {
 		    banner:null,
         iconList:null,
         currentType:'pop',
-        isShowBackTop:false,
         goods:{
 		      'pop':{page: 0,  list: []},
           'sell':{page: 0, list: []},
           'new':{page: 0, list: []}
         },
         tabOffsetTop:0,
-        isTabFixed:false,
         savePosition:0
       }
     },
@@ -76,37 +76,27 @@
         this.$refs.tabControlOne.currentIndex = index
         this.$refs.tabControlTwo.currentIndex = index
       },
-      backTop(){
-        this.$refs.scroll.scrollTo(0, 0)
-      },
-      contentScroll(position){
-        //根据position位置来控制backTop组件的显示或隐藏(position时负数，需先转成正数再做比较)
-        this.isShowBackTop = (- position.y) > 1000
-
-        //根据position的位置控制tabControl是否吸顶
-        this.isTabFixed = (- position.y) > (this.tabOffsetTop - 48)
-      },
       loadMore(){
+        //上拉加载更多数据
         this.getGoodsData(this.currentType)
       },
       swiperImageLoad(){
+        //当轮播图的图片加载完成时就获取轮播组件距离顶部的高度
        this.tabOffsetTop = this.$refs.tabControlTwo.$el.offsetTop
-
       },
       /*
       * 请求数据事件
       */
       getHomeMultiData(){
         getHomeMultiData().then(res =>{
-
           this.banner =res.data[0].multiData[0].banner
           this.iconList = res.data[0].multiData[0].iconList
         })
       },
       getGoodsData(type){
+        //每获取一次数据就让当前类型商品的页数加一
         const page = this.goods[type].page +1
         getGoodsData(type, page).then(res => {
-
          if(res.data.length===0){
            console.log('没有数据！')
          }
@@ -123,7 +113,6 @@
     },
     created() {
 		  this.getHomeMultiData()
-
       /*
       * 获取首页中（“流行”“新款”“精选”）的数据
       */
@@ -142,6 +131,7 @@
 
     },
     activated() {
+		  //进入当前页面时，就让页面回复到之前滚动的位置，并且刷新scroll组件
       this.$refs.scroll.scrollTo(0, this.savePosition, 0)
       this.$refs.scroll.refresh()
     },

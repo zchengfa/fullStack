@@ -1,6 +1,6 @@
 <template>
   <div class="detail-recommend">
-    <div class="title-box"><h4>商品推荐</h4></div>
+    <div class="title"><h4>商品推荐</h4></div>
     <goods-data :goods="recommendData"></goods-data>
   </div>
 </template>
@@ -24,7 +24,5 @@ export default {
 </script>
 
 <style scoped>
-  .title-box h4{
-    text-indent: 1rem;
-  }
+
 </style>

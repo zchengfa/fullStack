@@ -14,7 +14,8 @@
       </div>
     </Scroll>
     <back-top v-show="isShowBackTop" @click.native="backTop"></back-top>
-    <detail-bottom-bar></detail-bottom-bar>
+    <detail-add-cart :product-info="productInfo" v-if="isShowAddCart" @submitAdd="submitAdd"></detail-add-cart>
+    <detail-bottom-bar @addCart="addCart"></detail-bottom-bar>
   </div>
 </template>
 
@@ -27,6 +28,7 @@
   import DetailRecommend from "@/views/detail/component/content/DetailRecommend";
   import DetailEmpty from "@/views/detail/component/content/DetailEmpty";
   import DetailBottomBar from "@/views/detail/component/bottom/DetailBottomBar";
+  import DetailAddCart from "@/views/detail/component/bottom/DetailAddCart";
 
   import BackTop from "@/components/content/backTop/BackTop";
   import Scroll from "@/components/common/scroll/Scroll";
@@ -47,7 +49,9 @@
         comment_num:0,
         contentTopYs:null,
         scrollToTopY:[],
-        currentRefsIndex:0
+        currentRefsIndex:0,
+        isShowAddCart:false,
+        productInfo:{}
       }
     },
     components:{
@@ -60,6 +64,7 @@
       DetailEmpty,
       BackTop,
       DetailBottomBar,
+      DetailAddCart,
       Scroll
     },
     computed:{
@@ -96,6 +101,16 @@
       scrollThere(index){
         //根据点击的选项来滚动到相应选项的位置
         this.$refs.scroll.scrollTo(0,-this.scrollToTopY[index],300)
+      },
+      addCart(){
+        this.isShowAddCart = !this.isShowAddCart
+        this.productInfo.title = this.detailData.title
+        this.productInfo.image = this.detailData.bigImage
+        this.productInfo.price = this.detailData.price
+      },
+      submitAdd() {
+        this.isShowAddCart = !this.isShowAddCart
+        this.$store.commit('addCart',this.productInfo)
       }
     }
     ,

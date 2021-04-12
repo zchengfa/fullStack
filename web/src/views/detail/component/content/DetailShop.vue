@@ -50,6 +50,8 @@ p{
   width: 90%;
 }
 p.price{
+  font-size: 1.3rem;
+  font-weight: bold;
   color: #e02929;
 }
 p.title{

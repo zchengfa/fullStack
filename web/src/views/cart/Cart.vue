@@ -4,6 +4,9 @@
       <div slot="center">
         <div class="nav-title">购物车</div>
       </div>
+      <div class="cart">
+
+      </div>
     </nav-bar>
   </div>
 </template>

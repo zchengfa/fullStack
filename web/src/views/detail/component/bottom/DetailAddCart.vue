@@ -51,7 +51,7 @@ export default {
     },
     //提交商品添加信息
     submitAdd(){
-      this.$emit('submitAdd')
+      this.$emit('submitAdd',this.count)
     }
   }
 }

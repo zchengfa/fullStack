@@ -83,9 +83,10 @@
   .content{
     height: calc(100% - 98px);
     overflow: hidden;
+    background-color: #fff;
   }
   .cart{
-    background-color: #ece6e6;
+
   }
   .cart-item{
     display: flex;
@@ -97,10 +98,14 @@
   }
   .shop-info{
     display: flex;
-    flex: 9;
+    flex: 8;
+  }
+  .title{
+    font-size: .8rem;
   }
   .image-box{
     flex: 1;
+    padding: 0 1rem 0 0;
   }
   .image-box img{
     position: relative;
@@ -119,6 +124,16 @@
     font-weight: bold;
   }
   .button-box{
-    text-align: right;
+    position: relative;
+    left: 60%;
+    width: 40%;
+  }
+  .button-box button{
+    width: 1.6rem;
+    height: 1.6rem;
+    font-weight: bold;
+  }
+  .button-box span{
+    padding: 0 .5rem;
   }
 </style>

@@ -2,7 +2,7 @@
   <div class="detail">
     <detail-nav-bar :nav-list="nav_list" @scrollThere="scrollThere" ref="detailNav"></detail-nav-bar>
     <Scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll">
-      <div style="position: fixed;z-index: 12;top: 50px;background-color: red;">{{$store.state.cartList}}</div>
+<!--      <div style="position: fixed;z-index: 12;top: 50px;background-color: red;">{{$store.state.cartList}}</div>-->
       <div class="shop-show" v-if="Object.keys(detailData).length !==0">
         <detail-shop ref="shop" :base-data="detailData"></detail-shop>
         <detail-image ref="image" :images-data="detailData.images" @imageLoadOver="imageLoad"></detail-image>
@@ -114,7 +114,7 @@
         this.productInfo.shopCount = count
         this.productInfo.product_id = this.id
         //将产品数据通过vuex的store分发到actions中
-        this.$store.dispatch('addCart',this.productInfo)
+        this.$store.dispatch('addCart',JSON.parse(JSON.stringify(this.productInfo)))
       }
     }
     ,

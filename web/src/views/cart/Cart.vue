@@ -126,7 +126,7 @@
   }
   .image-box img{
     width: 5rem;
-    height: 5rem;
+    height: 6rem;
   }
   .price{
     color: #e02929;

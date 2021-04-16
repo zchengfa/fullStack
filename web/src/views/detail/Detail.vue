@@ -2,16 +2,12 @@
   <div class="detail">
     <detail-nav-bar :nav-list="nav_list" @scrollThere="scrollThere" ref="detailNav"></detail-nav-bar>
     <Scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll">
-<!--      <div style="position: fixed;z-index: 12;top: 50px;background-color: red;">{{$store.state.cartList}}</div>-->
       <div class="shop-show" v-if="Object.keys(detailData).length !==0">
         <detail-shop ref="shop" :base-data="detailData"></detail-shop>
         <detail-image ref="image" :images-data="detailData.images" @imageLoadOver="imageLoad"></detail-image>
         <detail-params ref="params" :params="detailData.shop_detail_params"></detail-params>
         <detail-comment ref="comment" :comment-num="Number(comment_num)"></detail-comment>
         <detail-recommend ref="recommend" :recommend-data="detailData.shop_recommend"></detail-recommend>
-      </div>
-      <div class="shop-hidden" v-else>
-        <detail-empty></detail-empty>
       </div>
     </Scroll>
     <back-top v-show="isShowBackTop" @click.native="backTop"></back-top>
@@ -27,7 +23,6 @@
   import DetailComment from "@/views/detail/component/content/DetailComment";
   import DetailImage from "@/views/detail/component/content/DetailImage";
   import DetailRecommend from "@/views/detail/component/content/DetailRecommend";
-  import DetailEmpty from "@/views/detail/component/content/DetailEmpty";
   import DetailBottomBar from "@/views/detail/component/bottom/DetailBottomBar";
   import DetailAddCart from "@/views/detail/component/bottom/DetailAddCart";
 
@@ -62,7 +57,6 @@
       DetailComment,
       DetailImage,
       DetailRecommend,
-      DetailEmpty,
       BackTop,
       DetailBottomBar,
       DetailAddCart,
@@ -115,6 +109,12 @@
         this.productInfo.product_id = this.id
         //将产品数据通过vuex的store分发到actions中
         this.$store.dispatch('addCart',JSON.parse(JSON.stringify(this.productInfo)))
+            .then(res => {
+              this.$toast.showToast(res)
+            })
+            .catch(err => {
+              this.$toast.showToast(err)
+            })
       }
     }
     ,
@@ -132,6 +132,7 @@
       }).catch(() => {
         //当请求的数据为空时，detailData的数据为空对象
         this.detailData = {}
+        this.$empty.showEmpty('没有商品')
       })
 
       //防抖函数处理获取页面元素位置函数
@@ -142,9 +143,6 @@
         this.scrollToTopY.push(this.$refs.comment.$el.offsetTop)
         this.scrollToTopY.push(this.$refs.recommend.$el.offsetTop)
       },100)
-    },
-    mounted() {
-
     }
   }
 </script>

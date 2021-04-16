@@ -2,13 +2,14 @@
   <div class="settle-cart">
     <div class="check">
       <check-button id="check-button" @click.native="selectAll" :is-checked="isCheckedAll"></check-button>
-      <label for="check-button">全选</label>
+      <label v-if="!isAllChecked" for="check-button" class="select-all">全选</label>
+      <label v-else for="check-button" class="deselect-all">取消全选</label>
     </div>
     <div class="total-price">
       <span>合计:</span>
       <span class="price">￥{{totalPrice}}元</span>
     </div>
-    <div class="settle">
+    <div class="settle" @click="settle">
       <button>去结算({{checkedNum}})</button>
     </div>
   </div>
@@ -67,6 +68,10 @@ export default {
   },
   methods:{
     selectAll(){
+      //判断购物车是否为空，为空弹出提示，反之则进行全选操作
+      if (this.cartList.length === 0){
+        this.$toast.showToast('您的购物车还未添加任何商品', 1000)
+      }
       //判断是否处于全选状态
       if (this.isAllChecked===true){
         //处于全选状态，让商品列表里的所有商品都取消勾选
@@ -77,12 +82,21 @@ export default {
         })
       }
       else {
-        //当前为不全选，让为勾选的商品进入勾选状态
+        //当前为不全选，让未勾选的商品进入勾选状态
         this.cartList.map((item)=>{
           if (item.isChecked !== true){
             item.isChecked = true
           }
         })
+      }
+    },
+    settle(){
+      //判断是否选择商品
+      if (this.checkedNum ===0) {
+        this.$toast.showToast('您未选择购物车中的任何商品,请选择')
+      }
+      else {
+        this.$toast.showToast('支付功能还未开发,无法结算')
       }
     }
   }
@@ -112,6 +126,7 @@ export default {
 label{
   position: relative;
   left: .5rem;
+  font-size: .6rem;
 }
 .total-price{
   flex: 2;

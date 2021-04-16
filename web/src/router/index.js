@@ -6,7 +6,7 @@ Vue.use(VueRouter)
 
 //路由懒加载
 const Home = ()=> import ('views/home/Home')
-const About = ()=> import ('views/about/About')
+const Category = ()=> import ('views/category/Category')
 const Cart = ()=> import ('views/cart/Cart')
 const Profile = ()=> import ('views/profile/Profile')
 const Detail = ()=> import ('views/detail/Detail')
@@ -22,8 +22,8 @@ const routes =[
 		component:Home
 	},
 	{
-		path:'/about',
-		component:About
+		path:'/category',
+		component:Category
 	},
 	{
 		path:'/cart',

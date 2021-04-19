@@ -5,7 +5,7 @@
     <Scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll"
             :pull-up-load="true" @pullingUp="loadMore">
       <swiper :banner="banner" @swiperImageLoad="swiperImageLoad"></swiper>
-      <menu-list :iconList="iconList"></menu-list>
+      <menu-list :menu-list="iconList"></menu-list>
       <tab-control :class="{fixed: isTabFixed}" ref="tabControlTwo" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
       <goods-data :goods="goods[currentType].list" :current-type="currentType"></goods-data>
     </Scroll>
@@ -23,7 +23,7 @@
   import TabControl from '@/components/content/tabControl/TabControl'
   import GoodsData from "@/components/content/goodsData/GoodsData"
 
-  import MenuList from "@/views/home/components/MenuList"
+  import MenuList from "@/components/content/menuList/MenuList"
 
   import mixins from "@/mixins/mixins";
   //引入获取首页数据方法

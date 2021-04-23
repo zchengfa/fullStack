@@ -18,6 +18,8 @@ require('./router/home/detail')(app)
 //导入category路由模块
 require('./router/category/category')(app)
 
+require('./router/profile/profile')(app)
+
 app.get('/',(req,res) => {
     res.setHeader('Access-Control-Allow-Origin', '*')
     res.json('666')

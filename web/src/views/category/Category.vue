@@ -22,7 +22,7 @@
       </Scroll>
       <Scroll ref="scrollTwo" class="scroll-list-detail content" :probe-type="3">
         <menu-list :menu-list="shopListDetail"></menu-list>
-        <tab-control :title="shopListDetail"></tab-control>
+        <tab-control :title="tabTitle"></tab-control>
         <goods-data :goods="shopListDetail"></goods-data>
       </Scroll>
     </div>
@@ -46,7 +46,8 @@ export default {
     return {
       categoryList:[],
       shopListDetail:[],
-      currentIndex:0
+      currentIndex:0,
+      tabTitle:['流行','精选','新款']
     }
   },
   components:{
@@ -59,7 +60,7 @@ export default {
   methods:{
     getCategoryList(){
       getCategoryList().then(res => {
-        //console.log(res.data[0].category_list)
+        console.log(res.data[0])
         this.categoryList = res.data[0].category_list
 
       }).catch(err => {

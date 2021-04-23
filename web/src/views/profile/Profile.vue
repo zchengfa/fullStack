@@ -6,8 +6,8 @@
         <img src="~assets/image/profile/header.png" alt="header_img">
       </div>
       <div class="content">
-        <input type="text" placeholder="账号/手机号" v-model="username" name="username">
-        <input type="password" placeholder="密码" v-model="password" name="password">
+        <input type="text" placeholder="账号/手机号" v-model="username" >
+        <input type="password" placeholder="密码" v-model="password" >
         <input type="checkbox" name="remember" value="remember" id="remember">
         <label for="remember">记住密码</label>
         <button type="submit" @click="login">登录</button>
@@ -21,7 +21,8 @@
 </template>
 
 <script>
-import {checkLogin} from "@/network/profile";
+import {login} from "@/network/home";
+
 
 export default {
   name: "Login",
@@ -33,11 +34,9 @@ export default {
   },
   methods:{
     login(){
-      checkLogin(this.username,this.password).then(res => {
-        console.log(res)
-      }).catch(err => {
-        console.log(err)
-      })
+        login(this.username,this.password).then(res => {
+          console.log(res)
+        })
     }
   }
 }

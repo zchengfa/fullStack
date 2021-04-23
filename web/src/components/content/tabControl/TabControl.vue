@@ -12,7 +12,9 @@ export default {
   props:{
     title:{
       type:Array,
-      default:[]
+      default(){
+        return []
+      }
     }
   },
   data(){

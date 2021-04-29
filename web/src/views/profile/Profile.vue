@@ -1,128 +1,107 @@
 <template>
-  <div class="login">
-    <div class="bg"></div>
-    <form class="form">
-      <div class="header">
-        <img src="~assets/image/profile/header.png" alt="header_img">
+  <div class="profile">
+    <nav-bar>
+      <div slot="left"><img src="~assets/image/detail/back.svg" alt="back"></div>
+      <div slot="right"><img src="~assets/image/profile/config.png" alt="config"></div>
+    </nav-bar>
+    <div class="user-info">
+      <div class="login-register">
+        <button class="register" @click="register">注册</button>
+        <button class="login" @click="login">登录</button>
       </div>
-      <div class="content">
-        <input type="text" placeholder="账号/手机号" v-model="username" >
-        <input type="password" placeholder="密码" v-model="password" >
-        <input type="checkbox" name="remember" value="remember" id="remember">
-        <label for="remember">记住密码</label>
-        <button type="submit" @click="login">登录</button>
+      <div class="collection">
+        <a href="javascript:void (0)" class="collection-item"  v-for="(item, index) in collectionList" :key="index">
+          <span class="count">{{item.count}}</span>
+          <span class="title">{{item.title}}</span>
+        </a>
       </div>
-      <div class="login-way">
-        <div class="qq"><img src="" alt="">QQ登录</div>
-        <div class="weChat"><img src="" alt="">微信登录</div>
-      </div>
-    </form>
+    </div>
+    <menu-list :menu-list="orderList"></menu-list>
   </div>
 </template>
 
 <script>
-import {login} from "@/network/home";
-
+import NavBar from "@/components/common/navbar/NavBar";
+import MenuList from "@/components/content/menuList/MenuList";
 
 export default {
   name: "Login",
   data(){
     return {
-      username:null,
-      password:null
+      collectionList:[
+        {
+          "count":"--",
+          "title":"商品收藏"
+        },
+        {
+          "count":"--",
+          "title":"品牌收藏"
+        },
+        {
+          "count":"--",
+          "title":"我的足迹"
+        }
+      ],
+      orderList: []
     }
   },
-  methods:{
-    login(){
-        login(this.username,this.password).then(res => {
-          console.log(res)
-        })
-    }
+  components:{
+    NavBar,
+    MenuList
   }
 }
 </script>
 
 <style scoped>
-.login{
+.profile{
   width: 100vw;
   height: 100vh;
+  background-color: #dad5d5;
+}
+.profile div{
   background-color: #fff;
 }
-.bg{
+.login-register{
   position: relative;
-  width: 100%;
-  height: 20vh;
-  background-color: #5d5ddc;
-}
-.bg::after{
-  position: absolute;
-  top: 0;
-  display: block;
-  content: '';
-  width: 100%;
-  height: 36vh;
-  border-radius: 50%;
-  background-color: #5d5ddc;
-}
-.form{
-  position: relative;
-  margin: 20vh auto 1rem;
-  width: 80vw;
-  background-color: #fff;
-  z-index: 9;
-}
-.header{
-  position: absolute;
-  top: -4rem;
-  width: 100%;
+  top:1rem;
+  bottom:1rem;
   text-align: center;
 }
-.content{
-  position: relative;
-  top:1rem
-}
-input{
-  display: block;
-  margin-top: 1.5rem;
-  margin-left: auto;
-  margin-right: auto;
-  width: 80%;
+.login,.register{
+  width: 5rem;
   height: 2rem;
-  outline: none;
-  text-indent: 1rem;
-  color: darkgrey;
+  border:1px solid #e02929;
+  border-radius: 1rem;
+  color: #e02929;
 }
-#remember{
-  display: inline-block;
-  margin-left: 10%;
-  width: 1rem;
-  height: 1rem;
+.register{
+  margin-right: 1rem;
 }
-label{
-  position: relative;
-  top: -.2rem;
-  padding-left: .5rem;
-  font-size: .6rem;
-}
-button{
-  display: block;
-  margin: 1rem auto;
-  width: 80%;
-  height: 2rem;
-  background-color: #f31b1b;
-  border: none;
+.login{
+  background-color: #e02929;
   color: #fff;
-  outline: none;
 }
-.login-way{
-  position: relative;
-  top: 1rem;
+.collection{
   display: flex;
-  margin: auto;
-  width: 80%;
-}
-.login-way div {
-  flex: 1;
+  position: relative;
+  top:2rem;
+  text-align: center;
   font-size: .8rem;
+  line-height: 1.5rem;
+}
+.collection a{
+  flex: 1;
+  margin-bottom: .5rem;
+}
+.collection span{
+  display: block;
+  height: 1.5rem;
+}
+.collection .title::before{
+  position: relative;
+  right: 32%;
+  display: inline-block;
+  content: '|';
+  color: #bfbaba;
 }
 </style>

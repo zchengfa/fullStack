@@ -21,7 +21,7 @@ module.exports = app => {
             res.send(results)
 
         })
-    
+
         //console.log(paramsObj)
     })
 

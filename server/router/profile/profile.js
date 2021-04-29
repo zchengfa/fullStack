@@ -7,7 +7,18 @@ module.exports = app => {
     app.use(bodyParser.json())
     app.use(bodyParser.urlencoded({extended:false}))
 
-    router.post('/profile', (req, res) => {
+    router.get('/profile', (req, res) => {
+        const profileModel = require('../../model/profileModel')
+        profileModel.find({}, (err, docs) => {
+            res.setHeader('Access-Control-Allow-Origin', '*')
+            if (err) {
+                res.send(err)
+            }
+            res.send(docs)
+        })
+    })
+
+    router.post('/login', (req, res) => {
         const params =JSON.stringify(req.body)
         const paramsObj = JSON.parse(params)
         //连接mysql数据库，查询是否有与参数一致的用户名和密码

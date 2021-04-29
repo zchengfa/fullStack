@@ -24,6 +24,8 @@
 import NavBar from "@/components/common/navbar/NavBar";
 import MenuList from "@/components/content/menuList/MenuList";
 
+import {getProfileData} from "@/network/profile";
+
 export default {
   name: "Login",
   data(){
@@ -48,6 +50,18 @@ export default {
   components:{
     NavBar,
     MenuList
+  },
+  methods:{
+    getProfileData(){
+      getProfileData().then(res => {
+        console.log(res)
+      }).catch(err => {
+        console.log(err)
+      })
+    }
+  },
+  created() {
+    this.getProfileData()
   }
 }
 </script>

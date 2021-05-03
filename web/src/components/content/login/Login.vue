@@ -6,9 +6,9 @@
         <img src="~assets/image/profile/header.png" alt="header_img">
       </div>
       <div class="content">
-        <input type="text" placeholder="账号/手机号" v-model="username" >
-        <input type="password" placeholder="密码" v-model="password" >
-        <input type="checkbox" name="remember" value="remember" id="remember">
+        <input type="text" placeholder="账号/手机号" @input="onChange" v-model="username">
+        <input type="password" placeholder="密码" @input="onChange" v-model="password">
+        <input type="checkbox" @click="checkBox" id="remember" :checked="isChecked" :disabled="isAble" >
         <label for="remember">记住密码</label>
         <button type="submit" @click="login">登录</button>
       </div>
@@ -26,15 +26,42 @@ export default {
   name: "Login",
   data(){
     return {
-      username:null,
-      password:null
+      username:'',
+      password:'',
+      isChecked:false,
+      isAble:true
     }
   },
   methods:{
+    onChange(){
+      if (this.username.length && this.password.length){
+        this.isAble = false
+      }
+      console.log(this.username,this.password)
+    },
     login(){
       login(this.username,this.password).then(res => {
         console.log(res)
       })
+    },
+    checkBox(){
+      if (Object.keys(this.username).length && Object.keys(this.password).length){
+        this.isChecked = true
+        this.isAble = false
+        this.setCookie(this.username,this.password,1)
+      }
+      else {
+        this.isChecked = false
+        this.isAble = true
+        this.$toast.showToast('账号或密码不能为空',500)
+      }
+      console.log(this.isChecked,this.isAble,document.cookie)
+    },
+    setCookie(username,password,expiresTime){
+      let date = new Date()
+      date.setTime(date.getTime()+(expiresTime *24 *60 *60 *1000))
+      let expires = 'expires='+ date.toUTCString()
+      document.cookie = username + '=' +password + ';' +expires
     }
   }
 }

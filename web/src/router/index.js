@@ -10,6 +10,7 @@ const Category = ()=> import ('views/category/Category')
 const Cart = ()=> import ('views/cart/Cart')
 const Profile = ()=> import ('views/profile/Profile')
 const Detail = ()=> import ('views/detail/Detail')
+const Login = ()=> import('@/components/content/login/Login')
 
 //创建路由映射表对象
 const routes =[
@@ -37,6 +38,10 @@ const routes =[
 		//路由传参
 		path: '/detail/:product_type/:product_id',
 		component:Detail
+	},
+	{
+		path: '/login',
+		component:Login
 	}
 ]
 

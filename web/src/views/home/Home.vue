@@ -25,7 +25,7 @@
 
   import MenuList from "@/components/content/menuList/MenuList"
 
-  import mixins from "@/mixins/mixins";
+  import mixins from "@/common/mixins/mixins";
   //引入获取首页数据方法
   import {getHomeMultiData, getGoodsData} from "@/network/home"
 

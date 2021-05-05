@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <div class="bg"></div>
-    <form class="form">
+    <form class="form" name="login">
       <div class="header">
         <img src="~assets/image/profile/header.png" alt="header_img">
       </div>
@@ -10,11 +10,11 @@
         <input type="password" placeholder="密码" @input="onChange" v-model="password">
         <input type="checkbox" @click="checkBox" id="remember" :checked="isChecked" :disabled="isAble" >
         <label for="remember">记住密码</label>
-        <button type="submit" @click="login">登录</button>
+        <button type="submit" @click="login" :disabled="isAble" :class="{active:!isAble}">登录</button>
       </div>
-      <div class="login-way">
-        <div class="qq"><img src="" alt="">QQ登录</div>
-        <div class="weChat"><img src="" alt="">微信登录</div>
+      <div class="login-way" @click="loginWay">
+        <div class="qq"><img src="~assets/image/login/QQ.svg" alt="QQ"><span>QQ登录</span></div>
+        <div class="weChat"><img src="~assets/image/login/WeChat.svg" alt="WeChat"><span>微信登录</span></div>
       </div>
     </form>
   </div>
@@ -22,6 +22,8 @@
 
 <script>
 import {login} from "@/network/home";
+import {setCookie,getCookie} from "@/common/cookie";
+
 export default {
   name: "Login",
   data(){
@@ -34,40 +36,52 @@ export default {
   },
   methods:{
     onChange(){
-      if (this.username.length && this.password.length){
+      if (this.username.length !==0 && this.password.length !==0){
         this.isAble = false
       }
-      console.log(this.username,this.password)
+      else {
+        this.isAble = true
+      }
     },
     login(){
       login(this.username,this.password).then(res => {
         console.log(res)
+      }).catch(err => {
+        console.log(err)
       })
     },
     checkBox(){
       if (Object.keys(this.username).length && Object.keys(this.password).length){
         this.isChecked = true
         this.isAble = false
-        this.setCookie(this.username,this.password,1)
+        //用户名和密码都不为空，设置cookie
+        setCookie(this.username,this.password,1)
+
       }
       else {
         this.isChecked = false
         this.isAble = true
         this.$toast.showToast('账号或密码不能为空',500)
       }
-      console.log(this.isChecked,this.isAble,document.cookie)
+      console.log(document.cookie)
     },
-    setCookie(username,password,expiresTime){
-      let date = new Date()
-      date.setTime(date.getTime()+(expiresTime *24 *60 *60 *1000))
-      let expires = 'expires='+ date.toUTCString()
-      document.cookie = username + '=' +password + ';' +expires
+    loginWay(){
+      this.$toast.showToast('功能暂时还未开发')
     }
+
+  },
+  mounted() {
+
   }
 }
 </script>
 
 <style scoped>
+.active {
+  background-color: #f31b1b;
+  border: none;
+  color: #fff;
+}
 .login{
   width: 100vw;
   height: 100vh;
@@ -134,7 +148,8 @@ button{
   margin: 1rem auto;
   width: 80%;
   height: 2rem;
-  background-color: #f31b1b;
+  background-color: #c2bdbd;
+  border-radius: 1rem;
   border: none;
   color: #fff;
   outline: none;
@@ -145,9 +160,24 @@ button{
   display: flex;
   margin: auto;
   width: 80%;
+  text-align: center;
 }
 .login-way div {
   flex: 1;
-  font-size: .8rem;
+  font-size: .9rem;
+}
+.login-way img{
+  display: block;
+  position: relative;
+  top: 0;
+  left: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-size: contain;
+  transform: translateX(-50%);
+}
+.login-way span {
+  display: block;
+  margin-top: .4rem;
 }
 </style>

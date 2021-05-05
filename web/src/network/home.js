@@ -31,7 +31,7 @@ export function getGoodsDetail(product_type,product_id){
 export function login (username, pwd) {
   return request({
     method:'POST',
-    url:'/profile',
+    url:'/login',
     data:qs.stringify({
       username,
       pwd

@@ -32,7 +32,7 @@
   import {getGoodsDetail} from "@/network/home"
   import {debounce} from "@/common/utils"
 
-  import mixins from "@/mixins/mixins";
+  import mixins from "@/common/mixins/mixins";
 
   export default {
     name: "detail",

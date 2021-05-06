@@ -10,7 +10,7 @@
         <input type="password" placeholder="密码" @input="onChange" v-model="password">
         <input type="checkbox" @click="checkBox" id="remember" :checked="isChecked" :disabled="isAble" >
         <label for="remember">记住密码</label>
-        <button type="submit" @click="login" :disabled="isAble" :class="{active:!isAble}">登录</button>
+        <button type="button" @click="login" :disabled="isAble" :class="{active:!isAble}">登录</button>
       </div>
       <div class="login-way" @click="loginWay">
         <div class="qq"><img src="~assets/image/login/QQ.svg" alt="QQ"><span>QQ登录</span></div>
@@ -45,18 +45,22 @@ export default {
     },
     login(){
       login(this.username,this.password).then(res => {
-        console.log(res)
-        if (Object.keys(res).length !==0) {
-          sessionStorage.token = res.data.token
-          this.$router.replace('/profile')
-        }
-        else {
-          this.$toast.showToast(res.data.err)
-        }
-      }).catch(err => {
-        console.log(err)
-      })
+          console.log(res)
+        //判断是否有token值
+          if (res.data.token) {
+            sessionStorage.token = res.data.token
+            this.$router.replace('/profile')
+          }
+          else {
+            this.$toast.showToast(res.data.err)
+          }
+        }).catch(err => {
+          console.log(err)
+        })
 
+    },
+    onsubmit(){
+      return false
     },
     checkBox(){
       if (Object.keys(this.username).length && Object.keys(this.password).length){

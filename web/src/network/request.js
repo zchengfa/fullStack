@@ -5,7 +5,7 @@ import axios from 'axios'
 export function request(config) {
   //创建实例
   const instance = axios.create({
-    baseURL:'http://192.168.31.130:3000/home/api',
+    baseURL:'http://192.168.1.108:3000/home/api',
     timeout:5000
   })
 
@@ -29,7 +29,7 @@ export function request(config) {
 
 export function requestPost (config) {
   const instance = axios.create({
-    baseURL:'http://192.168.31.130:3000',
+    baseURL:'http://192.168.1.108:3000',
     timeout:5000,
     method:"POST"
   })

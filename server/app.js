@@ -1,13 +1,6 @@
 //导入express模块
 const express = require('express')
 
-//导入cors模块解决跨域
-// const cors = require('cors')
-// const corsOptions = {
-//     origin:'*',
-//     optionsSuccessStatus: 200
-// }
-
 const app = express()
 
 //导入home路由模块
@@ -21,6 +14,7 @@ require('./router/category/category')(app)
 //导入profile路由模块
 require('./router/profile/profile')(app)
 
+//导入login登录模块
 require('./router/login/login')(app)
 
 app.get('/',(req,res) => {

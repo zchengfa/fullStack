@@ -5,7 +5,16 @@
       <div slot="right"><img src="~assets/image/profile/config.png" alt="config"></div>
     </nav-bar>
     <div class="user-info">
-      <div class="login-register">
+      <div class="info" v-if="isLogin">
+        <div class="user-header-default" v-if="hasHeader">
+          <img src="~assets/image/profile/header_default.png" alt="header_default">
+        </div>
+        <div class="user-header-custom" v-else>
+          <img :src="headerCustom" alt="header_custom">
+        </div>
+        <div class="username"><span>欢迎您,{{username}}</span></div>
+      </div>
+      <div class="login-register" v-else>
         <button class="register" @click="register">注册</button>
         <button class="login" @click="login">登录</button>
       </div>
@@ -26,6 +35,8 @@ import MenuList from "@/components/content/menuList/MenuList";
 
 import {getProfileData} from "@/network/profile";
 
+import jwt from 'jsonwebtoken'
+
 export default {
   name: "Login",
   data(){
@@ -44,7 +55,11 @@ export default {
           "title":"我的足迹"
         }
       ],
-      orderList: []
+      orderList: [],
+      isLogin:false,
+      username:'',
+      headerCustom:'',
+      hasHeader:true
     }
   },
   components:{
@@ -54,9 +69,9 @@ export default {
   methods:{
     getProfileData(){
       getProfileData().then(res => {
-        //console.log(res)
+        console.log(res)
       }).catch(err => {
-        //console.log(err)
+        console.log(err)
       })
     },
     login(){
@@ -68,6 +83,22 @@ export default {
   },
   created() {
     this.getProfileData()
+  },
+  activated() {
+    const token = sessionStorage.getItem('token')
+    const decode = jwt.decode(token)
+    if (decode) {
+      this.isLogin = true
+      this.username = decode.username
+      if (decode.headerImage) {
+        this.hasHeader = false
+        this.headerCustom = decode.headerImage
+      }
+      else {
+        this.hasHeader = true
+      }
+    }
+    //console.log(decode)
   }
 }
 </script>
@@ -80,6 +111,14 @@ export default {
 }
 .profile div{
   background-color: #fff;
+}
+.user-info {
+  width: 100%;
+  height: 20vh;
+}
+.user-info .info{
+  width: 100%;
+  text-align: center;
 }
 .login-register{
   position: relative;

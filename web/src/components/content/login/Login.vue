@@ -22,7 +22,10 @@
 
 <script>
 import {login} from "@/network/home";
-import {setCookie,getCookie} from "@/common/cookie";
+import {setCookie} from "@/common/cookie";
+
+//引入密码加密模块
+import {encrypt} from '@/common/crypt'
 
 export default {
   name: "Login",
@@ -44,14 +47,29 @@ export default {
       }
     },
     login(){
+      //对用户输入的密码进行加密
+      const encryptPwd = encrypt(this.password)
+
+      //将用户名和加密后的密码传给服务端进行校验
       login(this.username,this.password).then(res => {
           console.log(res)
+
+        //判断是否勾选记住密码项
+          if (this.isChecked) {
+
+            //记住密码进入勾选状态，设置cookie
+            setCookie(this.username,encryptPwd,1)
+          }
         //判断是否有token值
           if (res.data.token) {
+            //登录成功，将token存储到sessionStorage临时存储中，页面关闭时会自动清除token
             sessionStorage.token = res.data.token
+
+            //登录成功，跳转到profile页面
             this.$router.replace('/profile')
           }
           else {
+            //登录失败，提示后端传过来的提示信息
             this.$toast.showToast(res.data.err)
           }
         }).catch(err => {
@@ -59,21 +77,14 @@ export default {
         })
 
     },
-    onsubmit(){
-      return false
-    },
     checkBox(){
       if (Object.keys(this.username).length && Object.keys(this.password).length){
         this.isChecked = true
         this.isAble = false
-        //用户名和密码都不为空，设置cookie
-        setCookie(this.username,this.password,1)
-
       }
       else {
         this.isChecked = false
         this.isAble = true
-        this.$toast.showToast('账号或密码不能为空',500)
       }
       console.log(document.cookie)
     },

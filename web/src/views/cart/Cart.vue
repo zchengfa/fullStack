@@ -70,7 +70,7 @@
       }
       else {
         //自定义插件显示购物车为空
-        this.$empty.showEmpty('购物车为空哦')
+        this.$empty.showEmpty('购物车空空如也...')
       }
    },
     deactivated() {

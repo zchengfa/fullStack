@@ -11,6 +11,7 @@ const Cart = ()=> import ('views/cart/Cart')
 const Profile = ()=> import ('views/profile/Profile')
 const Detail = ()=> import ('views/detail/Detail')
 const Login = ()=> import('@/components/content/login/Login')
+const Register = ()=> import('@/components/content/register/Register')
 
 //创建路由映射表对象
 const routes =[
@@ -42,6 +43,10 @@ const routes =[
 	{
 		path: '/login',
 		component:Login
+	},
+	{
+		path: '/register',
+		component:Register
 	}
 ]
 

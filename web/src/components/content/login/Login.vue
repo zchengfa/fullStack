@@ -46,9 +46,17 @@ export default {
     login(){
       login(this.username,this.password).then(res => {
         console.log(res)
+        if (Object.keys(res).length !==0) {
+          sessionStorage.token = res.data.token
+          this.$router.replace('/profile')
+        }
+        else {
+          this.$toast.showToast(res.data.err)
+        }
       }).catch(err => {
         console.log(err)
       })
+
     },
     checkBox(){
       if (Object.keys(this.username).length && Object.keys(this.password).length){
@@ -71,7 +79,9 @@ export default {
 
   },
   mounted() {
-
+    if (sessionStorage.getItem('token')) {
+      console.log(sessionStorage.getItem('token'))
+    }
   }
 }
 </script>

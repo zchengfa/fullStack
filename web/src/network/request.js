@@ -26,3 +26,13 @@ export function request(config) {
   //返回一个axios实例
   return instance(config)
 }
+
+export function requestPost (config) {
+  const instance = axios.create({
+    baseURL:'http://192.168.31.130:3000',
+    timeout:5000,
+    method:"POST"
+  })
+
+  return instance(config)
+}

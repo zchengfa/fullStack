@@ -1,5 +1,5 @@
 //引入request方法
-import {request} from "@/network/request";
+import {request, requestPost} from "@/network/request";
 import qs from 'qs'
 
 //导出获取首页数据函数
@@ -29,8 +29,7 @@ export function getGoodsDetail(product_type,product_id){
 }
 
 export function login (username, pwd) {
-  return request({
-    method:'POST',
+  return requestPost({
     url:'/login',
     data:qs.stringify({
       username,

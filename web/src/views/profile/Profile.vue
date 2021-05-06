@@ -54,13 +54,16 @@ export default {
   methods:{
     getProfileData(){
       getProfileData().then(res => {
-        console.log(res)
+        //console.log(res)
       }).catch(err => {
-        console.log(err)
+        //console.log(err)
       })
     },
     login(){
       this.$router.push('/login')
+    },
+    register(){
+      this.$router.push('/register')
     }
   },
   created() {

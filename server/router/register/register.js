@@ -24,7 +24,7 @@ module.exports = app => {
             if (err) throw err
             if (Object.keys(result).length){
                 res.setHeader('Access-Control-Allow-Origin', '*')
-                res.send({'err':'用户已存在'})
+                res.send({'exist':'用户已存在'})
                 console.log('用户已存在')
             }
             else {

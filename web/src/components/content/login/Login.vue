@@ -57,7 +57,7 @@ export default {
       const encryptPwd = encrypt(this.password)
 
       //将用户名和加密后的密码传给服务端进行校验
-      login(this.username,this.password).then(res => {
+      login(this.username,encryptPwd).then(res => {
           console.log(res)
 
         //判断是否勾选记住密码项

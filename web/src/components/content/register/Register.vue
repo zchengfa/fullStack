@@ -50,7 +50,14 @@ export default {
       const encryptConfirmPwd = encrypt(this.confirmPwd)
       if (encryptPwd===encryptConfirmPwd){
         register(this.username,encryptPwd).then((res)=> {
-          console.log(res)
+          if (res.data.success) {
+            //注册成功跳转页面
+            this.$toast.showToast(res.data.success)
+            this.$router.replace('/profile')
+          }
+          else {
+            this.$toast.showToast(res.data.exist)
+          }
         })
       }
       else {
@@ -69,6 +76,7 @@ export default {
 }
 .register{
   position: relative;
+  top:-1rem;
   width: 100vw;
   height: 100vh;
   background-color: #e78ba9;

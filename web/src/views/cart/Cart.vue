@@ -5,8 +5,8 @@
         <div class="nav-title">购物车({{cartList.length}})</div>
       </div>
     </nav-bar>
-    <Scroll v-if="cartList.length" class="content" ref="scroll">
-      <div class="cart">
+    <Scroll class="content" ref="scroll">
+      <div class="cart" v-if="cartList.length">
         <div class="cart-item" v-for="(item,index) in cartList" :key="index">
           <check-button class="check" :is-checked="item.isChecked" @click.native="changeChecked(index)"></check-button>
           <div class="shop-info">
@@ -23,7 +23,12 @@
           </div>
         </div>
       </div>
+      <div class="login-tip" v-if="isLogin">
+        <span>您还未登录</span>
+        <router-link class="to-login" :to="{path:'/login'}">马上登录</router-link>
+      </div>
     </Scroll>
+
     <settle-cart v-show="cartList.length"></settle-cart>
   </div>
 </template>
@@ -39,7 +44,8 @@
     name:'Cart',
     data(){
       return {
-        cartList: this.$store.state.cartList
+        cartList: this.$store.state.cartList,
+        isLogin:false
       }
     },
     components:{
@@ -64,14 +70,20 @@
       }
     },
    activated() {
-      if (this.$refs.scroll){
-        //进入页面时刷新scroll
-        this.$refs.scroll.scroll.refresh()
-      }
-      else {
-        //自定义插件显示购物车为空
-        this.$empty.showEmpty('购物车空空如也...')
-      }
+     if (this.$refs.scroll){
+       //进入页面时刷新scroll
+       this.$refs.scroll.scroll.refresh()
+     }
+     //判断用户是否登录,若已登录显示用户的购物车物品列表,未登录，显示登录提示
+     if (sessionStorage.getItem('token')){
+       this.isLogin = false
+       if (this.cartList.length ===0) {
+         this.$empty.showEmpty('您的购物车空空如也...')
+       }
+     }
+     else {
+       this.isLogin = true
+     }
    },
     deactivated() {
       //离开页面，隐藏empty
@@ -94,6 +106,30 @@
     height: calc(100% - 98px);
     overflow: hidden;
     background-color: #fff;
+  }
+  .login-tip{
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 2rem;
+    width: 50%;
+    height: 2rem;
+    line-height: 1.5rem;
+  }
+  .login-tip span{
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    color: #a5a2a2;
+  }
+  .to-login{
+    display: block;
+    width: 10rem;
+    height: 1.5rem;
+    margin-left: .3rem;
+    background-color: #1e8efc;
+    border-radius: 1rem;
+    color: #fff;
+    text-align: center;
   }
   .cart{
 

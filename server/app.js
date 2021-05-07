@@ -17,6 +17,9 @@ require('./router/profile/profile')(app)
 //导入login登录模块
 require('./router/login/login')(app)
 
+//导入register注册模块
+require('./router/register/register')(app)
+
 app.get('/',(req,res) => {
     res.setHeader('Access-Control-Allow-Origin', '*')
     res.json('666')

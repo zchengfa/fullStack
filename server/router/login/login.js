@@ -8,8 +8,8 @@ module.exports = app => {
     app.use(bodyParser.urlencoded({extended:false}))
 
     router.post('/login', (req, res) => {
-        const params =JSON.stringify(req.body)
-        const paramsObj = JSON.parse(params)
+        //将请求参数转换成对象
+        const paramsObj = JSON.parse(JSON.stringify(req.body))
 
         //连接mysql数据库，查询是否有与参数一致的用户名和密码
         const connect = require('../../plugins/connectMysql')
@@ -35,9 +35,9 @@ module.exports = app => {
 
                 //将生成的token存入数据库中
                 const update = `UPDATE USER SET token = '${token}' WHERE account = '${results[0].account}'`
-                connection.query(update, (err, results) => {
+                connection.query(update, (err) => {
                     if (err) throw err
-                    console.log(results)
+                    console.log('token write success')
                 })
 
                 console.log('success')

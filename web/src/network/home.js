@@ -37,3 +37,13 @@ export function login (username, pwd) {
     })
   })
 }
+
+export function register (username,pwd) {
+  return requestPost({
+    url:'/register',
+    data:qs.stringify({
+      username,
+      pwd
+    })
+  })
+}

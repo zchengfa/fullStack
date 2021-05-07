@@ -11,7 +11,9 @@
 *       mixins:[mixins]
 *   }
 */
-export default {
+
+//创建回到顶部的混入对象
+const backTopMixins = {
     data(){
         return {
             isShowBackTop:false,
@@ -32,4 +34,35 @@ export default {
             this.$refs.scroll.scrollTo(0,0,300)
         }
     }
+}
+
+
+//创建关闭当前页面的混入对象
+const closeCurrentPageMixins = {
+    data() {
+      return {
+          username:'',
+          password:'',
+          isClose:true,
+          isAble:true
+      }
+    },
+    components:{
+        Close: () => import('@/components/content/close/Close')
+    },
+    methods: {
+        closeCurrentPage() {
+            //点击关闭页面按钮，关闭当前页面，前往profile页面
+            this.isClose = false
+            this.$router.replace('/profile').then()
+        }
+    },
+    activated() {
+        this.isClose = true
+    }
+}
+
+module.exports = {
+    backTopMixins,
+    closeCurrentPageMixins
 }

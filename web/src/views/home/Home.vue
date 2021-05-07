@@ -25,7 +25,7 @@
 
   import MenuList from "@/components/content/menuList/MenuList"
 
-  import mixins from "@/common/mixins/mixins";
+  import {backTopMixins} from "@/common/mixins/mixins";
   //引入获取首页数据方法
   import {getHomeMultiData, getGoodsData} from "@/network/home"
 
@@ -33,7 +33,7 @@
 
   export default {
 		name:'Home',
-    mixins:[mixins],
+    mixins:[backTopMixins],
     data(){
 		  return {
 		    banner:null,

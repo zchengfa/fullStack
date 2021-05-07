@@ -1,15 +1,21 @@
 <template>
-  <div class="login">
+  <div class="login" v-if="isClose">
+    <Close @close="closeCurrentPage"></Close>
     <div class="bg"></div>
     <form class="form" name="login">
       <div class="header">
         <img src="~assets/image/profile/header.png" alt="header_img">
       </div>
       <div class="content">
-        <input type="text" placeholder="账号/手机号" @input="onChange" v-model="username">
-        <input type="password" placeholder="密码" @input="onChange" v-model="password">
-        <input type="checkbox" @click="checkBox" id="remember" :checked="isChecked" :disabled="isAble" >
-        <label for="remember">记住密码</label>
+        <div class="input-box">
+          <input type="text" placeholder="账号/手机号" @input="onChange" v-model="username"/>
+          <input type="password" placeholder="密码" @input="onChange" v-model="password"/>
+        </div>
+        <div class="option">
+          <input type="checkbox" @click="checkBox" id="remember" :checked="isChecked" :disabled="isAble" />
+          <label for="remember">记住密码</label>
+          <router-link class="register-link" :to="{path:'/register'}" replace>没有账号?去注册</router-link>
+        </div>
         <button type="button" @click="login" :disabled="isAble" :class="{active:!isAble}">登录</button>
       </div>
       <div class="login-way" @click="loginWay">
@@ -27,19 +33,19 @@ import {setCookie} from "@/common/cookie";
 //引入密码加密模块
 import {encrypt} from '@/common/crypt'
 
+import {closeCurrentPageMixins} from '@/common/mixins/mixins'
+
 export default {
   name: "Login",
+  mixins:[closeCurrentPageMixins],
   data(){
     return {
-      username:'',
-      password:'',
-      isChecked:false,
-      isAble:true
+      isChecked:false
     }
   },
   methods:{
     onChange(){
-      if (this.username.length !==0 && this.password.length !==0){
+      if (this.username.length && this.password.length){
         this.isAble = false
       }
       else {
@@ -91,7 +97,6 @@ export default {
     loginWay(){
       this.$toast.showToast('功能暂时还未开发')
     }
-
   },
   mounted() {
     if (sessionStorage.getItem('token')) {
@@ -108,9 +113,11 @@ export default {
   color: #fff;
 }
 .login{
+  position: relative;
   width: 100vw;
   height: 100vh;
   background-color: #fff;
+  z-index: 12;
 }
 .bg{
   position: relative;
@@ -154,7 +161,8 @@ input{
   height: 2rem;
   outline: none;
   text-indent: 1rem;
-  color: darkgrey;
+  color: #aaa7a7;
+  border-bottom: 1px solid #aaa7a7;
 }
 #remember{
   display: inline-block;
@@ -167,6 +175,13 @@ label{
   top: -.2rem;
   padding-left: .5rem;
   font-size: .6rem;
+}
+.register-link {
+  position: relative;
+  top: -2px;
+  left: 30%;
+  font-size: .8rem;
+  color: deepskyblue;
 }
 button{
   display: block;

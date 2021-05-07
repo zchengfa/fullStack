@@ -36,7 +36,7 @@
 
   export default {
     name: "detail",
-    mixins:[mixins],
+    mixins:[mixins.backTopMixins],
     data(){
       return {
         id:null,

@@ -27,6 +27,10 @@
         <span>您还未登录</span>
         <router-link class="to-login" :to="{path:'/login'}">马上登录</router-link>
       </div>
+      <div class="recommend">
+        <div class="title"><h3>为你推荐</h3></div>
+        <goods-data :goods="recommendData"></goods-data>
+      </div>
     </Scroll>
 
     <settle-cart v-show="cartList.length"></settle-cart>
@@ -40,33 +44,51 @@
   import CheckButton from "@/views/cart/components/CheckButton"
   import SettleCart from "@/views/cart/components/SettleCart";
 
+  import GoodsData from "@/components/content/goodsData/GoodsData";
+
+  import {getRcommendData,getUserCartData} from "@/network/cart";
+
   export  default {
     name:'Cart',
     data(){
       return {
         cartList: this.$store.state.cartList,
-        isLogin:false
+        isLogin:false,
+        recommendData:[]
       }
     },
     components:{
       NavBar,
       Scroll,
       CheckButton,
-      SettleCart
+      SettleCart,
+      GoodsData
     },
     methods:{
-      //减少数量
+      //减少数量函数
       reduceCount(index){
         //减少对应商品的数量
         this.cartList[index].shopCount --
       },
-      //增加数量
+      //增加数量函数
       addCount(index){
          //增加对应商品的数量
          this.cartList[index].shopCount ++
       },
       changeChecked(index){
         this.cartList[index].isChecked = !this.cartList[index].isChecked
+      },
+      //获取商品推荐数据函数
+      getRecommendData(){
+        getRcommendData().then(res => {
+          console.log(res)
+        })
+      },
+      //获取用户购物车数据函数
+      getUserCartData (token) {
+        getUserCartData(token).then(res => {
+          console.log(res)
+        })
       }
     },
    activated() {
@@ -75,15 +97,23 @@
        this.$refs.scroll.scroll.refresh()
      }
      //判断用户是否登录,若已登录显示用户的购物车物品列表,未登录，显示登录提示
-     if (sessionStorage.getItem('token')){
+     const  token = sessionStorage.getItem('token')
+     if (token){
        this.isLogin = false
-       if (this.cartList.length ===0) {
-         this.$empty.showEmpty('您的购物车空空如也...')
-       }
+       // if (this.cartList.length ===0) {
+       //   this.$empty.showEmpty('您的购物车空空如也...')
+       // }
+
+       //存在token值，用户已登录，执行获取用户购物车数据函数
+       //进入购物车页面，获取用户token，执行获取用户购物车数据函数
+       this.getUserCartData(token)
      }
      else {
        this.isLogin = true
      }
+     //进入购物车页面，执行获取商品推荐数据函数
+     this.getRecommendData()
+
    },
     deactivated() {
       //离开页面，隐藏empty

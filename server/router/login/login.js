@@ -28,8 +28,8 @@ module.exports = app => {
                 const user = {
                     username:results[0].account
                 }
-                //生成token
-                const token = jwt.sign(user,'user',{expiresIn: 180})
+                //生成token,当过期时间number类型时以秒计算
+                const token = jwt.sign(user,'user',{expiresIn: '1d'})
                 res.setHeader('Access-Control-Allow-Origin', '*')
                 res.send({'token':token})
 

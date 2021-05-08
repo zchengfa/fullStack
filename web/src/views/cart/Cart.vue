@@ -23,13 +23,20 @@
           </div>
         </div>
       </div>
+      <Empty v-else-if="!cartList.length && !isLogin" :empty-message="emptyMessage"></Empty>
       <div class="login-tip" v-if="isLogin">
         <span>您还未登录</span>
         <router-link class="to-login" :to="{path:'/login'}">马上登录</router-link>
       </div>
       <div class="recommend">
-        <div class="title"><h3>为你推荐</h3></div>
-        <goods-data :goods="recommendData"></goods-data>
+        <div class="title">
+          <h3>
+            <img src="~assets/image/cart/balloon.svg" alt="balloon">
+            为你推荐
+            <img src="~assets/image/cart/balloon.svg" alt="balloon">
+          </h3>
+        </div>
+        <goods-data v-if="recommendData.length" :goods="recommendData"></goods-data>
       </div>
     </Scroll>
 
@@ -40,6 +47,7 @@
 <script>
   import NavBar from "@/components/common/navbar/NavBar"
   import Scroll from "@/components/common/scroll/Scroll"
+  import Empty from "@/components/common/empty/Empty";
 
   import CheckButton from "@/views/cart/components/CheckButton"
   import SettleCart from "@/views/cart/components/SettleCart";
@@ -54,7 +62,9 @@
       return {
         cartList: this.$store.state.cartList,
         isLogin:false,
-        recommendData:[]
+        recommendData:[],
+        emptyMessage: '',
+        emptyRecommend:''
       }
     },
     components:{
@@ -62,7 +72,8 @@
       Scroll,
       CheckButton,
       SettleCart,
-      GoodsData
+      GoodsData,
+      Empty
     },
     methods:{
       //减少数量函数
@@ -82,12 +93,18 @@
       getRecommendData(){
         getRcommendData().then(res => {
           console.log(res)
+          if (res.data.empty) {
+            this.emptyRecommend = res.data.empty
+          }
         })
       },
       //获取用户购物车数据函数
       getUserCartData (token) {
         getUserCartData(token).then(res => {
           console.log(res)
+          if(res.data.empty) {
+            this.emptyMessage = res.data.empty
+          }
         })
       }
     },
@@ -100,9 +117,6 @@
      const  token = sessionStorage.getItem('token')
      if (token){
        this.isLogin = false
-       // if (this.cartList.length ===0) {
-       //   this.$empty.showEmpty('您的购物车空空如也...')
-       // }
 
        //存在token值，用户已登录，执行获取用户购物车数据函数
        //进入购物车页面，获取用户token，执行获取用户购物车数据函数
@@ -114,11 +128,7 @@
      //进入购物车页面，执行获取商品推荐数据函数
      this.getRecommendData()
 
-   },
-    deactivated() {
-      //离开页面，隐藏empty
-      this.$empty.removeEmpty()
-    }
+   }
   }
 </script>
 
@@ -142,7 +152,6 @@
     margin-right: auto;
     margin-top: 2rem;
     width: 50%;
-    height: 2rem;
     line-height: 1.5rem;
   }
   .login-tip span{
@@ -153,12 +162,14 @@
   }
   .to-login{
     display: block;
-    width: 10rem;
+    margin: .5rem auto;
+    width: 5rem;
     height: 1.5rem;
-    margin-left: .3rem;
-    background-color: #1e8efc;
+
+    background-color: #fff;
+    border: 1px solid #a5a2a2;
     border-radius: 1rem;
-    color: #fff;
+    font-size: .5rem;
     text-align: center;
   }
   .cart{
@@ -211,5 +222,19 @@
   }
   .button-box span{
     padding: 0 .5rem;
+  }
+  .recommend{
+    margin: 1rem auto;
+    width: 94%;
+    text-align: center;
+  }
+  .recommend h3 {
+    height: 2.2rem;
+  }
+  img[alt='balloon'] {
+    position: relative;
+    top:.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
   }
 </style>

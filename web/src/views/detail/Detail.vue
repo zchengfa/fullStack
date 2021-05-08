@@ -129,10 +129,8 @@
         this.detailData = res.data[0].product_detail[0]
         //获取detailData中的评论数据
         this.comment_num = this.detailData.comment_num
-      }).catch(() => {
-        //当请求的数据为空时，detailData的数据为空对象
-        this.detailData = {}
-        this.$empty.showEmpty('没有商品')
+      }).catch((err) => {
+        console.log(err)
       })
 
       //防抖函数处理获取页面元素位置函数

@@ -1,8 +1,8 @@
 <template>
-  <div class="empty" v-if="isShow">
+  <div class="empty">
     <div class="message">
       <div class="image-box"><img src="~assets/image/empty/empty.png" alt="empty_image"></div>
-      <div>{{message}}</div>
+      <div>{{emptyMessage}}</div>
     </div>
   </div>
 </template>
@@ -10,19 +10,12 @@
 <script>
 export default {
   name: "Empty",
-  data(){
-    return {
-      message:'',
-      isShow:false
-    }
-  },
-  methods:{
-    showEmpty(message=''){
-      this.message = message
-      this.isShow = true
-    },
-    removeEmpty(){
-      this.isShow = false
+  props:{
+    emptyMessage:{
+      type:String,
+      default(){
+        return '空空如也...'
+      }
     }
   }
 }
@@ -30,15 +23,13 @@ export default {
 
 <style scoped>
 .empty{
-  position: absolute;
-  top:44px;
-  width: 100vw;
-  height: 30vh;
+  position: relative;
+  top:0;
+  width: 100%;
   text-align: center;
   background-color: #f1eaea;
 }
 .image-box{
-  margin-top: 1rem;
   margin-bottom: 1rem;
 }
 .message{

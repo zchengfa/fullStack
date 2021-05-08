@@ -3,7 +3,7 @@ import qs from "qs";
 
 export function getUserCartData (token) {
     return requestPost({
-        url:'/cart',
+        url:'/home/api/cart',
         data:qs.stringify({
             token
         })

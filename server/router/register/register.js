@@ -14,7 +14,8 @@ module.exports = app => {
 
         //创建数据库查询语句
         const selectQuery = `SELECT * FROM USER WHERE account = '${paramsObj.username}'`
-        const insertQuery = `INSERT INTO USER (account,password) VALUES ('${paramsObj.username}','${paramsObj.pwd}')`
+        const selectUserCount = `SELECT COUNT(user_id) FROM USER`
+
 
         const connect = require('../../plugins/connectMysql')
 
@@ -29,12 +30,18 @@ module.exports = app => {
             }
             else {
 
-                connection.query(insertQuery, (err) => {
-                    if (err) throw err
-                    res.setHeader('Access-Control-Allow-Origin', '*')
-                    res.send({'success':'注册成功'})
-                    console.log('注册成功')
+                connection.query(selectUserCount, (err,result) => {
+                    if (err) throw  err
+                    console.log(JSON.stringify(result))
+                    const insertQuery = `INSERT INTO USER (user_id,account,password) VALUES ('${parseInt(result.COUNT(user_id))}','${paramsObj.username}','${paramsObj.pwd}')`
+                    connection.query(insertQuery, (err) => {
+                        if (err) throw err
+                        res.setHeader('Access-Control-Allow-Origin', '*')
+                        res.send({'success':'注册成功'})
+                        console.log('注册成功')
+                    })
                 })
+
             }
 
         })

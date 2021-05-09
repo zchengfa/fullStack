@@ -103,9 +103,9 @@
         if (this.token) {
           //token存在，点击加入购物车按钮，显示确认加入购物车组件，并将要加入购物车的商品信息添加到productInfo对象中
           this.isShowAddCart = !this.isShowAddCart
-          this.productInfo.title = this.detailData.title
-          this.productInfo.image = this.detailData.bigImage
-          this.productInfo.price = this.detailData.price
+          this.productInfo.title = this.detailData.baseData.title
+          this.productInfo.image = this.detailData.baseData.bigImage
+          this.productInfo.price = this.detailData.baseData.price
         }
         //token不存在，用户未登录，引导用户进入登录页面
         else {
@@ -121,7 +121,12 @@
 
         addShopToCart(this.token,product.product_id,product.title,product.image,product.price,product.product_count).then(res => {
           console.log(res)
+          if (res.data.message) {
+            this.$toast.showToast(res.data.message)
+          }
           //this.$toast.showToast(res.data.message)
+        }).catch(err => {
+          console.log(err)
         })
         //使用vuex状态管理来管理购物车数据
         // this.productInfo.shopCount = count
@@ -149,7 +154,7 @@
         this.detailData = res.data[0].product_detail[0]
         //获取detailData中的评论数据
         this.comment_num = this.detailData.baseData.comment_num
-        console.log(this.productInfo)
+        //console.log(res)
       }).catch((err) => {
         console.log(err)
       })

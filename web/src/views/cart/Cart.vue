@@ -6,17 +6,18 @@
       </div>
     </nav-bar>
     <Scroll class="content" ref="scroll">
+<!--      <div class="cart-item" v-for="(item,index) in cartList" :key="index">{{item}}</div>-->
       <div class="cart" v-if="cartList.length">
-        <div class="cart-item" v-for="(item,index) in cartList" :key="index">
+        <div class="cart-item" v-for="(item,index) in cartList[0]" :key="index">
           <check-button class="check" :is-checked="item.isChecked" @click.native="changeChecked(index)"></check-button>
           <div class="shop-info">
-            <div class="image-box"><img :src="item.image" alt="cart_image"></div>
+            <div class="image-box"><img :src="item.product_image" alt="cart_image"></div>
             <div class="info">
-              <p class="title">{{item.title}}</p>
-              <p class="price">{{item.price}}</p>
+              <p class="title">{{item.product_title}}</p>
+              <p class="price">{{item.product_price}}</p>
               <div class="button-box">
                 <button class="reduce" :disabled="item.shopCount <= 1" @click="reduceCount(index)">-</button>
-                <span class="quantity">{{item.shopCount}}</span>
+                <span class="quantity">{{item.product_count}}</span>
                 <button class="add" @click="addCount(index)">+</button>
               </div>
             </div>
@@ -92,7 +93,7 @@
       //获取商品推荐数据函数
       getRecommendData(){
         getRcommendData().then(res => {
-          console.log(res)
+          //console.log(res)
           if (res.data.empty) {
             this.emptyRecommend = res.data.empty
           }
@@ -101,8 +102,13 @@
       //获取用户购物车数据函数
       getUserCartData (token) {
         getUserCartData(token).then(res => {
-          console.log(res)
-          if(res.data.empty) {
+
+          //判断是否存在用户购物车数据
+          if(res.data.user_cart_data) {
+            this.cartList.push(res.data.user_cart_data)
+            console.log(this.cartList)
+          }
+          else {
             this.emptyMessage = res.data.empty
           }
         })

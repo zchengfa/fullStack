@@ -1,11 +1,12 @@
 //引入axios
 import axios from 'axios'
+const ipUrl = 'http://192.168.1.104:3000'
 
 //导出request函数
 export function request(config) {
   //创建实例
   const instance = axios.create({
-    baseURL:'http://192.168.31.130:3000/home/api',
+    baseURL:`${ipUrl}/home/api`,
     timeout:5000
   })
 
@@ -29,7 +30,7 @@ export function request(config) {
 
 export function requestPost (config) {
   const instance = axios.create({
-    baseURL:'http://192.168.31.130:3000',
+    baseURL:`${ipUrl}`,
     timeout:5000,
     method:"POST"
   })

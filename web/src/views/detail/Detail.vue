@@ -2,8 +2,8 @@
   <div class="detail">
     <detail-nav-bar :nav-list="nav_list" @scrollThere="scrollThere" ref="detailNav"></detail-nav-bar>
     <Scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll">
-      <div class="shop-show" v-if="Object.keys(detailData).length !==0">
-        <detail-shop ref="shop" :base-data="detailData"></detail-shop>
+      <div class="shop-show" v-if="Object.keys(detailData).length">
+        <detail-shop ref="shop" :base-data="detailData.baseData"></detail-shop>
         <detail-image ref="image" :images-data="detailData.images" @imageLoadOver="imageLoad"></detail-image>
         <detail-params ref="params" :params="detailData.shop_detail_params"></detail-params>
         <detail-comment ref="comment" :comment-num="Number(comment_num)"></detail-comment>
@@ -47,7 +47,8 @@
         scrollToTopY:[],
         currentRefsIndex:0,
         isShowAddCart:false,
-        productInfo:{}
+        productInfo:{},
+        token:sessionStorage.getItem('token')
       }
     },
     components:{
@@ -98,21 +99,27 @@
         this.$refs.scroll.scrollTo(0,-this.scrollToTopY[index],300)
       },
       addCart(){
-        //点击加入购物车按钮，显示确认加入购物车组件，并将要加入购物车的商品信息添加到productInfo对象中
-        this.isShowAddCart = !this.isShowAddCart
-        this.productInfo.product_id = this.detailData.product_id
-        this.productInfo.title = this.detailData.title
-        this.productInfo.image = this.detailData.bigImage
-        this.productInfo.price = this.detailData.price
+        //点击加入购物车按钮，先通过查看token是否存在来判定用户是否已经登录，未登录则引导用户进入登录页面，若已登录，则进入下一步操作
+        if (this.token) {
+          //token存在，点击加入购物车按钮，显示确认加入购物车组件，并将要加入购物车的商品信息添加到productInfo对象中
+          this.isShowAddCart = !this.isShowAddCart
+          this.productInfo.title = this.detailData.title
+          this.productInfo.image = this.detailData.bigImage
+          this.productInfo.price = this.detailData.price
+        }
+        //token不存在，用户未登录，引导用户进入登录页面
+        else {
+          this.$router.replace('/login')
+        }
+
       },
       submitAdd(count) {
         //确认加入购物车，隐藏确认加入购物车组件，并将要加入购物车的商品数据提交给后端
         this.isShowAddCart = !this.isShowAddCart
         this.productInfo.product_count = count
-        const token = sessionStorage.getItem('token')
         const product = this.productInfo
-        console.log(this.productInfo)
-        addShopToCart(token,product.product_id,product.title,product.image,product.price,product.product_count).then(res => {
+
+        addShopToCart(this.token,product.product_id,product.title,product.image,product.price,product.product_count).then(res => {
           console.log(res)
           //this.$toast.showToast(res.data.message)
         })
@@ -138,9 +145,11 @@
       //将id和type作为参数进行请求
       getGoodsDetail(this.type,this.id).then(res=> {
         //将请求到的数据赋给detailData
+        this.productInfo.product_id = res.data[0].product_id
         this.detailData = res.data[0].product_detail[0]
         //获取detailData中的评论数据
-        this.comment_num = this.detailData.comment_num
+        this.comment_num = this.detailData.baseData.comment_num
+        console.log(this.productInfo)
       }).catch((err) => {
         console.log(err)
       })

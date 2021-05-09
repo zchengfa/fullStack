@@ -60,7 +60,7 @@
     name:'Cart',
     data(){
       return {
-        cartList: this.$store.state.cartList,
+        cartList: [],
         isLogin:false,
         recommendData:[],
         emptyMessage: '',

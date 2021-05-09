@@ -22,7 +22,7 @@ export default {
   data(){
     return {
       //保存商品列表数据
-      cartList:this.$store.state.cartList,
+      cartList:[],
       //记录商品是否为全选状态
       isAllChecked:false,
       //勾选的商品数量

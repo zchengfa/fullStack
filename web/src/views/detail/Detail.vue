@@ -29,7 +29,7 @@
   import BackTop from "@/components/content/backTop/BackTop";
   import Scroll from "@/components/common/scroll/Scroll";
 
-  import {getGoodsDetail} from "@/network/home"
+  import {getGoodsDetail,addShopToCart} from "@/network/home"
   import {debounce} from "@/common/utils"
 
   import mixins from "@/common/mixins/mixins";
@@ -98,23 +98,35 @@
         this.$refs.scroll.scrollTo(0,-this.scrollToTopY[index],300)
       },
       addCart(){
+        //点击加入购物车按钮，显示确认加入购物车组件，并将要加入购物车的商品信息添加到productInfo对象中
         this.isShowAddCart = !this.isShowAddCart
+        this.productInfo.product_id = this.detailData.product_id
         this.productInfo.title = this.detailData.title
         this.productInfo.image = this.detailData.bigImage
         this.productInfo.price = this.detailData.price
       },
       submitAdd(count) {
+        //确认加入购物车，隐藏确认加入购物车组件，并将要加入购物车的商品数据提交给后端
         this.isShowAddCart = !this.isShowAddCart
-        this.productInfo.shopCount = count
-        this.productInfo.product_id = this.id
+        this.productInfo.product_count = count
+        const token = sessionStorage.getItem('token')
+        const product = this.productInfo
+        console.log(this.productInfo)
+        addShopToCart(token,product.product_id,product.title,product.image,product.price,product.product_count).then(res => {
+          console.log(res)
+          //this.$toast.showToast(res.data.message)
+        })
+        //使用vuex状态管理来管理购物车数据
+        // this.productInfo.shopCount = count
+        // this.productInfo.product_id = this.id
         //将产品数据通过vuex的store分发到actions中
-        this.$store.dispatch('addCart',JSON.parse(JSON.stringify(this.productInfo)))
-            .then(res => {
-              this.$toast.showToast(res)
-            })
-            .catch(err => {
-              this.$toast.showToast(err)
-            })
+        // this.$store.dispatch('addCart',JSON.parse(JSON.stringify(this.productInfo)))
+        //     .then(res => {
+        //       this.$toast.showToast(res)
+        //     })
+        //     .catch(err => {
+        //       this.$toast.showToast(err)
+        //     })
       }
     }
     ,

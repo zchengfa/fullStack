@@ -7,6 +7,7 @@ const app = express()
 require('./router/home/multiData')(app)
 require('./router/home/goodsData')(app)
 require('./router/home/detail')(app)
+require('./router/home/addShopToCart')(app)
 
 //导入category路由模块
 require('./router/category/category')(app)

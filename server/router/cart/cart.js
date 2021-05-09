@@ -25,18 +25,25 @@ module.exports = app => {
                 //连接数据库
                 const connect = require('../../plugins/connectMysql')
                 const connection = connect()
-                const selectQuery = `SELECT account FROM USER WHERE account = '${decode.username}'`
+
+                //创建mysql右外连接查询语句，查询USER_SHOP表中是否有USER表中对应的商品数据
+                const selectQuery = `SELECT * FROM USER AS U RIGHT JOIN USER_SHOP AS S ON U.USER_ID = S.USERS_ID`
 
                 //查询数据
                 connection.query(selectQuery,(err,result) => {
                     if (err) throw err
-                    console.log(result)
+                    console.log(Object.keys(result).length)
+                    if (Object.keys(result).length) {
+                        res.setHeader('Access-Control-Allow-Origin', '*')
+                        res.send({'shop_data':result})
+                    }
+                    else {
+                        res.setHeader('Access-Control-Allow-Origin', '*')
+                        res.send({'empty':'您的购物车空空如也...'})
+                    }
                 })
             }
         })
-
-        res.setHeader('Access-Control-Allow-Origin', '*')
-        res.send({'empty':'您的购物车空空如也...'})
     })
 
     //接收前端获取商品推荐数据的请求，将数据返回给前端

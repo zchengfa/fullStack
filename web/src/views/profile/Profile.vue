@@ -68,11 +68,10 @@ export default {
   },
   methods:{
     getProfileData(){
-      getProfileData().then(res => {
-        console.log(res)
-      }).catch(err => {
-        console.log(err)
-      })
+      getProfileData().then()
+          .catch(err => {
+            console.log(err)
+          })
     },
     login(){
       this.$router.push('/login')
@@ -86,18 +85,23 @@ export default {
   },
   activated() {
     const token = sessionStorage.getItem('token')
-    const decode = jwt.decode(token)
-    if (decode) {
-      this.isLogin = true
-      this.username = decode.username
-      if (decode.headerImage) {
-        this.hasHeader = false
-        this.headerCustom = decode.headerImage
-      }
+    jwt.verify(token,'user', (err, decode) => {
+      if (err) throw err
       else {
-        this.hasHeader = true
+        if (decode) {
+          this.isLogin = true
+          this.username = decode.username
+          if (decode.headerImage) {
+            this.hasHeader = false
+            this.headerCustom = decode.headerImage
+          }
+          else {
+            this.hasHeader = true
+          }
+        }
       }
-    }
+    })
+
     //console.log(decode)
   }
 }

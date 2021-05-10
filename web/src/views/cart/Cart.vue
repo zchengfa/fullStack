@@ -40,7 +40,11 @@
       </div>
     </Scroll>
 
-    <settle-cart :cart-list="cartList" v-show="cartList.length"></settle-cart>
+    <settle-cart :total-price="totalPrice"
+                 :settle-num="settleNum"
+                 v-show="cartList.length"
+                 :is-all-checked="isAllChecked"
+    ></settle-cart>
   </div>
 </template>
 
@@ -65,7 +69,8 @@
         isLogin:false,
         recommendData:[],
         emptyMessage: '',
-        emptyRecommend:''
+        emptyRecommend:'',
+        checkedNum:0
       }
     },
     components:{
@@ -75,6 +80,32 @@
       SettleCart,
       GoodsData,
       Empty
+    },
+    computed:{
+      totalPrice () {
+        //将计算好的总价格传给子组件
+        let price = 0
+        this.cartList.map((item) => {
+          if (item.isChecked) {
+            price += item.product_count * item.product_price.substr(1,5)
+          }
+        })
+        return Number(price.toFixed(2))
+      },
+      settleNum () {
+        let settleNum = 0
+        this.cartList.map((item) => {
+          if (item.isChecked) {
+            settleNum ++
+          }
+          this.checkedNum = settleNum
+        })
+
+        return settleNum
+      },
+      isAllChecked () {
+         return this.checkedNum === this.cartList.length
+      }
     },
     methods:{
       //减少用户所点击的商品数量函数
@@ -127,6 +158,7 @@
               //提取数据中的购物车数据
               this.cartList.push(item)
             })
+
           }
           else {
             this.emptyMessage = res.data.empty
@@ -135,9 +167,29 @@
       }
     },
     mounted() {
+      this.$bus.$on('selectAll',() => {
+        //判断当前全选按钮处于什么状态，若是已经是全选状态，则让全选的商品进入未选择状态，若是不处于全选状态，则让未选择的商品进入选中状态
+        if (this.checkedNum === this.cartList.length) {
+          this.cartList.map((item) => {
+            //修改状态
+            item.isChecked = false
 
+            //将修改后的状态提交给后端，让后端修改数据库中该用户的状态
+            updateChecked(this.user_id,item.product_id,item.isChecked).then()
+          })
+        }
+        else {
+          this.cartList.map((item) => {
+            item.isChecked = true
+
+            //将修改后的状态提交给后端，让后端修改数据库中该用户的状态
+            updateChecked(this.user_id,item.product_id,item.isChecked).then()
+          })
+        }
+      })
     },
     activated() {
+
       if (this.$refs.scroll){
         //进入页面时刷新scroll
         this.$refs.scroll.scroll.refresh()

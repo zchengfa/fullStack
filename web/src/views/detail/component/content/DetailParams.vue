@@ -1,5 +1,5 @@
 <template>
-<div class="detail-params">
+<div class="params">
   <div class="title"><h4>参数</h4></div>
   <div class="params-box">
     <div class="params" v-for="(item, index) in params" :key="index">{{item}}</div>
@@ -22,7 +22,7 @@ export default {
 </script>
 
 <style scoped>
-  .detail-params{
+  .params{
     margin: 0 auto;
     width: 96%;
   }

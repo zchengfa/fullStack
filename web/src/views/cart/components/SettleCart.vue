@@ -19,10 +19,16 @@
 import CheckButton from "@/views/cart/components/CheckButton";
 export default {
   name: "SettleCart",
+  props:{
+    cartList:{
+      type:Array,
+      default() {
+        return []
+      }
+    }
+  },
   data(){
     return {
-      //保存商品列表数据
-      cartList:[],
       //记录商品是否为全选状态
       isAllChecked:false,
       //勾选的商品数量
@@ -40,9 +46,10 @@ export default {
         //判断当前商品是否勾选，若勾选则返回当前商品的总价
         if (item.isChecked){
           //对价格字符串进行截取并转换成Number类型
-          let price = parseFloat(item.price.substr(1,5))
+          let price = parseFloat(item.product_price.substr(1,5))
 
-          return totalPrice += price * item.shopCount
+          return totalPrice += price * item.product_count
+
         }
       })
       return totalPrice.toFixed(2)
@@ -54,16 +61,23 @@ export default {
         //判断当前商品是否勾选，已勾选则让勾选数量加一
         if (item.isChecked === true){
           this.checkedNum ++
+          //判断勾选数量是否等于商品列表里的所有商品数量，且商品数量不为空
+          if (this.checkedNum===this.cartList.length && this.cartList.length>0){
+            //全部勾选了，让全选按钮处于全选状态
+            this.isAllChecked = true
+
+            return true
+          }
+          else {
+            this.isAllChecked = false
+            return false
+          }
+        }
+        else {
           this.isAllChecked = false
+          return false
         }
       })
-      //判断勾选数量是否等于商品列表里的所有商品数量，且商品数量不为空
-     if (this.checkedNum===this.cartList.length && this.cartList.length>0){
-       //全部勾选了，让全选按钮处于全选状态
-       this.isAllChecked = true
-       return true
-     }
-     return false
     }
   },
   methods:{
@@ -114,6 +128,7 @@ export default {
   line-height: 3rem;
   border: 1px solid transparent;
   border-top-color: #d5cbcb;
+  background-color: #fff;
 }
 .check{
   flex: 1;

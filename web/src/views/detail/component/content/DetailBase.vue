@@ -1,5 +1,5 @@
 <template>
-  <div class="detail-base">
+  <div class="base">
     <div class="content">
       <div class="image-box">
         <img :src="baseData.bigImage" alt="bigImage">

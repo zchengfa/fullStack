@@ -7,7 +7,11 @@ module.exports = app => {
     app.use(bodyParser.json())
     app.use(bodyParser.urlencoded({extended:false}))
 
+    //导入token管理模块
     const jwt = require('jsonwebtoken')
+
+    //导入数据库连接模块
+    const connect = require('../../plugins/connectMysql')
 
     //接收前端cart请求，前端需要将用户token传入后端，后端解析token中的用户，查询数据库中对应用户的购物车数据，最后返回给前端
     router.post('/cart',(req, res) => {
@@ -24,7 +28,6 @@ module.exports = app => {
             //token合法且未过期，连接数据库，查询对应用户的购物车数据并返回给前端
             else {
                 //连接数据库
-                const connect = require('../../plugins/connectMysql')
                 const connection = connect()
                 console.log(decode)
 
@@ -36,19 +39,19 @@ module.exports = app => {
                         //拿到该用户对应的ID
                         const USER_ID = result[0]['USER_ID']
                         //创建查询语句，查询该用户在USER_SHOP表中是否存在商品数据
-                        const selectQuery = `SELECT product_id,product_title,product_image,product_price,product_count
+                        const selectQuery = `SELECT product_id,product_title,product_image,product_price,product_count,isChecked
                                                 FROM USER_SHOP WHERE USERS_ID = ${USER_ID}`
 
                         //查询数据
                         connection.query(selectQuery,(err,result) => {
                             if (err) throw err
-                            console.log(Object.keys(result).length)
+                            //console.log(Object.keys(result).length)
                             if (Object.keys(result).length) {
                                 //该用户已有商品数据，先进性数据处理在返回给前端
-                                console.log(result)
+                                //console.log(result)
 
                                 res.setHeader('Access-Control-Allow-Origin', '*')
-                                res.send({'user_cart_data':result})
+                                res.send({'user_cart_data':[result,{'user_id':USER_ID}]})
                                 //console.log(result[0])
                             }
                             else {
@@ -60,6 +63,49 @@ module.exports = app => {
                 })
             }
         })
+    })
+
+    //接收前端更新购物车状态请求(需要前端参数：user_id,product_id,status)(用户ID，产品ID，需要更改的状态)
+    router.post('/updateChecked', (req,res) => {
+        //接收请求参数
+        const paramsObj = JSON.parse(JSON.stringify(req.body))
+        console.log(paramsObj)
+
+        //连接数据库
+        const connection = connect()
+
+        //创建数据库修改语句
+        const updateChecked = `UPDATE USER_SHOP SET ISCHECKED = ${paramsObj.status} WHERE USERS_ID = ${paramsObj.user_id} AND PRODUCT_ID = ${paramsObj.product_id}`
+
+        //执行修改数据库语句
+        connection.query(updateChecked, (err) => {
+            if (err) throw err
+            res.setHeader('Access-Control-Allow-Origin', '*')
+            res.send({'message':'已改变该产品状态'})
+            console.log(`ID为：${paramsObj.user_id}的用户下的${paramsObj.product_id}产品状态修改成功`)
+        })
+
+    })
+
+    //接收前端更新购物车状态请求(需要前端参数：user_id,product_id,count)(用户ID，产品ID，需要更改的数量)
+    router.post('/updateProductCount', (req,res) => {
+        //接收请求参数
+        const paramsObj = JSON.parse(JSON.stringify(req.body))
+        console.log(paramsObj)
+
+        //连接数据库
+        const connection = connect()
+
+        //创建更新数据库语句
+        const updateCount = `UPDATE USER_SHOP SET PRODUCT_COUNT = ${paramsObj.count} WHERE USERS_ID = ${paramsObj.user_id} AND PRODUCT_ID = ${paramsObj.product_id}`
+
+        //执行更新语句
+        connection.query(updateCount, (err, result) => {
+            if (err) throw err
+            console.log(result)
+        })
+        res.setHeader('Access-Control-Allow-Origin', '*')
+        res.send({'empty':'商品推荐数据暂无'})
     })
 
     //接收前端获取商品推荐数据的请求，将数据返回给前端

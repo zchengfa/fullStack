@@ -54,6 +54,7 @@
     position: relative;
     width: 100%;
     background-color: #ffffff;
+    border-bottom: 1px solid #d9d2d2;
     z-index: 10;
   }
   .back{

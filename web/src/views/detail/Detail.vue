@@ -3,7 +3,7 @@
     <detail-nav-bar :nav-list="nav_list" @scrollThere="scrollThere" ref="detailNav"></detail-nav-bar>
     <Scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll">
       <div class="shop-show" v-if="Object.keys(detailData).length">
-        <detail-shop ref="shop" :base-data="detailData.baseData"></detail-shop>
+        <detail-base ref="base" class="detail-base" :base-data="detailData.baseData"></detail-base>
         <detail-image ref="image" :images-data="detailData.images" @imageLoadOver="imageLoad"></detail-image>
         <detail-params ref="params" :params="detailData.shop_detail_params"></detail-params>
         <detail-comment ref="comment" :comment-num="Number(comment_num)"></detail-comment>
@@ -18,7 +18,7 @@
 
 <script>
   import DetailNavBar from "@/views/detail/component/navBar/DetailNavBar";
-  import DetailShop from "@/views/detail/component/content/DetailShop";
+  import DetailBase from "@/views/detail/component/content/DetailBase";
   import DetailParams from "@/views/detail/component/content/DetailParams";
   import DetailComment from "@/views/detail/component/content/DetailComment";
   import DetailImage from "@/views/detail/component/content/DetailImage";
@@ -53,7 +53,7 @@
     },
     components:{
       DetailNavBar,
-      DetailShop,
+      DetailBase,
       DetailParams,
       DetailComment,
       DetailImage,
@@ -178,10 +178,11 @@
   }
   .content{
     position: relative;
-    bottom: 6rem;
-    height: calc(100% - 44px);
+    height: calc(100% - 14vh);
     overflow: hidden;
     z-index: 9;
   }
-
+  .detail-base{
+    margin-top: 44px;
+  }
 </style>

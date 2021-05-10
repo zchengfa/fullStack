@@ -5,7 +5,7 @@
         <div class="box">
           <div class="cart">
             <div class="image-box"><img src="~assets/image/detail/cart.png" alt="image"></div>
-            <div class="button-box"><button>购物车</button></div>
+            <div class="button-box"><button><router-link :to="{path:'/cart'}">购物车</router-link></button></div>
           </div>
         </div>
         <div class="box">

@@ -1,5 +1,5 @@
 <template>
-  <div class="image-detail">
+  <div class="image">
     <div class="title"><h4>详情介绍</h4></div>
     <div class="image-detail-box" v-for="(item, index) in imagesData" :key="index">
       <img :src="item.imagePath" alt="image_detail" @load="loadOver">
@@ -28,7 +28,7 @@ export default {
 </script>
 
 <style scoped>
-.image-detail{
+.image{
   margin: 1rem auto 4rem;
   width: 96%;
   border-top: .1rem solid #e3dede;

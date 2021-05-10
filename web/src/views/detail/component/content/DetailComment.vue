@@ -1,5 +1,5 @@
 <template>
-  <div class="detail-comment">
+  <div class="comment">
     <div class="title">
       <h4>用户评论{{commentNum}}</h4>
     </div>

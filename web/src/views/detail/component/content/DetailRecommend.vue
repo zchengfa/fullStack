@@ -1,5 +1,5 @@
 <template>
-  <div class="detail-recommend">
+  <div class="recommend">
     <div class="title"><h4>商品推荐</h4></div>
     <goods-data :goods="recommendData"></goods-data>
   </div>

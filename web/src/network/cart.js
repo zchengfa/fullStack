@@ -10,8 +10,30 @@ export function getUserCartData (token) {
     })
 }
 
-export function getRcommendData () {
+export function getRecommendData () {
     return request({
         url:'/recommend'
+    })
+}
+
+export function updateChecked (user_id,product_id,status) {
+    return requestPost({
+        url:'home/api/updateChecked',
+        data:qs.stringify({
+            user_id,
+            product_id,
+            status
+        })
+    })
+}
+
+export function updateProductCount (user_id,product_id,count) {
+    return requestPost({
+        url:'home/api/updateProductCount',
+        data:qs.stringify({
+            user_id,
+            product_id,
+            count
+        })
     })
 }

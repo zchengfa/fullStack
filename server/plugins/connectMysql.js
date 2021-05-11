@@ -11,8 +11,10 @@ module.exports = function connect () {
 
     //连接数据库
     connection.connect((err)=> {
-        if (err) throw err
-        console.log('mysql connect success')
+        if (err) {
+            connect()
+        }
+        console.log('connect...')
     })
 
     //mysql错误处理
@@ -22,7 +24,7 @@ module.exports = function connect () {
             connect()
         }
         else {
-            throw  err
+            connect()
         }
     })
 

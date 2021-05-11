@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import {ADD_CART,UPDATE_CART_COUNT} from "@/store/mutations-types";
 
+
 Vue.use(Vuex)
 
 const store = new Vuex.Store({

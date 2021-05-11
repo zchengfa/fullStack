@@ -128,16 +128,17 @@
         refresh()
 
       })
-
     },
     activated() {
-		  //进入当前页面时，就让页面回复到之前滚动的位置，并且刷新scroll组件
-      this.$refs.scroll.scrollTo(0, this.savePosition, 0)
-      this.$refs.scroll.refresh()
+		  this.$nextTick(() => {
+        //进入当前页面时，就让页面回复到之前滚动的位置，并且刷新scroll组件
+        this.$refs.scroll.scrollTo(0, this.savePosition, 0)
+        this.$refs.scroll.refresh()
+      })
+
     },
     deactivated() {
-		  //离开页面后记录当前页面的状态
-      this.savePosition = this.$refs.scroll.scroll.y
+		  this.savePosition = this.$refs.scroll.scroll.y
     }
   }
 </script>

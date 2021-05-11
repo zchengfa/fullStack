@@ -37,6 +37,8 @@
       goBack(){
         //点击返回图标返回之前的页面
         this.$router.back()
+
+        this.$bus.$emit('goBack')
       },
       itemClick(index){
         this.currentIndex =index

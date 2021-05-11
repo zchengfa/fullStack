@@ -16,6 +16,6 @@ Vue.use(toast)
 
 new Vue({
   router,
-  //store,
+  store,
   render: h => h(App)
 }).$mount('#app')

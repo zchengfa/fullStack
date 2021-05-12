@@ -3,8 +3,8 @@
     <ul>
       <li v-for="(item, index) in menuList" :key="index">
         <a href="javascript:void (0)">
-          <div><img :src="item.image" alt="itemImage"></div>
-          <div>{{item.name}}</div>
+          <div><img :src="item.image_path" alt="itemImage"></div>
+          <div>{{item.icon_name}}</div>
         </a>
       </li>
     </ul>
@@ -17,7 +17,9 @@
     props:{
       menuList:{
         type:Array,
-        default:[]
+        default() {
+          return []
+        }
       }
     }
 }
@@ -33,9 +35,7 @@
   }
   ul li{
     margin-top: .8rem;
-    width: 20%;
-
-
+    width: 25vw;
   }
   li a{
     display: block;

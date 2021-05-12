@@ -70,6 +70,6 @@
   }
   img{
     width: 100%;
-    height: 10rem;
+    height: 26vh;
   }
 </style>

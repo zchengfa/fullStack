@@ -5,7 +5,7 @@
     <Scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll"
             :pull-up-load="true" @pullingUp="loadMore">
       <swiper :banner="banner" @swiperImageLoad="swiperImageLoad"></swiper>
-      <menu-list :menu-list="iconList"></menu-list>
+      <menu-list :menu-list="menuList"></menu-list>
       <tab-control :class="{fixed: isTabFixed}" ref="tabControlTwo" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
       <goods-data :goods="goods[currentType].list" :current-type="currentType"></goods-data>
     </Scroll>
@@ -31,13 +31,16 @@
 
   import {debounce} from "@/common/utils";
 
+  //引入menuList路径文件
+  import {MENU_IMAGE_PATH} from './menuList/menu_image_path'
+
   export default {
 		name:'Home',
     mixins:[backTopMixins],
     data(){
 		  return {
 		    banner:null,
-        iconList:null,
+        menuList: [],
         currentType:'pop',
         goods:{
 		      'pop':{page: 0,  list: []},
@@ -90,7 +93,6 @@
       getHomeMultiData(){
         getHomeMultiData().then(res =>{
           this.banner =res.data[0].multiData[0].banner
-          this.iconList = res.data[0].multiData[0].iconList
         })
       },
       getGoodsData(type){
@@ -113,6 +115,9 @@
     },
     created() {
 		  this.getHomeMultiData()
+
+      this.menuList = MENU_IMAGE_PATH.menu_image_path
+      console.log(this.menuList)
       /*
       * 获取首页中（“流行”“新款”“精选”）的数据
       */

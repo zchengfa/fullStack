@@ -86,7 +86,9 @@ export default {
   activated() {
     const token = sessionStorage.getItem('token')
     jwt.verify(token,'user', (err, decode) => {
-      if (err) throw err
+      if (err) {
+        console.log(err,'登录凭证不存在，请登录')
+      }
       else {
         if (decode) {
           this.isLogin = true
@@ -101,8 +103,6 @@ export default {
         }
       }
     })
-
-    //console.log(decode)
   }
 }
 </script>

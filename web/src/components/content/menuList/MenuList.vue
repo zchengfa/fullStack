@@ -3,8 +3,8 @@
     <ul>
       <li v-for="(item, index) in menuList" :key="index">
         <a href="javascript:void (0)">
-          <div><img :src="item.image_path" alt="itemImage"></div>
-          <div>{{item.icon_name}}</div>
+          <div><img :src="item.iconImagePath" alt="itemImage"></div>
+          <div>{{item.iconName}}</div>
         </a>
       </li>
     </ul>

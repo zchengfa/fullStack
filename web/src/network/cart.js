@@ -10,9 +10,18 @@ export function getUserCartData (token) {
     })
 }
 
-export function getRecommendData () {
+export function getCommonRecommend () {
     return request({
-        url:'/recommend'
+        url:'/commonRecommend'
+    })
+}
+
+export function getUserRecommend (token) {
+    return requestPost({
+        url:'home/api/userRecommend',
+        data:qs.stringify({
+           token
+        })
     })
 }
 

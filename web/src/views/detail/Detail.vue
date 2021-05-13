@@ -7,7 +7,7 @@
         <detail-image ref="image" :images-data="detailData.images" @imageLoadOver="imageLoad"></detail-image>
         <detail-params ref="params" :params="detailData.shop_detail_params"></detail-params>
         <detail-comment ref="comment" :comment-num="Number(comment_num)"></detail-comment>
-        <detail-recommend ref="recommend" :recommend-data="detailData.shop_recommend"></detail-recommend>
+        <Recommend ref="recommend" :recommend-data="detailData.shop_recommend" recommend-title="商品推荐"></Recommend>
       </div>
     </Scroll>
     <back-top v-show="isShowBackTop" @click.native="backTop"></back-top>
@@ -22,10 +22,10 @@
   import DetailParams from "@/views/detail/component/content/DetailParams";
   import DetailComment from "@/views/detail/component/content/DetailComment";
   import DetailImage from "@/views/detail/component/content/DetailImage";
-  import DetailRecommend from "@/views/detail/component/content/DetailRecommend";
   import DetailBottomBar from "@/views/detail/component/bottom/DetailBottomBar";
   import DetailAddCart from "@/views/detail/component/bottom/DetailAddCart";
 
+  import Recommend from "@/components/content/recommend/Recommend";
   import BackTop from "@/components/content/backTop/BackTop";
   import Scroll from "@/components/common/scroll/Scroll";
 
@@ -57,7 +57,7 @@
       DetailParams,
       DetailComment,
       DetailImage,
-      DetailRecommend,
+      Recommend,
       BackTop,
       DetailBottomBar,
       DetailAddCart,

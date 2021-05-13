@@ -17,7 +17,7 @@ module.exports = app => {
     router.post('/cart',(req, res) => {
         const paramsObj = JSON.parse(JSON.stringify(req.body))
         const token = paramsObj.token
-        console.log(paramsObj)
+        //console.log(paramsObj)
 
         jwt.verify(token,'user',(err,decode) => {
             //验证前端传过来的token是否合法，是否过期
@@ -29,7 +29,7 @@ module.exports = app => {
             else {
                 //连接数据库
                 const connection = connect()
-                console.log(decode)
+                //console.log(decode)
 
                 //先查询到该用户的ID
                 const selectUserId = `SELECT USER_ID FROM USER WHERE ACCOUNT = '${decode.username}'`
@@ -91,7 +91,7 @@ module.exports = app => {
     router.post('/updateProductCount', (req,res) => {
         //接收请求参数
         const paramsObj = JSON.parse(JSON.stringify(req.body))
-        console.log(paramsObj)
+        //console.log(paramsObj)
 
         //连接数据库
         const connection = connect()
@@ -102,16 +102,31 @@ module.exports = app => {
         //执行更新语句
         connection.query(updateCount, (err, result) => {
             if (err) throw err
-            console.log(result)
+            res.setHeader('Access-Control-Allow-Origin', '*')
+            res.send({'empty':'商品推荐数据暂无'})
+            console.log(`ID为：${paramsObj.user_id}的用户下的${paramsObj.product_id}产品数量+${paramsObj.count}`)
         })
-        res.setHeader('Access-Control-Allow-Origin', '*')
-        res.send({'empty':'商品推荐数据暂无'})
     })
 
     //接收前端获取商品推荐数据的请求，将数据返回给前端
-    router.get('/recommend', (req, res) => {
+    router.get('/commonRecommend', (req, res) => {
+        const connection = connect()
+        const selectQuery = `SELECT * FROM COMMON_RECOMMEND_SHOP`
+
+        connection.query(selectQuery, (err,result) => {
+            if (err) throw err
+            else {
+                res.setHeader('Access-Control-Allow-Origin', '*')
+                res.send({"commonRecommend":result})
+            }
+        })
+    })
+
+    //接收前端用户获取商品推荐数据的请求，将数据返回给前端
+    router.post('/userRecommend', (req, res) => {
+        console.log(JSON.stringify(req.body))
         res.setHeader('Access-Control-Allow-Origin', '*')
-        res.send({'empty':'商品推荐数据暂无'})
+        res.send({'empty':JSON.stringify(req.body)})
     })
 
     app.use('/home/api',router)

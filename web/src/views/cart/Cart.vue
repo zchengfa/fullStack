@@ -28,16 +28,7 @@
         <span>您还未登录</span>
         <router-link class="to-login" :to="{path:'/login'}">马上登录</router-link>
       </div>
-      <div class="recommend">
-        <div class="title">
-          <h3>
-            <img src="~assets/image/cart/balloon.svg" alt="balloon">
-            为你推荐
-            <img src="~assets/image/cart/balloon.svg" alt="balloon">
-          </h3>
-        </div>
-        <goods-data v-if="recommendData.length" :goods="recommendData"></goods-data>
-      </div>
+      <Recommend :recommend-data="recommendData" recommend-title="为你推荐"></Recommend>
     </Scroll>
 
     <settle-cart :total-price="totalPrice"
@@ -52,13 +43,14 @@
   import NavBar from "@/components/common/navbar/NavBar"
   import Scroll from "@/components/common/scroll/Scroll"
   import Empty from "@/components/common/empty/Empty";
+  import Recommend from "@/components/content/recommend/Recommend";
+
+  import {debounce} from "@/common/utils";
 
   import CheckButton from "@/views/cart/components/CheckButton"
   import SettleCart from "@/views/cart/components/SettleCart";
 
-  import GoodsData from "@/components/content/goodsData/GoodsData";
-
-  import {getRecommendData,getUserCartData,updateChecked,updateProductCount} from "@/network/cart";
+  import {getCommonRecommend,getUserRecommend,getUserCartData,updateChecked,updateProductCount} from "@/network/cart";
 
   export  default {
     name:'Cart',
@@ -78,8 +70,8 @@
       Scroll,
       CheckButton,
       SettleCart,
-      GoodsData,
-      Empty
+      Empty,
+      Recommend
     },
     computed:{
       totalPrice () {
@@ -135,12 +127,21 @@
 
       },
       //获取商品推荐数据函数
-      getRecommendData(){
-        getRecommendData().then(res => {
-          //console.log(res)
+      getCommonRecommend(){
+        getCommonRecommend().then(res => {
+          this.recommendData = res.data.commonRecommend
+        }).catch(err => {
+          console.log(err)
+        })
+      },
+      getUserRecommend(){
+        getUserRecommend().then(res => {
+          console.log(res)
           if (res.data.empty) {
             this.emptyRecommend = res.data.empty
           }
+        }).catch(err => {
+          console.log(err)
         })
       },
       //获取用户购物车数据函数
@@ -187,6 +188,11 @@
           })
         }
       })
+
+      const refresh = debounce(this.$refs.scroll.refresh, 200)
+      this.$bus.$on('itemImageLoad',() => {
+        refresh()
+      })
     },
     activated() {
 
@@ -202,13 +208,17 @@
        //存在token值，用户已登录，执行获取用户购物车数据函数
        //进入购物车页面，获取用户token，执行获取用户购物车数据函数
        this.getUserCartData(token)
+
+       //获取用户对应的推荐数据
+       // this.getUserRecommend('111')
+       // console.log(token)
+
      }
      else {
+       //token值不存在，用户未登录，获取默认的推荐数据
+       this.getCommonRecommend()
        this.isLogin = true
      }
-     //进入购物车页面，执行获取商品推荐数据函数
-     this.getRecommendData()
-
    }
   }
 </script>
@@ -303,19 +313,5 @@
   }
   .button-box span{
     padding: 0 .5rem;
-  }
-  .recommend{
-    margin: 1rem auto;
-    width: 94%;
-    text-align: center;
-  }
-  .recommend h3 {
-    height: 2.2rem;
-  }
-  img[alt='balloon'] {
-    position: relative;
-    top:.5rem;
-    width: 1.5rem;
-    height: 1.5rem;
   }
 </style>

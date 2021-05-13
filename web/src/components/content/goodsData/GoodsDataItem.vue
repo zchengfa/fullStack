@@ -1,12 +1,12 @@
 <template>
   <div class="goods-data-item" >
     <div class="list-box">
-      <div class="list-image" @click="itemClick"><img :src="list.imagePath" alt="itemImage" @load="imageLoad"></div>
+      <div class="list-image" @click="itemClick"><img :src="list.imagePath || list.product_image" alt="itemImage" @load="imageLoad"></div>
       <div class="list-content">
-        <div class="title">{{list.title}}</div>
+        <div class="title">{{list.title || list.product_title}}</div>
         <div class="list-others">
           <div class="price-box">
-            <span class="price">{{list.price}}</span>
+            <span class="price">{{list.price || list.product_price}}</span>
             <span class="origin_price">{{list.origin_price}}</span>
           </div>
           <div class="love-box" @click="collectFavorite">

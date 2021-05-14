@@ -146,6 +146,7 @@
       //将路由传过来的参数赋值给id和type
       this.id = this.$route.params.product_id -1
       this.type = this.$route.params.product_type
+      console.log(this.id)
 
       //将id和type作为参数进行请求
       getGoodsDetail(this.type,this.id).then(res=> {

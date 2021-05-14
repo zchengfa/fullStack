@@ -28,7 +28,7 @@
         <span>您还未登录</span>
         <router-link class="to-login" :to="{path:'/login'}">马上登录</router-link>
       </div>
-      <Recommend :recommend-data="recommendData" recommend-title="为你推荐"></Recommend>
+      <Recommend class="recommend" :align-center="true" :recommend-data="recommendData" recommend-title="为你推荐"></Recommend>
     </Scroll>
 
     <settle-cart :total-price="totalPrice"
@@ -134,12 +134,10 @@
           console.log(err)
         })
       },
-      getUserRecommend(){
-        getUserRecommend().then(res => {
+      getUserRecommend(token){
+        getUserRecommend(token).then(res => {
           console.log(res)
-          if (res.data.empty) {
-            this.emptyRecommend = res.data.empty
-          }
+          this.recommendData = res.data.result
         }).catch(err => {
           console.log(err)
         })
@@ -193,6 +191,7 @@
       this.$bus.$on('itemImageLoad',() => {
         refresh()
       })
+
     },
     activated() {
 
@@ -210,8 +209,7 @@
        this.getUserCartData(token)
 
        //获取用户对应的推荐数据
-       // this.getUserRecommend('111')
-       // console.log(token)
+       this.getUserRecommend(token)
 
      }
      else {
@@ -234,7 +232,7 @@
     color: #fff;
   }
   .content{
-    height: calc(100% - 98px);
+    height: calc(100vh - 98px);
     overflow: hidden;
     background-color: #fff;
   }
@@ -314,4 +312,5 @@
   .button-box span{
     padding: 0 .5rem;
   }
+
 </style>

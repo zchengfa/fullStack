@@ -47,7 +47,7 @@ module.exports = app => {
                             if (err) throw err
                             //console.log(Object.keys(result).length)
                             if (Object.keys(result).length) {
-                                //该用户已有商品数据，先进性数据处理在返回给前端
+                                //该用户已有商品数据，先进行数据处理再返回给前端
                                 //console.log(result)
 
                                 res.setHeader('Access-Control-Allow-Origin', '*')
@@ -124,9 +124,43 @@ module.exports = app => {
 
     //接收前端用户获取商品推荐数据的请求，将数据返回给前端
     router.post('/userRecommend', (req, res) => {
-        console.log(JSON.stringify(req.body))
-        res.setHeader('Access-Control-Allow-Origin', '*')
-        res.send({'empty':JSON.stringify(req.body)})
+        //接收前端请求参数
+        const paramsObj = JSON.parse(JSON.stringify(req.body))
+        const token= paramsObj.token
+
+        //验证请求参数里的token是否合法是否过期
+        jwt.verify(token,'user',(err,decode) => {
+            if (err) throw err
+            else {
+                const user_id = decode.user_id
+                const selectQuery = `SELECT * FROM USER_RECOMMEND_SHOP WHERE USERS_ID = ${user_id}`
+
+                const connection = connect()
+
+                connection.query(selectQuery,(err,result) => {
+                    if (err) throw err
+                    else {
+                        if (Object.keys(result).length) {
+                            res.setHeader('Access-Control-Allow-Origin', '*')
+                            res.send({'result':result})
+                        }
+                        //该用户没有推荐数据，返回默认的推荐数据
+                        else {
+                            //创建查询默认推荐数据语句
+                            const selectDefault = `SELECT * FROM COMMON_RECOMMEND_SHOP`
+                            connection.query(selectDefault,(err,result) => {
+                                if (err) throw err
+                                else {
+                                    res.setHeader('Access-Control-Allow-Origin', '*')
+                                    res.send({'result':result,'empty':'该用户暂时还没有推荐数据，返回的是默认推荐数据'})
+                                }
+                            })
+                        }
+                    }
+                })
+            }
+        })
+
     })
 
     app.use('/home/api',router)

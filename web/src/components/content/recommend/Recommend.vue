@@ -1,6 +1,6 @@
 <template>
   <div class="recommend">
-    <div class="title"><h4>{{ recommendTitle }}</h4></div>
+    <div :class="{alignCenter:alignCenter}" class="title"><h4>{{ recommendTitle }}</h4></div>
     <goods-data :goods="recommendData"></goods-data>
   </div>
 </template>
@@ -21,6 +21,12 @@ export default {
       default() {
         return '推荐标题';
       }
+    },
+    alignCenter:{
+      type:Boolean,
+      default(){
+        return false
+      }
     }
   },
   components:{
@@ -30,5 +36,8 @@ export default {
 </script>
 
 <style scoped>
+.alignCenter h4{
+  text-align: center;
+}
 
 </style>

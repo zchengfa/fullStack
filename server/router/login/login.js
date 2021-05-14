@@ -26,7 +26,8 @@ module.exports = app => {
             if (Object.keys(results).length !==0) {
                 const jwt = require('jsonwebtoken')
                 const user = {
-                    username:results[0].account
+                    username:results[0].account,
+                    user_id:results[0].user_id
                 }
                 //生成token,当过期时间number类型时以秒计算
                 const token = jwt.sign(user,'user',{expiresIn: '1d'})

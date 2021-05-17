@@ -144,7 +144,7 @@
     ,
     created() {
       //将路由传过来的参数赋值给id和type
-      this.id = this.$route.params.product_id -1
+      this.id = this.$route.params.product_id
       this.type = this.$route.params.product_type
       console.log(this.id)
 

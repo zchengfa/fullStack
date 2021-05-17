@@ -82,6 +82,9 @@ export default {
   },
   created() {
     this.getProfileData()
+    const time = new Date()
+
+    console.log(time.getTime())
   },
   activated() {
     const token = sessionStorage.getItem('token')

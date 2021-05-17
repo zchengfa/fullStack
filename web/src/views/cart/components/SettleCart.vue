@@ -54,6 +54,7 @@ export default {
       this.$bus.$emit('selectAll')
     },
     settle(){
+
       this.$emit('settle')
     }
   },

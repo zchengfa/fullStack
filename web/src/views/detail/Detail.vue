@@ -146,7 +146,7 @@
       //将路由传过来的参数赋值给id和type
       this.id = this.$route.params.product_id
       this.type = this.$route.params.product_type
-      console.log(this.id)
+      //console.log(this.id)
 
       //将id和type作为参数进行请求
       getGoodsDetail(this.type,this.id).then(res=> {
@@ -168,6 +168,11 @@
         this.scrollToTopY.push(this.$refs.comment.$el.offsetTop)
         this.scrollToTopY.push(this.$refs.recommend.$el.offsetTop)
       },100)
+    },
+    mounted() {
+      setTimeout(()=>{
+        this.$refs.scroll.scroll.refresh()
+      },500)
     }
   }
 </script>

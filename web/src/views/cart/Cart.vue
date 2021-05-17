@@ -35,6 +35,7 @@
                  :settle-num="settleNum"
                  v-show="cartList.length"
                  :is-all-checked="isAllChecked"
+                 @settle="settle"
     ></settle-cart>
   </div>
 </template>
@@ -125,6 +126,15 @@
         //提交更新请求
         updateChecked(this.user_id, this.cartList[index].product_id, this.cartList[index].isChecked).then()
 
+      },
+      settle(){
+        //点击结算按钮时先判断是否选择了商品
+        if (this.checkedNum) {
+          this.$toast.showToast('支付系统暂未开发')
+        }
+        else {
+          this.$toast.showToast('您为选中任何要结算的商品')
+        }
       },
       //获取商品推荐数据函数
       getCommonRecommend(){

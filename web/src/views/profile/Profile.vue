@@ -1,8 +1,7 @@
 <template>
   <div class="profile">
-    <nav-bar>
-      <div slot="left"><img src="~assets/image/detail/back.svg" alt="back"></div>
-      <div slot="right"><img src="~assets/image/profile/config.png" alt="config"></div>
+    <nav-bar class="nav">
+      <div slot="center">我的</div>
     </nav-bar>
     <div class="user-info">
       <div class="info" v-if="isLogin">
@@ -25,15 +24,20 @@
         </a>
       </div>
     </div>
-    <menu-list :menu-list="orderList"></menu-list>
+    <order-menu :order-list="orderList"></order-menu>
+    <order-menu :order-list="meansList"></order-menu>
+    <menu-list class="other-menu" :menu-list="otherList" :padding="true"></menu-list>
   </div>
 </template>
 
 <script>
 import NavBar from "@/components/common/navbar/NavBar";
+import OrderMenu from "@/components/content/orderMenu/OrderMenu";
 import MenuList from "@/components/content/menuList/MenuList";
 
 import {getProfileData} from "@/network/profile";
+
+import {orderMenuImage,meansMenuImage,otherMenuImage} from '@/assets/image/profile/orderMenu/orderMenuImage'
 
 import jwt from 'jsonwebtoken'
 
@@ -56,6 +60,8 @@ export default {
         }
       ],
       orderList: [],
+      meansList:[],
+      otherList:[],
       isLogin:false,
       username:'',
       headerCustom:'',
@@ -64,6 +70,7 @@ export default {
   },
   components:{
     NavBar,
+    OrderMenu,
     MenuList
   },
   methods:{
@@ -82,9 +89,10 @@ export default {
   },
   created() {
     this.getProfileData()
-    const time = new Date()
 
-    console.log(time.getTime())
+    this.otherList = otherMenuImage
+    this.meansList = meansMenuImage
+    this.orderList = orderMenuImage
   },
   activated() {
     const token = sessionStorage.getItem('token')
@@ -114,14 +122,18 @@ export default {
 .profile{
   width: 100vw;
   height: 100vh;
-  background-color: #dad5d5;
+  background-color: #efecec;
 }
 .profile div{
   background-color: #fff;
 }
+.nav {
+  box-shadow: 0 1px #ece6e6;
+}
+
 .user-info {
   width: 100%;
-  height: 20vh;
+  height: 22vh;
 }
 .user-info .info{
   width: 100%;
@@ -170,4 +182,14 @@ export default {
   content: '|';
   color: #bfbaba;
 }
+.other-menu {
+  margin-top: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+  width: 96vw;
+  border-radius: .5rem;
+}
+
 </style>

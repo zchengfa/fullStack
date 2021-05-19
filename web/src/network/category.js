@@ -1,7 +1,7 @@
 import {request} from "@/network/request";
 
-export function getCategoryList () {
+export function getCategoryData () {
     return request({
-        url:'/category_list'
+        url:'/category_data'
     })
 }

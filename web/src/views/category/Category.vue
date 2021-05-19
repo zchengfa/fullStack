@@ -13,55 +13,49 @@
     </nav-bar>
     <div class="main">
       <Scroll ref="scrollOne" class="scroll-list content" :probe-type="3">
-        <ul>
-          <li class="list-item" v-for="(item,index) in categoryList"
+        <ul class="category-list-left">
+          <li class="list-item" v-for="(item,index) in categoryData.list"
               :key="index">
-            <a :class="{active:currentIndex===index}" @click="showListDetail(index)" href="javascript:void (0)">{{item}}</a>
+            <a :class="{active:currentIndex===index}" @click="showListDetail(index)" :href="item.location">{{item}}</a>
           </li>
         </ul>
       </Scroll>
       <Scroll ref="scrollTwo" class="scroll-list-detail content" :probe-type="3">
-        <menu-list :menu-list="shopListDetail"></menu-list>
-        <tab-control :title="tabTitle"></tab-control>
-        <goods-data :goods="shopListDetail"></goods-data>
+        <category-list-detail :category-list-detail="categoryListDetail"></category-list-detail>
       </Scroll>
     </div>
-
-
   </div>
 </template>
 
 <script>
 import NavBar from "@/components/common/navbar/NavBar";
 import Scroll from "@/components/common/scroll/Scroll";
-import MenuList from "@/components/content/menuList/MenuList";
-import TabControl from "@/components/content/tabControl/TabControl";
-import GoodsData from "@/components/content/goodsData/GoodsData";
+import CategoryListDetail from "./components/CategoryListDetail";
 
-import {getCategoryList} from "@/network/category";
+import {getCategoryData} from "@/network/category";
 
 export default {
   name:"Category",
   data(){
     return {
-      categoryList:[],
-      shopListDetail:[],
-      currentIndex:0,
-      tabTitle:['流行','精选','新款']
+      categoryData:[],
+      categoryListDetail:[],
+      currentIndex:0
     }
   },
   components:{
     NavBar,
     Scroll,
-    MenuList,
-    TabControl,
-    GoodsData
+    CategoryListDetail
   },
   methods:{
-    getCategoryList(){
-      getCategoryList().then(res => {
+    getCategoryData(){
+      getCategoryData().then(res => {
         console.log(res.data[0])
-        this.categoryList = res.data[0].category_list
+        this.categoryData = res.data[0]
+
+        this.categoryListDetail = this.categoryData.categoryData[this.currentIndex][this.categoryData.list[this.currentIndex]]
+
 
       }).catch(err => {
         console.log(err)
@@ -69,6 +63,7 @@ export default {
     },
     showListDetail(index){
       this.currentIndex = index
+      this.categoryListDetail = this.categoryData.categoryData[index][this.categoryData.list[index]]
     },
     //点击打开手机摄像头
     openCamera() {
@@ -77,15 +72,18 @@ export default {
     }
   },
   created() {
-    this.getCategoryList()
+    this.getCategoryData()
   },
   mounted() {
+
     setTimeout(() => {
-      this.$refs.scrollOne.refresh()
+      this.$refs.scrollOne.scroll.refresh()
     },100)
   },
   activated() {
-    this.$refs.scrollOne.refresh()
+
+
+
   }
 }
 </script>

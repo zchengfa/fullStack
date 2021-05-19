@@ -129,11 +129,11 @@
       })
     },
     activated() {
-		  console.log('activated')
+
       this.$refs.scroll.refresh()
     },
     deactivated() {
-      console.log('deactivated')
+
     }
   }
 </script>

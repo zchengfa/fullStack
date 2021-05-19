@@ -53,8 +53,10 @@ export default {
       getCategoryData().then(res => {
         console.log(res.data[0])
         this.categoryData = res.data[0]
+        if (this.currentIndex === 0) {
+          this.categoryListDetail = this.categoryData.categoryData[0][this.categoryData.list[0]]
+        }
 
-        this.categoryListDetail = this.categoryData.categoryData[this.currentIndex][this.categoryData.list[this.currentIndex]]
 
 
       }).catch(err => {
@@ -78,6 +80,7 @@ export default {
 
     setTimeout(() => {
       this.$refs.scrollOne.scroll.refresh()
+      this.$refs.scrollTwo.scroll.refresh()
     },100)
   },
   activated() {

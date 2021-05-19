@@ -25,5 +25,17 @@ export default {
 </script>
 
 <style scoped>
-
+.list-item {
+  width: 100%;
+}
+.list-item .content {
+  display: inline-block;
+  width: 30%;
+  text-align: center;
+  font-size: .8rem;
+}
+.content img {
+  width: 90%;
+  background-size: contain;
+}
 </style>

@@ -72,7 +72,7 @@ export default {
             sessionStorage.token = res.data.token
 
             //登录成功，跳转到profile页面
-            this.$router.replace('/profile')
+            this.$router.go(-1)
           }
           else {
             //登录失败，提示后端传过来的提示信息

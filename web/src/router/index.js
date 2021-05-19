@@ -21,7 +21,10 @@ const routes =[
 	},
 	{
 		path:'/home',
-		component:Home
+		component:Home,
+		meta:{
+			keepAlive:true
+		}
 	},
 	{
 		path:'/category',
@@ -48,6 +51,7 @@ const routes =[
 		path: '/register',
 		component:Register
 	}
+
 ]
 
 const router = new VueRouter({

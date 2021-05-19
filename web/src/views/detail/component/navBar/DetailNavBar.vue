@@ -36,7 +36,7 @@
     methods:{
       goBack(){
         //点击返回图标返回之前的页面
-        this.$router.replace({path:'/home'})
+        this.$router.back()
       },
       itemClick(index){
         this.currentIndex =index

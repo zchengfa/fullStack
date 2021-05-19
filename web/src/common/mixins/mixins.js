@@ -54,7 +54,7 @@ const closeCurrentPageMixins = {
         closeCurrentPage() {
             //点击关闭页面按钮，关闭当前页面，前往profile页面
             this.isClose = false
-            this.$router.replace('/profile').then()
+            this.$router.go(-1)
         }
     },
     activated() {

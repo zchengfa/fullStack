@@ -53,7 +53,7 @@ export default {
           if (res.data.success) {
             //注册成功跳转页面
             this.$toast.showToast(res.data.success)
-            this.$router.replace('/profile')
+            this.$router.go(-1)
           }
           else {
             this.$toast.showToast(res.data.exist)

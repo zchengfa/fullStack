@@ -109,6 +109,18 @@
            this.$refs.scroll.finishPullUp()
          }
         })
+      },
+      saveLocation() {
+        this.savePosition = this.$refs.scroll.scroll.y
+        console.log(this.savePosition)
+      },
+      scrollBack(){
+        this.$nextTick(() => {
+          //进入当前页面时，就让页面回复到之前滚动的位置，并且刷新scroll组件
+          this.$refs.scroll.scrollTo(0, this.savePosition, 0)
+          this.$refs.scroll.refresh()
+        })
+        console.log(this.savePosition)
       }
     },
     created() {
@@ -130,15 +142,10 @@
       })
     },
     activated() {
-		  this.$nextTick(() => {
-        //进入当前页面时，就让页面回复到之前滚动的位置，并且刷新scroll组件
-        this.$refs.scroll.scrollTo(0, this.savePosition, 0)
-        this.$refs.scroll.refresh()
-      })
-
+      this.scrollBack()
     },
     deactivated() {
-		  this.savePosition = this.$refs.scroll.scroll.y
+		  this.saveLocation()
     }
   }
 </script>

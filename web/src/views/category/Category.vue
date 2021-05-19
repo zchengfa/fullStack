@@ -1,7 +1,7 @@
 <template>
 	<div class="category">
     <nav-bar class="nav-bar">
-      <div slot="left"><img src="~assets/image/category/scan.svg" alt="scan_image"></div>
+      <div slot="left" @click="openCamera"><img src="~assets/image/category/scan.svg" alt="scan_image"></div>
       <div slot="center">
         <div class="search-box">
           <img src="~assets/image/category/search.svg" alt="search_image">
@@ -69,6 +69,11 @@ export default {
     },
     showListDetail(index){
       this.currentIndex = index
+    },
+    //点击打开手机摄像头
+    openCamera() {
+
+
     }
   },
   created() {

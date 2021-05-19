@@ -2,7 +2,7 @@
   <div class="menu-list">
     <ul>
       <li v-for="(item, index) in menuList" :key="index" :class="{padding:padding}">
-        <a href="javascript:void (0)">
+        <a :href="item.location">
           <div><img :src="item.iconImagePath || item.image" alt="itemImage"></div>
           <div>{{item.iconName || item.title}}</div>
         </a>

@@ -42,14 +42,14 @@ module.exports = app => {
                         * 只需要将商品数量在之前数量的基础上增加用户再次添加的商品数量即可。
                         */
                         //创建查询该用户下的对应的商品ID以及商品数量语句
-                        const selectProductId = `SELECT PRODUCT_ID,PRODUCT_COUNT FROM USER_SHOP WHERE USERS_ID = ${USER_ID} AND PRODUCT_ID = ${paramsObj.product_id}`
+                        const selectProductId = `SELECT PRODUCT_ID,PRODUCT_COUNT FROM USER_SHOP WHERE USERS_ID = ${USER_ID} AND PRODUCT_ID = '${paramsObj.product_id}'`
                         connection.query(selectProductId, (err, result) => {
                             if (err) throw err
                             //console.log(result)
                             //如果result不为空，说明当前用户已添加过该商品，只要增加该商品的数量即可
                             if (Object.keys(result).length) {
                                 //创建修改商品数据语句
-                                const updateShop = `UPDATE USER_SHOP SET PRODUCT_COUNT = ${result[0]['PRODUCT_COUNT'] + parseInt(paramsObj.count)} WHERE PRODUCT_ID = ${result[0]['PRODUCT_ID']}`
+                                const updateShop = `UPDATE USER_SHOP SET PRODUCT_COUNT = ${result[0]['PRODUCT_COUNT'] + parseInt(paramsObj.count)} WHERE PRODUCT_ID = '${result[0]['PRODUCT_ID']}'`
 
                                 //执行修改商品数据语句
                                 connection.query(updateShop, (err, result) => {
@@ -68,7 +68,7 @@ module.exports = app => {
                             else {
                                 //创建添加商品数据到user_shop表语句
                                 const insertShop = `INSERT INTO USER_SHOP (USERS_ID,PRODUCT_ID,PRODUCT_TITLE,PRODUCT_IMAGE,PRODUCT_PRICE,PRODUCT_COUNT)
-                                                    VALUES (${USER_ID},${paramsObj.product_id},'${paramsObj.title}','${paramsObj.image}',
+                                                    VALUES (${USER_ID},'${paramsObj.product_id}','${paramsObj.title}','${paramsObj.image}',
                                                             '${paramsObj.price}','${parseInt(paramsObj.count)}')`
 
                                 //执行添加商品数据语句

@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {ADD_CART,UPDATE_CART_COUNT} from "@/store/mutations-types";
+import {ADD_CART,UPDATE_CART_COUNT,SAVE_POSITION} from "@/store/mutations-types";
 
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
     state:{
-        cartList:[]
+        cartList:[],
+        position:[]
     },
     mutations:{
         //已有商品，更新购物车中当前商品的数量
@@ -18,6 +19,9 @@ const store = new Vuex.Store({
         //添加到购物车
         [ADD_CART](state,payload){
             state.cartList.push(payload)
+        },
+        [SAVE_POSITION](state,payload) {
+            state.position.push(payload)
         }
 
     },
@@ -48,6 +52,9 @@ const store = new Vuex.Store({
                     reject('+添加商品成功')
                 }
             })
+        },
+        savePosition(context,payload) {
+            context.commit('savePosition',payload)
         }
     }
 })

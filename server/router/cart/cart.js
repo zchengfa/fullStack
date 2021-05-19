@@ -75,7 +75,7 @@ module.exports = app => {
         const connection = connect()
 
         //创建数据库修改语句
-        const updateChecked = `UPDATE USER_SHOP SET ISCHECKED = ${paramsObj.status} WHERE USERS_ID = ${paramsObj.user_id} AND PRODUCT_ID = ${paramsObj.product_id}`
+        const updateChecked = `UPDATE USER_SHOP SET ISCHECKED = ${paramsObj.status} WHERE USERS_ID = ${paramsObj.user_id} AND PRODUCT_ID = '${paramsObj.product_id}'`
 
         //执行修改数据库语句
         connection.query(updateChecked, (err) => {

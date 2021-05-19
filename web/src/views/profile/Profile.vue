@@ -94,13 +94,16 @@ export default {
     this.meansList = meansMenuImage
     this.orderList = orderMenuImage
   },
-  activated() {
+  mounted() {
+    console.log(this.isLogin)
     const token = sessionStorage.getItem('token')
+
     jwt.verify(token,'user', (err, decode) => {
       if (err) {
         console.log(err,'登录凭证不存在，请登录')
       }
       else {
+
         if (decode) {
           this.isLogin = true
           this.username = decode.username

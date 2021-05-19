@@ -201,33 +201,31 @@
       this.$bus.$on('itemImageLoad',() => {
         refresh()
       })
-
-    },
-    activated() {
-
       if (this.$refs.scroll){
         //进入页面时刷新scroll
-        this.$refs.scroll.scroll.refresh()
+        setTimeout(()=>{
+          this.$refs.scroll.scroll.refresh()
+        },300)
       }
-     //判断用户是否登录,若已登录显示用户的购物车物品列表,未登录，显示登录提示
-     const  token = sessionStorage.getItem('token')
-     if (token){
-       this.isLogin = false
+      //判断用户是否登录,若已登录显示用户的购物车物品列表,未登录，显示登录提示
+      const  token = sessionStorage.getItem('token')
+      if (token){
+        this.isLogin = false
 
-       //存在token值，用户已登录，执行获取用户购物车数据函数
-       //进入购物车页面，获取用户token，执行获取用户购物车数据函数
-       this.getUserCartData(token)
+        //存在token值，用户已登录，执行获取用户购物车数据函数
+        //进入购物车页面，获取用户token，执行获取用户购物车数据函数
+        this.getUserCartData(token)
 
-       //获取用户对应的推荐数据
-       this.getUserRecommend(token)
+        //获取用户对应的推荐数据
+        this.getUserRecommend(token)
 
-     }
-     else {
-       //token值不存在，用户未登录，获取默认的推荐数据
-       this.getCommonRecommend()
-       this.isLogin = true
-     }
-   }
+      }
+      else {
+        //token值不存在，用户未登录，获取默认的推荐数据
+        this.getCommonRecommend()
+        this.isLogin = true
+      }
+    }
   }
 </script>
 

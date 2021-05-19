@@ -23,7 +23,7 @@
 		methods:{
 			//实现item点击方法，使用路由跳转到指定路径
 			itemClick(){
-				this.$router.replace({path:this.path})
+				this.$router.push({path:this.path})
 			}
 		},
 		computed:{

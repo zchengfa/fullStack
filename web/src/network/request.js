@@ -1,6 +1,6 @@
 //引入axios
 import axios from 'axios'
-const ipUrl = 'http://192.168.31.130:3000'
+const ipUrl = 'http://192.168.1.106:3000'
 
 //导出request函数
 export function request(config) {

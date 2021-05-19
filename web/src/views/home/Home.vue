@@ -44,8 +44,7 @@
           'sell':{page: 0, list: []},
           'new':{page: 0, list: []}
         },
-        tabOffsetTop:0,
-        savePosition:0
+        tabOffsetTop:0
       }
     },
 		components:{
@@ -109,18 +108,6 @@
            this.$refs.scroll.finishPullUp()
          }
         })
-      },
-      saveLocation() {
-        this.savePosition = this.$refs.scroll.scroll.y
-        console.log(this.savePosition)
-      },
-      scrollBack(){
-        this.$nextTick(() => {
-          //进入当前页面时，就让页面回复到之前滚动的位置，并且刷新scroll组件
-          this.$refs.scroll.scrollTo(0, this.savePosition, 0)
-          this.$refs.scroll.refresh()
-        })
-        console.log(this.savePosition)
       }
     },
     created() {
@@ -142,10 +129,11 @@
       })
     },
     activated() {
-      this.scrollBack()
+		  console.log('activated')
+      this.$refs.scroll.refresh()
     },
     deactivated() {
-		  this.saveLocation()
+      console.log('deactivated')
     }
   }
 </script>

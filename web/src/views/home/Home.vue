@@ -120,7 +120,7 @@
       this.getGoodsData("sell")
     },
     mounted() {
-		  const refresh = debounce(this.$refs.scroll.refresh, 200)
+      const refresh = debounce(this.$refs.scroll.refresh, 200)
       //监听图片加载完成
       this.$bus.$on('itemImageLoad', ()=>{
         //使用scroll中的refresh

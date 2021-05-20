@@ -171,7 +171,7 @@
     },
     mounted() {
       setTimeout(()=>{
-        this.$refs.scroll.scroll.refresh()
+        this.$refs.scroll.refresh()
       },500)
     }
   }

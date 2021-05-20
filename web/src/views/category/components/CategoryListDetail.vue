@@ -4,7 +4,7 @@
       <div class="title"><h4>{{item.title}}</h4></div>
       <div class="content" v-for="(items,index) in item.content" :key="index">
         <a :href="items.location">
-          <div class="image-box"><img :src="items.image" alt="image"></div>
+          <div class="image-box"><img :src="items.image" alt="image" @load="imageLoadOver"></div>
           <p class="detail-title">{{items.title}}</p>
         </a>
       </div>
@@ -21,6 +21,11 @@ export default {
       default() {
         return []
       }
+    }
+  },
+  methods:{
+    imageLoadOver(){
+      this.$emit('imageLoad')
     }
   }
 }

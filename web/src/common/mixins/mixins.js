@@ -62,6 +62,7 @@ const closeCurrentPageMixins = {
     }
 }
 
+
 module.exports = {
     backTopMixins,
     closeCurrentPageMixins

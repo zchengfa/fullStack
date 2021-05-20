@@ -21,7 +21,7 @@
         </ul>
       </Scroll>
       <Scroll ref="scrollTwo" class="scroll-list-detail content" :probe-type="3">
-        <category-list-detail :category-list-detail="categoryListDetail"></category-list-detail>
+        <category-list-detail :category-list-detail="categoryListDetail" @imageLoad="imageLoadOver" ></category-list-detail>
       </Scroll>
     </div>
   </div>
@@ -33,6 +33,8 @@ import Scroll from "@/components/common/scroll/Scroll";
 import CategoryListDetail from "./components/CategoryListDetail";
 
 import {getCategoryList,getCategoryDetail} from "@/network/category";
+
+import {debounce} from "@/common/utils";
 
 export default {
   name:"Category",
@@ -72,8 +74,16 @@ export default {
     },
     showListDetail(index){
       this.currentIndex = index
+      //清空之前列表详细数据
+      this.categoryListDetail = []
       //点击列表项，获取对应的详细列表数据
       this.getCategoryDetail(this.categoryList[this.currentIndex])
+    },
+    //图片加载完刷新一下scroll
+    imageLoadOver() {
+      const refresh = debounce(this.$refs.scrollTwo.refresh, 200)
+      //使用scroll中的refresh
+      refresh()
     },
     //点击打开手机摄像头
     openCamera() {
@@ -87,13 +97,11 @@ export default {
   mounted() {
 
     setTimeout(() => {
-      this.$refs.scrollOne.scroll.refresh()
-      this.$refs.scrollTwo.scroll.refresh()
+      this.$refs.scrollOne.refresh()
+      this.$refs.scrollTwo.refresh()
     },100)
   },
   activated() {
-
-
 
   }
 }

@@ -9,8 +9,9 @@ ul li{
 }
 
 .title h4{
-    margin-block-start: 1rem;
-    margin-block-end: 1rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin-block: unset;
     text-indent: 1rem;
 }
 button{

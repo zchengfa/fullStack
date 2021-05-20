@@ -3,8 +3,10 @@
     <div class="list-item" v-for="(item, index) in categoryListDetail" :key="index">
       <div class="title"><h4>{{item.title}}</h4></div>
       <div class="content" v-for="(items,index) in item.content" :key="index">
-        <div class="image-box"><img :src="items.image" alt="image"></div>
-        <p class="detail-title">{{items.title}}</p>
+        <a :href="items.location">
+          <div class="image-box"><img :src="items.image" alt="image"></div>
+          <p class="detail-title">{{items.title}}</p>
+        </a>
       </div>
     </div>
   </div>
@@ -27,12 +29,21 @@ export default {
 <style scoped>
 .list-item {
   width: 100%;
+  text-align: center;
+}
+.list-item .title{
+  text-align: left;
+  text-indent: 1rem;
 }
 .list-item .content {
   display: inline-block;
   width: 30%;
   text-align: center;
   font-size: .8rem;
+}
+.content a {
+  display: block;
+  width: 100%;
 }
 .content img {
   width: 90%;

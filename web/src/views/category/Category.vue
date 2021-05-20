@@ -14,7 +14,7 @@
     <div class="main">
       <Scroll ref="scrollOne" class="scroll-list content" :probe-type="3">
         <ul class="category-list-left">
-          <li class="list-item" v-for="(item,index) in categoryData.list"
+          <li class="list-item" v-for="(item,index) in categoryList"
               :key="index">
             <a :class="{active:currentIndex===index}" @click="showListDetail(index)" :href="item.location">{{item}}</a>
           </li>
@@ -32,13 +32,13 @@ import NavBar from "@/components/common/navbar/NavBar";
 import Scroll from "@/components/common/scroll/Scroll";
 import CategoryListDetail from "./components/CategoryListDetail";
 
-import {getCategoryData} from "@/network/category";
+import {getCategoryList,getCategoryDetail} from "@/network/category";
 
 export default {
   name:"Category",
   data(){
     return {
-      categoryData:[],
+      categoryList:[],
       categoryListDetail:[],
       currentIndex:0
     }
@@ -49,23 +49,31 @@ export default {
     CategoryListDetail
   },
   methods:{
-    getCategoryData(){
-      getCategoryData().then(res => {
-        console.log(res.data[0])
-        this.categoryData = res.data[0]
-        if (this.currentIndex === 0) {
-          this.categoryListDetail = this.categoryData.categoryData[0][this.categoryData.list[0]]
-        }
+    getCategoryList(){
+      getCategoryList().then(res => {
+        //将获取到的列表数据赋给categoryList
+        this.categoryList = res.data.list
 
-
+        //拿到列表数据后立即获取列表第一项的详细列表数据
+        this.getCategoryDetail(this.categoryList[this.currentIndex])
 
       }).catch(err => {
         console.log(err)
       })
     },
+    getCategoryDetail(type) {
+      getCategoryDetail(type).then(res => {
+        //将获取到的列表详细数据赋给categoryListDetail
+        this.categoryListDetail = res.data.categoryDetail
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    },
     showListDetail(index){
       this.currentIndex = index
-      this.categoryListDetail = this.categoryData.categoryData[index][this.categoryData.list[index]]
+      //点击列表项，获取对应的详细列表数据
+      this.getCategoryDetail(this.categoryList[this.currentIndex])
     },
     //点击打开手机摄像头
     openCamera() {
@@ -74,7 +82,7 @@ export default {
     }
   },
   created() {
-    this.getCategoryData()
+    this.getCategoryList()
   },
   mounted() {
 
@@ -141,7 +149,7 @@ img{
 .content{
   display: inline-block;
   flex: 1;
-  height: calc(100% - 90px);
+  height: calc(100% - 94px);
   overflow: hidden;
 }
 .list-item,a{

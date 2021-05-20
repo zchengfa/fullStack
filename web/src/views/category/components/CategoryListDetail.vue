@@ -1,7 +1,7 @@
 <template>
   <div class="category-list-detail">
     <div class="list-item" v-for="(item, index) in categoryListDetail" :key="index">
-      <div class="title"><h4>{{item.title}}</h4></div>
+      <div class="title"><h4>{{item.title}}</h4><a :href="item.router">热销榜> </a></div>
       <div class="content" v-for="(items,index) in item.content" :key="index">
         <a :href="items.location">
           <div class="image-box"><img :src="items.image" alt="image" @load="imageLoadOver"></div>
@@ -38,13 +38,24 @@ export default {
 }
 .list-item .title{
   text-align: left;
-  text-indent: 1rem;
+  text-indent: .5rem;
 }
+
 .list-item .content {
   display: inline-block;
   width: 30%;
   text-align: center;
   font-size: .8rem;
+}
+.list-item .title h4{
+  display: inline-block;
+  width: 60%;
+}
+.list-item .title a{
+  display: inline-block;
+  width: 30%;
+  font-size: .8rem;
+  text-align: right;
 }
 .content a {
   display: block;

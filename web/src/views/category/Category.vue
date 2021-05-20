@@ -169,7 +169,8 @@ a{
   display: inline-block;
   line-height: 3rem;
   text-align: center;
-  font-size: 1rem;
+  font-size: .9rem;
+  font-min-size: 14px;
   color: #8a8686;
 }
 .scroll-list-detail{

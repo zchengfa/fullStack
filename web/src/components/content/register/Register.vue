@@ -7,6 +7,13 @@
         <input type="text" placeholder="手机号" @input="onChange" v-model="username" />
         <input type="password" placeholder="密码:" @input="onChange" v-model="password" />
         <input type="password" placeholder="确认密码:" @input="onChange" v-model="confirmPwd" />
+        <div>
+          <input type="text" class="mail-code">
+          <button class="send-verify">
+            <span v-if="!isSendAgain">发送验证码</span>
+            <span v-else>重新发送</span>
+          </button>
+        </div>
       </div>
       <div class="button-box">
         <button :class="{active:!isAble}" type="button" :disabled="isAble" @click="submitRegister">注册</button>
@@ -34,6 +41,7 @@ export default {
   data(){
     return {
       confirmPwd:'',
+      isSendAgain:false
     }
   },
   methods:{
@@ -47,22 +55,29 @@ export default {
     },
     submitRegister() {
       //创建正则表达式
-      const RegExp = /^((13[0-9])|(15[^4])|(18[^4])|(199))\d{8}/
+      const RegExpPhone = /^((13[0-9])|(15[^4])|(18[^4])|(199))\d{8}/
+      const RegExpMail = /^[1-9]\d{7,10}@qq\.com/
 
       const encryptPwd = encrypt(this.password)
       const encryptConfirmPwd = encrypt(this.confirmPwd)
-      if (RegExp.test(this.username)) {
+      //先判断用户注册所用的账号是否为手机号或者qq邮箱
+      if (RegExpPhone.test(this.username) || RegExpMail.test(this.username)) {
         if (encryptPwd===encryptConfirmPwd){
-          register(this.username,encryptPwd).then((res)=> {
-            if (res.data.success) {
-              //注册成功跳转页面
-              this.$toast.showToast(res.data.success)
-              this.$router.go(-1)
-            }
-            else {
-              this.$toast.showToast(res.data.exist)
-            }
-          })
+          if (this.password.length >=6) {
+            register(this.username,encryptPwd).then((res)=> {
+              if (res.data.success) {
+                //注册成功跳转页面
+                this.$toast.showToast(res.data.success)
+                this.$router.go(-1)
+              }
+              else {
+                this.$toast.showToast(res.data.exist)
+              }
+            })
+          }
+          else {
+            this.$toast.showToast('密码长度至少为6')
+          }
         }
         else {
           this.$toast.showToast('两次密码不一致')

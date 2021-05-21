@@ -95,7 +95,7 @@ export default {
     this.orderList = orderMenuImage
   },
   mounted() {
-    console.log(this.isLogin)
+
     const token = sessionStorage.getItem('token')
 
     jwt.verify(token,'user', (err, decode) => {

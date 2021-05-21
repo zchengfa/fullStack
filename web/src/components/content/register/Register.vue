@@ -4,7 +4,7 @@
     <form class="register-form">
       <div class="title"><h4>欢迎来到注册页面</h4></div>
       <div class="input-box">
-        <input type="text" placeholder="昵称/手机号" @input="onChange" v-model="username" />
+        <input type="text" placeholder="手机号" @input="onChange" v-model="username" />
         <input type="password" placeholder="密码:" @input="onChange" v-model="password" />
         <input type="password" placeholder="确认密码:" @input="onChange" v-model="confirmPwd" />
       </div>
@@ -46,23 +46,32 @@ export default {
       }
     },
     submitRegister() {
+      //创建正则表达式
+      const RegExp = /^((13[0-9])|(15[^4])|(18[^4])|(199))\d{8}/
+
       const encryptPwd = encrypt(this.password)
       const encryptConfirmPwd = encrypt(this.confirmPwd)
-      if (encryptPwd===encryptConfirmPwd){
-        register(this.username,encryptPwd).then((res)=> {
-          if (res.data.success) {
-            //注册成功跳转页面
-            this.$toast.showToast(res.data.success)
-            this.$router.go(-1)
-          }
-          else {
-            this.$toast.showToast(res.data.exist)
-          }
-        })
+      if (RegExp.test(this.username)) {
+        if (encryptPwd===encryptConfirmPwd){
+          register(this.username,encryptPwd).then((res)=> {
+            if (res.data.success) {
+              //注册成功跳转页面
+              this.$toast.showToast(res.data.success)
+              this.$router.go(-1)
+            }
+            else {
+              this.$toast.showToast(res.data.exist)
+            }
+          })
+        }
+        else {
+          this.$toast.showToast('两次密码不一致')
+        }
       }
       else {
-        this.$toast.showToast('两次密码不一致')
+        this.$toast.showToast('您的账号格式不正确')
       }
+
     }
   }
 }

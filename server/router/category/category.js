@@ -22,6 +22,10 @@ module.exports = app => {
                     res.setHeader('Access-Control-Allow-Origin', '*')
                     res.send({"categoryDetail":result[0].categoryDetail})
                 }
+                else {
+                    res.setHeader('Access-Control-Allow-Origin', '*')
+                    res.send({"empty":"数据暂无"})
+                }
             }
         })
 

@@ -21,7 +21,8 @@
         </ul>
       </Scroll>
       <Scroll ref="scrollTwo" class="scroll-list-detail content" :probe-type="3">
-        <category-list-detail :category-list-detail="categoryListDetail" @imageLoad="imageLoadOver" ></category-list-detail>
+        <category-list-detail v-show="!isEmpty" :category-list-detail="categoryListDetail" @imageLoad="imageLoadOver" ></category-list-detail>
+        <div class="empty" v-show="isEmpty">{{emptyMessage}}</div>
       </Scroll>
     </div>
   </div>
@@ -42,7 +43,9 @@ export default {
     return {
       categoryList:[],
       categoryListDetail:[],
-      currentIndex:0
+      currentIndex:0,
+      isEmpty:false,
+      emptyMessage:"emptyMessage"
     }
   },
   components:{
@@ -65,8 +68,15 @@ export default {
     },
     getCategoryDetail(type) {
       getCategoryDetail(type).then(res => {
-        //将获取到的列表详细数据赋给categoryListDetail
-        this.categoryListDetail = res.data.categoryDetail
+        if (res.data.categoryDetail) {
+          this.isEmpty = false
+          //将获取到的列表详细数据赋给categoryListDetail
+          this.categoryListDetail = res.data.categoryDetail
+        }
+        else {
+          this.isEmpty = true
+          this.emptyMessage = res.data.empty
+        }
       })
       .catch(err => {
         console.log(err)
@@ -78,6 +88,9 @@ export default {
       this.categoryListDetail = []
       //点击列表项，获取对应的详细列表数据
       this.getCategoryDetail(this.categoryList[this.currentIndex])
+
+      //每次点击列表项时让scroll滚动到顶部
+      this.$refs.scrollTwo.scrollTo(0,0,0)
     },
     //图片加载完刷新一下scroll
     imageLoadOver() {
@@ -117,9 +130,10 @@ export default {
 .category{
   width: 100vw;
   height: 100vh;
+  text-align: center;
 }
 .nav-bar{
-  text-align: center;
+
   background-color: #e5dede;
 }
 .nav-bar div{
@@ -175,5 +189,17 @@ a{
 }
 .scroll-list-detail{
   flex: 3;
+}
+.empty {
+  position: relative;
+  top: 50vh;
+  left: 50%;
+  width: 50%;
+  height: 5vh;
+  line-height: 5vh;
+  color: #a5a2a2;
+  border: 1px solid #a5a2a2;
+  border-radius: 1rem;
+  transform: translate(-50%,-20vh);
 }
 </style>

@@ -8,7 +8,7 @@
       </div>
       <div class="content">
         <div class="input-box">
-          <input type="text" placeholder="账号/手机号" @input="onChange" v-model="username"/>
+          <input type="text" placeholder="手机号/QQ邮箱" @input="onChange" v-model="username"/>
           <input type="password" placeholder="密码" @input="onChange" v-model="password"/>
         </div>
         <div class="option">
@@ -70,9 +70,16 @@ export default {
           if (res.data.token) {
             //登录成功，将token存储到sessionStorage临时存储中，页面关闭时会自动清除token
             sessionStorage.token = res.data.token
+            this.$toast.showToast('登录成功,即将返回上一页面',1000)
 
-            //登录成功，跳转到profile页面
-            this.$router.go(-1)
+            setTimeout(() => {
+              //登录成功，跳转到profile页面
+              this.$router.go(-1)
+            },1200)
+          }
+          else if (res.data.non_exist) {
+            //登录失败，提示后端传过来的提示信息
+            this.$toast.showToast(res.data.non_exist)
           }
           else {
             //登录失败，提示后端传过来的提示信息

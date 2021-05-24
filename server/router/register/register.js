@@ -7,6 +7,34 @@ module.exports = app => {
     app.use(bodyParser.json())
     app.use(bodyParser.urlencoded({extended:false}))
 
+    const {sendMailVerifyCode,generateVerifyCode} = require('../../util/sendMailer')
+
+    let verifyCode = generateVerifyCode()
+
+    const verifyCodeExpired = 30
+
+    router.post('/verifyMailCode', (req, res) => {
+        const paramsObj = JSON.parse(JSON.stringify(req.body))
+        console.log(paramsObj)
+
+        const html = `<p>这是一条来自mall项目组发送给您的验证邮件，您的验证码为<a href="javascript:(0)" style="color: #f00">${verifyCode}</a>，请在${verifyCodeExpired/60}分钟内使用此验证码，过期无效哦！</p>`
+
+        sendMailVerifyCode(paramsObj.email,'mall用户注册验证邮件',html).then(() => {
+            console.log(`邮件已经发送给了${paramsObj.email}`)
+            res.setHeader('Access-Control-Allow-Origin', '*')
+            res.send({'verify_code':generateVerifyCode(),'verify_code_expired':verifyCodeExpired})
+
+            //将验证码返回给前端后设置一个定时器，是生成的验证码为空，使其与之前的验证码不一致，实现验证码过期
+            setTimeout(() => {
+                verifyCode = ''
+            },verifyCodeExpired * 1000)
+        }).catch(() => {
+            console.log(`${paramsObj.email}不存在，无法发送邮箱验证`)
+            res.setHeader('Access-Control-Allow-Origin', '*')
+            res.send({'email_non_exist':`${paramsObj.email}邮箱不存在,无法发送邮箱验证`})
+        })
+    })
+
     router.post('/register', (req, res) => {
         //将请求参数转换成对象
         const paramsObj = JSON.parse(JSON.stringify(req.body))

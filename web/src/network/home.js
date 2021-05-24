@@ -41,6 +41,15 @@ export function login (username, pwd) {
     })
   })
 }
+//导出发送验证码请求函数
+export function sendMailVerifyCode (email) {
+  return requestPost({
+    url:'/verifyMailCode',
+    data:qs.stringify({
+      email
+    })
+  })
+}
 
 //导出注册函数
 export function register (username,pwd) {

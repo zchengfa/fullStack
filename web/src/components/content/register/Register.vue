@@ -7,12 +7,12 @@
         <input type="text" placeholder="手机号/QQ邮箱" @input="onChange" v-model="username" />
         <input type="password" placeholder="密码:" @input="onChange" v-model="password" />
         <input type="password" placeholder="确认密码:" @input="onChange" v-model="confirmPwd" />
-        <div class="mail-verify" >
-          <div><input type="text" class="mail-code" v-model="mailVerifyCode"></div>
+        <div class="mail-verify" v-show="isMail">
+          <div><input type="text" class="mail-code" @input="onChange" v-model="mailVerifyCode"></div>
           <div>
-            <button @click="sendVerifyCode">
+            <button type="button" :class="{active: !isSendAgain}" @click="sendVerifyCode">
               <span v-if="!isSendAgain">发送验证码</span>
-              <span v-else>重新发送</span>
+              <span v-else>重新发送({{verifyCodeExpired}})秒</span>
             </button>
           </div>
         </div>
@@ -35,7 +35,7 @@ import {closeCurrentPageMixins} from '@/common/mixins/mixins'
 //引入密码加密模块
 import {encrypt} from "@/common/crypt";
 
-import {register} from "@/network/home";
+import {register,sendMailVerifyCode} from "@/network/home";
 
 export default {
   name: "Register",
@@ -47,35 +47,65 @@ export default {
       isMail:false,
       RegExpPhone:/^((13[0-9])|(15[^4])|(18[^4])|(199))\d{8}/,
       RegExpMail:/^[1-9]\d{7,10}@qq\.com/,
-      mailVerifyCode:''
+      mailVerifyCode:'',
+      encryptPwd:encrypt(this.password),
+      encryptConfirmPwd:encrypt(this.confirmPwd),
+      verifyCode:'',
+      verifyCodeExpired:''
     }
   },
   methods:{
     onChange(){
-      if (this.username.length && this.password.length && this.confirmPwd.length) {
+      //判断账号类型，根据账号类型决定注册按钮能点击的条件
+      if (this.adjustAccountType()) {
+       this.changeDisabledStatus(this.username.length && this.password.length && this.confirmPwd.length && this.mailVerifyCode.length === 6)
+      }
+      else {
+        this.changeDisabledStatus(this.username.length && this.password.length && this.confirmPwd.length)
+      }
+
+    },
+    //检测参数真假，改变按钮的点击状态
+    changeDisabledStatus(confident){
+      if (confident) {
         this.isAble = false
       }
       else {
         this.isAble=true
       }
+    },
+    adjustAccountType() {
       //判断账号是否为QQ邮箱类型，若是则显示发送邮箱验证元素
       if (this.RegExpMail.test(this.username)) {
         this.isMail = true
+        return true
       }
       else {
         this.isMail = false
+        return  false
+      }
+    },
+    //检测密码是否一致，长度是否达到要求
+    verifyPass() {
+      if (this.encryptPwd=== this.encryptConfirmPwd){
+        if (this.password.length >=6) {
+          return true
+        }
+        else {
+          this.$toast.showToast('密码长度至少为6')
+        }
+      }
+      else {
+        this.$toast.showToast('两次密码不一致')
       }
     },
     submitRegister() {
-
-      const encryptPwd = encrypt(this.password)
-      const encryptConfirmPwd = encrypt(this.confirmPwd)
-
       //先判断用户注册所用的账号是否为手机号或者qq邮箱
-      if (this.RegExpPhone.test(this.username) || this.RegExpMail.test(this.username)) {
-        if (encryptPwd===encryptConfirmPwd){
-          if (this.password.length >=6) {
-            register(this.username,encryptPwd).then((res)=> {
+      if (this.RegExpPhone.test(this.username) || this.adjustAccountType()) {
+        //若是手机号
+        if (this.RegExpPhone.test(this.username)) {
+          if (this.verifyPass()) {
+            register(this.username,this.encryptPwd).then((res)=> {
               if (res.data.success) {
                 //注册成功跳转页面
                 this.$toast.showToast(res.data.success)
@@ -86,12 +116,10 @@ export default {
               }
             })
           }
-          else {
-            this.$toast.showToast('密码长度至少为6')
-          }
         }
+        //若是QQ邮箱
         else {
-          this.$toast.showToast('两次密码不一致')
+
         }
       }
       else {
@@ -99,9 +127,27 @@ export default {
       }
 
     },
-    //给邮箱发送验证码
+    //给邮箱发送验证码,并将验证码赋值给mailVerifyCode，以便注册按钮可以接收到验证码后提交给后端进行校验
     sendVerifyCode() {
-
+      this.isSendAgain = true
+      sendMailVerifyCode(this.username).then(res => {
+        if (res.data.email_non_exist) {
+          this.$toast.showToast(res.data.email_non_exist,1000)
+        }
+        else {
+          this.verifyCode = res.data.verify_code
+          this.verifyCodeExpired = res.data.verify_code_expired
+          let timer = null
+          timer = setInterval(() => {
+            this.verifyCodeExpired --
+            if (this.verifyCodeExpired === 0) {
+              clearInterval(timer)
+            }
+          },1000)
+        }
+      }).catch(err => {
+        console.log(err)
+      })
     }
   }
 }
@@ -191,8 +237,9 @@ button{
 .mail-verify button {
   position: relative;
   top:5%;
-  font-size: .8rem;
+  font-size: 12px;
   width: 70%;
   height: 40%;
+  background-color: #e02929;
 }
 </style>

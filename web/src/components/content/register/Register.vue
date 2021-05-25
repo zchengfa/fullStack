@@ -48,14 +48,15 @@ export default {
       RegExpPhone:/^((13[0-9])|(15[^4])|(18[^4])|(199))\d{8}/,
       RegExpMail:/^[1-9]\d{7,10}@qq\.com/,
       mailVerifyCode:'',
-      encryptPwd:encrypt(this.password),
-      encryptConfirmPwd:encrypt(this.confirmPwd),
-      verifyCode:'',
-      verifyCodeExpired:''
+      encryptPwd:'',
+      encryptConfirmPwd:'',
+      verifyCodeExpired: 0
     }
   },
   methods:{
     onChange(){
+      this.encryptPwd = encrypt(this.password)
+      this.encryptConfirmPwd = encrypt(this.confirmPwd)
       //判断账号类型，根据账号类型决定注册按钮能点击的条件
       if (this.adjustAccountType()) {
        this.changeDisabledStatus(this.username.length && this.password.length && this.confirmPwd.length && this.mailVerifyCode.length === 6)
@@ -119,7 +120,28 @@ export default {
         }
         //若是QQ邮箱
         else {
+          if (this.verifyPass()) {
+            register(this.username,this.encryptPwd,this.mailVerifyCode).then(res => {
+              console.log(res)
+              if (res.data.success) {
+                //注册成功跳转页面
+                this.$toast.showToast(res.data.success)
+                this.$router.go(-1)
+              }
+              else if (res.data.code_err) {
+                this.$toast.showToast(res.data.code_err)
+              }
+              else if (res.data.code_expired) {
+                this.$toast.showToast(res.data.code_expired)
+              }
+              else {
+                this.$toast.showToast(res.data.exist)
+              }
 
+            }).catch(err => {
+              console.log(err)
+            })
+          }
         }
       }
       else {
@@ -131,17 +153,19 @@ export default {
     sendVerifyCode() {
       this.isSendAgain = true
       sendMailVerifyCode(this.username).then(res => {
+        console.log(res)
         if (res.data.email_non_exist) {
           this.$toast.showToast(res.data.email_non_exist,1000)
         }
-        else {
-          this.verifyCode = res.data.verify_code
+        else if(res.data.verify_code_expired){
           this.verifyCodeExpired = res.data.verify_code_expired
           let timer = null
+          console.log(this.verifyCodeExpired)
           timer = setInterval(() => {
             this.verifyCodeExpired --
-            if (this.verifyCodeExpired === 0) {
+            if (this.verifyCodeExpired <= 0) {
               clearInterval(timer)
+              this.verifyCodeExpired = 0
             }
           },1000)
         }

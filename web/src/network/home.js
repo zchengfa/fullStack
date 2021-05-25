@@ -52,12 +52,13 @@ export function sendMailVerifyCode (email) {
 }
 
 //导出注册函数
-export function register (username,pwd) {
+export function register (username,pwd,verifyCode) {
   return requestPost({
     url:'/register',
     data:qs.stringify({
       username,
-      pwd
+      pwd,
+      verifyCode
     })
   })
 }

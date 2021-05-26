@@ -18,7 +18,7 @@
         <button class="login" @click="login">登录</button>
       </div>
       <div class="collection">
-        <a href="javascript:void (0)" class="collection-item"  v-for="(item, index) in collectionList" :key="index">
+        <a href="javascript:void (0)" class="collection-item"  v-for="(item, index) in userInfoList" :key="index">
           <span class="count">{{item.count}}</span>
           <span class="title">{{item.title}}</span>
         </a>
@@ -45,7 +45,7 @@ export default {
   name: "Login",
   data(){
     return {
-      collectionList:[
+      userInfoList:[
         {
           "count":"--",
           "title":"商品收藏"

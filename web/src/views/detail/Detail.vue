@@ -12,7 +12,7 @@
     </Scroll>
     <back-top v-show="isShowBackTop" @click.native="backTop"></back-top>
     <detail-add-cart :product-info="productInfo" v-if="isShowAddCart" @submitAdd="submitAdd"></detail-add-cart>
-    <detail-bottom-bar ref="detailBottomBar" @addCart="addCart" @collectProduct="collectProduct"></detail-bottom-bar>
+    <detail-bottom-bar ref="detailBottomBar" @addCart="addCart" :is-collected="isCollected" @collectProduct="collectProduct"></detail-bottom-bar>
   </div>
 </template>
 
@@ -29,7 +29,7 @@
   import BackTop from "@/components/content/backTop/BackTop";
   import Scroll from "@/components/common/scroll/Scroll";
 
-  import {getGoodsDetail,addShopToCart,getProductCollectionStatus} from "@/network/home"
+  import {getGoodsDetail,addShopToCart,getProductCollectionStatus,changeUserProductCollectionStatus} from "@/network/home"
   import {debounce} from "@/common/utils"
 
   import mixins from "@/common/mixins/mixins";
@@ -50,7 +50,8 @@
         currentRefsIndex:0,
         isShowAddCart:false,
         productInfo:{},
-        token:sessionStorage.getItem('token')
+        token:sessionStorage.getItem('token'),
+        isCollected:false
       }
     },
     components:{
@@ -111,13 +112,45 @@
         }
         //token不存在，用户未登录，引导用户进入登录页面
         else {
-          this.$router.replace('/login')
+          this.$router.push({path:'/login'})
         }
 
       },
+      changeUserProductCollectionStatus(user_id,product_id,status) {
+        changeUserProductCollectionStatus(user_id,product_id,status).then(res => {
+          if (res.data.current_status) {
+            this.isCollected = res.data.current_status
+            this.$toast.showToast('商品收藏成功')
+          }
+          else {
+            this.isCollected = res.data.current_status
+            this.$toast.showToast('取消收藏')
+          }
+        })
+      },
       collectProduct() {
         //点击按钮先判断用户是否登录，若用户未登录，跳转到登录页面
-        console.log('collectProduct')
+        if (this.token) {
+          verify(this.token, (err,decode) => {
+            if (err) throw err
+            else {
+              //判断当前商品是在收藏状态还是未收藏状态
+              if (this.isCollected) {
+                //已处于收藏状态，点击按钮取消收藏
+                this.changeUserProductCollectionStatus(decode.user_id,this.id,1)
+              }
+              else {
+                //处于未收藏状态，点击按钮收藏商品
+                this.changeUserProductCollectionStatus(decode.user_id,this.id,0)
+              }
+            }
+          })
+
+        }
+        //没有token值，用户未登录，引导用户进入登录页面
+        else {
+          this.$router.push({path:'/login'})
+        }
       },
       submitAdd(count) {
         //确认加入购物车，隐藏确认加入购物车组件，并将要加入购物车的商品数据提交给后端
@@ -148,7 +181,14 @@
       },
       getProductCollectionStatus(user_id,product_id) {
         getProductCollectionStatus(user_id,product_id).then(res => {
-          console.log(res)
+          //收藏状态为true时
+          if (res.data.collection_status) {
+            this.isCollected = res.data.collection_status
+          }
+          //收藏状态为false时
+          else {
+            this.isCollected = res.data.collection_status
+          }
         })
       }
     }
@@ -190,13 +230,11 @@
       //判断该组件是否创建
       if (this.$refs.detailBottomBar) {
         //创建完页面后检测用户是否登录，若已经登录，获取该用户是否已经收藏过该商品，从而改变收藏按钮的状态，若未登录，让收藏按钮处于默认状态
-        console.log(this.token)
         if (this.token) {
           //若用户已经登录
           verify(this.token, (err,decode) => {
             if (err) throw err
             else {
-              console.log(decode)
               this.getProductCollectionStatus(decode.user_id,this.id)
             }
           })

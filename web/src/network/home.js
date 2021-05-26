@@ -34,10 +34,22 @@ export function getGoodsDetail(product_type,product_id){
 //导出获取该用户是否收藏该产品的状态的函数
 export function getProductCollectionStatus(user_id,product_id){
   return request({
-    url:'/userCollection',
+    url:'/userProductCollectionStatus',
     params:{
       user_id,
       product_id
+    }
+  })
+}
+
+//导出修改对应用户对应商品的收藏状态函数
+export function changeUserProductCollectionStatus (user_id,product_id,currentStatus) {
+  return request({
+    url:'/changeUserProductCollectionStatus',
+    params:{
+      user_id,
+      product_id,
+      currentStatus
     }
   })
 }

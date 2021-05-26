@@ -114,6 +114,7 @@
     position: absolute;
     top:50%;
     width: 100%;
+    transform: translateY(-50%);
   }
   .swiper-controller button:first-child {
     float: left;

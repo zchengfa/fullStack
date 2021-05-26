@@ -11,13 +11,14 @@
         <div class="box">
           <div class="customer">
             <div class="image-box"><img src="~assets/image/detail/customer.png" alt="image"></div>
-            <div class="button-box"><button>客服</button></div>
+            <div class="button-box" @click="contactCustomer"><button>客服</button></div>
           </div>
         </div>
         <div class="box">
           <div class="favorite">
-            <div class="image-box"><img src="~assets/image/detail/favorite.png" alt="image"></div>
-            <div class="button-box"><button @click="collectProduct">收藏</button></div>
+            <div class="image-box" v-if="!isCollected"><img src="~assets/image/detail/favorite.png" alt="image"></div>
+            <div class="image-box" v-else><img src="~assets/image/detail/sweetHeart.png" alt="image"></div>
+            <div class="button-box" @click="collectProduct"><button >收藏</button></div>
           </div>
         </div>
       </div>
@@ -36,12 +37,23 @@
 <script>
 export default {
   name: "DetailBottomBar",
+  props:{
+    isCollected:{
+      type:Boolean,
+      default(){
+        return false
+      }
+    }
+  },
   methods:{
     addCart(){
       this.$emit('addCart')
     },
     collectProduct() {
       this.$emit('collectProduct')
+    },
+    contactCustomer() {
+      this.$toast.showToast('联系客服功能暂未开发')
     }
   }
 }

@@ -12,7 +12,7 @@
     </Scroll>
     <back-top v-show="isShowBackTop" @click.native="backTop"></back-top>
     <detail-add-cart :product-info="productInfo" v-if="isShowAddCart" @submitAdd="submitAdd"></detail-add-cart>
-    <detail-bottom-bar @addCart="addCart"></detail-bottom-bar>
+    <detail-bottom-bar ref="detailBottomBar" @addCart="addCart" @collectProduct="collectProduct"></detail-bottom-bar>
   </div>
 </template>
 
@@ -29,10 +29,12 @@
   import BackTop from "@/components/content/backTop/BackTop";
   import Scroll from "@/components/common/scroll/Scroll";
 
-  import {getGoodsDetail,addShopToCart} from "@/network/home"
+  import {getGoodsDetail,addShopToCart,getProductCollectionStatus} from "@/network/home"
   import {debounce} from "@/common/utils"
 
   import mixins from "@/common/mixins/mixins";
+
+  import {verify} from '@/common/jsonwebtoken'
 
   export default {
     name: "detail",
@@ -113,6 +115,10 @@
         }
 
       },
+      collectProduct() {
+        //点击按钮先判断用户是否登录，若用户未登录，跳转到登录页面
+        console.log('collectProduct')
+      },
       submitAdd(count) {
         //确认加入购物车，隐藏确认加入购物车组件，并将要加入购物车的商品数据提交给后端
         this.isShowAddCart = !this.isShowAddCart
@@ -139,10 +145,16 @@
         //     .catch(err => {
         //       this.$toast.showToast(err)
         //     })
+      },
+      getProductCollectionStatus(user_id,product_id) {
+        getProductCollectionStatus(user_id,product_id).then(res => {
+          console.log(res)
+        })
       }
     }
     ,
     created() {
+
       //将路由传过来的参数赋值给id和type
       this.id = this.$route.params.product_id
       this.type = this.$route.params.product_type
@@ -168,11 +180,28 @@
         this.scrollToTopY.push(this.$refs.comment.$el.offsetTop)
         this.scrollToTopY.push(this.$refs.recommend.$el.offsetTop)
       },100)
+
     },
     mounted() {
       setTimeout(()=>{
         this.$refs.scroll.refresh()
-      },500)
+      },50)
+
+      //判断该组件是否创建
+      if (this.$refs.detailBottomBar) {
+        //创建完页面后检测用户是否登录，若已经登录，获取该用户是否已经收藏过该商品，从而改变收藏按钮的状态，若未登录，让收藏按钮处于默认状态
+        console.log(this.token)
+        if (this.token) {
+          //若用户已经登录
+          verify(this.token, (err,decode) => {
+            if (err) throw err
+            else {
+              console.log(decode)
+              this.getProductCollectionStatus(decode.user_id,this.id)
+            }
+          })
+        }
+      }
     }
   }
 </script>

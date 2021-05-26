@@ -1,7 +1,7 @@
 <template>
   <div class="swiper-item">
     <ul>
-      <li v-for="(item, index) in banner" :class="{'active':index===mark}" :key="index"></li>
+      <li v-for="(item, index) in banner" :class="{active:index===mark}" :key="index"></li>
     </ul>
   </div>
 </template>
@@ -12,7 +12,9 @@
     props:{
       banner:{
         type:Array,
-        default:[]
+        default() {
+          return []
+        }
       },
       mark:{
         type:Number,

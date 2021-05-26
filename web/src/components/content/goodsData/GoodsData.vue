@@ -31,7 +31,7 @@
   .goods-data{
     display: flex;
     flex-wrap: wrap;
-    margin: 0 auto 4rem;
+    margin: 0 auto 1rem;
     width: 90%;
     font-size: 14px;
     color: #a9a9a9;

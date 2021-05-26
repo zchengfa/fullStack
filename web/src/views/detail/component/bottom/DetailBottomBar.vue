@@ -17,7 +17,7 @@
         <div class="box">
           <div class="favorite">
             <div class="image-box"><img src="~assets/image/detail/favorite.png" alt="image"></div>
-            <div class="button-box"><button>收藏</button></div>
+            <div class="button-box"><button @click="collectProduct">收藏</button></div>
           </div>
         </div>
       </div>
@@ -39,6 +39,9 @@ export default {
   methods:{
     addCart(){
       this.$emit('addCart')
+    },
+    collectProduct() {
+      this.$emit('collectProduct')
     }
   }
 }

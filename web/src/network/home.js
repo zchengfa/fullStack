@@ -31,6 +31,17 @@ export function getGoodsDetail(product_type,product_id){
   })
 }
 
+//导出获取该用户是否收藏该产品的状态的函数
+export function getProductCollectionStatus(user_id,product_id){
+  return request({
+    url:'/userCollection',
+    params:{
+      user_id,
+      product_id
+    }
+  })
+}
+
 //导出登录函数
 export function login (username, pwd) {
   return requestPost({

@@ -39,7 +39,7 @@ import {getProfileData} from "@/network/profile";
 
 import {orderMenuImage,meansMenuImage,otherMenuImage} from '@/assets/image/profile/orderMenu/orderMenuImage'
 
-import jwt from 'jsonwebtoken'
+import {verify} from '@/common/jsonwebtoken'
 
 export default {
   name: "Login",
@@ -98,7 +98,7 @@ export default {
 
     const token = sessionStorage.getItem('token')
 
-    jwt.verify(token,'user', (err, decode) => {
+    verify(token, (err, decode) => {
       if (err) {
         console.log(err,'登录凭证不存在，请登录')
       }

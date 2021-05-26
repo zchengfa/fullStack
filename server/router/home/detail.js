@@ -21,6 +21,11 @@ module.exports = app =>{
             }
         })
     })
+    router.get('/userCollection',(req,res) => {
+        console.log(req.query)
+        res.setHeader('Access-Control-Allow-Origin', '*')
+        res.send('doc')
+    })
 
     app.use('/home/api', router)
 }

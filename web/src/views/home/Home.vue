@@ -8,6 +8,7 @@
       <menu-list :menu-list="menuList"></menu-list>
       <tab-control :class="{fixed: isTabFixed}" ref="tabControlTwo" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
       <goods-data :goods="goods[currentType].list" :current-type="currentType"></goods-data>
+      <div class="no-more" v-if="noMore"><p>没有更多了哦!</p></div>
     </Scroll>
     <back-top v-show="isShowBackTop" @click.native="backTop"></back-top>
 	</div>
@@ -44,7 +45,8 @@
           'sell':{page: 0, list: []},
           'new':{page: 0, list: []}
         },
-        tabOffsetTop:0
+        tabOffsetTop:0,
+        noMore:false
       }
     },
 		components:{
@@ -97,6 +99,10 @@
         const page = this.goods[type].page +1
         getGoodsData(type, page).then(res => {
          if(res.data.length===0){
+           this.noMore = true
+           setTimeout(() => {
+             this.noMore = false
+           },1000)
            console.log('没有数据！')
          }
          else {
@@ -104,9 +110,9 @@
            this.goods[type].list.push(...res.data[0].shopData)
            this.goods[type].page += 1
 
-           //上拉加载一次掉用一次结束上拉
-           this.$refs.scroll.finishPullUp()
          }
+          //上拉加载一次调用一次结束上拉
+          this.$refs.scroll.finishPullUp()
         })
       }
     },
@@ -161,9 +167,14 @@
   }
   .content{
     position: absolute;
-    top:0;
+    top:44px;
     bottom: 50px;
     width: 100vw;
     overflow: hidden;
+  }
+  .no-more {
+    text-align: center;
+    color: #a5a2a2;
+    font-size: 12px;
   }
 </style>

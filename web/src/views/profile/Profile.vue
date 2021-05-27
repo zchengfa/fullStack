@@ -35,7 +35,7 @@ import NavBar from "@/components/common/navbar/NavBar";
 import OrderMenu from "@/components/content/orderMenu/OrderMenu";
 import MenuList from "@/components/content/menuList/MenuList";
 
-import {getProfileData} from "@/network/profile";
+import {getUserInfo} from "@/network/profile";
 
 import {orderMenuImage,meansMenuImage,otherMenuImage} from '@/assets/image/profile/orderMenu/orderMenuImage'
 
@@ -65,7 +65,8 @@ export default {
       isLogin:false,
       username:'',
       headerCustom:'',
-      hasHeader:true
+      hasHeader:true,
+      token:sessionStorage.getItem('token')
     }
   },
   components:{
@@ -74,8 +75,17 @@ export default {
     MenuList
   },
   methods:{
-    getProfileData(){
-      getProfileData().then()
+    getUserInfo(username){
+      getUserInfo(username).then(res => {
+        console.log(res)
+        if (res.data.header_image) {
+          this.hasHeader = false
+          this.headerCustom = res.data.header_image
+        }
+        else {
+          this.hasHeader = true
+        }
+      })
           .catch(err => {
             console.log(err)
           })
@@ -88,35 +98,27 @@ export default {
     }
   },
   created() {
-    this.getProfileData()
-
     this.otherList = otherMenuImage
     this.meansList = meansMenuImage
     this.orderList = orderMenuImage
   },
   mounted() {
-
-    const token = sessionStorage.getItem('token')
-
-    verify(token, (err, decode) => {
-      if (err) {
-        console.log(err,'登录凭证不存在，请登录')
-      }
-      else {
-
-        if (decode) {
-          this.isLogin = true
-          this.username = decode.username
-          if (decode.headerImage) {
-            this.hasHeader = false
-            this.headerCustom = decode.headerImage
-          }
-          else {
-            this.hasHeader = true
+    if (this.token) {
+      verify(this.token, (err, decode) => {
+        if (err) throw err
+        else {
+          console.log(decode)
+          if (decode) {
+            this.isLogin = true
+            this.username = decode.username
+            this.getUserInfo(this.username)
           }
         }
-      }
-    })
+      })
+    }
+    else {
+      console.log('用户未登录')
+    }
   }
 }
 </script>
@@ -136,11 +138,20 @@ export default {
 
 .user-info {
   width: 100%;
-  height: 22vh;
+  height: 24vh;
 }
 .user-info .info{
-  width: 100%;
+  position: relative;
+  top: 1rem;
   text-align: center;
+}
+.user-header-custom img,
+user-header-default img{
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background-size: contain;
+  overflow: hidden;
 }
 .login-register{
   position: relative;

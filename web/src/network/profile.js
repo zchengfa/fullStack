@@ -1,7 +1,11 @@
-import {request} from "@/network/request";
+import {requestPost} from "@/network/request";
+import qs from 'qs'
 
-export function getProfileData () {
-    return request({
-        url:'/profile'
+export function getUserInfo (username) {
+    return requestPost({
+        url:'/userInfo',
+        data:qs.stringify({
+            username
+        })
     })
 }

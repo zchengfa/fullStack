@@ -51,6 +51,6 @@
     height: 1.5rem;
   }
   .padding {
-    padding-top: 1.5rem;
+    padding-top: 1rem;
   }
 </style>

@@ -70,7 +70,6 @@ export default {
           if (res.data.token) {
             //登录成功，将token存储到sessionStorage临时存储中，页面关闭时会自动清除token
             sessionStorage.token = res.data.token
-            this.$toast.showToast('登录成功,即将返回上一页面',1000)
 
             setTimeout(() => {
               //登录成功，跳转到profile页面

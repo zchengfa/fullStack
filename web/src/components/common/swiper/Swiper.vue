@@ -33,7 +33,6 @@
     data(){
       return {
         mark:0,
-        isLoad:false,
         timer:null
       }
     },
@@ -50,10 +49,7 @@
         },3000)
       },
       imageLoad(){
-        if(!this.isLoad){
-          this.$emit('swiperImageLoad')
-          this.isLoad = true
-        }
+        this.$emit('swiperImageLoad')
       },
       //点击按钮显示上一张图片
       previousPage(mark) {
@@ -89,7 +85,10 @@
       }
     },
     mounted() {
-      this.play()
+      //当banner数据为空时停止自动轮播
+      if (this.banner) {
+        this.play()
+      }
     }
 
   }

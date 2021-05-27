@@ -4,7 +4,7 @@
     <tab-control v-show="isTabFixed" ref="tabControlOne" class="tab-control" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
     <Scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll"
             :pull-up-load="true" @pullingUp="loadMore">
-      <swiper :banner="banner" @swiperImageLoad="swiperImageLoad"></swiper>
+      <swiper class="swiper" :banner="banner" @swiperImageLoad="swiperImageLoad"></swiper>
       <menu-list :menu-list="menuList"></menu-list>
       <tab-control :class="{fixed: isTabFixed}" ref="tabControlTwo" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
       <goods-data :goods="goods[currentType].list" :current-type="currentType"></goods-data>
@@ -92,6 +92,8 @@
         getHomeMultiData().then(res =>{
           this.banner =res.data[0].multiData[0].banner
           this.menuList = res.data[0].multiData[0].iconList
+        }).catch(err => {
+          console.log(err)
         })
       },
       getGoodsData(type){
@@ -177,4 +179,5 @@
     color: #a5a2a2;
     font-size: 12px;
   }
+
 </style>

@@ -85,6 +85,9 @@ export default {
         else {
           this.hasHeader = true
         }
+        if (res.data.shop_collection_count) {
+          this.userInfoList[0].count = '(' + res.data.shop_collection_count + ')'
+        }
       })
           .catch(err => {
             console.log(err)
@@ -188,6 +191,9 @@ user-header-default img{
 .collection span{
   display: block;
   height: 1.5rem;
+}
+.collection .count {
+  color: #e02929;
 }
 .collection .title::before{
   position: relative;

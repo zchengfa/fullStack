@@ -3,6 +3,8 @@ module.exports = app => {
     const bodyParser = require('body-parser')
     const router = express.Router()
 
+    const ID = require('../../util/generateID')
+
     //用于解析post请求体中传递过来的参数
     app.use(bodyParser.json())
     app.use(bodyParser.urlencoded({extended:false}))
@@ -81,7 +83,7 @@ module.exports = app => {
                         if (err) throw  err
                         // console.log(result[0]['COUNT(1)'])
                         //创建查询语句，查询该表已有多少条数据，将user_id字段在原有的数据数量上加一
-                        const insertQuery = `INSERT INTO USER (user_id,account,password) VALUES ('${result[0]['COUNT(1)'] + 1 }','${paramsObj.username}','${paramsObj.pwd}')`
+                        const insertQuery = `INSERT INTO USER (NUMBER,USER_ID,ACCOUNT,PASSWORD) VALUES ('${result[0]['COUNT(1)'] + 1 }','${ID()}','${paramsObj.username}','${paramsObj.pwd}')`
                         connection.query(insertQuery, (err) => {
                             if (err) throw err
                             res.setHeader('Access-Control-Allow-Origin', '*')

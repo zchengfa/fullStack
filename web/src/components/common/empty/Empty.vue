@@ -35,7 +35,7 @@ export default {
 .message{
   width: 100%;
   height: 100%;
-  font-family: cursive;
+  font-family: cursive ;
   color: #a5a2a2;
 }
 </style>

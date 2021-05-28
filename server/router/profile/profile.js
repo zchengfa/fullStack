@@ -12,22 +12,29 @@ module.exports = app => {
     router.post('/userInfo', (req, res) => {
         console.log(JSON.parse(JSON.stringify(req.body)))
         const paramsObj = JSON.parse(JSON.stringify(req.body))
+        console.log(paramsObj)
 
         const connection = connect()
 
         const selectQuery = `SELECT HEADER_IMAGE FROM USER WHERE ACCOUNT = '${paramsObj.username}'`
+        const selectQuery2 = `SELECT COUNT(1) FROM USER_COLLECTION WHERE USERS_ID = '${paramsObj.user_id}'`
 
-        connection.query(selectQuery, (err, result) => {
+        connection.query(`${selectQuery +';' +selectQuery2}`, (err, results) => {
             if (err) throw err
             else {
-                console.log(result)
-                if (result[0]['HEADER_IMAGE']) {
+                console.log(results[0][0]['HEADER_IMAGE'])
+                if (results[0][0]['HEADER_IMAGE']) {
                     res.setHeader('Access-Control-Allow-Origin', '*')
-                    res.send({'header_image':result[0]['HEADER_IMAGE']})
+                    res.send({
+                        'header_image':results[0]['HEADER_IMAGE'],
+                        'shop_collection_count':results[1][0]['COUNT(1)']
+                    })
                 }
                 else {
                     res.setHeader('Access-Control-Allow-Origin', '*')
-                    res.send({'header_image':false})
+                    res.send({'header_image':false,
+                        'shop_collection_count':results[1][0]['COUNT(1)']
+                    })
                 }
             }
         })

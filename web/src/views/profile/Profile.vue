@@ -75,8 +75,8 @@ export default {
     MenuList
   },
   methods:{
-    getUserInfo(username){
-      getUserInfo(username).then(res => {
+    getUserInfo(username,user_id){
+      getUserInfo(username,user_id).then(res => {
         console.log(res)
         if (res.data.header_image) {
           this.hasHeader = false
@@ -111,7 +111,7 @@ export default {
           if (decode) {
             this.isLogin = true
             this.username = decode.username
-            this.getUserInfo(this.username)
+            this.getUserInfo(this.username,decode.user_id)
           }
         }
       })

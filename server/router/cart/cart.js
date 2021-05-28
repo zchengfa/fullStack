@@ -40,7 +40,7 @@ module.exports = app => {
                         const USER_ID = result[0]['USER_ID']
                         //创建查询语句，查询该用户在USER_SHOP表中是否存在商品数据
                         const selectQuery = `SELECT product_id,product_title,product_image,product_price,product_count,isChecked
-                                                FROM USER_SHOP WHERE USERS_ID = ${USER_ID}`
+                                                FROM USER_SHOP WHERE USERS_ID = '${USER_ID}'`
 
                         //查询数据
                         connection.query(selectQuery,(err,result) => {
@@ -75,7 +75,7 @@ module.exports = app => {
         const connection = connect()
 
         //创建数据库修改语句
-        const updateChecked = `UPDATE USER_SHOP SET ISCHECKED = ${paramsObj.status} WHERE USERS_ID = ${paramsObj.user_id} AND PRODUCT_ID = '${paramsObj.product_id}'`
+        const updateChecked = `UPDATE USER_SHOP SET ISCHECKED = ${paramsObj.status} WHERE USERS_ID = '${paramsObj.user_id}' AND PRODUCT_ID = '${paramsObj.product_id}'`
 
         //执行修改数据库语句
         connection.query(updateChecked, (err) => {
@@ -97,7 +97,7 @@ module.exports = app => {
         const connection = connect()
 
         //创建更新数据库语句
-        const updateCount = `UPDATE USER_SHOP SET PRODUCT_COUNT = ${paramsObj.count} WHERE USERS_ID = ${paramsObj.user_id} AND PRODUCT_ID = ${paramsObj.product_id}`
+        const updateCount = `UPDATE USER_SHOP SET PRODUCT_COUNT = ${paramsObj.count} WHERE USERS_ID = '${paramsObj.user_id}' AND PRODUCT_ID = '${paramsObj.product_id}'`
 
         //执行更新语句
         connection.query(updateCount, (err, result) => {
@@ -133,7 +133,7 @@ module.exports = app => {
             if (err) throw err
             else {
                 const user_id = decode.user_id
-                const selectQuery = `SELECT * FROM USER_RECOMMEND_SHOP WHERE USERS_ID = ${user_id}`
+                const selectQuery = `SELECT * FROM USER_RECOMMEND_SHOP WHERE USERS_ID = '${user_id}'`
 
                 const connection = connect()
 

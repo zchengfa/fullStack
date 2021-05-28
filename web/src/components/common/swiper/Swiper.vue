@@ -42,9 +42,11 @@
     methods:{
       play(){
         this.timer = setInterval(()=>{
-          this.mark = this.mark +1
-          if(this.mark === this.banner.length){
-            this.mark = 0
+          if (this.banner) {
+            this.mark = this.mark +1
+            if(this.mark === this.banner.length){
+              this.mark = 0
+            }
           }
         },3000)
       },
@@ -85,10 +87,7 @@
       }
     },
     mounted() {
-      //当banner数据为空时停止自动轮播
-      if (this.banner) {
-        this.play()
-      }
+      this.play()
     }
 
   }

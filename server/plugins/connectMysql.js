@@ -6,7 +6,8 @@ module.exports = function connect () {
         host:'localhost',
         user:'root',
         password:'19961212',
-        database:'user'
+        database:'user',
+        multipleStatements: true
     })
 
     //连接数据库

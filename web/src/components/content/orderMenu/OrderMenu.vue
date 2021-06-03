@@ -40,6 +40,9 @@ export default {
  .menu .menu-item {
    flex: 1;
  }
+ .menu .item-link{
+   display: block;
+ }
  .menu-item img {
    position: relative;
    top:.5rem;
@@ -49,4 +52,5 @@ export default {
    height: 1.5rem;
    background-size: contain;
  }
+
 </style>

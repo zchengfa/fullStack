@@ -19,7 +19,8 @@
       </div>
       <div class="collection">
         <a href="javascript:void (0)" class="collection-item"  v-for="(item, index) in userInfoList" :key="index">
-          <span class="count">{{item.count}}</span>
+          <span class="count" v-if="!isLogin">{{item.count}}</span>
+          <Bubble :count="counts[index]" v-else></Bubble>
           <span class="title">{{item.title}}</span>
         </a>
       </div>
@@ -32,6 +33,7 @@
 
 <script>
 import NavBar from "@/components/common/navbar/NavBar";
+import Bubble from "@/components/common/bubble/Bubble";
 import OrderMenu from "@/components/content/orderMenu/OrderMenu";
 import MenuList from "@/components/content/menuList/MenuList";
 
@@ -40,6 +42,7 @@ import {getUserInfo} from "@/network/profile";
 import {orderMenuImage,meansMenuImage,otherMenuImage} from '@/assets/image/profile/orderMenu/orderMenuImage'
 
 import {verify} from '@/common/jsonwebtoken'
+
 
 export default {
   name: "Login",
@@ -59,6 +62,7 @@ export default {
           "title":"我的足迹"
         }
       ],
+      counts:[],
       orderList: [],
       meansList:[],
       otherList:[],
@@ -72,7 +76,8 @@ export default {
   components:{
     NavBar,
     OrderMenu,
-    MenuList
+    MenuList,
+    Bubble
   },
   methods:{
     getUserInfo(username,user_id){
@@ -86,7 +91,9 @@ export default {
           this.hasHeader = true
         }
         if (res.data.shop_collection_count) {
-          this.userInfoList[0].count = '(' + res.data.shop_collection_count + ')'
+          this.counts[0] = res.data.shop_collection_count
+          this.counts[1] = 0
+          this.counts[2] = 0
         }
       })
           .catch(err => {
@@ -184,7 +191,8 @@ user-header-default img{
   font-size: .8rem;
   line-height: 1.5rem;
 }
-.collection a{
+.collection a.collection-item{
+  position: relative;
   flex: 1;
   margin-bottom: .5rem;
 }

@@ -5,7 +5,6 @@ import store from "@/store";
 
 import toast from "@/components/common/toast";
 
-
 Vue.config.productionTip = false
 
 //将Vue实例给$bus（事件总线）并添加到Vue原型上

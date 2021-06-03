@@ -1,5 +1,5 @@
 <template>
-  <div class="message-bubble" v-if="bubble">
+  <div class="message-bubble" v-show="count">
     <div class="content">
       <span class="count">{{count}}</span>
     </div>
@@ -10,21 +10,25 @@
 export default {
   name: "MessageBubble",
   props:{
-    count:{
+    count: {
       type:Number,
       default() {
         return 0
       }
-    }
-  },
-  computed:{
-    bubble(){
-      return this.count !== 0
     }
   }
 }
 </script>
 
 <style scoped>
-
+.message-bubble {
+  position: absolute;
+  left: 65%;
+  width: 1rem;
+  height: 1rem;
+  background-color: #e02929 !important;
+  color: #fff;
+  border-radius: 50%;
+  line-height: 1rem;
+}
 </style>

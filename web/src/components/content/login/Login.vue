@@ -71,10 +71,8 @@ export default {
             //登录成功，将token存储到sessionStorage临时存储中，页面关闭时会自动清除token
             sessionStorage.token = res.data.token
 
-            setTimeout(() => {
-              //登录成功，跳转到profile页面
-              this.$router.go(-1)
-            },1200)
+            //登录成功，跳转到之前页面
+            this.$router.go(-1)
           }
           else if (res.data.non_exist) {
             //登录失败，提示后端传过来的提示信息

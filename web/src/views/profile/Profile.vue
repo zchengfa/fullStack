@@ -19,8 +19,8 @@
       </div>
       <div class="collection">
         <a href="javascript:void (0)" class="collection-item"  v-for="(item, index) in userInfoList" :key="index">
-          <span class="count" v-if="!isLogin">{{item.count}}</span>
-          <Bubble :count="counts[index]" v-else></Bubble>
+          <span class="count" v-if="!isLogin">--</span>
+          <Bubble :count="item.count" v-else></Bubble>
           <span class="title">{{item.title}}</span>
         </a>
       </div>
@@ -50,19 +50,15 @@ export default {
     return {
       userInfoList:[
         {
-          "count":"--",
-          "title":"商品收藏"
+          'title':'商品收藏'
         },
         {
-          "count":"--",
-          "title":"品牌收藏"
+          'title':'品牌收藏'
         },
         {
-          "count":"--",
-          "title":"我的足迹"
+          'title':'我的足迹'
         }
       ],
-      counts:[],
       orderList: [],
       meansList:[],
       otherList:[],
@@ -90,11 +86,8 @@ export default {
         else {
           this.hasHeader = true
         }
-        if (res.data.shop_collection_count) {
-          this.counts[0] = res.data.shop_collection_count
-          this.counts[1] = 0
-          this.counts[2] = 0
-        }
+        this.userInfoList = res.data.content
+        console.log(this.userInfoList)
       })
           .catch(err => {
             console.log(err)

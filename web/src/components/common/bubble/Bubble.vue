@@ -1,5 +1,5 @@
 <template>
-  <div class="message-bubble" v-show="count">
+  <div class="message-bubble" v-show="showCount">
     <div class="content">
       <span class="count">{{count}}</span>
     </div>
@@ -15,6 +15,11 @@ export default {
       default() {
         return 0
       }
+    }
+  },
+  computed:{
+    showCount(){
+      return this.count !== 0
     }
   }
 }

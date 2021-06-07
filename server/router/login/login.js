@@ -13,10 +13,12 @@ module.exports = app => {
 
         //连接mysql数据库，查询是否有与参数一致的用户名和密码
         const connect = require('../../plugins/connectMysql')
+        const mysql_query = require('../../plugins/mysql_query')
         //创建查询用户名语句
-        const selectUser_id = `SELECT ACCOUNT FROM USER WHERE ACCOUNT = '${paramsObj.username}'`
+        const selectUser_id = mysql_query.selectFields('user','account',`account = '${paramsObj.username}'`)
 
-        const select_query = `SELECT ACCOUNT,USER_ID FROM USER WHERE ACCOUNT = '${paramsObj.username}' AND PASSWORD = '${paramsObj.pwd}'`
+        const select_query = mysql_query.selectFields('user','account,user_id',`account = '${paramsObj.username}' AND password = '${paramsObj.pwd}'`)
+
 
         //连接数据库
         const connection = connect()
@@ -34,19 +36,23 @@ module.exports = app => {
                         if (Object.keys(results).length !==0) {
                             const jwt = require('jsonwebtoken')
                             const user = {
-                                username:results[0].ACCOUNT,
-                                user_id:results[0].USER_ID
+                                username:results[0]['account'],
+                                user_id:results[0]['user_id']
                             }
                             //生成token,当过期时间number类型时以秒计算
                             const token = jwt.sign(user,'user',{expiresIn: '1d'})
-                            res.setHeader('Access-Control-Allow-Origin', '*')
-                            res.send({'token':token})
+
                             console.log(results[0])
                             //将生成的token存入数据库中
-                            const update = `UPDATE USER SET TOKEN = '${token}' WHERE ACCOUNT = '${results[0].ACCOUNT}'`
+                            const update = mysql_query.update('user',`token = '${token}'`,`account = '${results[0]['account']}'`)
+
                             connection.query(update, (err) => {
                                 if (err) throw err
-                                console.log('token write success')
+                                else {
+                                    console.log('token write success')
+                                    res.setHeader('Access-Control-Allow-Origin', '*')
+                                    res.send({'token':token})
+                                }
                             })
 
                             console.log('longin success')

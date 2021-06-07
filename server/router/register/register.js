@@ -59,11 +59,12 @@ module.exports = app => {
         console.log(verifyCode,verifyCodeExpired,paramsObj.verifyCode)
 
         function registerUser () {
-            //创建数据库查询语句
-            const selectQuery = `SELECT * FROM USER WHERE account = '${paramsObj.username}'`
-            const selectUserCount = `SELECT COUNT(1) FROM USER`
-
             const connect = require('../../plugins/connectMysql')
+            const mysql_query = require('../../plugins/mysql_query')
+
+            //创建数据库查询语句
+            const selectQuery = mysql_query.selectAll('user',`account = '${paramsObj.username}'`)
+            const selectUserCount = mysql_query.selectCount('user')
 
             //连接数据库
             const connection = connect()
@@ -81,9 +82,9 @@ module.exports = app => {
                     //查询结果为空，账号未被注册，将用户注册的账号等信息写入数据库
                     connection.query(selectUserCount, (err,result) => {
                         if (err) throw  err
-                        // console.log(result[0]['COUNT(1)'])
+
                         //创建查询语句，查询该表已有多少条数据，将user_id字段在原有的数据数量上加一
-                        const insertQuery = `INSERT INTO USER (NUMBER,USER_ID,ACCOUNT,PASSWORD) VALUES ('${result[0]['COUNT(1)'] + 1 }','${ID()}','${paramsObj.username}','${paramsObj.pwd}')`
+                        const insertQuery = mysql_query.insert('user','number,user_id,account,password',`'${result[0]['COUNT(1)'] + 1 }','${ID()}','${paramsObj.username}','${paramsObj.pwd}'`)
                         connection.query(insertQuery, (err) => {
                             if (err) throw err
                             res.setHeader('Access-Control-Allow-Origin', '*')

@@ -12,14 +12,16 @@ module.exports = app => {
 
     //导入数据库连接模块
     const connect = require('../../plugins/connectMysql')
+    const mysql_query = require('../../plugins/mysql_query')
 
     //接收前端cart请求，前端需要将用户token传入后端，后端解析token中的用户，查询数据库中对应用户的购物车数据，最后返回给前端
     router.post('/cart',(req, res) => {
         const paramsObj = JSON.parse(JSON.stringify(req.body))
         const token = paramsObj.token
-        //console.log(paramsObj)
+        console.log(paramsObj)
 
         jwt.verify(token,'user',(err,decode) => {
+            console.log(decode)
             //验证前端传过来的token是否合法，是否过期
             if (err) {
                 res.setHeader('Access-Control-Allow-Origin', '*')
@@ -29,36 +31,24 @@ module.exports = app => {
             else {
                 //连接数据库
                 const connection = connect()
-                //console.log(decode)
+                //创建查询语句，查询该用户在USER_SHOP表中是否存在商品数据
+                const  selectQuery = mysql_query.selectFields('user_shop','product_id,product_title,product_image,product_price,product_count,isChecked',
+                    `users_id = '${decode.user_id}'`)
 
-                //先查询到该用户的ID
-                const selectUserId = `SELECT USER_ID FROM USER WHERE ACCOUNT = '${decode.username}'`
-                connection.query(selectUserId, (err, result) => {
+                //查询数据
+                connection.query(selectQuery,(err,result) => {
+                    console.log(result)
                     if (err) throw err
+                    //console.log(Object.keys(result).length)
+                    if (Object.keys(result).length) {
+                        //该用户已有商品数据，先进行数据处理再返回给前端
+                        res.setHeader('Access-Control-Allow-Origin', '*')
+                        res.send({'user_cart_data':[result,{'user_id':decode.user_id}]})
+                        //console.log(result[0])
+                    }
                     else {
-                        //拿到该用户对应的ID
-                        const USER_ID = result[0]['USER_ID']
-                        //创建查询语句，查询该用户在USER_SHOP表中是否存在商品数据
-                        const selectQuery = `SELECT product_id,product_title,product_image,product_price,product_count,isChecked
-                                                FROM USER_SHOP WHERE USERS_ID = '${USER_ID}'`
-
-                        //查询数据
-                        connection.query(selectQuery,(err,result) => {
-                            if (err) throw err
-                            //console.log(Object.keys(result).length)
-                            if (Object.keys(result).length) {
-                                //该用户已有商品数据，先进行数据处理再返回给前端
-                                //console.log(result)
-
-                                res.setHeader('Access-Control-Allow-Origin', '*')
-                                res.send({'user_cart_data':[result,{'user_id':USER_ID}]})
-                                //console.log(result[0])
-                            }
-                            else {
-                                res.setHeader('Access-Control-Allow-Origin', '*')
-                                res.send({'empty':'您的购物车空空如也...'})
-                            }
-                        })
+                        res.setHeader('Access-Control-Allow-Origin', '*')
+                        res.send({'empty':'您的购物车空空如也...'})
                     }
                 })
             }
@@ -75,7 +65,8 @@ module.exports = app => {
         const connection = connect()
 
         //创建数据库修改语句
-        const updateChecked = `UPDATE USER_SHOP SET ISCHECKED = ${paramsObj.status} WHERE USERS_ID = '${paramsObj.user_id}' AND PRODUCT_ID = '${paramsObj.product_id}'`
+        const updateChecked = mysql_query.update('user_shop',`isChecked = ${paramsObj.status}`,
+                        `users_id = '${paramsObj.user_id}' AND product_id = '${paramsObj.product_id}'`)
 
         //执行修改数据库语句
         connection.query(updateChecked, (err) => {
@@ -97,7 +88,9 @@ module.exports = app => {
         const connection = connect()
 
         //创建更新数据库语句
-        const updateCount = `UPDATE USER_SHOP SET PRODUCT_COUNT = ${paramsObj.count} WHERE USERS_ID = '${paramsObj.user_id}' AND PRODUCT_ID = '${paramsObj.product_id}'`
+        const updateCount = mysql_query.update('user_shop',`product_count = ${paramsObj.count}`,
+                                                `users_id = '${paramsObj.user_id}' AND product_id = '${paramsObj.product_id}'`)
+
 
         //执行更新语句
         connection.query(updateCount, (err, result) => {
@@ -109,11 +102,12 @@ module.exports = app => {
     })
 
     //接收前端获取商品推荐数据的请求，将数据返回给前端
+    const selectDefault = mysql_query.selectAll('common_recommend_shop')
     router.get('/commonRecommend', (req, res) => {
         const connection = connect()
-        const selectQuery = `SELECT * FROM COMMON_RECOMMEND_SHOP`
 
-        connection.query(selectQuery, (err,result) => {
+
+        connection.query(selectDefault, (err,result) => {
             if (err) throw err
             else {
                 res.setHeader('Access-Control-Allow-Origin', '*')
@@ -133,11 +127,11 @@ module.exports = app => {
             if (err) throw err
             else {
                 const user_id = decode.user_id
-                const selectQuery = `SELECT * FROM USER_RECOMMEND_SHOP WHERE USERS_ID = '${user_id}'`
+                const selectUser = mysql_query.selectAll('user_recommend_shop',`users_id = '${user_id}'`)
 
                 const connection = connect()
 
-                connection.query(selectQuery,(err,result) => {
+                connection.query(selectUser,(err,result) => {
                     if (err) throw err
                     else {
                         if (Object.keys(result).length) {
@@ -146,8 +140,7 @@ module.exports = app => {
                         }
                         //该用户没有推荐数据，返回默认的推荐数据
                         else {
-                            //创建查询默认推荐数据语句
-                            const selectDefault = `SELECT * FROM COMMON_RECOMMEND_SHOP`
+
                             connection.query(selectDefault,(err,result) => {
                                 if (err) throw err
                                 else {

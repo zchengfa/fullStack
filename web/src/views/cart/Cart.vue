@@ -1,6 +1,6 @@
 <template>
 	<div class="nav-cart">
-    <nav-bar>
+    <nav-bar class="cart-nav-bar">
       <div slot="center">
         <div class="nav-title">购物车({{cartList.length}})</div>
       </div>
@@ -52,7 +52,6 @@
   import SettleCart from "@/views/cart/components/SettleCart";
 
   import {getCommonRecommend,getUserRecommend,getUserCartData,updateChecked,updateProductCount} from "@/network/cart";
-
   export  default {
     name:'Cart',
     data(){
@@ -233,7 +232,7 @@
   .nav-cart{
     height: 100vh;
   }
-  .nav-bar{
+  .cart-nav-bar{
     background-color: #db7093;
   }
   .nav-title{

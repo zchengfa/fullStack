@@ -100,7 +100,11 @@ export default {
     },
     //点击打开手机摄像头
     openCamera() {
-
+      //默认需在https环境下才能开启
+      let media = navigator.mediaDevices.getUserMedia({video:true})
+      media.then(mediaStream => {
+        console.log(mediaStream)
+      })
 
     }
   },

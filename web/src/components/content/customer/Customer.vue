@@ -5,8 +5,8 @@
     <div slot="center">客服</div>
   </nav-bar>
   <div class="message-box">
-    <div class="message-user message" v-show="messageUserList.length" v-for="(item,index) in messageUserList" :key="index + 'user'">{{item}}</div>
-    <div class="message-customer message" v-show="messageCustomerList" v-for="(items,index) in messageCustomerList" :key="index +'customer'">{{items}}</div>
+    <div class="message-user message " v-show="messageUserList.length" v-for="(item,index) in messageUserList" :key="index + 'user'">{{item}}</div>
+    <div class="message-customer message " v-show="messageCustomerList.length" v-for="(items,index) in messageCustomerList" :key="index +'customer'">{{items}}</div>
   </div>
   <div class="bottom">
     <chat-bar @sendMessage="sendMessage"></chat-bar>
@@ -22,7 +22,7 @@ export default {
   data(){
     return {
       messageUserList:[],
-      messageCustomerList:[]
+      messageCustomerList:['customer']
     }
   },
   components:{
@@ -63,18 +63,23 @@ export default {
   top:5px;
 }
 .message-box {
-  position: fixed;
-  top:45px;
+  position: relative;
+  top:0;
 }
 .message {
+  width: 50%;
+  margin-top: .5rem;
+  margin-bottom: .5rem;
   padding: .5rem;
   background-color: #8ec225;
 }
 .message-user {
-
+  position: relative;
+  left: 0;
 }
 .message-customer{
-
+  position: relative;
+  right: 0;
 }
 .bottom {
   position: fixed;

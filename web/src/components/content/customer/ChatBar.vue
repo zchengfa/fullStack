@@ -2,7 +2,7 @@
 <div class="chat-bar">
   <div class="chat-with-voice"><img src="~assets/image/customer/voice.png" alt="voice"></div>
   <div class="chat">
-    <input type="text" v-model="message" @input="inputMessage">
+    <input type="text" v-model="message" @input="inputMessage" @keyup.enter="keyUp">
     <button class="emoji" @click="emoji"></button>
   </div>
   <div class="other">+</div>
@@ -33,6 +33,11 @@ export default {
     },
     sendMessage() {
       this.$emit('sendMessage',this.message)
+      this.message = ''
+      this.isSend = false
+    },
+    keyUp(){
+      this.$emit('keyUpEnter',this.message)
       this.message = ''
       this.isSend = false
     }

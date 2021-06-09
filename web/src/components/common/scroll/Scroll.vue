@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper" ref="slide">
-    <div class="content">
+    <div class="content" :class="{padding:padding}">
       <slot></slot>
     </div>
   </div>
@@ -26,6 +26,12 @@ export default {
       type:Boolean,
       default() {
         return false;
+      }
+    },
+    padding: {
+      type:Boolean,
+      default() {
+        return false
       }
     }
   },
@@ -73,5 +79,7 @@ export default {
 
 
 <style scoped>
-
+.padding {
+  padding-bottom: 5rem;
+}
 </style>

@@ -168,10 +168,8 @@
     right: 0;
   }
   .content{
-    position: absolute;
-    top:44px;
-    bottom: 50px;
     width: 100vw;
+    height: calc(100vh - 44px - 49px);
     overflow: hidden;
   }
   .no-more {

@@ -12,7 +12,10 @@
     </Scroll>
     <back-top v-show="isShowBackTop" @click.native="backTop"></back-top>
     <detail-add-cart :product-info="productInfo" v-if="isShowAddCart" @submitAdd="submitAdd"></detail-add-cart>
-    <detail-bottom-bar ref="detailBottomBar" @addCart="addCart" :is-collected="isCollected" @collectProduct="collectProduct"></detail-bottom-bar>
+    <detail-bottom-bar ref="detailBottomBar" @addCart="addCart" :is-collected="isCollected"
+                       @collectProduct="collectProduct"
+                        @contactCustomer="contactCustomer">
+    </detail-bottom-bar>
   </div>
 </template>
 
@@ -150,6 +153,22 @@
         //没有token值，用户未登录，引导用户进入登录页面
         else {
           this.$router.push({path:'/login'})
+        }
+      },
+      contactCustomer() {
+        //点击联系客服按钮进入用户与客服的聊天界面
+        //通过token判断用户是否登录，若已登录进入customer页面
+        if (this.token) {
+          verify(this.token, (err) => {
+            if (err) throw err
+            else {
+              this.$router.push({path:'/customer/'+ this.token})
+            }
+          })
+        }
+        //未登录，进入登录页面
+        else {
+          this.$router.push('/login')
         }
       },
       submitAdd(count) {

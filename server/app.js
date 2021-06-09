@@ -1,7 +1,11 @@
 //导入express模块
 const express = require('express')
+const http = require('http')
 
 const app = express()
+const server = http.createServer(app)
+
+require('./socket/socket')(server)
 
 //导入home路由模块
 require('./router/home/multiData')(app)
@@ -24,12 +28,14 @@ require('./router/login/login')(app)
 //导入register注册模块
 require('./router/register/register')(app)
 
+
+
 app.get('/',(req,res) => {
     res.setHeader('Access-Control-Allow-Origin', '*')
     res.json('666')
 })
 
-app.listen(3000, err =>{
+server.listen(3000, err =>{
     if(err){
         console.log(err)
     }

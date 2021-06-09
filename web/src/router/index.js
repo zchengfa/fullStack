@@ -12,6 +12,7 @@ const Profile = ()=> import ('views/profile/Profile')
 const Detail = ()=> import ('views/detail/Detail')
 const Login = ()=> import('@/components/content/login/Login')
 const Register = ()=> import('@/components/content/register/Register')
+const Customer = ()=> import('@/components/content/customer/Customer')
 
 //创建路由映射表对象
 const routes =[
@@ -53,6 +54,10 @@ const routes =[
 	{
 		path: '/register',
 		component:Register
+	},
+	{
+		path: '/customer/:token',
+		component:Customer
 	}
 
 ]

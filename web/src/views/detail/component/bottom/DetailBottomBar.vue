@@ -53,7 +53,7 @@ export default {
       this.$emit('collectProduct')
     },
     contactCustomer() {
-      this.$toast.showToast('联系客服功能暂未开发')
+      this.$emit('contactCustomer')
     }
   }
 }

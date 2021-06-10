@@ -54,7 +54,11 @@ export default {
     },
     sendMessage(message) {
       const socket = io(this.url)
-      socket.emit('send',message + ';')
+      socket.emit('send',{
+        message,
+        sender:'18720412920',
+        receiver:'18270014304'
+      })
       this.messageList.push({
         'sender':'user',
         message

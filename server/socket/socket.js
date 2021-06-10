@@ -12,7 +12,7 @@ module.exports = server => {
             console.log('用户:'+data + '上线了')
         })
         socket.on('send',res => {
-            console.log( )
+            console.log( res)
         })
     })
 }

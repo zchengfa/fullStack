@@ -21,12 +21,16 @@ import NavBar from "@/components/common/navbar/NavBar";
 import ChatBar from "@/components/content/customer/ChatBar";
 import Scroll from "@/components/common/scroll/Scroll";
 
+import {verify} from "@/common/jsonwebtoken";
+
 import io from 'socket.io-client'
 export default {
   name: "Customer",
   data(){
     return {
-      messageList:[]
+      messageList:[],
+      url:'http://192.168.31.130:3000',
+      token:sessionStorage.getItem('token')
     }
   },
   components:{
@@ -49,8 +53,8 @@ export default {
       }
     },
     sendMessage(message) {
-      const socket = io('http://192.168.1.103:3000')
-      socket.emit('send',message)
+      const socket = io(this.url)
+      socket.emit('send',message + ';')
       this.messageList.push({
         'sender':'user',
         message
@@ -68,6 +72,17 @@ export default {
     keyUpEnter(message){
       this.sendMessage(message)
     }
+  },
+  mounted() {
+
+    console.log(this.token)
+    verify(this.token,(err,decode) => {
+      if (err) throw err
+      else {
+        const socket = io(this.url)
+        socket.emit('online',decode.username)
+      }
+    })
   }
 }
 </script>

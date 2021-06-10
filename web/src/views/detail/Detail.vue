@@ -162,7 +162,7 @@
           verify(this.token, (err) => {
             if (err) throw err
             else {
-              this.$router.push({path:'/customer/'+ this.token})
+              this.$router.push({path:'/customer'})
             }
           })
         }

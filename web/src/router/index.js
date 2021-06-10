@@ -56,7 +56,7 @@ const routes =[
 		component:Register
 	},
 	{
-		path: '/customer/:token',
+		path: '/customer',
 		component:Customer,
 		meta: {
 			keepAlive: true

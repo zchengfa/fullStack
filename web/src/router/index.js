@@ -57,10 +57,7 @@ const routes =[
 	},
 	{
 		path: '/customer',
-		component:Customer,
-		meta: {
-			keepAlive: true
-		}
+		component:Customer
 	}
 
 ]

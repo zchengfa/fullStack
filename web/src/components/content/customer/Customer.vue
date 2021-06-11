@@ -30,7 +30,9 @@ export default {
     return {
       messageList:[],
       url:'http://192.168.31.130:3000',
-      token:sessionStorage.getItem('token')
+      token:sessionStorage.getItem('token'),
+      user:'',
+      socket:''
     }
   },
   components:{
@@ -53,10 +55,10 @@ export default {
       }
     },
     sendMessage(message) {
-      const socket = io(this.url)
-      socket.emit('send',{
+
+      this.socket.emit('send',{
         message,
-        sender:'18720412920',
+        sender:this.user,
         receiver:'18270014304'
       })
       this.messageList.push({
@@ -64,29 +66,42 @@ export default {
         message
       })
       this.scrollToBottom()
-      socket.on('response',data => {
+
+    },
+    receiveMsg() {
+      this.socket.on('response',data => {
+        console.log(data)
         this.messageList.push({
           'sender':'customer',
           'message':data.message
         })
         this.scrollToBottom()
       })
-
     },
     keyUpEnter(message){
       this.sendMessage(message)
     }
   },
-  mounted() {
+  created() {
+    const  socket = io(this.url)
+    this.socket = socket
 
-    console.log(this.token)
     verify(this.token,(err,decode) => {
       if (err) throw err
       else {
+        this.user = decode.username
         const socket = io(this.url)
         socket.emit('online',decode.username)
       }
     })
+  },
+  mounted() {
+    this.receiveMsg()
+  },
+  activated() {
+
+
+
   }
 }
 </script>
@@ -165,7 +180,7 @@ export default {
   border-width: .8rem;
   border-style: solid;
   border-color: transparent #1e8efc transparent transparent;
-  transform: translateY(-50%);
+
 }
 .bottom {
   position: fixed;

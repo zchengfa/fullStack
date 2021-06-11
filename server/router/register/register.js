@@ -84,7 +84,7 @@ module.exports = app => {
                         if (err) throw  err
 
                         //创建查询语句，查询该表已有多少条数据，将user_id字段在原有的数据数量上加一
-                        const insertQuery = mysql_query.insert('user','number,user_id,account,password',`'${result[0]['COUNT(1)'] + 1 }','${ID()}','${paramsObj.username}','${paramsObj.pwd}'`)
+                        const insertQuery = mysql_query.insert('user','id,user_id,account,password',`${result[0]['COUNT(1)'] + 1 },'${ID()}','${paramsObj.username}','${paramsObj.pwd}'`)
                         connection.query(insertQuery, (err) => {
                             if (err) throw err
                             res.setHeader('Access-Control-Allow-Origin', '*')

@@ -6,8 +6,11 @@
   </nav-bar>
   <div class="message-box">
    <Scroll class="content" ref="message" :padding="true">
-     <div class="message" :class="{'message-user':item.sender==='user','message-customer':item.sender==='customer'}"
-          v-for="(item,index) in messageList" :key="index"><span>{{item.message}}</span></div>
+     <div class="message" :class="{'message-user':item.sender===user,'message-customer':item.sender==='customer'}"
+          v-for="(item,index) in messageList" :key="index">
+       <img src="" alt="image">
+       <span>{{item.message}}</span>
+     </div>
    </Scroll>
   </div>
   <div class="bottom">
@@ -29,10 +32,11 @@ export default {
   data(){
     return {
       messageList:[],
-      url:'http://192.168.31.130:3000',
+      url:'http://192.168.1.103:3000',
       token:sessionStorage.getItem('token'),
       user:'',
-      socket:''
+      socket:'',
+      sender:'18270014304'
     }
   },
   components:{
@@ -48,60 +52,68 @@ export default {
       const scrollHeight = this.$refs.message.scroll.content.clientHeight
       const clientHeight = this.$refs.message.$el.clientHeight
 
-      if (clientHeight<scrollHeight){
+      if (clientHeight<=scrollHeight){
         this.$refs.message.scroll.scrollTo(0,- (scrollHeight + 300),300)
         //自动上滑后刷新scroll组件
         this.$refs.message.scroll.refresh()
       }
     },
+    //发送消息
     sendMessage(message) {
-
-      this.socket.emit('send',{
-        message,
-        sender:this.user,
-        receiver:'18270014304'
-      })
-      this.messageList.push({
-        'sender':'user',
-        message
-      })
-      this.scrollToBottom()
-
-    },
-    receiveMsg() {
-      this.socket.on('response',data => {
-        console.log(data)
+      try {
+        this.socket.emit('sendMsg',message,this.user,this.sender);
+      }
+      catch (err) {
+        console.log(err)
+      }
+      finally {
         this.messageList.push({
-          'sender':'customer',
-          'message':data.message
+          message,
+          'sender':this.user
         })
         this.scrollToBottom()
-      })
+        console.log('message send success')
+      }
+    },
+    //接收消息
+    receiveMsg() {
+      try {
+        this.socket.on('sendMsgToReceiver',(message,sender) => {
+          console.log(message,sender)
+          this.sender = sender
+          this.messageList.push({
+            message,
+            sender:'customer'
+          })
+          this.scrollToBottom()
+        })
+      }
+      catch (err) {
+        console.log(err)
+      }
+      finally {
+        this.scrollToBottom()
+        console.log('over')
+      }
     },
     keyUpEnter(message){
       this.sendMessage(message)
     }
   },
   created() {
-    const  socket = io(this.url)
-    this.socket = socket
-
     verify(this.token,(err,decode) => {
       if (err) throw err
       else {
         this.user = decode.username
-        const socket = io(this.url)
-        socket.emit('online',decode.username)
+        const  socket = io(this.url)
+        this.socket = socket
       }
     })
   },
   mounted() {
+    //通知服务器用户上线了
+    this.socket.emit('online',this.user)
     this.receiveMsg()
-  },
-  activated() {
-
-
-
   }
 }
 </script>
@@ -138,7 +150,7 @@ export default {
   height: calc(100vh - 44px - 4rem);
 }
 .message {
-  max-width: 90vw;
+  max-width: 100%;
   margin-top: .5rem;
   margin-bottom: .5rem;
   padding: .5rem;

@@ -79,15 +79,8 @@ export default {
     getUserInfo(username,user_id){
       getUserInfo(username,user_id).then(res => {
         console.log(res)
-        if (res.data.header_image) {
-          this.hasHeader = false
-          this.headerCustom = res.data.header_image
-        }
-        else {
-          this.hasHeader = true
-        }
+
         this.userInfoList = res.data.content
-        console.log(this.userInfoList)
       })
           .catch(err => {
             console.log(err)
@@ -114,6 +107,15 @@ export default {
           if (decode) {
             this.isLogin = true
             this.username = decode.username
+
+            //当token中的头像为null时说明用户没有头像，显示默认头像，反之则显示用户自己的头像
+            if (decode.avatar !== null) {
+              this.hasHeader = false
+              this.headerCustom = decode.avatar
+            }
+            else {
+              this.hasHeader = true
+            }
             this.getUserInfo(this.username,decode.user_id)
           }
         }

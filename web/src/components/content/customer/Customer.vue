@@ -10,7 +10,7 @@
           <div class="message" :class="{'message-user':item.sender===user,'message-customer':item.sender==='customer'}">
             <span>{{item.message}}</span>
           </div>
-          <img :class="{'user-image':item.sender===user,'customer-image':item.sender==='customer'}" src="" alt="image">
+          <img :class="{'user-image':item.sender===user,'customer-image':item.sender==='customer'}" :src="avatar"  alt="image">
         </div>
       </Scroll>
     </div>
@@ -37,7 +37,8 @@ export default {
       token:sessionStorage.getItem('token'),
       user:'',
       socket:'',
-      sender:'18270014304'
+      sender:'18270014304',
+      avatar: ''
     }
   },
   components:{
@@ -94,7 +95,6 @@ export default {
       }
       finally {
         this.scrollToBottom()
-        console.log('over')
       }
     },
     keyUpEnter(message){
@@ -106,6 +106,8 @@ export default {
       if (err) throw err
       else {
         this.user = decode.username
+
+        this.avatar = decode.avatar
         const  socket = io(this.url)
         this.socket = socket
       }
@@ -150,12 +152,19 @@ export default {
   top:44px;
   height: calc(100vh - 44px - 4rem);
 }
+.content-box{
+  position: relative;
+}
+.content-box img{
+  width: 10vw;
+  height: 10vw;
+}
 .message {
   display: inline-block;
-  max-width: 100%;
+  max-width: 80%;
   margin-top: .5rem;
   margin-bottom: .5rem;
-  padding: .5rem;
+  padding: .5rem 0;
 }
 .message span {
   display: inline-block;
@@ -167,9 +176,13 @@ export default {
 }
 .content-user{
   text-align: right;
+  margin-right: 2vw;
 }
 .message-user span{
   background-color: red;
+}
+.message-customer {
+  margin-left: 10%;
 }
 .message-user::after,
 .message-customer::before{
@@ -185,6 +198,12 @@ export default {
 }
 .content-customer{
   text-align: left;
+}
+.content-customer img {
+  position: absolute;
+  left: 2vw;
+  top:50%;
+  transform: translateY(-50%);
 }
 .message-customer span {
   background-color: #1e8efc;

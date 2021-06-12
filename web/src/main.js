@@ -5,6 +5,9 @@ import store from "@/store";
 
 import toast from "@/components/common/toast";
 
+import {URL} from "@/common/utils";
+Vue.prototype.$link = URL
+
 Vue.config.productionTip = false
 
 //将Vue实例给$bus（事件总线）并添加到Vue原型上

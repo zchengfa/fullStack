@@ -1,22 +1,23 @@
 <template>
-<div class="customer">
-  <nav-bar class="nav">
-    <div slot="left" @click="back"><img src="~assets/image/detail/back.svg" alt="backImage"></div>
-    <div slot="center">客服</div>
-  </nav-bar>
-  <div class="message-box">
-   <Scroll class="content" ref="message" :padding="true">
-     <div class="message" :class="{'message-user':item.sender===user,'message-customer':item.sender==='customer'}"
-          v-for="(item,index) in messageList" :key="index">
-       <img src="" alt="image">
-       <span>{{item.message}}</span>
-     </div>
-   </Scroll>
+  <div class="customer">
+    <nav-bar class="nav">
+      <div slot="left" @click="back"><img src="~assets/image/detail/back.svg" alt="backImage"></div>
+      <div slot="center">客服</div>
+    </nav-bar>
+    <div class="message-box">
+      <Scroll class="content" ref="message" :padding="true">
+        <div class="content-box" :class="{'content-user':item.sender===user,'content-customer':item.sender==='customer'}" v-for="(item,index) in messageList" :key="index">
+          <div class="message" :class="{'message-user':item.sender===user,'message-customer':item.sender==='customer'}">
+            <span>{{item.message}}</span>
+          </div>
+          <img :class="{'user-image':item.sender===user,'customer-image':item.sender==='customer'}" src="" alt="image">
+        </div>
+      </Scroll>
+    </div>
+    <div class="bottom">
+      <chat-bar @sendMessage="sendMessage" @keyUpEnter="keyUpEnter" ></chat-bar>
+    </div>
   </div>
-  <div class="bottom">
-    <chat-bar @sendMessage="sendMessage" @keyUpEnter="keyUpEnter" ></chat-bar>
-  </div>
-</div>
 </template>
 
 <script>
@@ -32,7 +33,7 @@ export default {
   data(){
     return {
       messageList:[],
-      url:'http://192.168.1.103:3000',
+      url:this.$link,
       token:sessionStorage.getItem('token'),
       user:'',
       socket:'',
@@ -150,6 +151,7 @@ export default {
   height: calc(100vh - 44px - 4rem);
 }
 .message {
+  display: inline-block;
   max-width: 100%;
   margin-top: .5rem;
   margin-bottom: .5rem;
@@ -163,27 +165,13 @@ export default {
   word-break: break-all;
   text-align: left;
 }
-.message-user{
+.content-user{
   text-align: right;
 }
 .message-user span{
   background-color: red;
 }
-.message-user::after {
-  position: relative;
-  top:50%;
-  display: inline-block;
-  content: '';
-  border-width: .8rem;
-  border-style: solid;
-  border-color: transparent transparent transparent red;
-}
-.message-customer{
-  text-align: left;
-}
-.message-customer span {
-  background-color: #1e8efc;
-}
+.message-user::after,
 .message-customer::before{
   position: relative;
   top:50%;
@@ -191,8 +179,18 @@ export default {
   content: '';
   border-width: .8rem;
   border-style: solid;
+}
+.message-user::after {
+  border-color: transparent transparent transparent red;
+}
+.content-customer{
+  text-align: left;
+}
+.message-customer span {
+  background-color: #1e8efc;
+}
+.message-customer::before{
   border-color: transparent #1e8efc transparent transparent;
-
 }
 .bottom {
   position: fixed;

@@ -8,9 +8,10 @@
       <Scroll class="content" ref="message" :padding="true">
         <div class="content-box" :class="{'content-user':item.sender===user,'content-customer':item.sender==='customer'}" v-for="(item,index) in messageList" :key="index">
           <div class="message" :class="{'message-user':item.sender===user,'message-customer':item.sender==='customer'}">
-            <span>{{item.message}}</span>
+            <span>{{item.message}}{{item.sendTime}}</span>
           </div>
-          <img :class="{'user-image':item.sender===user,'customer-image':item.sender==='customer'}" :src="avatar"  alt="image">
+          <img v-if="item.sender===user" :class="{'user-image':item.sender===user}" :src="avatar"  alt="image">
+          <img v-else :class="{'customer-image':item.sender==='customer'}" src="~assets/image/profile/header.png"  alt="image">
         </div>
       </Scroll>
     </div>
@@ -62,8 +63,9 @@ export default {
     },
     //发送消息
     sendMessage(message) {
+      let sendTime = new Date().getTime()
       try {
-        this.socket.emit('sendMsg',message,this.user,this.sender);
+        this.socket.emit('sendMsg',message,this.user,this.sender,sendTime);
       }
       catch (err) {
         console.log(err)
@@ -71,7 +73,8 @@ export default {
       finally {
         this.messageList.push({
           message,
-          'sender':this.user
+          'sender':this.user,
+          'sendTime':sendTime
         })
         this.scrollToBottom()
         console.log('message send success')
@@ -107,7 +110,12 @@ export default {
       else {
         this.user = decode.username
 
-        this.avatar = decode.avatar
+        if (decode.avatar !== null){
+          this.avatar = decode.avatar
+        }
+        else {
+          this.avatar = '~assets/image/profile/header.png'
+        }
         const  socket = io(this.url)
         this.socket = socket
       }

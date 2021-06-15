@@ -1,29 +1,52 @@
 <template>
-<div class="chat-bar">
-  <div class="chat-with-voice"><img src="~assets/image/customer/voice.png" alt="voice"></div>
-  <div class="chat">
-    <input type="text" v-model="message" @input="inputMessage" @keyup.enter="keyUp">
-    <button class="emoji" @click="emoji"></button>
+<div class="chat-bar" >
+  <div class="chat-controller">
+    <div class="chat-with-voice"><img src="~assets/image/customer/voice.png" alt="voice"></div>
+    <div class="chat">
+      <input type="text" v-model="message" @input="inputMessage" @focus="onfocus" @keyup.enter="keyUp">
+      <button class="emoji" @click="emoji"></button>
+    </div>
+    <div class="other" @click="otherController">+</div>
+    <div class="send" v-show="isSend" @click="sendMessage">发送</div>
   </div>
-  <div class="other">+</div>
-  <div class="send" v-show="isSend" @click="sendMessage">发送</div>
+  <div class="chat-other" v-show="showChatOther">
+    <div class="content">
+      <Emoji v-show="showEmoji" @selectEmoji="selectEmoji"></Emoji>
+    </div>
+  </div>
 </div>
 </template>
 
 <script>
+import Emoji from "@/components/content/customer/Emoji";
 export default {
   name: "ChatBar",
   data(){
     return {
       message:'',
-      isSend:false
+      isSend:false,
+      showChatOther:false,
+      showEmoji:true
     }
   },
+  components:{
+    Emoji
+  },
   methods:{
+    onfocus(){
+      //点击输入框时，隐藏表情组件
+      this.showChatOther = false
+    },
     emoji(){
-      console.log('打开表情库')
+      //点击输入框中表情按钮，控制表情组件的显示和隐藏
+      this.showChatOther = !this.showChatOther
+    },
+    otherController(){
+      //点击加号，显示其他控件
+
     },
     inputMessage(){
+      //检测输入框是否有内容，来控制发送按钮的显示与隐藏
       if (this.message.length >= 1) {
         this.isSend = true
       }
@@ -32,14 +55,27 @@ export default {
       }
     },
     sendMessage() {
+      //将发送消息事件以及发送的内容发送给父组件
       this.$emit('sendMessage',this.message)
+      //点击发送按钮后清空输入框中的内容
       this.message = ''
+      //点击发送按钮后隐藏发送按钮
       this.isSend = false
     },
     keyUp(){
+      //将enter键盘事件以及内容发送给父组件
       this.$emit('keyUpEnter',this.message)
+      //enter键回弹后清空输入框内容
       this.message = ''
+      //enter键回弹后隐藏发送按钮
       this.isSend = false
+    },
+    //选择表情
+    selectEmoji(value) {
+      //将表情加到输入框中
+      this.message += value
+      //执行函数，判断输入框是否有内容来控制发送按钮的显示隐藏
+      this.inputMessage()
     }
   }
 }
@@ -47,18 +83,19 @@ export default {
 
 <style scoped>
 .chat-bar {
-  display: flex;
   width: 100vw;
-  height: 4rem;
-  line-height: 4rem;
   background-color: #e0d9d9;
 }
-.chat-bar div {
+.chat-bar div.chat-controller{
+  display: flex;
+  line-height: 4rem;
+}
+.chat-bar div.chat-controller div {
   flex: 1;
   text-align: center;
 }
-.chat-bar .chat {
-  flex: 4.5;
+.chat-bar div.chat-controller .chat {
+  flex: 4;
 }
 .chat-with-voice img{
   position: relative;
@@ -78,10 +115,11 @@ input{
 button {
   position: absolute;
   top: 1rem;
-  right: 16%;
+  right: 18%;
   width: 2rem;
   height: 2rem;
   background-image: url("~assets/image/customer/emoji.png");
+  background-repeat: no-repeat;
   z-index: 11;
 }
 .other{

@@ -9,9 +9,14 @@
     <div class="other" @click="otherController">+</div>
     <div class="send" v-show="isSend" @click="sendMessage">发送</div>
   </div>
-  <div class="chat-other" v-show="showChatOther">
+  <div class="chat-other" v-show="showEmoji">
     <div class="content">
-      <Emoji v-show="showEmoji" @selectEmoji="selectEmoji"></Emoji>
+      <Emoji @selectEmoji="selectEmoji"></Emoji>
+    </div>
+  </div>
+  <div class="chat-other" v-show="showOtherController">
+    <div class="content">
+      <chat-other class="other-controller"></chat-other>
     </div>
   </div>
 </div>
@@ -19,18 +24,20 @@
 
 <script>
 import Emoji from "@/components/content/customer/Emoji";
+import ChatOther from "@/components/content/customer/ChatOther";
 export default {
   name: "ChatBar",
   data(){
     return {
       message:'',
       isSend:false,
-      showChatOther:false,
-      showEmoji:true
+      showEmoji:false,
+      showOtherController:false
     }
   },
   components:{
-    Emoji
+    Emoji,
+    ChatOther
   },
   methods:{
     onfocus(){
@@ -39,11 +46,18 @@ export default {
     },
     emoji(){
       //点击输入框中表情按钮，控制表情组件的显示和隐藏
-      this.showChatOther = !this.showChatOther
+      this.showEmoji = !this.showEmoji
+
+      //显示或隐藏表情的同时，隐藏其他组件
+      this.showOtherController = false
     },
     otherController(){
+      console.log('other')
       //点击加号，显示其他控件
+      this.showOtherController = !this.showOtherController
 
+      //显示或隐藏其他控件的同时，隐藏表情等组件
+      this.showEmoji = false
     },
     inputMessage(){
       //检测输入框是否有内容，来控制发送按钮的显示与隐藏
@@ -136,5 +150,8 @@ button {
   background:linear-gradient(to right, #d4912d, #e0b007);
   border-radius: 8px;
   color: #fff;
+}
+.chat-other .other-controller{
+  height: 20vh;
 }
 </style>

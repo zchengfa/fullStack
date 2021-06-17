@@ -4,6 +4,10 @@
       <div slot="center">
         <div class="nav-title">购物车({{cartList.length}})</div>
       </div>
+      <div slot="right" @click="manageOrComplete">
+        <button v-show="!isComplete" class="manage">管理</button>
+        <button v-show="isComplete" class="complete">完成</button>
+      </div>
     </nav-bar>
     <Scroll class="content" ref="scroll">
       <div class="cart" v-if="cartList.length">
@@ -34,8 +38,12 @@
     <settle-cart :total-price="totalPrice"
                  :settle-num="settleNum"
                  v-show="cartList.length"
+                 @selectAll="selectAll"
                  :is-all-checked="isAllChecked"
                  @settle="settle"
+                 :show-total-and-settle="showTotalAndSettle"
+                 @moveToCollection="moveToCollection"
+                 @remove="remove"
     ></settle-cart>
   </div>
 </template>
@@ -51,18 +59,22 @@
   import CheckButton from "@/views/cart/components/CheckButton"
   import SettleCart from "@/views/cart/components/SettleCart";
 
-  import {getCommonRecommend,getUserRecommend,getUserCartData,updateChecked,updateProductCount} from "@/network/cart";
+  import {getCommonRecommend,getUserRecommend,getUserCartData,updateChecked,
+    updateProductCount,moveToCollection,remove} from "@/network/cart";
   export  default {
     name:'Cart',
     data(){
       return {
+        isComplete:false,
+        showTotalAndSettle:true,
         cartList: [],
         user_id:'',
         isLogin:false,
         recommendData:[],
         emptyMessage: '',
         emptyRecommend:'',
-        checkedNum:0
+        checkedNum:0,
+        targets:[]
       }
     },
     components:{
@@ -100,6 +112,12 @@
       }
     },
     methods:{
+      //点击导航栏右边按钮控制按钮的显示与隐藏，并控制结算组件中删除等按钮的显示与隐藏
+      manageOrComplete(){
+        this.isComplete = !this.isComplete
+        //计算组件中删除和移入收藏夹按钮的显示与隐藏
+        this.showTotalAndSettle = !this.showTotalAndSettle
+      },
       //减少用户所点击的商品数量函数
       reduceCount(index){
         //减少对应商品的数量
@@ -122,9 +140,46 @@
         //点击选中按钮，修改按钮状态，并将修改后的状态提交到后端
         this.cartList[index].isChecked = !this.cartList[index].isChecked
 
+        //点击选中按钮时判断是否已选中，若已选中则将该商品的id加入到targets数组中
+        if (this.cartList[index].isChecked){
+          this.targets.push(this.cartList[index].product_id)
+        }
+        //取消选中该商品，则将该商品id从targets数组中删除
+        else {
+          //删除该商品前，需要找到该商品在targets数组中的位置
+          this.targets.splice(this.targets.indexOf(this.cartList[index].product_id),1)
+        }
+
         //提交更新请求
         updateChecked(this.user_id, this.cartList[index].product_id, this.cartList[index].isChecked).then()
 
+      },
+      //全选与取消全选
+      selectAll(){
+        //判断当前全选按钮处于什么状态，若是已经是全选状态，则让全选的商品进入未选择状态，若是不处于全选状态，则让未选择的商品进入选中状态
+        if (this.checkedNum === this.cartList.length) {
+          this.cartList.map((item) => {
+            //修改状态
+            item.isChecked = false
+
+            //将修改后的状态提交给后端，让后端修改数据库中该用户的状态
+            updateChecked(this.user_id,item.product_id,item.isChecked).then()
+          })
+          //取消全选，清空targets数组
+          this.targets = []
+        }
+        else {
+          //全选，先清空targets数组
+          this.targets = []
+          this.cartList.map((item) => {
+            item.isChecked = true
+
+            //将cartList数组中的product_id全部加入targets中
+            this.targets.push(item.product_id)
+            //将修改后的状态提交给后端，让后端修改数据库中该用户的状态
+            updateChecked(this.user_id,item.product_id,item.isChecked).then()
+          })
+        }
       },
       settle(){
         //点击结算按钮时先判断是否选择了商品
@@ -134,6 +189,14 @@
         else {
           this.$toast.showToast('您为选中任何要结算的商品')
         }
+      },
+      //将选择的商品移入收藏夹
+      moveToCollection() {
+        moveToCollection(this.user_id,this.targets)
+      },
+      //将商品从用户购物车中移除
+      remove() {
+        remove(this.user_id,this.targets)
       },
       //获取商品推荐数据函数
       getCommonRecommend(){
@@ -175,26 +238,17 @@
       }
     },
     mounted() {
-      this.$bus.$on('selectAll',() => {
-        //判断当前全选按钮处于什么状态，若是已经是全选状态，则让全选的商品进入未选择状态，若是不处于全选状态，则让未选择的商品进入选中状态
-        if (this.checkedNum === this.cartList.length) {
-          this.cartList.map((item) => {
-            //修改状态
-            item.isChecked = false
-
-            //将修改后的状态提交给后端，让后端修改数据库中该用户的状态
-            updateChecked(this.user_id,item.product_id,item.isChecked).then()
+      //元素挂载完成后，遍历cartList数组，若是已选中状态则将该商品id加入targets数组中
+      setTimeout(() => {
+        if (this.cartList.length){
+          this.cartList.map(item => {
+            if (item.isChecked){
+              this.targets.push(item.product_id)
+            }
           })
+          console.log(this.targets,this.cartList)
         }
-        else {
-          this.cartList.map((item) => {
-            item.isChecked = true
-
-            //将修改后的状态提交给后端，让后端修改数据库中该用户的状态
-            updateChecked(this.user_id,item.product_id,item.isChecked).then()
-          })
-        }
-      })
+      },50)
 
       const refresh = debounce(this.$refs.scroll.refresh, 200)
       this.$bus.$on('itemImageLoad',() => {
@@ -235,7 +289,8 @@
   .cart-nav-bar{
     background-color: #db7093;
   }
-  .nav-title{
+  .cart-nav-bar .nav-title,
+  .cart-nav-bar button{
     color: #fff;
   }
   .content{

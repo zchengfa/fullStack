@@ -156,5 +156,13 @@ module.exports = app => {
 
     })
 
+    router.post('/remove', (req,res) => {
+        const paramsObj = JSON.parse(JSON.stringify(req.body))
+
+        console.log(paramsObj)
+
+
+    })
+
     app.use('/home/api',router)
 }

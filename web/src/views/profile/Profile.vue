@@ -65,8 +65,7 @@ export default {
       isLogin:false,
       username:'',
       headerCustom:'',
-      hasHeader:true,
-      token:sessionStorage.getItem('token')
+      hasHeader:true
     }
   },
   components:{
@@ -99,8 +98,8 @@ export default {
     this.orderList = orderMenuImage
   },
   mounted() {
-    if (this.token) {
-      verify(this.token, (err, decode) => {
+    if (this.$token) {
+      verify(this.$token, (err, decode) => {
         if (err) throw err
         else {
           console.log(decode)

@@ -53,7 +53,6 @@
         currentRefsIndex:0,
         isShowAddCart:false,
         productInfo:{},
-        token:sessionStorage.getItem('token'),
         isCollected:false
       }
     },
@@ -106,7 +105,7 @@
       },
       addCart(){
         //点击加入购物车按钮，先通过查看token是否存在来判定用户是否已经登录，未登录则引导用户进入登录页面，若已登录，则进入下一步操作
-        if (this.token) {
+        if (this.$token) {
           //token存在，点击加入购物车按钮，显示确认加入购物车组件，并将要加入购物车的商品信息添加到productInfo对象中
           this.isShowAddCart = !this.isShowAddCart
           this.productInfo.title = this.detailData.baseData.title
@@ -133,8 +132,8 @@
       },
       collectProduct() {
         //点击按钮先判断用户是否登录，若用户未登录，跳转到登录页面
-        if (this.token) {
-          verify(this.token, (err,decode) => {
+        if (this.$token) {
+          verify(this.$token, (err,decode) => {
             if (err) throw err
             else {
               //判断当前商品是在收藏状态还是未收藏状态
@@ -158,8 +157,8 @@
       contactCustomer() {
         //点击联系客服按钮进入用户与客服的聊天界面
         //通过token判断用户是否登录，若已登录进入customer页面
-        if (this.token) {
-          verify(this.token, (err) => {
+        if (this.$token) {
+          verify(this.$token, (err) => {
             if (err) throw err
             else {
               this.$router.push({path:'/customer'})
@@ -177,7 +176,7 @@
         this.productInfo.product_count = count
         const product = this.productInfo
 
-        addShopToCart(this.token,product.product_id,product.title,product.image,product.price,product.product_count).then(res => {
+        addShopToCart(this.$token,product.product_id,product.title,product.image,product.price,product.product_count).then(res => {
           console.log(res)
           if (res.data.message) {
             this.$toast.showToast(res.data.message)
@@ -249,9 +248,9 @@
       //判断该组件是否创建
       if (this.$refs.detailBottomBar) {
         //创建完页面后检测用户是否登录，若已经登录，获取该用户是否已经收藏过该商品，从而改变收藏按钮的状态，若未登录，让收藏按钮处于默认状态
-        if (this.token) {
+        if (this.$token) {
           //若用户已经登录
-          verify(this.token, (err,decode) => {
+          verify(this.$token, (err,decode) => {
             if (err) throw err
             else {
               this.getProductCollectionStatus(decode.user_id,this.id)

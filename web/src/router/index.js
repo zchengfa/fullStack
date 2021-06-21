@@ -4,6 +4,11 @@ import VueRouter from 'vue-router'
 //安装依赖
 Vue.use(VueRouter)
 
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push (location) {
+	return originalPush.call(this,location).catch(err => err)
+}
+
 //路由懒加载
 const Home = ()=> import ('views/home/Home')
 const Category = ()=> import ('views/category/Category')

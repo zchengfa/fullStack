@@ -196,7 +196,17 @@
       },
       //将商品从用户购物车中移除
       remove() {
-        remove(this.user_id,this.targets)
+        remove(this.user_id,this.targets).then(res => {
+          if (res.data.success){
+            //删除成功后再删除cartList中对应的产品数据，并给用户作出删除成功提示
+            this.targets.map(item => {
+              this.cartList.splice(this.cartList.indexOf(item),1)
+            })
+            this.getUserCartData(this.$token)
+            this.$toast.showToast(res.data.success)
+          }
+          console.log(res.data)
+        })
       },
       //获取商品推荐数据函数
       getCommonRecommend(){
@@ -208,7 +218,7 @@
       },
       getUserRecommend(token){
         getUserRecommend(token).then(res => {
-          console.log(res)
+          //console.log(res)
           this.recommendData = res.data.result
         }).catch(err => {
           console.log(err)
@@ -246,7 +256,7 @@
               this.targets.push(item.product_id)
             }
           })
-          console.log(this.targets,this.cartList)
+
         }
       },50)
 
@@ -261,16 +271,16 @@
         },300)
       }
       //判断用户是否登录,若已登录显示用户的购物车物品列表,未登录，显示登录提示
-      const  token = sessionStorage.getItem('token')
-      if (token){
+
+      if (this.$token){
         this.isLogin = false
 
         //存在token值，用户已登录，执行获取用户购物车数据函数
         //进入购物车页面，获取用户token，执行获取用户购物车数据函数
-        this.getUserCartData(token)
+        this.getUserCartData(this.$token)
 
         //获取用户对应的推荐数据
-        this.getUserRecommend(token)
+        this.getUserRecommend(this.$token)
 
       }
       else {

@@ -157,9 +157,44 @@ module.exports = app => {
     })
 
     router.post('/remove', (req,res) => {
+        //接收参数
         const paramsObj = JSON.parse(JSON.stringify(req.body))
+        let product_id_array = []
 
-        console.log(paramsObj)
+        //遍历对象
+        for (const paramsObjKey in paramsObj) {
+            //将参数push到新数组中
+            product_id_array.push(paramsObj[paramsObjKey])
+        }
+
+        //从新数组中拿到user_id
+        let user_id = product_id_array.shift()
+
+        //连接数据库
+        const connection = connect()
+
+        //定义开关变量，解决Cannot set headers after they are sent to the client错误
+        let isOver = false
+        product_id_array.map(item => {
+            const deleteQuery = mysql_query.delete('user_shop',`users_id = '${user_id}' AND product_id = '${item}'`)
+            try {
+                connection.query(deleteQuery, err => {
+                    if (err) throw err
+                })
+            }
+            catch (err){
+                console.log(err)
+            }
+            finally {
+                isOver = true
+                console.log('删除成功')
+            }
+
+        })
+        if (isOver){
+            res.setHeader('Access-Control-Allow-Origin', '*')
+            res.send({'success':'删除成功'})
+        }
 
 
     })

@@ -1,7 +1,7 @@
 <template>
   <div class="detail">
     <detail-nav-bar :nav-list="nav_list" @scrollThere="scrollThere" ref="detailNav"></detail-nav-bar>
-    <Scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll">
+    <Scroll class="content" @click.native="closeAddCart" ref="scroll" :probe-type="3" @scroll="contentScroll">
       <div class="shop-show" v-if="Object.keys(detailData).length">
         <detail-base ref="base" class="detail-base" :base-data="detailData.baseData"></detail-base>
         <detail-image ref="image" :images-data="detailData.images" @imageLoadOver="imageLoad"></detail-image>
@@ -116,7 +116,10 @@
         else {
           this.$router.push({path:'/login'})
         }
-
+      },
+      //点击addCart组件外部，隐藏addCart组件
+      closeAddCart(){
+        this.isShowAddCart = false
       },
       changeUserProductCollectionStatus(user_id,product_id,status) {
         changeUserProductCollectionStatus(user_id,product_id,status).then(res => {

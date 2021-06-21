@@ -15,7 +15,6 @@ module.exports = function connect () {
         if (err) {
             connect()
         }
-        console.log('connect...')
     })
 
     //mysql错误处理
@@ -28,7 +27,6 @@ module.exports = function connect () {
             connect()
         }
     })
-
     return connection
 }
 

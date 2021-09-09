@@ -28,6 +28,9 @@ require('./router/login/login')(app)
 //导入register注册模块
 require('./router/register/register')(app)
 
+//导入管理员登录模块
+require('./router/admin/loginAdministrator')(app)
+
 
 
 app.get('/',(req,res) => {

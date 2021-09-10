@@ -17,7 +17,6 @@ module.exports = app =>{
                 console.log(err)
             }
             else {
-                res.setHeader('Access-Control-Allow-Origin', '*')
                 res.send(doc)
 
             }
@@ -37,11 +36,9 @@ module.exports = app =>{
         connection.query(selectQuery,(err, result) => {
             if (err) throw err
             if (result[0]['COUNT(1)'] !== 0) {
-                res.setHeader('Access-Control-Allow-Origin', '*')
                 res.send({'collection_status':true})
             }
             else {
-                res.setHeader('Access-Control-Allow-Origin', '*')
                 res.send({'collection_status':false})
             }
 
@@ -63,7 +60,6 @@ module.exports = app =>{
             connection.query(deleteQuery, err => {
                 if (err) throw err
                 else {
-                    res.setHeader('Access-Control-Allow-Origin', '*')
                     res.send({'current_status':false})
 
                     //后续修改，将该商品从该用户中删除后，需要将对应的favorite数量减一
@@ -77,7 +73,6 @@ module.exports = app =>{
             connection.query(insertQuery, err => {
                 if (err) throw err
                 else {
-                    res.setHeader('Access-Control-Allow-Origin', '*')
                     res.send({'current_status':true})
                 }
 

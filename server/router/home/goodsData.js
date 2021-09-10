@@ -16,7 +16,6 @@ module.exports = app =>{
                 console.log(err)
             }
             else {
-                res.setHeader('Access-Control-Allow-Origin', '*')
                 res.send(doc)
                 //console.log(doc)
             }

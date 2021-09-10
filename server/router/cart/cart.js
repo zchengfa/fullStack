@@ -24,7 +24,6 @@ module.exports = app => {
             console.log(decode)
             //验证前端传过来的token是否合法，是否过期
             if (err) {
-                res.setHeader('Access-Control-Allow-Origin', '*')
                 res.send(err)
             }
             //token合法且未过期，连接数据库，查询对应用户的购物车数据并返回给前端
@@ -42,12 +41,10 @@ module.exports = app => {
                     //console.log(Object.keys(result).length)
                     if (Object.keys(result).length) {
                         //该用户已有商品数据，先进行数据处理再返回给前端
-                        res.setHeader('Access-Control-Allow-Origin', '*')
                         res.send({'user_cart_data':[result,{'user_id':decode.user_id}]})
                         //console.log(result[0])
                     }
                     else {
-                        res.setHeader('Access-Control-Allow-Origin', '*')
                         res.send({'empty':'您的购物车空空如也...'})
                     }
                 })
@@ -71,7 +68,6 @@ module.exports = app => {
         //执行修改数据库语句
         connection.query(updateChecked, (err) => {
             if (err) throw err
-            res.setHeader('Access-Control-Allow-Origin', '*')
             res.send({'message':'已改变该产品状态'})
             console.log(`ID为：${paramsObj.user_id}的用户下的${paramsObj.product_id}产品状态修改成功`)
         })
@@ -110,7 +106,6 @@ module.exports = app => {
         connection.query(selectDefault, (err,result) => {
             if (err) throw err
             else {
-                res.setHeader('Access-Control-Allow-Origin', '*')
                 res.send({"commonRecommend":result})
             }
         })
@@ -192,7 +187,6 @@ module.exports = app => {
 
         })
         if (isOver){
-            res.setHeader('Access-Control-Allow-Origin', '*')
             res.send({'success':'删除成功'})
         }
 

@@ -34,6 +34,7 @@
 <script>
 import {ElButton,ElForm,ElInput,ElRow,ElCol,ElFormItem} from 'element-plus'
 import {loginAdministrator} from "../network/requestLogin";
+import {encrypt} from "../common/crypt";
 
 export default {
   name: "login",
@@ -87,7 +88,7 @@ export default {
       //点击登录按钮，对表单进行验证，验证通过才能向后台发起登录请求
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          loginAdministrator(account,password).then(result => {
+          loginAdministrator(account,encrypt(password)).then(result => {
             console.log(result)
           }).catch(err => {
             console.log(err)

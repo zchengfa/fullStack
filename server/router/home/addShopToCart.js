@@ -18,7 +18,6 @@ module.exports = app => {
         jwt.verify(token,'user', (err,decode) => {
             //身份不合法或已过期
             if (err){
-                res.setHeader('Access-Control-Allow-Origin', '*')
                 res.send({'err':err})
             }
             //身份合法且未过期
@@ -58,7 +57,6 @@ module.exports = app => {
                                     if (err) throw err
                                     else {
                                         //修改成功，将添加的数量反馈给前端
-                                        res.setHeader('Access-Control-Allow-Origin', '*')
                                         res.send({'message':`数量+${paramsObj.count}`})
                                         console.log(`用户：${decode.username}下已经存在该商品，已将用户：${decode.username}对应的商品数量+${paramsObj.count}`)
                                     }
@@ -79,7 +77,6 @@ module.exports = app => {
                                     if (err) throw err
                                     else {
                                         //商品添加成功，将结果反馈给前端
-                                        res.setHeader('Access-Control-Allow-Origin', '*')
                                         res.send({'message':'添加商品成功'})
                                         console.log(`用户：${decode.username}未曾添加过该商品，已将该商品数据添加到用户：${decode.username}下`)
                                     }

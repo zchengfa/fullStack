@@ -8,7 +8,6 @@ module.exports = app => {
     router.get('/category_list', (req, res) => {
         categoryListModel.find({}, (err, docs) => {
             if (err) throw err
-            res.setHeader('Access-Control-Allow-Origin', '*')
             res.send({"list":docs[0].list})
         })
     })
@@ -19,11 +18,9 @@ module.exports = app => {
             if (err) throw err
             else {
                 if (Object.keys(result).length) {
-                    res.setHeader('Access-Control-Allow-Origin', '*')
                     res.send({"categoryDetail":result[0].categoryDetail})
                 }
                 else {
-                    res.setHeader('Access-Control-Allow-Origin', '*')
                     res.send({"empty":"数据暂无"})
                 }
             }

@@ -51,7 +51,6 @@ module.exports = app => {
                                 if (err) throw err
                                 else {
                                     console.log('token write success')
-                                    res.setHeader('Access-Control-Allow-Origin', '*')
                                     res.send({'token':token})
                                 }
                             })
@@ -60,7 +59,6 @@ module.exports = app => {
                         }
                         //没有匹配项，不允许登录，并将错误信息发送给前端让其提示用户
                         else {
-                            res.setHeader('Access-Control-Allow-Origin', '*')
                             res.send({'err':'账号或密码错误'})
                             console.log('password is not correct')
                         }
@@ -69,7 +67,6 @@ module.exports = app => {
                 }
                 //用户名不存在，返回提示给前端
                 else {
-                    res.setHeader('Access-Control-Allow-Origin', '*')
                     res.send({'non_exist':'账号不存在'})
                     console.log('account is not exist')
                 }

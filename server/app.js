@@ -1,9 +1,12 @@
 //导入express模块
 const express = require('express')
 const http = require('http')
-
+const cors = require('cors')
 const app = express()
 const server = http.createServer(app)
+
+//允许跨域
+app.use(cors())
 
 require('./socket/socket')(server)
 

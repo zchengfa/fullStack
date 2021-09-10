@@ -26,7 +26,6 @@ module.exports = app => {
             if (err) throw err
             else {
                 console.log(results)
-                res.setHeader('Access-Control-Allow-Origin', '*')
                 res.send({
                     'header_image':results[0][0]['HEADER_IMAGE'],
                     'content': {

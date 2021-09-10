@@ -34,7 +34,6 @@ module.exports = app => {
 
         sendMailVerifyCode(paramsObj.email,'mall用户注册验证邮件',html).then(() => {
             console.log(`邮件已经发送给了${paramsObj.email}`)
-            res.setHeader('Access-Control-Allow-Origin', '*')
             res.send({'verify_code_expired':verifyCodeExpired})
 
             //将验证码返回给前端后设置一个定时器,过期时间为0,实现验证码过期
@@ -47,7 +46,6 @@ module.exports = app => {
             //验证码接收者不存在，清除当前接收者
             userEmail = ''
             console.log(`${paramsObj.email}不存在，无法发送邮箱验证`)
-            res.setHeader('Access-Control-Allow-Origin', '*')
             res.send({'email_non_exist':`${paramsObj.email}邮箱不存在,无法发送邮箱验证`})
         })
     })
@@ -74,7 +72,6 @@ module.exports = app => {
 
                 //查询结果不为空，说明已经存在该用户,提示用户该账号已被注册
                 if (Object.keys(result).length){
-                    res.setHeader('Access-Control-Allow-Origin', '*')
                     res.send({'exist':'账号已被注册'})
                     console.log('账号已被注册')
                 }
@@ -87,7 +84,6 @@ module.exports = app => {
                         const insertQuery = mysql_query.insert('user','id,user_id,account,password',`${result[0]['COUNT(1)'] + 1 },'${ID()}','${paramsObj.username}','${paramsObj.pwd}'`)
                         connection.query(insertQuery, (err) => {
                             if (err) throw err
-                            res.setHeader('Access-Control-Allow-Origin', '*')
                             res.send({'success':'注册成功'})
                             console.log('注册成功')
                         })

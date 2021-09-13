@@ -1,14 +1,14 @@
 <template>
-  <Login></Login>
+  <router-view></router-view>
 </template>
 
 <script>
 
-import Login from "./components/Login.vue";
+import Admin from "./views/admin.vue";
 export default {
   name: 'App',
   components: {
-    Login
+    Admin
   }
 }
 </script>

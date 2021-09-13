@@ -34,14 +34,14 @@ module.exports = app => {
 
                         //判断是否已有匹配项，有匹配项即账号密码正确，允许登录，生成token并发送给前端
                         if (Object.keys(results).length !==0) {
-                            const jwt = require('jsonwebtoken')
+                            const {createToken} = require('../../util/token')
                             const user = {
                                 username:results[0]['account'],
                                 user_id:results[0]['user_id'],
                                 avatar:results[0]['header_image']
                             }
                             //生成token,当过期时间number类型时以秒计算
-                            const token = jwt.sign(user,'user',{expiresIn: '1d'})
+                            const token = createToken(user,'user','1d')
 
                             console.log(results[0])
                             //将生成的token存入数据库中

@@ -4,6 +4,7 @@ import VueRouter from 'vue-router'
 //安装依赖
 Vue.use(VueRouter)
 
+//重写vue-router的push方法，解决路由跳转到同一路径报错的问题
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push (location) {
 	return originalPush.call(this,location).catch(err => err)

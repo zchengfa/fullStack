@@ -16,20 +16,28 @@ module.exports = app => {
        const mysql_query = require('../../plugins/mysql_query')
 
        //创建查询符合请求参数的identity字段(是否为管理员)语句
-       const selectUser = mysql_query.selectFields('user','identity',`account = '${paramsObj.account}' 
+       const selectUser = mysql_query.selectFields('user','username,account,header_image,identity',`account = '${paramsObj.account}' 
                                     AND password = '${paramsObj.password}' 
                                     AND identity = 'administrator'` )
 
-       connection.query(selectUser,(err,result) => {
+       connection.query(selectUser,(err,results) => {
            if (err) throw err
            else {
-               if (Object.keys(result).length){
-                   res.send({'success':'登录成功'})
+               if (Object.keys(results).length){
+                   const {createToken} = require('../../util/token.js')
+                   const administrator = {
+                       username:results[0].username,
+                       account:results[0].account,
+                       avatar:results[0].header_image,
+                       identity:results[0].identity
+                   }
+                   const token = createToken(administrator,'administrator','1d')
+                   res.send({'success':'登录成功','token':token})
                }
                else {
                    res.send({'failed':'账号密码错误或不是管理员'})
                }
-               console.log(result)
+               console.log(results)
            }
        })
    })

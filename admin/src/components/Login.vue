@@ -89,6 +89,16 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           loginAdministrator(account,encrypt(password)).then(result => {
+            //登录成功进入管理页面
+            if (result.data['success']){
+
+              //将token储存在sessionStorage中
+              sessionStorage.setItem('token',result.data['token'])
+              this.$router.push('/')
+            }
+            else {
+              alert(result.data['failed'])
+            }
             console.log(result)
           }).catch(err => {
             console.log(err)

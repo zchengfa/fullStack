@@ -8,6 +8,7 @@ import router from "./router";
 import ElementPlus from 'element-plus'
 import 'element-plus/theme-chalk/index.css'
 
+
 const app = createApp(App)
 
 //安装element-plus
@@ -15,7 +16,6 @@ app.use(ElementPlus)
 
 //安装router
 app.use(router)
+
 app.mount('#app')
-// const application = app.mount('#app')
-//
-// application.prototype.$token = sessionStorage.getItem('token')
+

@@ -1,7 +1,7 @@
 import cryptoJs from 'crypto-js'
 
-const key = cryptoJs.enc.Utf8.parse("1234123412ABCDEF");  //十六位十六进制数作为密钥
-const iv = cryptoJs.enc.Utf8.parse('ABCDEF1234123412');   //十六位十六进制数作为密钥偏移量
+const key = cryptoJs.enc.Utf8.parse("1234123412ABIDE");  //十六位十六进制数作为密钥
+const iv = cryptoJs.enc.Utf8.parse('ABIDE1234123412');   //十六位十六进制数作为密钥偏移量
 
 //密码加密
 export function encrypt(password) {

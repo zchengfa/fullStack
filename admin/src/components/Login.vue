@@ -3,7 +3,7 @@
     <el-header class="mall-login-header">mall商城管理平台</el-header>
     <el-main class="mall-login-main">
       <el-row class="mall-login-content">
-        <el-col :span="6" class="content-col">
+        <el-col :span="5" class="content-col">
           <el-form
               :model="ruleForm"
               status-icon
@@ -11,22 +11,25 @@
               ref="ruleForm"
               class="demo-ruleForm content-form"
           >
-            <el-form-item label="账号" prop="account" class="form-item">
+            <el-form-item label="账号：" prop="account" class="form-item">
               <el-input
                   type="text"
                   v-model="ruleForm.account"
                   autocomplete="off"
+                  placeholder="管理员账号"
               ></el-input>
             </el-form-item>
-            <el-form-item label="密码" prop="pass" class="form-item">
+            <el-form-item label="密码：" prop="pass" class="form-item">
               <el-input
                   type="password"
                   v-model="ruleForm.pass"
                   autocomplete="off"
+                  placeholder="密码"
               ></el-input>
             </el-form-item>
             <el-form-item class="form-item">
-              <el-button type="primary" @click="loginAdministrator('ruleForm',ruleForm.account,ruleForm.pass)">登录</el-button>
+              <el-button class="login-button" type="primary" @click="loginAdministrator('ruleForm',ruleForm.account,ruleForm.pass)">登录</el-button>
+              <el-button class="forget-password" @click="enterResetPage()">忘记密码？</el-button>
             </el-form-item>
           </el-form>
         </el-col>
@@ -34,7 +37,7 @@
     </el-main>
     <el-footer class="mall-login-footer">
       <el-row class="footer-row">
-        <el-col :span="10">版权所有 佛山市海天调味食品股份有限公司 公司地址：广东省佛山市文沙路16号</el-col>
+        <el-col :span="10">版权所有 zcf 公司地址：广东省深圳市宝安区</el-col>
       </el-row>
       <el-row class="footer-row">
         <el-col :span="10">
@@ -46,14 +49,23 @@
 </template>
 
 <script lang="ts">
-
 import {encrypt} from "../common/crypt";
 import {defineComponent} from "vue";
+import {useRouter} from "vue-router";
+import {loginAdministrator} from "../network/requestLogin";
 
 export default defineComponent( {
   name: "login",
-  components:{
+  setup(){
 
+    //忘记密码，引导管理员进入重置密码页面
+    let router = useRouter()
+    function enterResetPage (){
+      router.push('/resetPassword')
+    }
+    return {
+      enterResetPage
+    }
   },
   data() {
     let validatePass = (rule, value, callback) => {
@@ -69,8 +81,8 @@ export default defineComponent( {
     let validateAccount = (rule, value, callback) => {
 
       //设置账号验证规则
-      let RegExpPhone = /^((13[0-9])|(15[^4])|(18[^4])|(199))\d{8}/
-      let RegExpMail = /^[1-9]\d{7,10}@qq\.com/
+      let RegExpPhone:RegExp = /^((13[0-9])|(15[^4])|(18[^4])|(199))\d{8}/
+      let RegExpMail:RegExp = /^[1-9]\d{7,10}@qq\.com/
 
       if (value === '') {
         callback(new Error('请输入账号'))
@@ -93,7 +105,7 @@ export default defineComponent( {
   },
   methods: {
     //管理员登录
-    loginAdministrator(formName,account,password){
+    loginAdministrator(formName:string,account:string,password:string){
       //点击登录按钮，对表单进行验证，验证通过才能向后台发起登录请求
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -135,6 +147,7 @@ export default defineComponent( {
   text-indent: 16vw;
   font-size: larger;
   font-weight: bolder;
+  background-image: url("../assets/image/login/banner.jpeg");
 }
 .mall-login-main{
   width: 100%;
@@ -159,6 +172,18 @@ export default defineComponent( {
 .form-item{
   margin: 10% auto;
   width: 90%;
+}
+.login-button{
+  width: 6rem;
+}
+.forget-password{
+  margin-right:-10%;
+  border: none;
+  color: #00008b;
+}
+.forget-password:hover{
+  background-color: transparent;
+  text-decoration-line: underline;
 }
 .footer-row .el-col{
   margin: 8vh auto 0;

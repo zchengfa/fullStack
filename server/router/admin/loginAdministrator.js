@@ -42,5 +42,5 @@ module.exports = app => {
        })
    })
 
-    app.use('/login',router)
+    app.use('/admin',router)
 }

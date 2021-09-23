@@ -14,7 +14,7 @@ import {ElContainer,ElHeader,ElMain,ElFooter} from "element-plus";
 export default defineComponent({
   name: "admin",
   components:{
-    ElContainer,ElHeader,ElFooter
+    ElContainer,ElHeader,ElFooter,ElMain
   },
   setup(){
     const router = useRouter()

@@ -1,51 +1,59 @@
 <template>
-  <el-row>
-    <el-col :span="6">
-      <el-form
-          :model="ruleForm"
-          status-icon
-          :rules="rules"
-          ref="ruleForm"
-          label-width="100px"
-          class="demo-ruleForm"
-      >
-        <el-form-item label="账号" prop="account">
-          <el-input
-              type="text"
-              v-model="ruleForm.account"
-              autocomplete="off"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="密码" prop="pass">
-          <el-input
-              type="password"
-              v-model="ruleForm.pass"
-              autocomplete="off"
-          ></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loginAdministrator('ruleForm',ruleForm.account,ruleForm.pass)">登录</el-button>
-        </el-form-item>
-      </el-form>
-    </el-col>
-  </el-row>
+  <el-container class="mall-login-container">
+    <el-header class="mall-login-header">mall商城管理平台</el-header>
+    <el-main class="mall-login-main">
+      <el-row class="mall-login-content">
+        <el-col :span="6" class="content-col">
+          <el-form
+              :model="ruleForm"
+              status-icon
+              :rules="rules"
+              ref="ruleForm"
+              class="demo-ruleForm content-form"
+          >
+            <el-form-item label="账号" prop="account" class="form-item">
+              <el-input
+                  type="text"
+                  v-model="ruleForm.account"
+                  autocomplete="off"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="密码" prop="pass" class="form-item">
+              <el-input
+                  type="password"
+                  v-model="ruleForm.pass"
+                  autocomplete="off"
+              ></el-input>
+            </el-form-item>
+            <el-form-item class="form-item">
+              <el-button type="primary" @click="loginAdministrator('ruleForm',ruleForm.account,ruleForm.pass)">登录</el-button>
+            </el-form-item>
+          </el-form>
+        </el-col>
+      </el-row>
+    </el-main>
+    <el-footer class="mall-login-footer">
+      <el-row class="footer-row">
+        <el-col :span="10">版权所有 佛山市海天调味食品股份有限公司 公司地址：广东省佛山市文沙路16号</el-col>
+      </el-row>
+      <el-row class="footer-row">
+        <el-col :span="10">
+          电话：400-8xxx-813 07x7-828rexx | 粤ICP备12054983号 | <a href="javascript:void (0)">粤公网安备44060402rexx号</a>
+        </el-col>
+      </el-row>
+      </el-footer>
+  </el-container>
 </template>
 
 <script lang="ts">
-import {ElButton,ElForm,ElInput,ElRow,ElCol,ElFormItem} from 'element-plus'
-import {loginAdministrator} from "../network/requestLogin";
+
 import {encrypt} from "../common/crypt";
 import {defineComponent} from "vue";
 
 export default defineComponent( {
   name: "login",
   components:{
-    ElButton,
-    ElForm,
-    ElInput,
-    ElRow,
-    ElCol,
-    ElFormItem
+
   },
   data() {
     let validatePass = (rule, value, callback) => {
@@ -116,14 +124,43 @@ export default defineComponent( {
 </script>
 
 <style scoped>
-.el-row{
-  position: absolute;
-  top: 50%;
-  width: 100%;
-  transform: translateY(-50%);
+.mall-login-container{
+  margin: 0 auto;
 }
-.el-col{
-  margin-left: 50%;
-  transform: translateX(-50%);
+.mall-login-header{
+  width: 100%;
+  height: 14vh;
+  line-height: 14vh;
+  text-align: left;
+  text-indent: 16vw;
+  font-size: larger;
+  font-weight: bolder;
+}
+.mall-login-main{
+  width: 100%;
+  height: 54vh;
+  background-image: url("../assets/image/login/background.jpeg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: hidden;
+}
+.mall-login-content{
+  width: 100%;
+}
+.content-col{
+  margin-left: 60%;
+  min-width: 22rem;
+  background-color: #fff;
+}
+.content-form{
+  width: 100%;
+  height: 100%;
+}
+.form-item{
+  margin: 10% auto;
+  width: 90%;
+}
+.footer-row .el-col{
+  margin: 8vh auto 0;
 }
 </style>

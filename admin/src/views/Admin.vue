@@ -3,9 +3,9 @@
     <el-header class="admin-header">{{welcome.title}}</el-header>
     <el-main class="admin-main">
       <el-tabs tab-position="left" class="left-tabs">
-        <el-tab-pane v-for="(item,index) in leftTab.tabMenu" :key="index" :label="item">
-          <el-table :data="tableLogic.tableData">
-            <el-table-column v-for="(header,headerIndex) in tableLogic.tableHeader" :key="header" :prop="returnTableProp(headerIndex)"  :label="header"></el-table-column>
+        <el-tab-pane v-for="(item,index) in leftTab.tabMenu" :key="index" :tabindex="index" :label="item" :tab-click="showCurrentTabContent(index)">
+          <el-table :data="tableLogic.tableData" >
+            <el-table-column v-for="(header,headerIndex) in tableLogic.tableHeader" :key="header" :prop="returnTableProp(headerIndex,tableLogic.tableData)"  :label="header"></el-table-column>
           </el-table>
         </el-tab-pane>
       </el-tabs>
@@ -56,6 +56,10 @@ export default defineComponent({
       tabMenu:<object>['商品管理','订单管理','会员管理','营销管理','数据统计']
     })
 
+    function showCurrentTabContent(index:number){
+      console.log(index)
+    }
+
     /**
      * @param tableData 存储表格内的数据
      */
@@ -77,19 +81,31 @@ export default defineComponent({
         }
       ]
     })
-    function returnTableProp(index:number) {
+
+    /**
+     * @param returnTableProp 是一个返回tableData表中需要的prop值的函数
+     * @param index 方法接收index索引值,通过索引值判断这是哪一列
+     * @param data 方法接收一个数组,遍历数组得到数组中对象存在的属性名（因为data数组中每个对象中的属性名都一致，只需遍历其中一个对象即可）
+     * @param dataPropertyArray 将data数组中对象存在的属性名存储的数组
+     */
+    function returnTableProp(index:number,data: any[]) {
+      let dataPropertyArray = []
+          //因为data数组中每个对象中的属性名都一致，只需遍历第一个对象即可
+      for (const dataKey in data[0]) {
+        dataPropertyArray.push(dataKey)
+      }
       switch (index){
         case 0:
-          return 'title';
+          return dataPropertyArray[index];
 
         case 1:
-          return 'image'
+          return dataPropertyArray[index]
 
         case 2:
-          return 'count'
+          return dataPropertyArray[index]
 
         case 3:
-          return 'price'
+          return dataPropertyArray[index]
 
       }
     }
@@ -98,6 +114,7 @@ export default defineComponent({
       welcome,
       checkIsLogin,
       leftTab,
+      showCurrentTabContent,
       tableLogic,
       returnTableProp
     }

@@ -2,9 +2,9 @@
   <el-container>
     <el-header class="admin-header">{{welcome.title}}</el-header>
     <el-main class="admin-main">
-      <el-tabs tab-position="left" class="left-tabs">
-        <el-tab-pane v-for="(item,index) in leftTab.tabMenu" :key="index" :tabindex="index" :label="item" :tab-click="showCurrentTabContent(index)">
-          <el-table :data="tableLogic.tableData" >
+      <el-tabs tab-position="left" class="left-tabs"  @tab-click="showCurrentTabContent" >
+        <el-tab-pane v-for="(item,index) in leftTab.tabMenu" :key="index" :label="item">
+          <el-table v-show="isShowOrHidden.isShow" :data="tableLogic.tableData" >
             <el-table-column v-for="(header,headerIndex) in tableLogic.tableHeader" :key="header" :prop="returnTableProp(headerIndex,tableLogic.tableData)"  :label="header"></el-table-column>
           </el-table>
         </el-tab-pane>
@@ -56,10 +56,12 @@ export default defineComponent({
       tabMenu:<object>['商品管理','订单管理','会员管理','营销管理','数据统计']
     })
 
-    function showCurrentTabContent(index:number){
-      console.log(index)
+    let isShowOrHidden = reactive({
+      isShow:<boolean>true
+    })
+    function showCurrentTabContent(event:any){
+      event.index === '0' ?isShowOrHidden.isShow=true:isShowOrHidden.isShow=false
     }
-
     /**
      * @param tableData 存储表格内的数据
      */
@@ -115,6 +117,7 @@ export default defineComponent({
       checkIsLogin,
       leftTab,
       showCurrentTabContent,
+      isShowOrHidden,
       tableLogic,
       returnTableProp
     }

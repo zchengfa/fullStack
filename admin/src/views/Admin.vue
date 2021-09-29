@@ -4,9 +4,11 @@
     <el-main class="admin-main">
       <el-tabs tab-position="left" class="left-tabs"  @tab-click="showCurrentTabContent" >
         <el-tab-pane v-for="(item,index) in leftTab.tabMenu" :key="index" :label="item">
-          <el-table v-show="isShowOrHidden.isShowTable" :data="tableLogic.tableData" >
-            <el-table-column v-for="(header,headerIndex) in tableLogic.tableHeader" :key="header" :prop="returnTableProp(headerIndex,tableLogic.tableData)"  :label="header"></el-table-column>
-          </el-table>
+          <shop-manage
+              :table-data="tableLogic.tableData"
+              :table-header="tableLogic.tableHeader"
+              :is-show-table="isShowOrHidden.isShowTable"
+          ></shop-manage>
           <div class="order" v-show="isShowOrHidden.isShowOrder">订单管理</div>
           <div class="order" v-show="isShowOrHidden.isShowVip">会员管理</div>
           <div class="order" v-show="isShowOrHidden.isShowSell">营销管理</div>
@@ -22,11 +24,14 @@
 import {reactive,defineComponent} from "vue";
 import {useRouter} from 'vue-router'
 import {ElContainer,ElHeader,ElMain,ElTabs,ElTabPane} from "element-plus";
+import ShopManage from "../components/admin/ShopManage.vue";
+import {getPropertyArray} from "../common/utils";
 
 export default defineComponent({
   name: "admin",
   components:{
-    ElContainer,ElHeader,ElMain,ElTabs,ElTabPane
+    ElContainer,ElHeader,ElMain,ElTabs,ElTabPane,
+    ShopManage
   },
   setup(){
     const router = useRouter()
@@ -67,6 +72,11 @@ export default defineComponent({
       isShowSell:<boolean>false,
       isShowData:<boolean>false,
     })
+
+    /**
+     *@param showCurrentTabContent 控制点击对应标签栏显示对应的标签内容，隐藏与当前标签无关的内容
+     * @param isShowOrHiddenKeyArray 用于存储isShowOrHidden对象的属性名的数组
+     */
     function showCurrentTabContent(event:any){
       let isShowOrHiddenKeyArray:(keyof typeof isShowOrHidden)[]= getPropertyArray(isShowOrHidden)
       for (let i = 0;i<isShowOrHiddenKeyArray.length;i++){
@@ -77,6 +87,7 @@ export default defineComponent({
         Number(event.index) === i ?isShowOrHidden[isShowOrHiddenKeyArray[i]]=true:isShowOrHidden[isShowOrHiddenKeyArray[i]]=false
       }
     }
+
     /**
      * @param tableData 存储表格内的数据
      */
@@ -99,32 +110,6 @@ export default defineComponent({
       ]
     })
 
-    /**
-     * @param returnTableProp 是一个返回tableData表中需要的prop值的函数
-     * @param index 方法接收index索引值,通过索引值判断这是哪一列
-     * @param data 方法接收一个数组,遍历数组得到数组中对象存在的属性名（因为data数组中每个对象中的属性名都一致，只需遍历其中一个对象即可）
-     * @param dataPropertyArray 将data数组中对象存在的属性名存储的数组
-     */
-    function returnTableProp(index:number,data: any[]) {
-      let dataPropertyArray = getPropertyArray(data[0])
-          //因为data数组中每个对象中的属性名都一致，只需遍历第一个对象即可
-      return dataPropertyArray[index];
-    }
-
-    /**
-     * @param getPropertyArray 用于获取数组或对象中需要的属性名，将属性名加入到新数组中并返回
-     * @param _propertyArray 是一个用于存储属性名的数组
-     * @param array 接收一个数组
-     */
-
-    function getPropertyArray (array:any){
-      let _propertyArray:(keyof typeof array)[] = []
-      for (const arrayKey in array) {
-        _propertyArray.push(arrayKey)
-      }
-      return _propertyArray
-    }
-
     return {
       welcome,
       checkIsLogin,
@@ -132,7 +117,7 @@ export default defineComponent({
       showCurrentTabContent,
       isShowOrHidden,
       tableLogic,
-      returnTableProp
+      // returnTableProp
     }
   }
 

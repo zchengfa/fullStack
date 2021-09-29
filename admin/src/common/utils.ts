@@ -2,7 +2,7 @@ export const URL:string = 'http:'+ '//' + window.location.host.toString().split(
 
 
 /**
- * @param getPropertyArray 用于获取数组或对象中需要的属性名，将属性名加入到新数组中并返回
+ * @function getPropertyArray 用于获取数组或对象中需要的属性名，将属性名加入到新数组中并返回
  * @param _propertyArray 是一个用于存储属性名的数组
  * @param array 接收一个数组
  */

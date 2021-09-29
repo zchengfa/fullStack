@@ -52,7 +52,7 @@
 import {encrypt} from "../common/crypt";
 import {defineComponent} from "vue";
 import {useRouter} from "vue-router";
-import {loginAdministrator} from "../network/requestLogin";
+import {loginAdministrator} from "../network/request";
 
 export default defineComponent( {
   name: "login",

@@ -4,9 +4,13 @@
     <el-main class="admin-main">
       <el-tabs tab-position="left" class="left-tabs"  @tab-click="showCurrentTabContent" >
         <el-tab-pane v-for="(item,index) in leftTab.tabMenu" :key="index" :label="item">
-          <el-table v-show="isShowOrHidden.isShow" :data="tableLogic.tableData" >
+          <el-table v-show="isShowOrHidden.isShowTable" :data="tableLogic.tableData" >
             <el-table-column v-for="(header,headerIndex) in tableLogic.tableHeader" :key="header" :prop="returnTableProp(headerIndex,tableLogic.tableData)"  :label="header"></el-table-column>
           </el-table>
+          <div class="order" v-show="isShowOrHidden.isShowOrder">订单管理</div>
+          <div class="order" v-show="isShowOrHidden.isShowVip">会员管理</div>
+          <div class="order" v-show="isShowOrHidden.isShowSell">营销管理</div>
+          <div class="order" v-show="isShowOrHidden.isShowData">数据统计</div>
         </el-tab-pane>
       </el-tabs>
 
@@ -53,21 +57,32 @@ export default defineComponent({
      * @param tabMenu 存储左侧标签栏菜单标题数据
      */
     let leftTab = reactive({
-      tabMenu:<object>['商品管理','订单管理','会员管理','营销管理','数据统计']
+      tabMenu:<string[]>['商品管理','订单管理','会员管理','营销管理','数据统计']
     })
 
-    let isShowOrHidden = reactive({
-      isShow:<boolean>true
+    let isShowOrHidden= reactive({
+      isShowTable:<boolean>true,
+      isShowOrder:<boolean>false,
+      isShowVip:<boolean>false,
+      isShowSell:<boolean>false,
+      isShowData:<boolean>false,
     })
     function showCurrentTabContent(event:any){
-      event.index === '0' ?isShowOrHidden.isShow=true:isShowOrHidden.isShow=false
+      let isShowOrHiddenKeyArray:(keyof typeof isShowOrHidden)[]= getPropertyArray(isShowOrHidden)
+      for (let i = 0;i<isShowOrHiddenKeyArray.length;i++){
+        /**
+         *问题：该语句可以生效，但会导致typescript类型语法冲突而报错
+         *解决: 不设置变量的具体类型，根据返回值自动设置类型
+         */
+        Number(event.index) === i ?isShowOrHidden[isShowOrHiddenKeyArray[i]]=true:isShowOrHidden[isShowOrHiddenKeyArray[i]]=false
+      }
     }
     /**
      * @param tableData 存储表格内的数据
      */
 
     let tableLogic = reactive({
-      tableHeader:<Object>['商品描述', '商品图片', '数量', '价格'],
+      tableHeader:<string[]>['商品描述', '商品图片', '数量', '价格'],
       tableData:[
         {
           title:<string>'我是商品标题',
@@ -91,25 +106,23 @@ export default defineComponent({
      * @param dataPropertyArray 将data数组中对象存在的属性名存储的数组
      */
     function returnTableProp(index:number,data: any[]) {
-      let dataPropertyArray = []
+      let dataPropertyArray = getPropertyArray(data[0])
           //因为data数组中每个对象中的属性名都一致，只需遍历第一个对象即可
-      for (const dataKey in data[0]) {
-        dataPropertyArray.push(dataKey)
+      return dataPropertyArray[index];
+    }
+
+    /**
+     * @param getPropertyArray 用于获取数组或对象中需要的属性名，将属性名加入到新数组中并返回
+     * @param _propertyArray 是一个用于存储属性名的数组
+     * @param array 接收一个数组
+     */
+
+    function getPropertyArray (array:any){
+      let _propertyArray:(keyof typeof array)[] = []
+      for (const arrayKey in array) {
+        _propertyArray.push(arrayKey)
       }
-      switch (index){
-        case 0:
-          return dataPropertyArray[index];
-
-        case 1:
-          return dataPropertyArray[index]
-
-        case 2:
-          return dataPropertyArray[index]
-
-        case 3:
-          return dataPropertyArray[index]
-
-      }
+      return _propertyArray
     }
 
     return {

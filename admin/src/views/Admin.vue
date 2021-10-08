@@ -95,7 +95,7 @@ export default defineComponent({
      */
 
     let tableLogic = reactive({
-      tableHeader:<string[]>['商品描述', '商品图片', '数量', '价格'],
+      //tableHeader:<string[]>['商品描述', '商品图片', '数量', '价格'],
       tableData:<any[]>[]
     })
 
@@ -104,14 +104,14 @@ export default defineComponent({
      */
     function getSMData (){
       getShopManageData().then(result =>{
-        let shopManageData:string[] = []
-        result.data.filter(item =>{
-          shopManageData.push({
-            title:item.title,
-            imagePath:item.imagePath,
-            count:item.favorite,
-            price:item.price
-          })
+        let shopManageData:any[] = []
+        result.data.filter((item:any) =>{
+          return shopManageData.push({
+            title:<string>item.title,
+            imagePath:<string>item.imagePath,
+            count:<number>item.favorite,
+            price:<string>item.price
+          });
           //console.log(item)
         })
         tableLogic.tableData = shopManageData
@@ -121,7 +121,7 @@ export default defineComponent({
         throw err
       })
     }
-    let _getSMData = getSMData()
+    let GetSMData = getSMData()
 
     return {
       welcome,
@@ -130,7 +130,7 @@ export default defineComponent({
       showCurrentTabContent,
       isShowOrHidden,
       tableLogic,
-      _getSMData
+      GetSMData
     }
   }
 

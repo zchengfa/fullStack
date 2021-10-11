@@ -15,7 +15,7 @@
           <data-statistics></data-statistics>
         </el-tab-pane>
       </el-tabs>
-
+      <add-product v-show="addProductLogic.isShowAddProduct"></add-product>
     </el-main>
   </el-container>
 </template>
@@ -27,13 +27,15 @@ import {ElContainer,ElHeader,ElMain,ElTabs,ElTabPane} from "element-plus";
 import ShopManage from "../components/admin/shopManage/ShopManage.vue";
 import {getShopManageData} from "../network/request";
 import DataStatistics from "../components/admin/dataStatistics/DataStatistics.vue";
+import AddProduct from '../components/admin/shopManage/AddProduct.vue';
 
 export default defineComponent({
   name: "admin",
   components:{
     ElContainer,ElHeader,ElMain,ElTabs,ElTabPane,
     ShopManage,
-    DataStatistics
+    DataStatistics,
+    AddProduct
   },
   setup(){
     const router = useRouter()
@@ -61,8 +63,14 @@ export default defineComponent({
       }
     }
 
+    /**
+     * @function addProduct 点击按钮控制添加商品的页面显示与隐藏
+     */
+    let addProductLogic = reactive({
+      isShowAddProduct:<boolean>false
+    })
     function addProduct(){
-      alert('功能开发中')
+      addProductLogic.isShowAddProduct = ! addProductLogic.isShowAddProduct
     }
 
     /**
@@ -99,6 +107,7 @@ export default defineComponent({
     })
     return {
       tableLogic,
+      addProductLogic,
       addProduct
     }
   }
@@ -128,4 +137,5 @@ export default defineComponent({
 .left-tabs{
   height: 100%;
 }
+
 </style>

@@ -24,9 +24,9 @@
 import {reactive,defineComponent,onBeforeMount} from "vue";
 import {useRouter} from 'vue-router'
 import {ElContainer,ElHeader,ElMain,ElTabs,ElTabPane} from "element-plus";
-import ShopManage from "../components/admin/ShopManage.vue";
+import ShopManage from "../components/admin/shopManage/ShopManage.vue";
 import {getShopManageData} from "../network/request";
-import DataStatistics from "../components/admin/DataStatistics.vue";
+import DataStatistics from "../components/admin/dataStatistics/DataStatistics.vue";
 
 export default defineComponent({
   name: "admin",

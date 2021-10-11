@@ -1,5 +1,5 @@
 <template>
-  <div id="data-statistics"></div>
+  <div id="pie-chart-statistics"></div>
 </template>
 
 <script lang="ts">
@@ -26,14 +26,16 @@ echarts.use([
 import {onMounted} from "vue";
 
 export default defineComponent({
-  name: "DataStatistics",
+  name: "PieChartStatistics",
   setup(){
     onMounted(() =>{
-      let chartDom =<HTMLElement>document.getElementById('data-statistics')
+      //获取dom
+      let chartDom =<HTMLElement>document.getElementById('pie-chart-statistics')
       let pieChart = echarts.init(chartDom)
+      //饼图配置项
       let option = {
         title:{
-          text:'mall商品四季度销售图',
+          text:'四季度销售图',
           left:'center'
         },
         tooltip:{
@@ -48,7 +50,6 @@ export default defineComponent({
             name: '四季度销售量',
             type: 'pie',
             radius: '50%',
-            center:["30%","30%"],
             data: [
               { value: 1048, name: '春季' },
               { value: 735, name: '夏季' },
@@ -72,8 +73,9 @@ export default defineComponent({
 </script>
 
 <style scoped>
-#data-statistics{
-  width: 100vw;
-  height: 100vh;
+#pie-chart-statistics{
+  width: 40vw;
+  height: 40vh;
+  border: 1px solid #a29d9d;
 }
 </style>

@@ -15,7 +15,10 @@
           <data-statistics></data-statistics>
         </el-tab-pane>
       </el-tabs>
-      <add-product v-show="addProductLogic.isShowAddProduct"></add-product>
+      <add-product v-show="addProductLogic.isShowAddProduct"
+                   @cancel-add-click="cancelAddClick"
+                   @confirm-add-click="confirmAddClick"
+      ></add-product>
     </el-main>
   </el-container>
 </template>
@@ -91,7 +94,7 @@ export default defineComponent({
         })
         //console.log(result.data)
         tableLogic.tableData = shopManageData
-        console.log(shopManageData)
+        //console.log(shopManageData)
       })
           .catch(err =>{
             throw err
@@ -109,6 +112,24 @@ export default defineComponent({
       tableLogic,
       addProductLogic,
       addProduct
+    }
+  },
+  methods:{
+    //实现子组件发出的cancelAddClick方法
+    cancelAddClick(){
+      //关闭添加商品组件
+      this.addProductLogic.isShowAddProduct = false
+    },
+    //实现子组件发出的confirmAddClick方法
+    confirmAddClick(){
+      //点击确认添加商品按钮，将商品数据提交给后台保存并接收后台返回的处理结果，若后台返回结果为成功则立即关闭当前组件，反之则将错误反馈给用户
+      /**
+       *待实现
+       */
+
+
+      //关闭添加商品组件
+      this.addProductLogic.isShowAddProduct = false
     }
   }
 

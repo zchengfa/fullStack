@@ -32,14 +32,7 @@ import {defineComponent, reactive,watchEffect} from "vue";
 
 export default defineComponent({
   name: "ShopManage",
-  props:{
-    tableData:{
-      type:Array,
-      default(){
-        return []
-      }
-    }
-  },
+  props:['tableData'],
   setup(props){
     /**
      * @function editProduct该方法控制这当前所选商品是否编辑

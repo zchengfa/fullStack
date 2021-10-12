@@ -68,7 +68,7 @@ export default defineComponent( {
     }
   },
   data() {
-    let validatePass = (rule, value, callback) => {
+    let validatePass = (rule:string, value:string, callback:any) => {
       if (value === '') {
         callback(new Error('请输入密码'))
       } else {
@@ -78,7 +78,7 @@ export default defineComponent( {
         callback()
       }
     }
-    let validateAccount = (rule, value, callback) => {
+    let validateAccount = (rule:string, value:string, callback:any) => {
 
       //设置账号验证规则
       let RegExpPhone:RegExp = /^((13[0-9])|(15[^4])|(18[^4])|(199))\d{8}/
@@ -86,7 +86,7 @@ export default defineComponent( {
 
       if (value === '') {
         callback(new Error('请输入账号'))
-      } else if (RegExpMail.test(value) === false && RegExpPhone.test(value) === false) {
+      } else if (!RegExpMail.test(value) && !RegExpPhone.test(value)) {
         callback(new Error('账号格式不正确！'))
       } else {
         callback()
@@ -94,8 +94,8 @@ export default defineComponent( {
     }
     return {
       ruleForm: {
-        pass: '',
-        account: ''
+        pass:<string>'',
+        account:<string> ''
       },
       rules: {
         pass: [{ validator: validatePass, trigger: 'blur' }],
@@ -107,7 +107,7 @@ export default defineComponent( {
     //管理员登录
     loginAdministrator(formName:string,account:string,password:string){
       //点击登录按钮，对表单进行验证，验证通过才能向后台发起登录请求
-      this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate((valid:any) => {
         if (valid) {
           loginAdministrator(account,encrypt(password)).then(result => {
             //登录成功进入管理页面

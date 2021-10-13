@@ -39,8 +39,8 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="$emit('cancelAddClick')">取消</el-button>
-            <el-button type="success" @click="$emit('confirmAddClick',rulesLogic.ruleForm)">添加</el-button>
+            <el-button type="primary" @click="cancelAdd">取消</el-button>
+            <el-button type="success" @click="confirmAdd(rulesLogic.ruleForm)">添加</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -50,7 +50,8 @@
 
 <script lang="ts">
 import {defineComponent, reactive} from "vue";
-import rules from "./ruleForm";
+import rules from "./ruleForm.ts";
+import ruleForm from "./ruleForm.ts";
 
 export default defineComponent({
   name: "AddProduct",
@@ -78,10 +79,35 @@ export default defineComponent({
         selection:<string>'五分',
       }
     })
-
     return {
       optionList,
-      rulesLogic
+      rulesLogic,
+    }
+  },
+  methods:{
+    cancelAdd(){
+      this.$emit('cancelAddClick')
+    },
+
+    confirmAdd(ruleForm){
+      //先对当前表单进行验证，若符合表单验证规则，则将当前事件发送给父组件进行下一步处理
+      /**
+       * 注意：当前对表单进行this.$refs['ruleForm'].validate()验证时标签中含有prop属性，但未对其制定验证规则时会处于pending状态
+       * 解决：对每个标签中含有prop属性值制定验证规则，也可以将没有制定验证规则的prop进行删除
+       */
+      this.$refs['ruleForm'].validate().then(() => {
+        if (ruleForm.price<=0){
+          alert(`商品价格不能为${ruleForm.price}`)
+        }
+        else if(ruleForm.productCount <=0){
+          alert(`商品数量不能为${ruleForm.productCount}`)
+        }
+        else {
+          this.$emit('confirmAddClick',ruleForm)
+        }
+      }).catch(err =>{
+        console.log(err)
+      })
     }
   }
 })

@@ -15,7 +15,7 @@
           <data-statistics></data-statistics>
         </el-tab-pane>
       </el-tabs>
-      <add-product v-show="addProductLogic.isShowAddProduct"
+      <add-product ref="ruleForm" v-show="addProductLogic.isShowAddProduct"
                    @cancel-add-click="cancelAddClick"
                    @confirm-add-click="confirmAddClick"
       ></add-product>
@@ -28,7 +28,7 @@ import {reactive,defineComponent,onBeforeMount} from "vue";
 import {useRouter} from 'vue-router'
 import {ElContainer,ElHeader,ElMain,ElTabs,ElTabPane} from "element-plus";
 import ShopManage from "../components/admin/shopManage/ShopManage.vue";
-import {getShopManageData} from "../network/request";
+import {getShopManageData,addProduct} from "../network/request";
 import DataStatistics from "../components/admin/dataStatistics/DataStatistics.vue";
 import AddProduct from '../components/admin/shopManage/AddProduct.vue';
 
@@ -123,13 +123,14 @@ export default defineComponent({
     //实现子组件发出的confirmAddClick方法
     confirmAddClick(ruleForm){
       //点击确认添加商品按钮，将商品数据提交给后台保存并接收后台返回的处理结果，若后台返回结果为成功则立即关闭当前组件，反之则将错误反馈给用户
-      /**
-       *待实现
-       */
-        console.log(ruleForm)
+        addProduct(ruleForm).then(result => {
+          console.log(result)
+          //接收到后台反馈，商品数据添加成功，关闭添加商品组件
+          this.addProductLogic.isShowAddProduct = false
+        }).catch(err => {
+          console.log(err)
+        })
 
-      //关闭添加商品组件
-      this.addProductLogic.isShowAddProduct = false
     }
   }
 

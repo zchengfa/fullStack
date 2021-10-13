@@ -17,3 +17,10 @@ export function getShopManageData(){
         url:'/shopManage'
     })
 }
+
+export function addProduct (params:object){
+    return Post({
+        url:'/addProduct',
+        data:params
+    })
+}

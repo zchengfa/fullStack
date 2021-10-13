@@ -19,7 +19,7 @@ module.exports = app => {
     router.post('/addProduct',(req,res)=>{
         const paramsObj = JSON.parse(JSON.stringify(req.body))
         console.log(paramsObj)
-        res.send({'send':paramsObj.description})
+        res.send({'send':paramsObj})
     })
 
     app.use('/admin',router)

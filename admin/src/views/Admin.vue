@@ -121,7 +121,7 @@ export default defineComponent({
       this.addProductLogic.isShowAddProduct = false
     },
     //实现子组件发出的confirmAddClick方法
-    confirmAddClick(ruleForm){
+    confirmAddClick(ruleForm:any){
       //点击确认添加商品按钮，将商品数据提交给后台保存并接收后台返回的处理结果，若后台返回结果为成功则立即关闭当前组件，反之则将错误反馈给用户
         addProduct(ruleForm).then(result => {
           console.log(result)

@@ -1,4 +1,4 @@
-interface rulesInterface {
+interface rulesInterface{
     description:[
         {
             required:boolean,
@@ -15,24 +15,24 @@ interface rulesInterface {
     ],
     productCount:[
         {
-            required:boolean,
+            type:string,
             message:string,
             trigger:string
         },
         {
-            type:string,
+            required:boolean,
             message:string,
             trigger:string
         }
     ],
     price:[
         {
-            required:boolean,
+            type:string,
             message:string,
             trigger:string
         },
         {
-            type:string,
+            required:boolean,
             message:string,
             trigger:string
         }
@@ -44,7 +44,7 @@ interface rulesInterface {
             trigger:string
         }
     ],
-    sizeCheckList: [
+    sizeCheckList:[
         {
             type:string,
             required:boolean,
@@ -52,7 +52,7 @@ interface rulesInterface {
             trigger:string
         }
     ],
-    seasonCheckList: [
+    seasonCheckList:[
         {
             type:string,
             required:boolean,
@@ -60,85 +60,86 @@ interface rulesInterface {
             trigger:string
         }
     ],
-    collarTypeCheckList: [
+    collarTypeCheckList:[
         {
             type:string,
             required:boolean,
             message:string,
             trigger:string
         }
-    ],
+    ]
 }
 
-let rules:rulesInterface={
+let rules:rulesInterface = {
     description:[
         {
             required:true,
-            message:'图片描述不能为空!',
+            message:'商品描述不能为空！',
             trigger:'blur'
         }
     ],
     imageLink:[
         {
             required:true,
-            message:'链接不能为空!',
+            message:'图片链接不能为空！',
             trigger:'blur'
         }
     ],
     productCount:[
         {
-            required:true,
-            message:'数量不能为空!',
+            type:'number',
+            message:'您输入的内容不是数字哦！',
             trigger:'blur'
         },
         {
-            type:'number',
-            message:'您的输入的不是数字哦!',
+            required:true,
+            message:'数量不能为空！',
             trigger:'blur'
         }
     ],
     price:[
         {
-            required:true,
-            message:'价格不能为空!',
+            type:'number',
+            message:'您输入的价格不是数字哦！',
             trigger:'blur'
         },
         {
-            type:'number',
-            message:'价格必须是数字哦!',
+            required:true,
+            message:'价格不能为空！',
             trigger:'blur'
         }
     ],
     brand:[
         {
             required:true,
-            message:'品牌不能为空!',
+            message:'品牌不能为空',
             trigger:'blur'
         }
     ],
-    sizeCheckList: [
+    sizeCheckList:[
         {
             type:'array',
             required:true,
-            message:'至少选择一项哦！',
+            message:'至少选择一项尺寸',
             trigger:'change'
         }
     ],
-    seasonCheckList: [
+    seasonCheckList:[
         {
             type:'array',
             required:true,
-            message:'至少选择一项哦！',
+            message:'至少选择一项季节',
             trigger:'change'
         }
     ],
-    collarTypeCheckList: [
+    collarTypeCheckList:[
         {
             type:'array',
             required:true,
-            message:'至少选择一项哦！',
+            message:'至少选择一项领型',
             trigger:'change'
         }
-    ],
+    ]
 }
+
 export default rules

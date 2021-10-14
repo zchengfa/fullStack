@@ -7,7 +7,9 @@
             <el-input v-model="rulesLogic.ruleForm.description" type="textarea" :autosize="{maxRows:5}" placeholder="请添加商品描述"></el-input>
           </el-form-item>
           <el-form-item label="商品图片链接：" prop="imageLink">
-            <el-input v-model="rulesLogic.ruleForm.imageLink" placeholder="图片链接"></el-input>
+            <el-input v-model="rulesLogic.ruleForm.imageLink" placeholder="图片链接">
+              <template #prepend>https://</template>
+            </el-input>
           </el-form-item>
           <el-form-item label="商品数量：" prop="productCount">
             <el-input v-model.number="rulesLogic.ruleForm.productCount" type="number" placeholder="数量"></el-input>
@@ -95,12 +97,16 @@ export default defineComponent({
        * 注意：当前对表单进行this.$refs['ruleForm'].validate()验证时标签中含有prop属性，但未对其制定验证规则时会处于pending状态
        * 解决：对每个标签中含有prop属性值制定验证规则，也可以将没有制定验证规则的prop进行删除
        */
+      let urlRExp = new RegExp(/^(https)\:\/\/\w+/)
       this.$refs.ruleForm.validate().then(() => {
         if (ruleForm.price<=0){
           alert(`商品价格不能为${ruleForm.price}`)
         }
         else if(ruleForm.productCount <=0){
           alert(`商品数量不能为${ruleForm.productCount}`)
+        }
+        else if(!urlRExp.test(ruleForm.imageLink)){
+          alert('图片链接格式不正确')
         }
         else {
           this.$emit('confirmAddClick',ruleForm)

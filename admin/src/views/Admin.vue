@@ -131,7 +131,7 @@ export default defineComponent({
               title:<string>ruleForm.description,
               imagePath:<string>ruleForm.imageLink,
               count:<string>ruleForm.productCount +'件',
-              price:<string>ruleForm.price
+              price:<string>'￥'+ruleForm.price
             })
 
             //接收到后台添加商品数据成功的反馈，关闭添加商品组件

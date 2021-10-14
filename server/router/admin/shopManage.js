@@ -2,6 +2,8 @@ module.exports = app => {
     const express = require('express')
     const router = express.Router()
     const shopManageDataModel = require('../../model/goodsDataModel')
+
+    //接收前端获取商品数据请求
     router.get('/shopManage',(req, res) => {
         shopManageDataModel.find({}, (err,doc) => {
             if (err) throw err
@@ -16,10 +18,41 @@ module.exports = app => {
         })
     })
 
+    //接收前端添加商品请求
     router.post('/addProduct',(req,res)=>{
         const paramsObj = JSON.parse(JSON.stringify(req.body))
-        console.log(paramsObj)
-        res.send({'send':paramsObj})
+        const productID = require('../../util/createProductID')()
+        let insertData = {
+            type:['pop','sell','new'][Math.round(Math.random()*2)],
+            page:Math.round(Math.random()*10),
+            shopData:[
+                {
+                    product_id:productID,
+                    title:paramsObj.description,
+                    imagePath:paramsObj.imageLink,
+                    price:'￥'+paramsObj.price,
+                    origin_price:'￥'+(paramsObj.price*1.2).toFixed(1),
+                    favorite:paramsObj.productCount.toString()
+                }
+            ]
+        }
+        shopManageDataModel.insertMany([insertData],{rawResult:true}).then(result =>{
+            if (result){
+                res.send({'success':true,'product_id':productID})
+            }
+        }).catch(err =>{
+            res.sendStatus(501)
+        })
+    })
+
+    //接收前端删除商品请求
+    router.post('/deleteProduct',(req,res) => {
+        let paramObj = JSON.parse(JSON.stringify(req.body))
+        console.log(paramObj)
+        // shopManageDataModel.findOneAndDelete({'product_id':paramObj.product_id},null,(err, doc, res)=>{
+        //     console.log(err,doc,res)
+        // })
+        res.send(paramObj)
     })
 
     app.use('/admin',router)

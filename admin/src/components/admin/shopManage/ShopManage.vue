@@ -13,7 +13,7 @@
     <el-table-column label="操作" fixed="right" align="center">
       <template #default="scope">
         <el-button class="edit-btn" size="small" @click.prevent="editProduct(scope.$index,tableData)">编辑</el-button>
-        <el-button class="delete-btn" size="small" @click.prevent="deleteProduct(scope.$index,tableData)">删除</el-button>
+        <el-button class="delete-btn" size="small" @click.prevent="deletePro(scope.$index,tableData)">删除</el-button>
       </template>
     </el-table-column>
     <!--    <el-table-column v-for="(header,headerIndex) in tableHeader" :key="header"-->
@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import {defineComponent, reactive,watchEffect} from "vue";
-//import {getPropertyArray} from "../../common/utils";
+import {deleteProduct} from "../../../network/request";
 
 export default defineComponent({
   name: "ShopManage",
@@ -50,9 +50,13 @@ export default defineComponent({
      * @param rows 当前行的商品数据
      * 点击对应行中的删除按钮即可删除该行的商品数据
      */
-    function deleteProduct(index:number,rows:any[]){
-      rows.splice(index,1)
-      console.log(index,rows[index])
+    function deletePro(index:number,rows:any[]){
+      //rows.splice(index,1)
+      deleteProduct(rows[index].id).then(result =>{
+        console.log(result)
+      }).catch(err =>{
+        console.log(err)
+      })
     }
 
     function selection(val:any){
@@ -87,7 +91,7 @@ export default defineComponent({
 
     return {
       editProduct,
-      deleteProduct,
+      deletePro,
       selection,
       currentPageChange,
       currentPageData

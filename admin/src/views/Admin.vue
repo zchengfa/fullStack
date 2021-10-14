@@ -124,9 +124,20 @@ export default defineComponent({
     confirmAddClick(ruleForm:any){
       //点击确认添加商品按钮，将商品数据提交给后台保存并接收后台返回的处理结果，若后台返回结果为成功则立即关闭当前组件，反之则将错误反馈给用户
         addProduct(ruleForm).then(result => {
-          console.log(result)
-          //接收到后台反馈，商品数据添加成功，关闭添加商品组件
-          this.addProductLogic.isShowAddProduct = false
+          //根据后台反馈判断商品是否添加成功，若成功则将数据push进tableData中进行数据更新显示
+          if (result.data.success){
+            this.tableLogic.tableData.push({
+              id:<string>result.data.product_id,
+              title:<string>ruleForm.description,
+              imagePath:<string>ruleForm.imageLink,
+              count:<string>ruleForm.productCount +'件',
+              price:<string>ruleForm.price
+            })
+
+            //接收到后台添加商品数据成功的反馈，关闭添加商品组件
+            this.addProductLogic.isShowAddProduct = false
+          }
+
         }).catch(err => {
           console.log(err)
         })

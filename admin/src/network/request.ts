@@ -24,3 +24,12 @@ export function addProduct (params:object){
         data:params
     })
 }
+
+export function deleteProduct (product_id:string){
+    return Post({
+        url:'/deleteProduct',
+        data:{
+            product_id
+        }
+    })
+}

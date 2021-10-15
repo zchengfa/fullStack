@@ -1,19 +1,33 @@
 <template>
-  <el-table class="mall-table" :data="currentPageData.pageData" @selection-change="selection">
+  <el-table class="mall-table" :data="currentPageData.pageData" @selection-change="selection" border>
     <el-table-column type="selection"></el-table-column>
-    <el-table-column prop="id" label="商品ID"></el-table-column>
-    <el-table-column prop="title" label="商品描述" align="center"></el-table-column>
+    <el-table-column prop="id" label="商品ID">
+      <template #default="scope">
+        <span class="product-id">{{scope.row.id}}</span>
+      </template>
+    </el-table-column>
+    <el-table-column prop="title" label="商品描述" align="center">
+      <template #default="scope">
+        <span class="title">{{scope.row.title}}</span>
+      </template>
+    </el-table-column>
     <el-table-column prop="imagePath" label="商品图片" align="center">
       <template #default="scope">
         <el-image class="table-image" :src="scope.row.imagePath" alt="productImage"></el-image>
       </template>
     </el-table-column>
     <el-table-column prop="count" label="库存" align="center"></el-table-column>
-    <el-table-column prop="price" label="价格" align="center"></el-table-column>
+    <el-table-column prop="price" label="价格" align="center">
+      <template #default="scope">
+        <span class="price">{{scope.row.price}}</span>
+      </template>
+    </el-table-column>
     <el-table-column label="操作" fixed="right" align="center">
       <template #default="scope">
-        <el-button class="edit-btn" size="small" @click.prevent="editProduct(scope.$index,tableData)">编辑</el-button>
-        <el-button class="delete-btn" size="small" @click.prevent="deletePro(scope.$index,tableData)">删除</el-button>
+        <div class="operation-btn">
+          <el-button class="edit-btn" size="small" @click.prevent="editProduct(scope.$index,tableData)">编辑</el-button>
+          <el-button class="delete-btn" size="small" @click.prevent="deletePro(scope.$index,tableData)">删除</el-button>
+        </div>
       </template>
     </el-table-column>
     <!--    <el-table-column v-for="(header,headerIndex) in tableHeader" :key="header"-->
@@ -119,11 +133,25 @@ export default defineComponent({
 .mall-table{
   height: 70vh;
 }
+.product-id{
+  color: #1e8efc;
+}
+.title{
+  display: block;
+  min-width: 200px;
+  color: #d91868;
+}
+.price{
+  color: #ff4d00;
+}
 .table-image{
   padding: .2rem;
   width: 10%;
   min-width: 42px;
   border: 1px solid #bdb6b6;
+}
+.operation-btn{
+  min-width: 200px;
 }
 .edit-btn,.delete-btn{
   color: #fff;

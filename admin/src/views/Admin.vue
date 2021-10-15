@@ -162,6 +162,7 @@ export default defineComponent({
 .add-btn {
   float: left;
   margin-left: 2rem;
+  margin-bottom: 1rem;
 }
 .admin-main{
   width: 100%;

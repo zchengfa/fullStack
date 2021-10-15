@@ -10,6 +10,7 @@
               :rules="rules"
               ref="ruleForm"
               class="demo-ruleForm content-form"
+              @keyup="enterKeyUpLogin($event)"
           >
             <el-form-item label="账号：" prop="account" class="form-item">
               <el-input
@@ -28,7 +29,7 @@
               ></el-input>
             </el-form-item>
             <el-form-item class="form-item">
-              <el-button class="login-button" type="primary" @click="loginAdministrator('ruleForm',ruleForm.account,ruleForm.pass)">登录</el-button>
+              <el-button class="login-button" type="primary" @click="loginAdmin(this.$refs.ruleForm,ruleForm.account,ruleForm.pass)">登录</el-button>
               <el-button class="forget-password" @click="enterResetPage()">忘记密码？</el-button>
             </el-form-item>
           </el-form>
@@ -63,6 +64,7 @@ export default defineComponent( {
     function enterResetPage (){
       router.push('/resetPassword')
     }
+
     return {
       enterResetPage
     }
@@ -72,7 +74,7 @@ export default defineComponent( {
       if (value === '') {
         callback(new Error('请输入密码'))
       } else {
-        if (this.ruleForm.pass !== '') {
+        if (this.ruleForm.pass !=='') {
           this.$refs.ruleForm.validateField('checkPass')
         }
         callback()
@@ -95,7 +97,7 @@ export default defineComponent( {
     return {
       ruleForm: {
         pass:<string>'',
-        account:<string> ''
+        account:<string>''
       },
       rules: {
         pass: [{ validator: validatePass, trigger: 'blur' }],
@@ -105,9 +107,9 @@ export default defineComponent( {
   },
   methods: {
     //管理员登录
-    loginAdministrator(formName:string,account:string,password:string){
+    loginAdmin(form:any,account:string,password:string){
       //点击登录按钮，对表单进行验证，验证通过才能向后台发起登录请求
-      this.$refs[formName].validate((valid:any) => {
+      form.validate((valid:any) => {
         if (valid) {
           loginAdministrator(account,encrypt(password)).then(result => {
             //登录成功进入管理页面
@@ -130,6 +132,13 @@ export default defineComponent( {
           return false
         }
       })
+    },
+    //监听键盘按键，当用户抬起enter键后发起登录请求
+    enterKeyUpLogin(e:any){
+      if (e.keyCode === 13){
+        this.loginAdmin(this.$refs.ruleForm,this.ruleForm.account,this.ruleForm.pass)
+      }
+
     }
   },
 })

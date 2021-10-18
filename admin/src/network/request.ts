@@ -33,3 +33,12 @@ export function deleteProduct (product_id:string){
         }
     })
 }
+
+export function getAdministratorInfo(token:string | null){
+    return Post({
+        url:'administratorInfo',
+        data:{
+            token
+        }
+    })
+}

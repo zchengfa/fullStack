@@ -131,7 +131,9 @@ export default defineComponent({
 
 <style scoped>
 .mall-table{
-  height: 70vh;
+  margin-top:1rem;
+  width: 100%;
+  height: 72%;
 }
 .product-id{
   color: #1e8efc;

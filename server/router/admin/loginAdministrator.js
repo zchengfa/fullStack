@@ -31,8 +31,19 @@ module.exports = app => {
                        avatar:results[0].header_image,
                        identity:results[0].identity
                    }
+                   //生成token,当过期时间number类型时以秒计算
                    const token = createToken(administrator,'administrator','1d')
-                   res.send({'success':'登录成功','token':token})
+
+                   //将生成的token存入数据库中
+                   const update = mysql_query.update('user',`token = '${token}'`,`account = '${results[0]['account']}'`)
+
+                   connection.query(update, (err) => {
+                       if (err) throw err
+                       else {
+                           console.log('token write success')
+                           res.send({'success':'登录成功','token':token})
+                       }
+                   })
                }
                else {
                    res.send({'failed':'账号密码错误或不是管理员'})

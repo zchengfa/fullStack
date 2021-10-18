@@ -3,6 +3,24 @@ module.exports = app => {
     const router = express.Router()
     const shopManageDataModel = require('../../model/goodsDataModel')
 
+    //接收前端获取管理员信息请求
+    router.post('/administratorInfo',(req, res) => {
+        const paramObj = JSON.parse(JSON.stringify(req.body))
+        const {verifyToken} = require('../../util/token')
+
+        verifyToken(paramObj.token,(err,decode)=>{
+           if (err){
+               console.log(err)
+               res.send(err)
+           }
+            else {
+                console.log(decode)
+               res.send({'info':decode})
+           }
+        })
+        //console.log(paramObj.token)
+    })
+
     //接收前端获取商品数据请求
     router.get('/shopManage',(req, res) => {
         shopManageDataModel.find({}, (err,doc) => {
@@ -41,7 +59,7 @@ module.exports = app => {
                 res.send({'success':true,'product_id':productID})
             }
         }).catch(err =>{
-            res.sendStatus(501)
+            res.send(err)
         })
     })
 

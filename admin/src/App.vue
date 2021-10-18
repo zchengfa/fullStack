@@ -16,8 +16,8 @@ body{
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin: 0 auto;
-  width: 100%;
+  margin: 0;
+  width: 100vw;
   height: 100vh;
 }
 </style>

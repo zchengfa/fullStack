@@ -18,6 +18,7 @@ body{
   color: #2c3e50;
   margin: 0;
   width: 100vw;
+  min-width: 1600px;
   height: 100vh;
 }
 </style>

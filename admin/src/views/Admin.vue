@@ -2,25 +2,34 @@
   <el-container class="menu-container shopM-con">
     <div class="content">
       <div class="administrator">
-        <el-avatar v-if="!administrator.info.avatar" icon="el-icon-user-solid"></el-avatar>
-        <el-avatar v-else :src="administrator.info.avatar"></el-avatar>
+        <div class="avatar-box">
+         <el-avatar v-if="!administrator.info.avatar" icon="el-icon-user-solid"></el-avatar>
+         <el-avatar v-else :src="administrator.info.avatar"></el-avatar>
+        </div>
         <div class="user-name">
           <span>管理员:{{administrator.info.account}}</span>
         </div>
       </div>
       <el-menu class="menu">
-        <el-menu-item v-for="(item,index) in shopMenu.menu" :key="item" :index="index">{{item}}</el-menu-item>
+        <el-menu-item class="menu-item" v-for="(item,index) in shopMenu.menu" :key="index" :index="index+''">
+          <slot>
+            <button class="menu-btn" @click="changeMenuItem(index)" :class="{'menu-btn-active':shopMenu.currentIndex===index}">{{item}}</button>
+          </slot>
+        </el-menu-item>
       </el-menu>
     </div>
   </el-container>
   <el-container class="table-container shopM-con">
-    <div class="shop-mana">
+    <div class="shop-mana" v-show="shopMenu.currentIndex===0" >
       <div class="btn-group">
         <el-button class="add-btn" type="primary" @click="addProduct">添加商品</el-button>
       </div>
       <shop-manage
           :table-data="tableLogic.tableData"
       ></shop-manage>
+    </div>
+    <div class="data-statistics" v-show="shopMenu.currentIndex===1">
+      <data-statistics></data-statistics>
     </div>
   </el-container>
   <add-product ref="ruleForm" v-show="addProductLogic.isShowAddProduct"
@@ -56,13 +65,17 @@
           }
         })
 
+        /**
+         * @param administrator 用管理员页面展示管理员信息
+         * @function getAdminInfo 用于获取管理员信息
+         * 将管理员登录成功后得到的token传给后台验证，后台返回管理员信息
+        */
         let administrator = reactive({
           info:{
             avatar:<string>'',
             account:<string>''
           }
         })
-
         function getAdminInfo(){
           getAdministratorInfo(token).then(result =>{
             if (result.data.info){
@@ -75,9 +88,20 @@
           })
         }
 
+        /**
+         * @param menu 存储菜单名
+         * @param currentIndex 用于存储用户当前点击菜单项索引，用索引控制对应内容的展示与隐藏
+         * @function changeMenuItem 用户点击菜单，获取到点击的菜单索引。并将其赋给currentIndex
+         */
         let shopMenu = reactive({
-          menu:<string[]>['商品管理','数据统计']
+          menu:<string[]>['商品管理','数据统计'],
+          currentIndex:<number>0
         })
+
+        function changeMenuItem (index:number){
+          shopMenu.currentIndex = index
+        }
+
         /**
          *  获取token，如果存在token则说明管理员已经登录，可以进入管理页面，反之则引导管理员进入登录界面
          * @function checkUserIsLogin() 检测管理员是否登录
@@ -140,7 +164,8 @@
           tableLogic,
           addProductLogic,
           addProduct,
-          shopMenu
+          shopMenu,
+          changeMenuItem
         }
       },
       methods:{
@@ -185,12 +210,13 @@
     }
     .menu-container{
       margin-left: 0;
-      width: 10vw;
+      width: 12vw;
       min-width: 10rem;
+      color: #fff;
     }
     .table-container{
       margin-left: 1rem;
-      width: 89vw;
+      width: 87vw;
     }
     .content{
       width: 100%;
@@ -200,13 +226,33 @@
       width: 100%;
       height: 14%;
       font-size:smaller;
-      background-color: red;
+      background-color: #343333;
+    }
+    .avatar-box{
+      padding-top: 1rem;
+    }
+    .user-name{
+      padding-top: 1rem;
     }
     .menu{
       width: 100%;
       height: 86%;
-      color: #1e8efc !important;
       background-color: #4d4b4b;
+    }
+    .menu-item:hover{
+      background-color: #5d5858;
+    }
+    .menu-btn{
+      width: 100%;
+      height: 96%;
+      border: none;
+      background-color: inherit;
+      color: #ccc9c9;
+      font-weight: bolder;
+      cursor: pointer;
+    }
+    .menu-btn-active{
+      color: #32b1e0;
     }
     .shop-mana{
       width: 100%;
@@ -220,5 +266,4 @@
       height: 10%;
       border: 1px solid #dedada;
     }
-
     </style>

@@ -21,8 +21,24 @@
   </el-container>
   <el-container class="table-container shopM-con">
     <div class="shop-mana" v-show="shopMenu.currentIndex===0" >
-      <div class="btn-group">
-        <el-button class="add-btn" type="primary" @click="addProduct">添加商品</el-button>
+      <div class="select-group">
+        <el-button class="add-btn" type="primary" size="small" @click="addProduct">添加商品</el-button>
+        <div class="category-selector-box">
+          <span>分类选择：</span>
+          <el-select v-model="addProductLogic.categoryCheckOption" placeholder="全部" class="select">
+            <el-option v-for="item in addProductLogic.selectCategoryOptions" :key="item" :value="item" :label="item"></el-option>
+          </el-select>
+        </div>
+        <div class="brand-selector-box">
+          <span>品牌选择：</span>
+          <el-select v-model="addProductLogic.brandCheckOption" placeholder="全部" class="select">
+            <el-option v-for="item in addProductLogic.selectBrandOptions" :key="item" :value="item" :label="item"></el-option>
+          </el-select>
+        </div>
+        <div class="search-box">
+          <span>搜索：</span>
+          <el-input class="search-input" placeholder="输入商品ID/分类/商品名称" suffix-icon="el-icon-search"></el-input>
+        </div>
       </div>
       <shop-manage
           :table-data="tableLogic.tableData"
@@ -121,7 +137,11 @@
          * @function addProduct 点击按钮控制添加商品的页面显示与隐藏
          */
         let addProductLogic = reactive({
-          isShowAddProduct:<boolean>false
+          isShowAddProduct:<boolean>false,
+          selectCategoryOptions:<string[]>['上衣','裤子'],
+          selectBrandOptions:<string[]>['太贫鸟','南极'],
+          categoryCheckOption:<string>'',
+          brandCheckOption:<string>''
         })
         function addProduct(){
           addProductLogic.isShowAddProduct = ! addProductLogic.isShowAddProduct
@@ -258,12 +278,35 @@
       width: 100%;
       height: 100%;
     }
-    .btn-group{
+    .select-group{
       display: flex;
       align-items: center;
-      margin-top: 2rem;
+      margin-top: 1rem;
       width: 60%;
+      min-width: 800px;
       height: 10%;
       border: 1px solid #dedada;
+    }
+    .add-btn{
+      margin-left: 1rem;
+    }
+    .category-selector-box,.brand-selector-box{
+      flex: 1;
+    }
+    .select{
+      width: 6rem;
+    }
+    .search-box{
+      margin-right: 1rem;
+      flex: 1.3;
+    }
+    .category-selector-box,
+    .brand-selector-box,
+    .search-box span{
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .search-box .search-input{
+      width: 80%;
     }
     </style>

@@ -37,14 +37,14 @@
         </div>
         <div class="search-box">
           <span>搜索：</span>
-          <el-input class="search-input" placeholder="输入商品ID/分类/商品名称" suffix-icon="el-icon-search"></el-input>
+          <el-input class="search-input" v-model="addProductLogic.searchKeyword" @keyup="searchProduct($event)" placeholder="输入商品ID/分类/商品名称" suffix-icon="el-icon-search"></el-input>
         </div>
       </div>
       <shop-manage
           :table-data="tableLogic.tableData"
       ></shop-manage>
     </div>
-    <div class="data-statistics" v-show="shopMenu.currentIndex===1">
+    <div class="data-statistics" v-show="shopMenu.currentIndex===2">
       <data-statistics></data-statistics>
     </div>
   </el-container>
@@ -110,7 +110,7 @@
          * @function changeMenuItem 用户点击菜单，获取到点击的菜单索引。并将其赋给currentIndex
          */
         let shopMenu = reactive({
-          menu:<string[]>['商品管理','数据统计'],
+          menu:<string[]>['商品管理','会员管理','数据统计'],
           currentIndex:<number>0
         })
 
@@ -134,27 +134,22 @@
         }
 
         /**
-         * @function addProduct 点击按钮控制添加商品的页面显示与隐藏
+         * @param tableData 存储表格内需要展示的数据
+         * @param shopManageData 存储后台获得的商品管理数据
          */
-        let addProductLogic = reactive({
-          isShowAddProduct:<boolean>false,
-          selectCategoryOptions:<string[]>['上衣','裤子'],
-          selectBrandOptions:<string[]>['太贫鸟','南极'],
-          categoryCheckOption:<string>'',
-          brandCheckOption:<string>''
+
+        let tableLogic = reactive({
+          tableData:<any[]>[],
+          shopManageData:<any[]>[]
         })
-        function addProduct(){
-          addProductLogic.isShowAddProduct = ! addProductLogic.isShowAddProduct
-        }
 
         /**
          *@function getShopManageData 获取商品管理数据
          */
         function getSMData (){
           getShopManageData().then(result =>{
-            let shopManageData:any[] = []
             result.data.filter((item:any) =>{
-              return shopManageData.push({
+              return tableLogic.shopManageData.push({
                 id:<string>item.product_id,
                 title:<string>item.title,
                 imagePath:<string>item.imagePath,
@@ -164,7 +159,7 @@
 
             })
             //console.log(result.data)
-            tableLogic.tableData = shopManageData
+            tableLogic.tableData = tableLogic.shopManageData
             //console.log(shopManageData)
           })
               .catch(err =>{
@@ -172,18 +167,65 @@
               })
         }
 
-        /**
-         * @param tableData 存储表格内的数据
-         */
 
-        let tableLogic = reactive({
-          tableData:<any[]>[],
+        /**
+         * @function addProduct 点击按钮控制添加商品的页面显示与隐藏
+         * @param isShowAddProduct bool值代表添加商品按钮的显示与隐藏
+         * @param selectCategoryOptions 分类选项组的内容
+         * @param selectBrandOptions 品牌选项组的内容
+         * @param categoryCheckOption 已选择的分类
+         * @param brandCheckOption 已选择的品牌
+         * @param searchKeyword 需要查询的关键字（ID/名称/分类）
+         */
+        let addProductLogic = reactive({
+          isShowAddProduct:<boolean>false,
+          selectCategoryOptions:<string[]>['上衣','裤子'],
+          selectBrandOptions:<string[]>['太贫鸟','南极'],
+          categoryCheckOption:<string>'',
+          brandCheckOption:<string>'',
+          searchKeyword:<string>''
         })
+
+        function addProduct(){
+          addProductLogic.isShowAddProduct = true
+        }
+
+        /**
+         *@function searchProduct 该方法用于管理员搜索想搜索的商品，通过绑定keyUp键盘事件来获取管理员按下的键来判断何时执行搜索方法
+         * @param searchArr 获取从后台得到的商品数据
+         * @param regExp 正则规则（new RegExp(addProductLogic.searchKeyword)将管理员输入的内容作为正则规则）
+         * @param regExpArr 用于存储正则规则匹配到的商品数据
+         */
+        function searchProduct(e:any){
+          let searchArr:any[] = tableLogic.shopManageData
+          let regExpArr:any[] = []
+          let regExp:RegExp = new RegExp(addProductLogic.searchKeyword)
+          //enter键抬起，开始搜索内容
+          if (e.keyCode === 13){
+            //通过判断关键字的长度来判断管理员是否输入了想要搜索的关键字，关键字长度大于0则执行正则匹配
+            if (addProductLogic.searchKeyword.length != 0){
+              searchArr.filter((item,index) => {
+                //将正则匹配到的数据push进regExp数组中
+                if (regExp.test(item.id) || regExp.test(item.title)){
+                  regExpArr.push(searchArr[index])
+                }
+
+              })
+              tableLogic.tableData = regExpArr
+            }
+            //关键字长度小于1，无关键字，表格展示所有数据
+            else {
+              tableLogic.tableData = tableLogic.shopManageData
+            }
+          }
+        }
+
         return {
           administrator,
           tableLogic,
           addProductLogic,
           addProduct,
+          searchProduct,
           shopMenu,
           changeMenuItem
         }

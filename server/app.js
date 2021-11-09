@@ -39,6 +39,9 @@ require('./router/admin/loginAdministrator')(app)
 //导入商品管理模块
 require('./router/admin/shopManage')(app)
 
+//导入用户管理模块
+require('./router/admin/memberManage')(app)
+
 
 
 app.get('/',(req,res) => {

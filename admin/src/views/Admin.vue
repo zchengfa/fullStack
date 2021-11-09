@@ -44,6 +44,9 @@
           :table-data="tableLogic.tableData"
       ></shop-manage>
     </div>
+    <div class="member-mana" v-show="shopMenu.currentIndex===1">
+      <member-manage ></member-manage>
+    </div>
     <div class="data-statistics" v-show="shopMenu.currentIndex===2">
       <data-statistics></data-statistics>
     </div>
@@ -58,7 +61,8 @@
     import {useRouter} from 'vue-router'
     import {ElContainer,ElHeader,ElMain,ElTabs,ElTabPane} from "element-plus";
     import ShopManage from "../components/admin/shopManage/ShopManage.vue";
-    import {getShopManageData,addProduct,getAdministratorInfo} from "../network/request";
+    import MemberManage from "../components/admin/memberManage/MemberManage.vue"
+    import {getShopManageData,addProduct,getAdministratorInfo,getMemberManageData} from "../network/request";
     import DataStatistics from "../components/admin/dataStatistics/DataStatistics.vue";
     import AddProduct from '../components/admin/shopManage/AddProduct.vue';
 
@@ -67,6 +71,7 @@
       components:{
         ElContainer,ElHeader,ElMain,ElTabs,ElTabPane,
         ShopManage,
+        MemberManage,
         DataStatistics,
         AddProduct
       },
@@ -78,6 +83,7 @@
           if (checkUserIsLogin()){
             getSMData()
             getAdminInfo()
+            getMMData()
           }
         })
 
@@ -110,7 +116,7 @@
          * @function changeMenuItem 用户点击菜单，获取到点击的菜单索引。并将其赋给currentIndex
          */
         let shopMenu = reactive({
-          menu:<string[]>['商品管理','会员管理','数据统计'],
+          menu:<string[]>['商品管理','用户管理','数据统计'],
           currentIndex:<number>0
         })
 
@@ -218,6 +224,17 @@
               tableLogic.tableData = tableLogic.shopManageData
             }
           }
+        }
+
+        /**
+         * @function getMMData 该方法用于获取商城所有的用户数据
+         */
+        function getMMData(){
+          getMemberManageData().then(result => {
+            console.log(result)
+          }).catch(err =>{
+            console.log(err)
+          })
         }
 
         return {

@@ -42,3 +42,9 @@ export function getAdministratorInfo(token:string | null){
         }
     })
 }
+
+export function getMemberManageData(){
+    return Get({
+        url:'/memberManage'
+    })
+}

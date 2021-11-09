@@ -86,7 +86,7 @@ module.exports = app => {
                         //创建查询语句，查询该表已有多少条数据，将user_id字段在原有的数据数量上加一
                         const insertQuery = mysql_query.insert('user','id,user_id,account,password,register_time',
                             `${result[0]['COUNT(1)'] + 1 },'${ID()}','${paramsObj.username}','${paramsObj.pwd}',
-                            ${timeFormatting("YYYY-MM-DD-HH-MM-SS")}`)
+                            '${timeFormatting('YYYY-MM-DD HH:MM:SS')}'`)
                         connection.query(insertQuery, (err) => {
                             if (err) throw err
                             res.send({'success':'注册成功'})

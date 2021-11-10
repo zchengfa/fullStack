@@ -36,7 +36,7 @@ export function deleteProduct (product_id:string){
 
 export function getAdministratorInfo(token:string | null){
     return Post({
-        url:'administratorInfo',
+        url:'/administratorInfo',
         data:{
             token
         }
@@ -47,4 +47,13 @@ export function getMemberManageData(){
     return Get({
         url:'/memberManage'
     })
+}
+
+export function deleteUser(user_id:string){
+	return Post({
+		url:'/deleteUser',
+		data:{
+			user_id
+		}
+	})
 }

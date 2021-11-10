@@ -30,7 +30,7 @@ const mysql_query = {
     update(table_name,values,confident) {
         return `UPDATE ${table_name} SET ${values} WHERE ${confident}`
     },
-    delete(table_name,confident){
+    deleteOpration(table_name,confident){
         return `DELETE FROM ${table_name} WHERE ${confident}`
     }
 }

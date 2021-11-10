@@ -14,7 +14,7 @@ module.exports = app => {
                res.send(err)
            }
             else {
-                console.log(decode)
+                //console.log(decode)
                res.send({'info':decode})
            }
         })

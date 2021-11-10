@@ -10,7 +10,7 @@ module.exports = app => {
    router.post('/loginAdministrator',(req,res)=> {
        //接受请求参数
        const paramsObj = JSON.parse(JSON.stringify(req.body))
-       console.log(paramsObj)
+       //console.log(paramsObj)
         //连接数据库
        const connection = require('../../plugins/connectMysql')()
        const mysql_query = require('../../plugins/mysql_query')
@@ -48,7 +48,7 @@ module.exports = app => {
                else {
                    res.send({'failed':'账号密码错误或不是管理员'})
                }
-               console.log(results)
+               //console.log(results)
            }
        })
    })

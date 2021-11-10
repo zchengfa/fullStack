@@ -66,7 +66,7 @@ module.exports = app => {
     //接收前端删除商品请求
     router.post('/deleteProduct',(req,res) => {
         let paramObj = JSON.parse(JSON.stringify(req.body))
-        console.log(paramObj)
+        //console.log(paramObj)
         // shopManageDataModel.findOneAndDelete({'product_id':paramObj.product_id},null,(err, doc, res)=>{
         //     console.log(err,doc,res)
         // })

@@ -43,7 +43,7 @@ module.exports = app => {
                             //生成token,当过期时间number类型时以秒计算
                             const token = createToken(user,'user','1d')
 
-                            console.log(results[0])
+                            //console.log(results[0])
                             //将生成的token存入数据库中
                             const update = mysql_query.update('user',`token = '${token}'`,`account = '${results[0]['account']}'`)
 
@@ -55,7 +55,7 @@ module.exports = app => {
                                 }
                             })
 
-                            console.log('longin success')
+                            console.log('login success')
                         }
                         //没有匹配项，不允许登录，并将错误信息发送给前端让其提示用户
                         else {

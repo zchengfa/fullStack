@@ -45,7 +45,7 @@
       ></shop-manage>
     </div>
     <div class="member-mana" v-show="shopMenu.currentIndex===1">
-      <member-manage ></member-manage>
+      <member-manage :member-data="tableLogic.memberData"></member-manage>
     </div>
     <div class="data-statistics" v-show="shopMenu.currentIndex===2">
       <data-statistics></data-statistics>
@@ -104,7 +104,7 @@
               administrator.info.avatar = result.data.info.avatar
               administrator.info.account = result.data.info.account
             }
-            console.log(result)
+            //console.log(result)
           }).catch(err =>{
             console.log(err)
           })
@@ -146,7 +146,8 @@
 
         let tableLogic = reactive({
           tableData:<any[]>[],
-          shopManageData:<any[]>[]
+          shopManageData:<any[]>[],
+          memberData:<any[]>[]
         })
 
         /**
@@ -231,7 +232,20 @@
          */
         function getMMData(){
           getMemberManageData().then(result => {
-            console.log(result)
+            tableLogic.memberData = result.data
+            tableLogic.memberData.filter(item => {
+              console.log(item.username)
+              if (!item.username){
+                item.username = '暂未设置昵称'
+              }
+              if (item.identity === 'administrator'){
+                item.identity = '管理员'
+              }
+              else {
+                item.identity = '普通用户'
+              }
+            })
+            console.log(result.data)
           }).catch(err =>{
             console.log(err)
           })
@@ -333,7 +347,7 @@
     .menu-btn-active{
       color: #32b1e0;
     }
-    .shop-mana{
+    .shop-mana,.member-mana{
       width: 100%;
       height: 100%;
     }

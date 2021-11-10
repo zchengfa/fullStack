@@ -1,5 +1,6 @@
 
 function timeFormatting (fm){
+    //拓展Date的时间格式化函数
     Date.prototype.format = function (fmt){
         let formatObject = {
             "M+": this.getMonth() + 1,                   //月份

@@ -71,6 +71,7 @@
     import {getShopManageData,addProduct,getAdministratorInfo,getMemberManageData} from "../network/request";
     import DataStatistics from "../components/admin/dataStatistics/DataStatistics.vue";
     import AddProduct from '../components/admin/shopManage/AddProduct.vue';
+		import {searchContentByKeyword} from '../common/utils.ts'
 
     export default defineComponent({
       name: "admin",
@@ -234,7 +235,15 @@
               tableLogic.tableData = tableLogic.shopManageData
             }
           }
+					
         }
+				
+				/**
+				 *@function searchUser 该方法用于管理员搜索想搜索的用户，通过绑定keyUp键盘事件来获取管理员按下的键来判断何时执行搜索方法
+				 * @param searchArr 获取从后台得到的用户数据
+				 * @param regExp 正则规则（new RegExp(tableLogic.memberManaSearchKeyword)将管理员输入的内容作为正则规则）
+				 * @param regExpArr 用于存储正则规则匹配到的用户数据
+				 */
 				
 				function searchUser(e:any){
 					let searchArr:any[] = tableLogic.memberDataCopy
@@ -252,7 +261,8 @@
 						}
 						else{
 							tableLogic.memberData = tableLogic.memberDataCopy
-						}					
+						}	
+					}					
 				}
 
         /**
@@ -288,7 +298,7 @@
           searchProduct,
           shopMenu,
 					searchUser,
-          changeMenuItem
+          changeMenuItem,
         }
       },
       methods:{

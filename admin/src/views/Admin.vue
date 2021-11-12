@@ -51,7 +51,7 @@
 				  <el-input class="search-input" v-model="tableLogic.memberManaSearchKeyword" @keyup="searchUser($event)" placeholder="输入用户身份/昵称/账号" suffix-icon="el-icon-search"></el-input>
 				</div>
 			</div>
-      <member-manage :member-data="tableLogic.memberData"></member-manage>
+      <member-manage :table-data="tableLogic.memberData"></member-manage>
     </div>
     <div class="data-statistics" v-show="shopMenu.currentIndex===2">
       <data-statistics></data-statistics>
@@ -71,7 +71,6 @@
     import {getShopManageData,addProduct,getAdministratorInfo,getMemberManageData} from "../network/request";
     import DataStatistics from "../components/admin/dataStatistics/DataStatistics.vue";
     import AddProduct from '../components/admin/shopManage/AddProduct.vue';
-		import {searchContentByKeyword} from '../common/utils.ts'
 
     export default defineComponent({
       name: "admin",

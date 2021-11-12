@@ -11,16 +11,12 @@ module.exports = function connect () {
     })
 
     //连接数据库
-    connection.connect((err)=> {
-        if (err) {
-            connect()
-        }
-    })
+    connection.connect()
 
     //mysql错误处理
     connection.on('error', err => {
-        //当数据库断开连接时重连数据库
-        if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+        //当数据库出现错误时重连数据库
+        if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR' || err.code === 'ETIMEDOUT') {
             connect()
         }
         else {

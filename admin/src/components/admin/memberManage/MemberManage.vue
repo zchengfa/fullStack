@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="memberData" class="member-table" border :header-cell-style="headerStyle" :cell-style="rowStyle" empty-text="用户数据为空">
+  <el-table :data="currentPageData.pageData" class="member-table" border :header-cell-style="headerStyle" :cell-style="rowStyle" empty-text="用户数据为空">
     <el-table-column prop="user_id" label="用户ID" align="center">
 		<template #default="scope">
 			<span class="user-id">{{scope.row.user_id}}</span>
@@ -16,21 +16,22 @@
     <el-table-column label="操作" fixed="right" align="center">
       <template #default="scope">
         <div class="operation-btn">
-          <el-button class="delete-btn" size="small" @click.prevent="deleteMember(scope.$index,memberData)">删除</el-button>
+          <el-button class="delete-btn" size="small" @click.prevent="deleteMember(scope.$index,tableData)">删除</el-button>
         </div>
       </template>
     </el-table-column>
   </el-table>
+  <el-pagination class="pagination" :page-size="7" :total="tableData.length" @current-change="currentPageChange"></el-pagination>
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
-import {deleteUser} from "../../../network/request.ts"
+import {defineComponent, reactive, watchEffect} from "vue";
+import {deleteUser} from "../../../network/request";
 
 export default defineComponent({
   name: "MemberManage",
-  props:['memberData'],
-  setup(){
+  props:['tableData'],
+  setup(props){
 		
 		/**
 		 *@function headerStyle 自定义设置表头的样式 
@@ -49,7 +50,7 @@ export default defineComponent({
 			}
 		}
 		
-		function deleteMember(index,rows){
+		function deleteMember(index:any,rows:any){
 			//console.log(index,rows[index])
 			deleteUser(rows[index].user_id).then(result =>{
 				if(result.data.success){
@@ -59,15 +60,43 @@ export default defineComponent({
 					
 				}
 				//console.log(result)
-			}).catch(err =>{
+			}).catch((err:any) =>{
 				console.log(err)
 			})
 		}
+
+    /**
+     * @param currentPageData 存储当前数据变量的对象
+     * @param pageData 存储当前需要显示的数据数组
+     * @function currentPageChange该方法通过获取到的页码值来控制对应页面需要显示的数据
+     */
+    let currentPageData = reactive({
+      pageData:<any[]>[]
+    })
+
+    watchEffect(()=>{
+      currentPageData.pageData = sliceTableData(0,7)
+    })
+
+    function currentPageChange(val:any){
+      if (val===1){
+        currentPageData.pageData = sliceTableData(val-1,7)
+      }
+      else {
+        currentPageData.pageData = sliceTableData((val-1)*7,((val-1)*7)+7)
+      }
+    }
+
+    function sliceTableData(start:number,end:number) {
+      return props.tableData.slice(start,end)
+    }
 		
     return {
 			headerStyle,
 			rowStyle,
-			deleteMember
+			deleteMember,
+      currentPageChange,
+      currentPageData
     }
   }
 })
@@ -76,8 +105,8 @@ export default defineComponent({
 <style scoped>
 .member-table{
   margin: 1rem auto;
-  width: 98%;
-	
+  width: 100%;
+	height: 70%;
 }
 .user-id{
 	font-weight: bolder;

@@ -45,6 +45,12 @@
       ></shop-manage>
     </div>
     <div class="member-mana" v-show="shopMenu.currentIndex===1">
+			<div class="select-group">
+				<div class="search-box">
+				  <span>搜索用户：</span>
+				  <el-input class="search-input" v-model="tableLogic.memberManaSearchKeyword" @keyup="searchUser($event)" placeholder="输入用户身份/昵称/账号" suffix-icon="el-icon-search"></el-input>
+				</div>
+			</div>
       <member-manage :member-data="tableLogic.memberData"></member-manage>
     </div>
     <div class="data-statistics" v-show="shopMenu.currentIndex===2">
@@ -147,7 +153,9 @@
         let tableLogic = reactive({
           tableData:<any[]>[],
           shopManageData:<any[]>[],
-          memberData:<any[]>[]
+          memberData:<any[]>[],
+					memberDataCopy:<any[]>[],
+					memberManaSearchKeyword:<string>''
         })
 
         /**
@@ -196,6 +204,7 @@
         function addProduct(){
           addProductLogic.isShowAddProduct = true
         }
+				
 
         /**
          *@function searchProduct 该方法用于管理员搜索想搜索的商品，通过绑定keyUp键盘事件来获取管理员按下的键来判断何时执行搜索方法
@@ -226,6 +235,25 @@
             }
           }
         }
+				
+				function searchUser(e:any){
+					let searchArr:any[] = tableLogic.memberDataCopy
+					let regExpArr:any[] = []
+					let regExp:RegExp = new RegExp(tableLogic.memberManaSearchKeyword)
+					if(e.keyCode === 13){
+						if(tableLogic.memberManaSearchKeyword.length !=0){
+							searchArr.map((item,index) => {
+								if(regExp.test(item.identity) || regExp.test(item.username) || regExp.test(item.account)){
+									regExpArr.push(searchArr[index])
+									
+								}	
+							})
+							tableLogic.memberData = regExpArr
+						}
+						else{
+							tableLogic.memberData = tableLogic.memberDataCopy
+						}					
+				}
 
         /**
          * @function getMMData 该方法用于获取商城所有的用户数据
@@ -245,6 +273,7 @@
                 item.identity = '普通用户'
               }
             })
+						tableLogic.memberDataCopy = tableLogic.memberData
             console.log(result.data)
           }).catch(err =>{
             console.log(err)
@@ -258,6 +287,7 @@
           addProduct,
           searchProduct,
           shopMenu,
+					searchUser,
           changeMenuItem
         }
       },

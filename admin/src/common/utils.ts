@@ -13,3 +13,22 @@ export function getPropertyArray (array:any){
     }
     return _propertyArray
 }
+
+export function searchContentByKeyword(keyCode:<number>13,target:<any[]>[],keyword:<string>'',regExpObj:<any>'',targetCopy:<any[]>[]){
+	let searchArr:any[] = target
+	let regExpArr:any[] = []
+	let regExp:RegExp = new RegExp(keyword)
+	if(keyCode){
+		if(keyword.length !=0){
+			searchArr.filter((item,index)=>{
+				if(regExp.test(item.regExpObj)){
+					regExpArr.push(searchArr[index])
+				}
+			})
+			targetCopy = regExpArr
+		}
+		else{
+			targetCopy = target
+		}
+	}
+}

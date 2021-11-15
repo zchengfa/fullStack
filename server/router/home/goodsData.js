@@ -16,8 +16,10 @@ module.exports = app =>{
                 console.log(err)
             }
             else {
-                res.send(doc)
-                //console.log(doc)
+								let result = []
+								result.push(doc)
+                res.send(result)
+                //console.log(result)
             }
         })
     })

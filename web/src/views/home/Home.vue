@@ -100,6 +100,7 @@
         //每获取一次数据就让当前类型商品的页数加一
         const page = this.goods[type].page +1
         getGoodsData(type, page).then(res => {
+					console.log(res)
          if(res.data.length===0){
            this.noMore = true
            setTimeout(() => {
@@ -109,9 +110,8 @@
          }
          else {
            //将获取到的数据数组通过...语法糖对数组进行解构加入到list数组中
-           this.goods[type].list.push(...res.data[0].shopData)
+           this.goods[type].list.push(...res.data[0])
            this.goods[type].page += 1
-
          }
           //上拉加载一次调用一次结束上拉
           this.$refs.scroll.finishPullUp()

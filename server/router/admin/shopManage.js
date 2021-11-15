@@ -28,7 +28,7 @@ module.exports = app => {
             else {
                 let newDoc = []
                 doc.map(item =>{
-                    newDoc.push(...item.shopData)
+                    newDoc.push(item)
                     // console.log(newDoc)
                 })
                 res.send(newDoc)

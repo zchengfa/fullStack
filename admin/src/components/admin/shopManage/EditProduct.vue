@@ -26,7 +26,7 @@ export default defineComponent({
   setup(props,{emit}){
 
     let formLogic = reactive({
-      data:props.currentProductData
+      data:[...props.currentProductData]
     })
 
     function saveEditClick(){

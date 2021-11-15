@@ -21,7 +21,7 @@
       </template>
     </el-table-column>
   </el-table>
-  <el-pagination class="pagination" :page-size="7" :total="tableData.length" @current-change="currentPageChange"></el-pagination>
+  <el-pagination class="pagination" :page-size="currentPageData.pageSize" :total="tableData.length" @current-change="currentPageChange"></el-pagination>
 </template>
 
 <script lang="ts">
@@ -71,19 +71,20 @@ export default defineComponent({
      * @function currentPageChange该方法通过获取到的页码值来控制对应页面需要显示的数据
      */
     let currentPageData = reactive({
-      pageData:<any[]>[]
+      pageData:<any[]>[],
+      pageSize:<number>10
     })
 
     watchEffect(()=>{
-      currentPageData.pageData = sliceTableData(0,7)
+      currentPageData.pageData = sliceTableData(0,currentPageData.pageSize)
     })
 
     function currentPageChange(val:any){
       if (val===1){
-        currentPageData.pageData = sliceTableData(val-1,7)
+        currentPageData.pageData = sliceTableData(val-1,currentPageData.pageSize)
       }
       else {
-        currentPageData.pageData = sliceTableData((val-1)*7,((val-1)*7)+7)
+        currentPageData.pageData = sliceTableData((val-1)*currentPageData.pageSize,((val-1)*currentPageData.pageSize)+currentPageData.pageSize)
       }
     }
 

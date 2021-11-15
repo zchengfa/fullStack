@@ -38,26 +38,40 @@
     <!--    </el-table-column>-->
   </el-table>
   <el-pagination class="pagination" :page-size="7" :total="tableData.length" @current-change="currentPageChange"></el-pagination>
+  <edit-product v-show="editProductLogic.isShow" :current-product-data="editProductLogic.currentProductData" @save-edit="saveEdit"></edit-product>
 </template>
 
 <script lang="ts">
 import {defineComponent, reactive,watchEffect} from "vue";
 import {deleteProduct} from "../../../network/request";
+import EditProduct from './EditProduct.vue'
 
 export default defineComponent({
   name: "ShopManage",
   props:['tableData'],
+  components:{
+    EditProduct
+  },
   setup(props){
     /**
      * @function editProduct该方法控制这当前所选商品是否编辑
      * @param index 当前行的索引
      * @param rows 当前行的商品数据
      */
+   let editProductLogic = reactive({
+      isShow:<boolean>false,
+      currentProductData:<string[]>[]
+    })
     function editProduct(index:number,rows:any[]){
-
-      console.log(index,rows[index])
+      editProductLogic.isShow = true
+      editProductLogic.currentProductData.push( rows[index])
+      //console.log(index,rows[index])
     }
 
+    function saveEdit(data:any){
+     editProductLogic.isShow = false
+     console.log(data)
+    }
     /**
      * @function deleteProduct该方法控制这当前所选商品是否删除
      * @param index 当前行的索引
@@ -105,6 +119,8 @@ export default defineComponent({
 
     return {
       editProduct,
+      editProductLogic,
+      saveEdit,
       deletePro,
       selection,
       currentPageChange,

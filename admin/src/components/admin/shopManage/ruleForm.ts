@@ -1,4 +1,4 @@
-interface rulesInterface{
+interface addProductRulesInterface{
     description:[
         {
             required:boolean,
@@ -70,7 +70,7 @@ interface rulesInterface{
     ]
 }
 
-let rules:rulesInterface = {
+export const addProductRules:addProductRulesInterface = {
     description:[
         {
             required:true,
@@ -141,5 +141,3 @@ let rules:rulesInterface = {
         }
     ]
 }
-
-export default rules

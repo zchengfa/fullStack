@@ -62,6 +62,9 @@ module.exports = app => {
             res.send(err)
         })
     })
+    router.post('/alterProduct',(req,res)=>{
+        res.send(JSON.parse(JSON.stringify(req.body)))
+    })
 
     //接收前端删除商品请求
     router.post('/deleteProduct',(req,res) => {

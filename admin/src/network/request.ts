@@ -34,6 +34,15 @@ export function deleteProduct (product_id:string){
     })
 }
 
+export function alterProduct (product_id:string,alterData:any){
+    return Post({
+        url:'/alterProduct',
+        data:{
+            alterData
+        }
+    })
+}
+
 export function getAdministratorInfo(token:string | null){
     return Post({
         url:'/administratorInfo',

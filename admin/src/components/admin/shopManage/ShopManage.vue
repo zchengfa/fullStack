@@ -43,7 +43,7 @@
 
 <script lang="ts">
 import {defineComponent, reactive,watchEffect} from "vue";
-import {deleteProduct} from "../../../network/request";
+import {deleteProduct,alterProduct} from "../../../network/request";
 import EditProduct from './EditProduct.vue'
 
 export default defineComponent({
@@ -64,13 +64,32 @@ export default defineComponent({
     })
     function editProduct(index:number,rows:any[]){
       editProductLogic.isShow = true
+      //先清空之前编辑的商品项
+      editProductLogic.currentProductData = []
       editProductLogic.currentProductData.push( rows[index])
       //console.log(index,rows[index])
     }
 
-    function saveEdit(data:any){
+    function saveEdit(alterData:any){
+     let data = alterData.submitData
+      let params = []
+     //遍历提交的商品修改数据，若有需要修改的数据就向后台发送数据修改请求
+      for (const dataKey in data) {
+        if (data[dataKey]){
+          params.push({
+            dataKey:data[dataKey]
+          })
+        }
+      }
+      if (params){
+        alterProduct(alterData.id,params).then(res =>{
+          console.log(res)
+        }).catch(err =>{
+          console.log(err)
+        })
+      }
      editProductLogic.isShow = false
-     console.log(data)
+     console.log(params)
     }
     /**
      * @function deleteProduct该方法控制这当前所选商品是否删除

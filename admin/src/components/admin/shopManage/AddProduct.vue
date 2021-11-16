@@ -2,7 +2,7 @@
   <div class="add-product">
     <el-row class="add-product-row">
       <el-col :span="12">
-        <el-form class="add-product-form" ref="ruleForm" :model="rulesLogic.ruleForm" :rules="rulesLogic.rules">
+        <el-form class="add-product-form" ref="ruleForm" :model="rulesLogic.ruleForm" :rules="rulesLogic.addProductRules">
           <el-form-item label="商品描述：" prop="description">
             <el-input v-model="rulesLogic.ruleForm.description" type="textarea" :autosize="{maxRows:5}" placeholder="请添加商品描述"></el-input>
           </el-form-item>
@@ -52,8 +52,7 @@
 
 <script lang="ts">
 import {defineComponent, reactive} from "vue";
-import rules from "./ruleForm";
-import ruleForm from "./ruleForm";
+import {addProductRules} from "./ruleForm";
 
 export default defineComponent({
   name: "AddProduct",
@@ -68,7 +67,7 @@ export default defineComponent({
     })
 
     let rulesLogic =  reactive({
-      rules,
+      addProductRules,
       ruleForm:{
         description:<string>'',
         imageLink:<string>'',

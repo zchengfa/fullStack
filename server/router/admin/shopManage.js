@@ -62,8 +62,19 @@ module.exports = app => {
             res.send(err)
         })
     })
+		
     router.post('/alterProduct',(req,res)=>{
-        res.send(JSON.parse(JSON.stringify(req.body)))
+				let bodyData = JSON.parse(JSON.stringify(req.body))
+				let product_id = bodyData.product_id
+				let paramsObj = bodyData.alterData
+				console.log(bodyData)
+				shopManageDataModel.updateOne({'product_id':product_id},{'title':paramsObj.title,'imagePath':paramsObj.imagePath,
+				'price':paramsObj.price,'favorite':paramsObj.count},(err,result)=>{
+					if(err)console.error(err)
+					else{
+						res.send({'success':'编辑成功'})
+					}
+				})
     })
 
     //接收前端删除商品请求
@@ -74,6 +85,7 @@ module.exports = app => {
         //     console.log(err,doc,res)
         // })
         res.send(paramObj)
+				
     })
 
     app.use('/admin',router)

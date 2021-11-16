@@ -38,7 +38,9 @@
     <!--    </el-table-column>-->
   </el-table>
   <el-pagination class="pagination" :page-size="7" :total="tableData.length" @current-change="currentPageChange"></el-pagination>
-  <edit-product v-show="editProductLogic.isShow" :current-product-data="editProductLogic.currentProductData" @save-edit="saveEdit"></edit-product>
+  <edit-product v-show="editProductLogic.isShow" :current-product-data="editProductLogic.currentProductData"
+		@cancel-edit='cancelEdit'
+	 @save-edit="saveEdit"></edit-product>
 </template>
 
 <script lang="ts">
@@ -69,27 +71,30 @@ export default defineComponent({
       editProductLogic.currentProductData.push( rows[index])
       //console.log(index,rows[index])
     }
+		
+		function cancelEdit(){
+			 editProductLogic.isShow = false
+		}
 
     function saveEdit(alterData:any){
-     let data = alterData.submitData
-      let params = []
-     //遍历提交的商品修改数据，若有需要修改的数据就向后台发送数据修改请求
-      for (const dataKey in data) {
-        if (data[dataKey]){
-          params.push({
-            dataKey:data[dataKey]
-          })
-        }
-      }
-      if (params){
-        alterProduct(alterData.id,params).then(res =>{
-          console.log(res)
-        }).catch(err =>{
-          console.log(err)
-        })
-      }
+			let data = alterData.submitData
+			let alterNumber:number = 0
+			let currentData:any = editProductLogic.currentProductData
+			
+			for(const key in data){
+				if(data[key] != currentData[0][key]){
+					alterNumber ++
+				}
+			}
+			if(alterNumber>0){
+				alterProduct(alterData.id,alterData.submitData).then(res =>{
+				  console.log(res)
+				}).catch(err =>{
+				  console.log(err)
+				})
+			} 
      editProductLogic.isShow = false
-     console.log(params)
+    
     }
     /**
      * @function deleteProduct该方法控制这当前所选商品是否删除
@@ -139,6 +144,7 @@ export default defineComponent({
     return {
       editProduct,
       editProductLogic,
+			cancelEdit,
       saveEdit,
       deletePro,
       selection,

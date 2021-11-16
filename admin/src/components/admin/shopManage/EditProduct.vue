@@ -24,15 +24,16 @@
             <span>{{item.count}}</span>
           </el-form-item>
           <el-form-item label="修改商品数量：" prop="productCount">
-            <el-input v-model.number="formLogic.submitData.productCount" type="number" placeholder="数量"></el-input>
+            <el-input v-model.number="formLogic.submitData.count" type='number' placeholder="数量"></el-input>
           </el-form-item>
           <el-form-item label="商品价格：">
             <span>{{item.price}}</span>
           </el-form-item>
           <el-form-item label="修改商品价格：" prop="price">
-            <el-input v-model.number="formLogic.submitData.price" type="number" placeholder="价格"></el-input>
+            <el-input v-model.number="formLogic.submitData.price" type='number' placeholder="价格"></el-input>
           </el-form-item>
-          <el-button size="small" type="primary" @click="submitSaveOperation(formLogic.submitData,item.id)">保存</el-button>
+					<el-button size="small" type="warning" @click="cancelSaveOperation">取消编辑</el-button>
+          <el-button size="small" type="primary" @click="submitSaveOperation(formLogic.submitData,item.id,currentProductData)">保存编辑</el-button>
         </el-form>
       </el-col>
     </el-row>
@@ -46,15 +47,15 @@ import {defineComponent, reactive, watchEffect} from "vue";
 export default defineComponent({
   name: "EditProduct",
   props:["currentProductData"],
-  emits:['saveEdit'],
+  emits:['saveEdit','cancelEdit'],
   setup(){
 
     let formLogic = reactive({
       submitData:{
-        title:<string>'',
-        imagePath:<string>'',
-        price:<string>'',
-        productCount:<string>''
+        title:<string>"",
+        imagePath:<string>"",
+        price:<string>"",
+        count:<string>""
       }
     })
 
@@ -63,10 +64,25 @@ export default defineComponent({
     }
   },
   methods:{
-    submitSaveOperation(submitData:any,id:string){
+		cancelSaveOperation(){
+			this.$emit('cancelEdit') 
+		},
+    submitSaveOperation(submitData:any,id:string,currentProductData:any){
       //先对当前表单进行验证，若符合表单验证规则，则将当前事件发送给父组件进行下一步处理
+			
       if (this.validate(submitData)){
-        this.$emit('saveEdit',{submitData,id})
+				for(let k in submitData){
+					if(!submitData[k]){
+						submitData[k] = currentProductData[0][k]
+					}
+				}
+		
+        this.$emit('saveEdit',{submitData,id}) 
+				this.$nextTick(()=>{
+					for(let k in submitData){
+						submitData[k] = ''
+					}
+				})
       }
     },
     validate(validateData:any){
@@ -84,7 +100,7 @@ export default defineComponent({
         return false
 
       }
-      else if(validateData.productCount.length !=0 && validateData.productCount <0){
+      else if(validateData.count.length !=0 && validateData.count <0){
         confirm('您输入的数量不能小于0哦！')
         return false
       }

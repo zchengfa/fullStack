@@ -283,7 +283,7 @@
               }
             })
 						tableLogic.memberDataCopy = tableLogic.memberData
-            console.log(result.data)
+            //console.log(result.data)
           }).catch(err =>{
             console.log(err)
           })

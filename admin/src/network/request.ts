@@ -38,7 +38,8 @@ export function alterProduct (product_id:string,alterData:any){
     return Post({
         url:'/alterProduct',
         data:{
-            alterData
+					product_id,
+          alterData
         }
     })
 }

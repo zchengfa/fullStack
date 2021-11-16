@@ -71,9 +71,21 @@ export default defineComponent({
       //先对当前表单进行验证，若符合表单验证规则，则将当前事件发送给父组件进行下一步处理
 			
       if (this.validate(submitData)){
+        console.log(submitData)
+        let priceRegExp = new RegExp(/￥/)
+        let countRegExp = new RegExp(/件/)
 				for(let k in submitData){
+          // submitData.price ='￥'+ currentProductData[0].price.replace(priceRegExp,'')
+          // submitData.count = currentProductData[0].count.replace(countRegExp,'')
+          // submitData[k] = currentProductData[0][k]
 					if(!submitData[k]){
-						submitData[k] = currentProductData[0][k]
+					  if(k === 'price' || k === 'count'){
+					    submitData.price ='￥'+ currentProductData[0].price.replace(priceRegExp,'')
+              submitData.count = currentProductData[0].count.replace(countRegExp,'')
+            }
+					  else {
+              submitData[k] = currentProductData[0][k]
+            }
 					}
 				}
 		

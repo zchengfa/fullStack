@@ -54,7 +54,7 @@ export default defineComponent({
   components:{
     EditProduct
   },
-  setup(props){
+  setup(props,contxt){
     /**
      * @function editProduct该方法控制这当前所选商品是否编辑
      * @param index 当前行的索引
@@ -77,23 +77,28 @@ export default defineComponent({
 		}
 
     function saveEdit(alterData:any){
-			let data = alterData.submitData
-			let alterNumber:number = 0
-			let currentData:any = editProductLogic.currentProductData
-			
-			for(const key in data){
-				if(data[key] != currentData[0][key]){
-					alterNumber ++
-				}
-			}
-			if(alterNumber>0){
-				alterProduct(alterData.id,alterData.submitData).then(res =>{
-				  console.log(res)
-				}).catch(err =>{
-				  console.log(err)
-				})
-			} 
-     editProductLogic.isShow = false
+
+      let submitData = alterData.submitData
+      let emptySubmitCount = alterData.emptySubmitCount
+
+      //判断用户为修改的数据数量是否跟可修改的数据数量（4）一致，若一致，说明用户未修改任何数据，
+      //直接关闭编辑组件不对后台发起的修改请求，若小于可修改数（4），说明用户修改了数据，对后台发起修改请求，并关闭编辑组件
+      if (emptySubmitCount < 4){
+         alterProduct(alterData.id,submitData).then(res =>{
+           if (res.data.success){
+             //编辑数据成功，重新进入当前页面，刷新数据
+             //this.$router
+           }
+           	  console.log(res)
+           editProductLogic.isShow = false
+           	}).catch(err =>{
+           	  console.log(err)
+           	})
+      }
+      //未修改数与可修改数一致，不提交修改请求直接关闭组件
+     else {
+        editProductLogic.isShow = false
+      }
     
     }
     /**

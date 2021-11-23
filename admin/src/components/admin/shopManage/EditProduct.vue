@@ -69,32 +69,41 @@ export default defineComponent({
 		},
     submitSaveOperation(submitData:any,id:string,currentProductData:any){
       //先对当前表单进行验证，若符合表单验证规则，则将当前事件发送给父组件进行下一步处理
-			
+      let emptySubmitCount:number = 0 //存储用户未修改的数据数量
+
       if (this.validate(submitData)){
-        console.log(submitData)
-        let priceRegExp = new RegExp(/￥/)
-        let countRegExp = new RegExp(/件/)
+        //遍历submitData
 				for(let k in submitData){
-          // submitData.price ='￥'+ currentProductData[0].price.replace(priceRegExp,'')
-          // submitData.count = currentProductData[0].count.replace(countRegExp,'')
-          // submitData[k] = currentProductData[0][k]
+          //当submitData[k]中的值为空时
 					if(!submitData[k]){
-					  if(k === 'price' || k === 'count'){
-					    submitData.price ='￥'+ currentProductData[0].price.replace(priceRegExp,'')
-              submitData.count = currentProductData[0].count.replace(countRegExp,'')
+					  //每有一个submitData[k]数据为空时，emptySubmitCount加一
+					  ++ emptySubmitCount
+					  //当k等于price或者count时，将原先对应的值先进行格式化
+					  if(k === 'price'){
+					    submitData.price ='￥'+ currentProductData[0].price.replace('￥','')
             }
+					  else if (k === 'count'){
+              submitData.count = currentProductData[0].count.replace('件','')
+            }
+					  //其他值正常赋值
 					  else {
               submitData[k] = currentProductData[0][k]
             }
 					}
+					//当submitData[k]值不为空，且k等于price时，对其进行格式化
+					else {
+            if(k === 'price' || k === 'count'){
+              submitData.price ='￥'+ submitData.price.toString().replace('￥','')
+            }
+          }
 				}
-		
-        this.$emit('saveEdit',{submitData,id}) 
+        this.$emit('saveEdit',{submitData,id,emptySubmitCount})
 				this.$nextTick(()=>{
 					for(let k in submitData){
 						submitData[k] = ''
 					}
 				})
+
       }
     },
     validate(validateData:any){
@@ -102,7 +111,7 @@ export default defineComponent({
        * 注意：当前对表单进行this.$refs['ruleForm'].validate()验证时标签中含有prop属性，但未对其制定验证规则时会处于pending状态
        * 解决：对每个标签中含有prop属性值制定验证规则，也可以将没有制定验证规则的prop进行删除
        */
-      let urlRExp = new RegExp(/^(https)\:\/\/\w+/)
+      let urlRExp = new RegExp(/^(https:)\/\/\w+/)
       if (validateData.imagePath.length>0 && !urlRExp.test(validateData.imagePath)){
         confirm('您的图片地址格式不规范哦！')
         return false

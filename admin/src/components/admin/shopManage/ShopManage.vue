@@ -1,4 +1,4 @@
-<template>
+ <template>
   <el-table class="mall-table" :data="currentPageData.pageData" @selection-change="selection" border empty-text="商品数据为空">
     <el-table-column type="selection"></el-table-column>
     <el-table-column prop="id" label="商品ID">
@@ -54,7 +54,7 @@ export default defineComponent({
   components:{
     EditProduct
   },
-  setup(props,contxt){
+  setup(props){
     /**
      * @function editProduct该方法控制这当前所选商品是否编辑
      * @param index 当前行的索引
@@ -76,22 +76,34 @@ export default defineComponent({
 			 editProductLogic.isShow = false
 		}
 
-    function saveEdit(alterData:any){
-
-      let submitData = alterData.submitData
-      let emptySubmitCount = alterData.emptySubmitCount
+    function saveEdit(data:any){
+			console.log(data)
+			let submitDataCopy =data.alterData
+      let submitData = data.submitData
+      let emptySubmitCount = data.emptySubmitCount
 
       //判断用户为修改的数据数量是否跟可修改的数据数量（4）一致，若一致，说明用户未修改任何数据，
       //直接关闭编辑组件不对后台发起的修改请求，若小于可修改数（4），说明用户修改了数据，对后台发起修改请求，并关闭编辑组件
       if (emptySubmitCount < 4){
-         alterProduct(alterData.id,submitData).then(res =>{
+         alterProduct(data.id,submitData).then(res =>{
            if (res.data.success){
              //编辑数据成功，重新进入当前页面，刷新数据
-             //this.$router
-           }
-           	  console.log(res)
-           editProductLogic.isShow = false
-           	}).catch(err =>{
+       //       setTimeout(()=>{
+							//  location.reload()
+						 // },1000)
+						 //接收到后台编辑商品成功的反馈后，将修改后的数据修改到当前列表显示的数据中，做到不刷新页面而刷新数据的效果
+						 currentPageData.pageData.filter(item =>{
+							 if(item.id === data.id){
+								 item.title = submitDataCopy.title
+								 item.imagePath = submitDataCopy.imagePath
+								 item.price =submitDataCopy.price
+								 item.count = submitDataCopy.count + '件'
+								 //console.log(item,submitData,submitDataCopy)
+							 }
+						 })
+						 alert(res.data.success)
+						  editProductLogic.isShow = false
+           }}).catch(err =>{
            	  console.log(err)
            	})
       }

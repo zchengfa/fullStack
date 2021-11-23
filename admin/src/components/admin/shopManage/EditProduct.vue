@@ -58,7 +58,7 @@ export default defineComponent({
         count:<string>""
       }
     })
-
+		
     return {
       formLogic
     }
@@ -97,13 +97,22 @@ export default defineComponent({
             }
           }
 				}
-        this.$emit('saveEdit',{submitData,id,emptySubmitCount})
+				//在submitData数据清空前保存给alterData
+				let alterData = {}
+				alterData.title = submitData.title
+				alterData.imagePath = submitData.imagePath
+				alterData.price = submitData.price
+				alterData.count = submitData.count
+				
+				//将父组件需要用到的数据发送出去
+        this.$emit('saveEdit',{submitData,id,emptySubmitCount,alterData})
+				
+				//Dom更新后将submitData的数据清空
 				this.$nextTick(()=>{
 					for(let k in submitData){
 						submitData[k] = ''
 					}
 				})
-
       }
     },
     validate(validateData:any){

@@ -88,7 +88,7 @@ export default defineComponent({
          alterProduct(data.id,submitData).then(res =>{
            if (res.data.success){
              //编辑数据成功，重新进入当前页面，刷新数据
-       //       setTimeout(()=>{
+							//setTimeout(()=>{
 							//  location.reload()
 						 // },1000)
 						 //接收到后台编辑商品成功的反馈后，将修改后的数据修改到当前列表显示的数据中，做到不刷新页面而刷新数据的效果

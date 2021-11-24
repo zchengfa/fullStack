@@ -1,36 +1,44 @@
 <template>
   <div class="edit-product">
-    <el-row>
-      <el-col :span="12">
-        <el-form ref="ruleForm" v-for="item in currentProductData">
-          <el-form-item label="商品ID：">
-            <span>{{item.id}}</span>
+    <el-row class="edit-row">
+      <el-col :span="12" class="edit-col">
+        <el-form ref="ruleForm" v-for="item in currentProductData" class="edit-form">
+          <el-form-item>
+            <span slot="label" class="edit-label">商品ID：</span>
+            <span slot="default" class="edit-label-content">{{item.id}}</span>
           </el-form-item>
-          <el-form-item label="商品描述：">
-            <span>{{item.title}}</span>
+          <el-form-item>
+            <span slot="label" class="edit-label">商品描述：</span>
+            <span slot="default" class="edit-label-content edit-label-title">{{item.title}}</span>
           </el-form-item>
-          <el-form-item label="修改商品描述：" prop="title">
-            <el-input type="textarea" :autosize="{maxRows: 5}" v-model="formLogic.submitData.title"></el-input>
+          <el-form-item>
+            <span slot="label" class="edit-alter-label">修改商品描述：</span>
+            <el-input slot="default" class="edit-alter-input" type="textarea" :autosize="{maxRows: 5}" v-model="formLogic.submitData.title"></el-input>
           </el-form-item>
-          <el-form-item label="商品链接：">
-            <span>{{item.imagePath}}</span>
+          <el-form-item >
+            <span slot="label" class="edit-label">商品链接：</span>
+            <span slot="default" class="edit-label-content edit-label-link">{{item.imagePath}}</span>
           </el-form-item>
-          <el-form-item label="修改商品图片链接：">
-            <el-input v-model="formLogic.submitData.imagePath" placeholder="图片链接：">
-              <template #prepend>https://</template>
-            </el-input>
+          <el-form-item class="edit-form-link">
+            <span slot="label" class="edit-alter-label">修改商品链接：</span>
+            <span class="edit-link">https://</span>
+            <el-input class="edit-alter-input" v-model="formLogic.submitData.imagePath" placeholder="图片链接："></el-input>
           </el-form-item>
-          <el-form-item label="商品数量：">
-            <span>{{item.count}}</span>
+          <el-form-item>
+            <span slot="label" class="edit-label">商品数量：</span>
+            <span slot="default" class="edit-label-content">{{item.count}}</span>
           </el-form-item>
-          <el-form-item label="修改商品数量：" prop="productCount">
-            <el-input v-model.number="formLogic.submitData.count" type='number' placeholder="数量"></el-input>
+          <el-form-item>
+            <span slot="label" class="edit-alter-label">修改商品数量：</span>
+            <el-input class="edit-alter-input" v-model.number="formLogic.submitData.count" type='number' placeholder="数量"></el-input>
           </el-form-item>
-          <el-form-item label="商品价格：">
-            <span>{{item.price}}</span>
+          <el-form-item>
+            <span slot="label" class="edit-label">商品价格：</span>
+            <span slot="default" class="edit-label-content">{{item.price}}</span>
           </el-form-item>
-          <el-form-item label="修改商品价格：" prop="price">
-            <el-input v-model.number="formLogic.submitData.price" type='number' placeholder="价格"></el-input>
+          <el-form-item>
+            <span slot="label" class="edit-alter-label">修改商品价格：</span>
+            <el-input class="edit-alter-input" v-model.number="formLogic.submitData.price" type='number' placeholder="价格"></el-input>
           </el-form-item>
 					<el-button size="small" type="warning" @click="cancelSaveOperation">取消编辑</el-button>
           <el-button size="small" type="primary" @click="submitSaveOperation(formLogic.submitData,item.id,currentProductData)">保存编辑</el-button>
@@ -42,7 +50,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, reactive, watchEffect} from "vue";
+import {defineComponent, reactive} from "vue";
 
 export default defineComponent({
   name: "EditProduct",
@@ -97,8 +105,14 @@ export default defineComponent({
             }
           }
 				}
+
 				//在submitData数据清空前保存给alterData
-				let alterData = {}
+				let alterData = {
+				  title:<string>'',
+          imagePath:<string>'',
+          price:<string>'',
+          count:<number>0
+        }
 				alterData.title = submitData.title
 				alterData.imagePath = submitData.imagePath
 				alterData.price = submitData.price
@@ -147,10 +161,72 @@ export default defineComponent({
   position: absolute;
   top:0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   background-color: rgba(211,211,220,.5);
   z-index: 9;
-  color: red;
+  overflow: hidden;
+}
+.edit-row{
+  width: 100%;
+  height: 100%;
+}
+.edit-col{
+  display: flex;
+  margin: auto;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+
+}
+.edit-form{
+  width: 80%;
+  overflow: hidden;
+}
+.edit-label,.edit-label-content{
+  display: inline-block;
+  float: left;
+
+}
+.edit-label,.edit-alter-label{
+  width: 20%;
+  text-align: right;
+	font-weight: bold;
+}
+.edit-label-content,.edit-alter-input{
+  width: 60%;
+  text-align: left;
+  text-indent: 1rem;
+	color: #989898;
+}
+.edit-alter-label,.edit-alter-input{
+  display: inline-block;
+}
+.edit-label-link,.edit-label-title{
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+.edit-link{
+  position: absolute;
+  display: inline-block;
+  width: 10%;
+  height: 96%;
+	min-width: 52px;
+	max-height: 40px;
+  left: 20%;
+  z-index: 9;
+  color: #dc2222;
+  border: 1px solid #a9a9a9;
+  background-color: #64a8ec;
+}
+
+.edit-form-link .edit-alter-input{
+  text-indent: 15%;
+}
+.edit-alter-label,
+.edit-alter-input{
+	float: left;
 }
 </style>

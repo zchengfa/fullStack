@@ -77,7 +77,7 @@ export default defineComponent({
 		}
 
     function saveEdit(data:any){
-			console.log(data)
+			//console.log(data)
 			let submitDataCopy =data.alterData
       let submitData = data.submitData
       let emptySubmitCount = data.emptySubmitCount

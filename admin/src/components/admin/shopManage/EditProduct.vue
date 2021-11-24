@@ -9,11 +9,7 @@
           </el-form-item>
           <el-form-item>
             <span slot="label" class="edit-label">商品描述：</span>
-<<<<<<< HEAD
             <span slot="default" class="edit-label-content edit-label-title">{{item.title}}</span>
-=======
-            <span slot="default" class="edit-label-content">{{item.title}}</span>
->>>>>>> 02f94b0ceec0b0d4cdce0290b37a34945ef3aa5e
           </el-form-item>
           <el-form-item>
             <span slot="label" class="edit-alter-label">修改商品描述：</span>
@@ -21,11 +17,7 @@
           </el-form-item>
           <el-form-item >
             <span slot="label" class="edit-label">商品链接：</span>
-<<<<<<< HEAD
             <span slot="default" class="edit-label-content edit-label-link">{{item.imagePath}}</span>
-=======
-            <span slot="default" class="edit-label-content">{{item.imagePath}}</span>
->>>>>>> 02f94b0ceec0b0d4cdce0290b37a34945ef3aa5e
           </el-form-item>
           <el-form-item class="edit-form-link">
             <span slot="label" class="edit-alter-label">修改商品链接：</span>
@@ -200,7 +192,6 @@ export default defineComponent({
 .edit-label,.edit-alter-label{
   width: 20%;
   text-align: right;
-<<<<<<< HEAD
 	font-weight: bold;
 }
 .edit-label-content,.edit-alter-input{
@@ -208,43 +199,28 @@ export default defineComponent({
   text-align: left;
   text-indent: 1rem;
 	color: #989898;
-=======
-}
-.edit-label-content,.edit-alter-input{
-  width: 76%;
-  text-align: left;
-  text-indent: 1rem;
->>>>>>> 02f94b0ceec0b0d4cdce0290b37a34945ef3aa5e
 }
 .edit-alter-label,.edit-alter-input{
   display: inline-block;
 }
-<<<<<<< HEAD
 .edit-label-link,.edit-label-title{
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
 }
-=======
->>>>>>> 02f94b0ceec0b0d4cdce0290b37a34945ef3aa5e
 .edit-link{
   position: absolute;
   display: inline-block;
   width: 10%;
   height: 96%;
-<<<<<<< HEAD
 	min-width: 52px;
 	max-height: 40px;
   left: 20%;
-=======
-  left: 25%;
->>>>>>> 02f94b0ceec0b0d4cdce0290b37a34945ef3aa5e
   z-index: 9;
   color: #dc2222;
   border: 1px solid #a9a9a9;
   background-color: #64a8ec;
 }
-<<<<<<< HEAD
 
 .edit-form-link .edit-alter-input{
   text-indent: 15%;
@@ -252,9 +228,5 @@ export default defineComponent({
 .edit-alter-label,
 .edit-alter-input{
 	float: left;
-=======
-.edit-form-link .edit-alter-input{
-  text-indent: 15%;
->>>>>>> 02f94b0ceec0b0d4cdce0290b37a34945ef3aa5e
 }
 </style>

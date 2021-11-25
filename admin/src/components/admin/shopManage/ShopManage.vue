@@ -122,7 +122,15 @@ export default defineComponent({
     function deletePro(index:number,rows:any[]){
       //rows.splice(index,1)
       deleteProduct(rows[index].id).then(result =>{
-        console.log(result)
+        //接收到后台删除商品的反馈，删除数组中的对应数据，并提示用户删除成功
+        if (result.data.success){
+          rows.splice(index,1)
+          alert(result.data.success)
+        }
+        else if(result.data.failed){
+          alert(result.data.failed)
+        }
+        //console.log(result)
       }).catch(err =>{
         console.log(err)
       })

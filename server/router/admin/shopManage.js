@@ -81,11 +81,20 @@ module.exports = app => {
     router.post('/deleteProduct',(req,res) => {
         let paramObj = JSON.parse(JSON.stringify(req.body))
         //console.log(paramObj)
-        // shopManageDataModel.findOneAndDelete({'product_id':paramObj.product_id},null,(err, doc, res)=>{
-        //     console.log(err,doc,res)
-        // })
-        res.send(paramObj)
-				
+        shopManageDataModel.findOneAndDelete({'product_id':paramObj.product_id},null,(err, doc)=>{
+            if (err) {
+                res.send({'error':err})
+            }
+            else {
+                if (doc){
+                    res.send({'success':'删除成功'})
+                }
+               else {
+                   res.send({'failed':'删除失败'})
+                }
+            }
+            console.log(err,doc)
+        })
     })
 
     app.use('/admin',router)

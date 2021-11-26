@@ -22,7 +22,7 @@
   <el-container class="table-container shopM-con">
     <div class="shop-mana" v-show="shopMenu.currentIndex===0" >
       <div class="select-group">
-        <el-button class="add-btn" type="primary" size="small" @click="addProduct">添加商品</el-button>
+        <el-button class="add-btn" type="primary" size="small" @click="addProduct">+添加商品</el-button>
         <div class="category-selector-box">
           <span>分类选择：</span>
           <el-select v-model="addProductLogic.categoryCheckOption" placeholder="全部" class="select">

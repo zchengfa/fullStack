@@ -66,11 +66,14 @@ export default {
             //记住密码进入勾选状态，设置cookie
             setCookie(this.username,encryptPwd,1)
           }
-        //判断是否有token值
+        //判断是否有token值,后端返回了token值，登录成功
           if (res.data.token) {
             //登录成功，将token存储到sessionStorage临时存储中，页面关闭时会自动清除token
             sessionStorage.token = res.data.token
 
+            //将token和用户信息分发给vuex进行状态管理
+            this.$store.dispatch('userInfo',JSON.parse(JSON.stringify(res.data.userInfo)))
+            this.$store.dispatch('setToken',JSON.parse(JSON.stringify(res.data.token)))
             //登录成功，跳转到之前页面
             this.$router.go(-1)
           }

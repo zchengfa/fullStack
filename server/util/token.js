@@ -1,13 +1,14 @@
 const jwt = require('jsonwebtoken')
-function createToken (params,privateKey,expiresTime) {
+let secretOrPrivateKey = 'mallSecretOrPrivateKey'
+function createToken (params,expiresTime) {
 
 
     //生成token,当过期时间number类型时以秒计算
-    return jwt.sign(params, privateKey, {expiresIn: expiresTime})
+    return jwt.sign(params,secretOrPrivateKey, {expiresIn: expiresTime})
 }
 
 function verifyToken (token,callback){
-    jwt.verify(token,'administrator',callback)
+    jwt.verify(token,secretOrPrivateKey,callback)
 }
 
 module.exports = {

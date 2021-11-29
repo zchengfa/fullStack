@@ -26,8 +26,6 @@ import NavBar from "@/components/common/navbar/NavBar";
 import ChatBar from "@/components/content/customer/ChatBar";
 import Scroll from "@/components/common/scroll/Scroll";
 
-import {verify} from "@/common/jsonwebtoken";
-
 import io from 'socket.io-client'
 export default {
   name: "Customer",

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {ADD_CART,UPDATE_CART_COUNT,SAVE_POSITION} from "@/store/mutations-types";
+import {ADD_CART, UPDATE_CART_COUNT, SAVE_POSITION, USER_INFO, SET_TOKEN} from "@/store/mutations-types";
 
 
 Vue.use(Vuex)
@@ -8,9 +8,17 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
     state:{
         cartList:[],
-        position:[]
+        position:[],
+        token:'',
+        userInfo:{}
     },
     mutations:{
+        [USER_INFO](state,payload){
+            state.userInfo = payload
+        },
+        [SET_TOKEN](state,payload){
+            state.token = payload
+        },
         //已有商品，更新购物车中当前商品的数量
         [UPDATE_CART_COUNT](state,payload){
             //将原先对应数据的数量加上想要添加的数量
@@ -26,6 +34,12 @@ const store = new Vuex.Store({
 
     },
     actions:{
+        userInfo(context,payload){
+            context.commit('userInfo',payload)
+        },
+        setToken(context,payload){
+            context.commit('setToken',payload)
+        },
         addCart(context,payload){
             return new Promise((resolve, reject) => {
                 //将商品加入购物车之前先查看state中是否存在当前商品

@@ -32,7 +32,7 @@ module.exports = app => {
                        identity:results[0].identity
                    }
                    //生成token,当过期时间number类型时以秒计算
-                   const token = createToken(administrator,'administrator','1d')
+                   const token = createToken(administrator,'1d')
 
                    //将生成的token存入数据库中
                    const update = mysql_query.update('user',`token = '${token}'`,`account = '${results[0]['account']}'`)

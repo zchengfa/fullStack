@@ -41,9 +41,6 @@ import {getUserInfo} from "@/network/profile";
 
 import {orderMenuImage,meansMenuImage,otherMenuImage} from '@/assets/image/profile/orderMenu/orderMenuImage'
 
-import {verify} from '@/common/jsonwebtoken'
-
-
 export default {
   name: "Login",
   data(){
@@ -75,7 +72,7 @@ export default {
     Bubble
   },
   methods:{
-    getUserInfo(username,user_id){
+    getUserCollectionInfo(username,user_id){
       getUserInfo(username,user_id).then(res => {
         console.log(res)
 
@@ -96,33 +93,29 @@ export default {
     this.otherList = otherMenuImage
     this.meansList = meansMenuImage
     this.orderList = orderMenuImage
-  },
-  mounted() {
-    if (this.$token) {
-      verify(this.$token, (err, decode) => {
-        if (err) throw err
-        else {
-          console.log(decode)
-          if (decode) {
-            this.isLogin = true
-            this.username = decode.username
 
-            //当token中的头像为null时说明用户没有头像，显示默认头像，反之则显示用户自己的头像
-            if (decode.avatar !== null) {
-              this.hasHeader = false
-              this.headerCustom = decode.avatar
-            }
-            else {
-              this.hasHeader = true
-            }
-            this.getUserInfo(this.username,decode.user_id)
-          }
-        }
-      })
+    if (this.$store.state.token) {
+      console.log(this.$store.state.token)
+      const userInfo = this.$store.state.userInfo
+      this.isLogin = true
+      this.username = userInfo.username
+
+      //当token中的头像为null时说明用户没有头像，显示默认头像，反之则显示用户自己的头像
+      if (userInfo.avatar !== null) {
+        this.hasHeader = false
+        this.headerCustom = userInfo.avatar
+      }
+      else {
+        this.hasHeader = true
+      }
+      this.getUserCollectionInfo(this.username,userInfo.user_id)
     }
     else {
       console.log('用户未登录')
     }
+  },
+  mounted() {
+
   }
 }
 </script>
@@ -150,7 +143,7 @@ export default {
   text-align: center;
 }
 .user-header-custom img,
-user-header-default img{
+.user-header-default img{
   width: 3rem;
   height: 3rem;
   border-radius: 50%;

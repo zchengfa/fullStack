@@ -37,7 +37,6 @@
 
   import mixins from "@/common/mixins/mixins";
 
-  import {verify} from '@/common/jsonwebtoken'
 
   export default {
     name: "detail",
@@ -136,20 +135,15 @@
       collectProduct() {
         //点击按钮先判断用户是否登录，若用户未登录，跳转到登录页面
         if (this.$token) {
-          verify(this.$token, (err,decode) => {
-            if (err) throw err
-            else {
-              //判断当前商品是在收藏状态还是未收藏状态
-              if (this.isCollected) {
-                //已处于收藏状态，点击按钮取消收藏
-                this.changeUserProductCollectionStatus(decode.user_id,this.id,1)
-              }
-              else {
-                //处于未收藏状态，点击按钮收藏商品
-                this.changeUserProductCollectionStatus(decode.user_id,this.id,0)
-              }
-            }
-          })
+          //判断当前商品是在收藏状态还是未收藏状态
+          if (this.isCollected) {
+            //已处于收藏状态，点击按钮取消收藏
+            this.changeUserProductCollectionStatus(decode.user_id,this.id,1)
+          }
+          else {
+            //处于未收藏状态，点击按钮收藏商品
+            this.changeUserProductCollectionStatus(decode.user_id,this.id,0)
+          }
 
         }
         //没有token值，用户未登录，引导用户进入登录页面

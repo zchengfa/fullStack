@@ -1,3 +1,4 @@
+
 module.exports = app => {
     const express = require('express')
     const router = express.Router()
@@ -7,8 +8,8 @@ module.exports = app => {
     app.use(bodyParser.json())
     app.use(bodyParser.urlencoded({extended:false}))
 
-    //导入token管理模块
-    const jwt = require('jsonwebtoken')
+    //导入token验证模块
+    const {verifyToken} = require("../../util/token");
 
     //导入数据库连接模块
     const connect = require('../../plugins/connectMysql')
@@ -20,7 +21,7 @@ module.exports = app => {
         const token = paramsObj.token
         console.log(paramsObj)
 
-        jwt.verify(token,'user',(err,decode) => {
+        verifyToken(token,'user',(err,decode) => {
             console.log(decode)
             //验证前端传过来的token是否合法，是否过期
             if (err) {
@@ -89,7 +90,7 @@ module.exports = app => {
 
 
         //执行更新语句
-        connection.query(updateCount, (err, result) => {
+        connection.query(updateCount, (err) => {
             if (err) throw err
             res.setHeader('Access-Control-Allow-Origin', '*')
             res.send({'empty':'商品推荐数据暂无'})
@@ -118,7 +119,7 @@ module.exports = app => {
         const token= paramsObj.token
 
         //验证请求参数里的token是否合法是否过期
-        jwt.verify(token,'user',(err,decode) => {
+        verifyToken(token,(err,decode) => {
             if (err) throw err
             else {
                 const user_id = decode.user_id
@@ -171,7 +172,7 @@ module.exports = app => {
         //定义开关变量，解决Cannot set headers after they are sent to the client错误
         let isOver = false
         product_id_array.map(item => {
-            const deleteQuery = mysql_query.delete('user_shop',`users_id = '${user_id}' AND product_id = '${item}'`)
+            const deleteQuery = mysql_query.deleteOpration('user_shop',`users_id = '${user_id}' AND product_id = '${item}'`)
             try {
                 connection.query(deleteQuery, err => {
                     if (err) throw err

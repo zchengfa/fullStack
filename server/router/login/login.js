@@ -41,7 +41,7 @@ module.exports = app => {
                                 avatar:results[0]['header_image']
                             }
                             //生成token,当过期时间number类型时以秒计算
-                            const token = createToken(user,'user','1d')
+                            const token = createToken(user,'1d')
 
                             //console.log(results[0])
                             //将生成的token存入数据库中
@@ -51,7 +51,8 @@ module.exports = app => {
                                 if (err) throw err
                                 else {
                                     console.log('token write success')
-                                    res.send({'token':token})
+                                    //用户token写入成功，将token和用户信息返回给前台
+                                    res.send({'token':token,'userInfo':user})
                                 }
                             })
 

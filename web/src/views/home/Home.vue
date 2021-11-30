@@ -100,7 +100,7 @@
         //每获取一次数据就让当前类型商品的页数加一
         const page = this.goods[type].page +1
         getGoodsData(type, page).then(res => {
-					console.log(res)
+					//console.log(res)
          if(res.data.length===0){
            this.noMore = true
            setTimeout(() => {

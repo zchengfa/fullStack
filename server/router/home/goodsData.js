@@ -16,8 +16,8 @@ module.exports = app =>{
                 console.log(err)
             }
             else {
-								let result = []
-								result.push(doc)
+                let result = []
+                result.push(doc)
                 res.send(result)
                 //console.log(result)
             }

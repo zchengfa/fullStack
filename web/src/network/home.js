@@ -87,11 +87,11 @@ export function register (username,pwd,verifyCode) {
 }
 
 //导出商品详情页添加商品到购物车函数
-export function addShopToCart (token,product_id,title,image,price,count) {
+export function addShopToCart (user_id,product_id,title,image,price,count) {
   return requestPost({
     url:'/addShopToCart',
     data:qs.stringify({
-      token,
+      user_id,
       product_id,
       title,
       image,

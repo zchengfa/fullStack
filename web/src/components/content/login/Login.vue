@@ -45,12 +45,7 @@ export default {
   },
   methods:{
     onChange(){
-      if (this.username.length && this.password.length){
-        this.isAble = false
-      }
-      else {
-        this.isAble = true
-      }
+      this.isAble = !(this.username.length && this.password.length);
     },
     login(){
       //对用户输入的密码进行加密

@@ -33,7 +33,7 @@ export default {
     return {
       messageList:[],
       url:this.$link,
-      token:sessionStorage.getItem('token'),
+      token:this.$store.state.token,
       user:'',
       socket:'',
       sender:'18270014304',
@@ -103,21 +103,18 @@ export default {
     }
   },
   created() {
-    verify(this.token,(err,decode) => {
-      if (err) throw err
-      else {
-        this.user = decode.username
+    if (this.token){
+      let userInfo = this.$store.state.userInfo
+      this.user = userInfo.username
 
-        if (decode.avatar !== null){
-          this.avatar = decode.avatar
-        }
-        else {
-          this.avatar = '~assets/image/profile/header.png'
-        }
-        const  socket = io(this.url)
-        this.socket = socket
+      if (userInfo.avatar !== null){
+        this.avatar = userInfo.avatar
       }
-    })
+      else {
+        this.avatar = '~assets/image/profile/header.png'
+      }
+      this.socket = io(this.url)
+    }
   },
   mounted() {
     //通知服务器用户上线了

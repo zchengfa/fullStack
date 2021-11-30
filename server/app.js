@@ -13,13 +13,37 @@ app.use(cors())
 
 //除了/admin/loginAdministrator请求，其他请求都必须先进行token验证，验证通过后才能进行当次请求
 app.use((req,res,next)=>{
+    let requestQuery = ''
+    let category_type = ''
+    let product_type = ''
+    let product_id = ''
+    if (req.url.indexOf('/home/api/goodsData?') >=0){
+        requestQuery = req.query
+    }
+    else if(req.url.indexOf('/home/api/category_detail?') >=0){
+        category_type = req.query.type
+    }
+    else if(req.url.indexOf('/home/api/detail?') >=0){
+        product_type = req.query.product_type
+        product_id = req.query.product_id
+        console.log(encodeURI(product_id))
+    }
     console.log(req.url)
-    const urlWhiteList = ['/admin/loginAdministrator','/home/api/multiData','/home/api/goodsData' ,'/login' ,'/home/api/userRecommend']
+    //设置请求地址白名单，只要请求地址是白名单内的都不需要进行token验证
+    const urlWhiteList = [
+        '/admin/loginAdministrator',
+        '/home/api/multiData',
+        `/home/api/goodsData?type=${requestQuery.type}&page=${requestQuery.page}`,
+        '/login' ,'/home/api/commonRecommend','/home/api/category_list',
+        `/home/api/category_detail?type=${encodeURI(category_type)}`,
+        `/home/api/detail?product_type=${product_type}&product_id=${product_id}`
+    ]
     if (urlWhiteList.indexOf(req.url) >= 0){
         next()
         return false
     }
     else{
+        //请求地址不在白名单内，获取请求头中的token
         const token = req.headers.authorization
         if (!token){
             res.send({err:401,msg:'token信息错误，不存在或已过期！'})

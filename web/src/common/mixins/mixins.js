@@ -41,7 +41,7 @@ const backTopMixins = {
 const closeCurrentPageMixins = {
     data() {
       return {
-          username:'',
+          account:'',
           password:'',
           isClose:true,
           isAble:true

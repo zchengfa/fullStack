@@ -2,11 +2,11 @@ import {request,requestPost} from "@/network/request";
 import qs from "qs";
 
 //导出获取用户购物车商品数据函数
-export function getUserCartData (token) {
+export function getUserCartData (user_id) {
     return requestPost({
         url:'/home/api/cart',
         data:qs.stringify({
-            token
+            user_id
         })
     })
 }
@@ -19,11 +19,11 @@ export function getCommonRecommend () {
 }
 
 //导出获取用户推荐商品数据函数
-export function getUserRecommend (token) {
+export function getUserRecommend (user_id) {
     return requestPost({
         url:'home/api/userRecommend',
         data:qs.stringify({
-           token
+           user_id
         })
     })
 }

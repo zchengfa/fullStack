@@ -13,11 +13,11 @@ module.exports = app => {
     router.post('/userInfo', (req, res) => {
         console.log(JSON.parse(JSON.stringify(req.body)))
         const paramsObj = JSON.parse(JSON.stringify(req.body))
-        console.log(paramsObj,1)
+        console.log(paramsObj.user_id,1)
 
         const connection = connect()
 
-        const selectQuery = mysql_query.selectFields('user','header_image',`account = '${paramsObj.username}'`)
+        const selectQuery = mysql_query.selectFields('user','header_image',`user_id = '${paramsObj.user_id}'`)
         const selectQuery2 = mysql_query.selectCount('user_collection', `users_id = '${paramsObj.user_id}'`)
         const selectQuery3 = mysql_query.selectCount('user_brand_collection', `users_id = '${paramsObj.user_id}'`)
         const selectQuery4 = mysql_query.selectCount('user_recommend_shop', `users_id = '${paramsObj.user_id}'`)
@@ -26,8 +26,15 @@ module.exports = app => {
             if (err) throw err
             else {
                 console.log(results)
+                let header_image
+                if (results[0]){
+                    header_image = results[0][0]['HEADER_IMAGE']
+                }
+                else {
+                    header_image = ''
+                }
                 res.send({
-                    'header_image':results[0][0]['HEADER_IMAGE'],
+                    'header_image':header_image,
                     'content': {
                         'shop_collection':{
                             'title':'商品收藏',

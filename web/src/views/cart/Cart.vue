@@ -272,15 +272,16 @@
       }
       //判断用户是否登录,若已登录显示用户的购物车物品列表,未登录，显示登录提示
 
-      if (this.$token){
+      if (this.$store.state.token){
+        let userInfo = this.$store.state.userInfo
         this.isLogin = false
 
         //存在token值，用户已登录，执行获取用户购物车数据函数
         //进入购物车页面，获取用户token，执行获取用户购物车数据函数
-        this.getUserCartData(this.$token)
+        this.getUserCartData(userInfo.user_id)
 
         //获取用户对应的推荐数据
-        this.getUserRecommend(this.$token)
+        this.getUserRecommend(userInfo.user_id)
 
       }
       else {

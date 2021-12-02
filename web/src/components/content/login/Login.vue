@@ -8,7 +8,7 @@
       </div>
       <div class="content">
         <div class="input-box">
-          <input type="text" placeholder="手机号/QQ邮箱" @input="onChange" v-model="username"/>
+          <input type="text" placeholder="手机号/QQ邮箱" @input="onChange" v-model="account"/>
           <input type="password" placeholder="密码" @input="onChange" v-model="password"/>
         </div>
         <div class="option">
@@ -45,32 +45,29 @@ export default {
   },
   methods:{
     onChange(){
-      this.isAble = !(this.username.length && this.password.length);
+      this.isAble = !(this.account.length && this.password.length);
     },
     login(){
       //对用户输入的密码进行加密
       const encryptPwd = encrypt(this.password)
 
       //将用户名和加密后的密码传给服务端进行校验
-      login(this.username,encryptPwd).then(res => {
+      login(this.account,encryptPwd).then(res => {
           console.log(res)
 
         //判断是否勾选记住密码项
           if (this.isChecked) {
 
             //记住密码进入勾选状态，设置cookie
-            setCookie(this.username,encryptPwd,1)
+            setCookie(this.account,encryptPwd,1)
           }
         //判断是否有token值,后端返回了token值，登录成功
           if (res.data.token) {
-            //登录成功，将token存储到sessionStorage临时存储中，页面关闭时会自动清除token
-            sessionStorage.token = res.data.token
-
             //将token和用户信息分发给vuex进行状态管理
-            this.$store.dispatch('userInfo',JSON.parse(JSON.stringify(res.data.userInfo)))
-            this.$store.dispatch('setToken',JSON.parse(JSON.stringify(res.data.token)))
-            //登录成功，跳转到之前页面
-            this.$router.go(-1)
+              this.$store.dispatch('userInfo',res.data.userInfo)
+              this.$store.dispatch('setToken',JSON.parse(JSON.stringify(res.data.token)))
+              //登录成功，跳转到之前页面
+              this.$router.go(-1)
           }
           else if (res.data.non_exist) {
             //登录失败，提示后端传过来的提示信息

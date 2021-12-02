@@ -12,16 +12,12 @@ module.exports = app => {
         const paramsObj = JSON.parse(JSON.stringify(req.body))
 
         //连接mysql数据库，查询是否有与参数一致的用户名和密码
-        const connect = require('../../plugins/connectMysql')
+        const connection = require('../../plugins/connectMysql')()
         const mysql_query = require('../../plugins/mysql_query')
         //创建查询用户名语句
-        const selectUser_id = mysql_query.selectFields('user','account',`account = '${paramsObj.username}'`)
+        const selectUser_id = mysql_query.selectFields('user','account',`account = '${paramsObj.account}'`)
 
-        const select_query = mysql_query.selectFields('user','account,user_id,header_image',`account = '${paramsObj.username}' AND password = '${paramsObj.pwd}'`)
-
-
-        //连接数据库
-        const connection = connect()
+        const select_query = mysql_query.selectFields('user','account,username,user_id,header_image',`account = '${paramsObj.account}' AND password = '${paramsObj.pwd}'`)
 
         connection.query(selectUser_id, (err, result) => {
             if (err) throw err
@@ -36,7 +32,8 @@ module.exports = app => {
                         if (Object.keys(results).length !==0) {
                             const {createToken} = require('../../util/token')
                             const user = {
-                                username:results[0]['account'],
+                                username:results[0]['username'],
+                                account:results[0]['account'],
                                 user_id:results[0]['user_id'],
                                 avatar:results[0]['header_image']
                             }

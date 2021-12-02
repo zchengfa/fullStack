@@ -4,20 +4,24 @@ import {ADD_CART, UPDATE_CART_COUNT, SAVE_POSITION, USER_INFO, SET_TOKEN} from "
 
 
 Vue.use(Vuex)
-
+//@warning: 将状态管理成员分发给vuex时，存储到sessionStorage中，可以解决页面刷新，状态管理成员的数据清空的问题
 const store = new Vuex.Store({
     state:{
         cartList:[],
         position:[],
-        token:'',
-        userInfo:{}
+        token:sessionStorage.getItem('token'),
+        userInfo:sessionStorage.getItem('userInfo')
     },
     mutations:{
-        [USER_INFO](state,payload){
-            state.userInfo = payload
+        [USER_INFO](state,userInfo){
+            sessionStorage.setItem('userInfo',JSON.stringify({
+                ...userInfo
+            }))
+            state.userInfo = userInfo
         },
-        [SET_TOKEN](state,payload){
-            state.token = payload
+        [SET_TOKEN](state,token){
+            sessionStorage.setItem('token',token)
+            state.token = token
         },
         //已有商品，更新购物车中当前商品的数量
         [UPDATE_CART_COUNT](state,payload){

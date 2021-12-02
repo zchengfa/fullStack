@@ -55,11 +55,11 @@ export function changeUserProductCollectionStatus (user_id,product_id,currentSta
 }
 
 //导出登录函数
-export function login (username, pwd) {
+export function login (account, pwd) {
   return requestPost({
     url:'/login',
     data:qs.stringify({
-      username,
+      account,
       pwd
     })
   })

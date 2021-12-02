@@ -11,7 +11,8 @@
         <div class="user-header-custom" v-else>
           <img :src="headerCustom" alt="header_custom">
         </div>
-        <div class="username"><span>欢迎您,{{username}}</span></div>
+        <div class="username" v-if="username"><span>欢迎您,{{username}}</span></div>
+        <div class="account" v-else><span>欢迎您,{{account}}</span></div>
       </div>
       <div class="login-register" v-else>
         <button class="register" @click="register">注册</button>
@@ -61,6 +62,7 @@ export default {
       otherList:[],
       isLogin:false,
       username:'',
+      account:'',
       headerCustom:'',
       hasHeader:true
     }
@@ -72,8 +74,8 @@ export default {
     Bubble
   },
   methods:{
-    getUserCollectionInfo(username,user_id){
-      getUserInfo(username,user_id).then(res => {
+    getUserCollectionInfo(user_id){
+      getUserInfo(user_id).then(res => {
         console.log(res)
 
         this.userInfoList = res.data.content
@@ -95,12 +97,14 @@ export default {
     this.orderList = orderMenuImage
 
     if (this.$store.state.token) {
-      console.log(this.$store.state.token)
+      //console.log(this.$store.state.token)
       const userInfo = this.$store.state.userInfo
+      console.log(userInfo)
       this.isLogin = true
       this.username = userInfo.username
+      this.account = userInfo.account
 
-      //当token中的头像为null时说明用户没有头像，显示默认头像，反之则显示用户自己的头像
+      //当userInfo中的头像为null时说明用户没有头像，显示默认头像，反之则显示用户自己的头像
       if (userInfo.avatar !== null) {
         this.hasHeader = false
         this.headerCustom = userInfo.avatar
@@ -108,7 +112,7 @@ export default {
       else {
         this.hasHeader = true
       }
-      this.getUserCollectionInfo(this.username,userInfo.user_id)
+      this.getUserCollectionInfo(userInfo.user_id)
     }
     else {
       console.log('用户未登录')

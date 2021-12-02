@@ -10,13 +10,13 @@ const store = new Vuex.Store({
         cartList:[],
         position:[],
         token:sessionStorage.getItem('token'),
-        userInfo:sessionStorage.getItem('userInfo')
+        //将sessionStorage存储的字符串化对象，转换成对象
+        userInfo:JSON.parse(sessionStorage.getItem('userInfo'))
     },
     mutations:{
         [USER_INFO](state,userInfo){
-            sessionStorage.setItem('userInfo',JSON.stringify({
-                ...userInfo
-            }))
+            //sessionStorage只能存储字符串，所以需将userInfo对象转换成字符串
+            sessionStorage.setItem('userInfo',JSON.stringify(userInfo))
             state.userInfo = userInfo
         },
         [SET_TOKEN](state,token){

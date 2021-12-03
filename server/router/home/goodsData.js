@@ -24,5 +24,20 @@ module.exports = app =>{
         })
     })
 
+    router.get('/userCollectionProductId',(req, res) => {
+        console.log(req.query)
+        const connection = require('../../plugins/connectMysql')()
+        const {selectFields} = require('../../plugins/mysql_query')
+
+        const select_query = selectFields('user_collection','product_id',`users_id = '${req.query.user_id}'`)
+        connection.query(select_query,(err,result)=>{
+            if (err) throw err
+            else {
+                console.log(result)
+            }
+        })
+        res.send(req.query)
+    })
+
     app.use('/home/api', router)
 }

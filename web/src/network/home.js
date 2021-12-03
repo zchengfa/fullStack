@@ -42,6 +42,16 @@ export function getProductCollectionStatus(user_id,product_id){
   })
 }
 
+//导出获取用户所有收藏商品的商品ID函数
+export function getUserCollectionProductId(user_id){
+  return request({
+    url:'/userCollectionProductId',
+    params:{
+      user_id
+    }
+  })
+}
+
 //导出修改对应用户对应商品的收藏状态函数
 export function changeUserProductCollectionStatus (user_id,product_id,currentStatus) {
   return request({

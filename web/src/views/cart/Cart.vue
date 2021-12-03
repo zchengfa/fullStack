@@ -331,7 +331,7 @@
     background-color: #fff;
     border: 1px solid #a5a2a2;
     border-radius: 1rem;
-    font-size: .5rem;
+    font-size: 1rem;
     text-align: center;
   }
   .cart{

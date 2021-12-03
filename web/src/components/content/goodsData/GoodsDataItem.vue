@@ -10,7 +10,7 @@
             <span class="origin_price">{{list.origin_price}}</span>
           </div>
           <div class="love-box" @click="collectFavorite">
-            <span :class="{active:isLove}">❤</span>
+            <span :class="{active:isLove}">♡</span>
             <span class="favorite">{{list.favorite}}</span>
           </div>
         </div>
@@ -47,17 +47,17 @@
     },
     methods:{
       collectFavorite(){
-        this.clickCount ++
-
-        //判断点击次数来控制小红心颜色以及favorite的数量
-        if(this.clickCount%2===0){
-          this.isLove = !this.isLove
-          this.list.favorite -=1
-        }
-        else {
-          this.isLove = !this.isLove
-          this.list.favorite = parseInt(this.list.favorite) +1
-        }
+        // this.clickCount ++
+        //
+        // //判断点击次数来控制小红心颜色以及favorite的数量
+        // if(this.clickCount%2===0){
+        //   this.isLove = !this.isLove
+        //   this.list.favorite -=1
+        // }
+        // else {
+        //   this.isLove = !this.isLove
+        //   this.list.favorite = parseInt(this.list.favorite) +1
+        // }
       },
       //监听图片是否加载完成(原生的js监听img.onLoad = function())
       //vue监听图片加载,在img标签加上@load = “方法”，在methods实现方法
@@ -99,7 +99,9 @@
   .price-box,
   .love-box{
     display: inline-block;
-
+  }
+  .love-box span:first-child{
+    font-size: 1.01rem;
   }
   .price,.favorite{
     color: #cd5c5c;

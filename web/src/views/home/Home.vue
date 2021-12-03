@@ -16,7 +16,7 @@
 
 <script>
   //引入组件
-	import NavBar from '@/components/common/navbar/NavBar.vue'
+  import NavBar from '@/components/common/navbar/NavBar.vue'
   import Swiper from '@/components/common/swiper/Swiper.vue'
   import Scroll from "@/components/common/scroll/Scroll"
   import BackTop from "@/components/content/backTop/BackTop"
@@ -28,7 +28,7 @@
 
   import {backTopMixins} from "@/common/mixins/mixins";
   //引入获取首页数据方法
-  import {getHomeMultiData, getGoodsData} from "@/network/home"
+  import {getHomeMultiData, getGoodsData, getUserCollectionProductId} from "@/network/home"
 
   import {debounce} from "@/common/utils";
 
@@ -137,7 +137,15 @@
       })
     },
     activated() {
-
+		  //进入页面时，判断用户有没有登录，若已登录，获取一些该页面需要用户登录后才需要的数据
+      if (this.$store.state.token){
+        let userInfo = this.$store.state.userInfo
+        getUserCollectionProductId(userInfo.user_id).then(res =>{
+          console.log(res)
+        }).catch(err=>{
+          console.log(err)
+        })
+      }
       this.$refs.scroll.refresh()
     },
     deactivated() {

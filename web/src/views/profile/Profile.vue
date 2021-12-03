@@ -5,14 +5,14 @@
     </nav-bar>
     <div class="user-info">
       <div class="info" v-if="isLogin">
-        <div class="user-header-default" v-if="hasHeader">
-          <img src="~assets/image/profile/header_default.png" alt="header_default">
+        <div class="user-header-default" v-if="!hasHeader">
+          <img src="~assets/image/profile/header.png" alt="header_default">
         </div>
         <div class="user-header-custom" v-else>
-          <img :src="headerCustom" alt="header_custom">
+          <img :src="headerCustom" alt="header-image" title="header-image">
         </div>
-        <div class="username" v-if="username"><span>欢迎您,{{username}}</span></div>
-        <div class="account" v-else><span>欢迎您,{{account}}</span></div>
+        <div class="username" v-show="username"><span>欢迎您,{{username}}</span></div>
+        <div class="account" v-show="account"><span>欢迎您,{{account}}</span></div>
       </div>
       <div class="login-register" v-else>
         <button class="register" @click="register">注册</button>
@@ -105,12 +105,12 @@ export default {
       this.account = userInfo.account
 
       //当userInfo中的头像为null时说明用户没有头像，显示默认头像，反之则显示用户自己的头像
-      if (userInfo.avatar !== null) {
-        this.hasHeader = false
+      if (userInfo.avatar) {
+        this.hasHeader = true
         this.headerCustom = userInfo.avatar
       }
       else {
-        this.hasHeader = true
+        this.hasHeader = false
       }
       this.getUserCollectionInfo(userInfo.user_id)
     }

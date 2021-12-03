@@ -54,7 +54,6 @@
     watch:{
       userCollections:function (newV){
         this.userCollection = newV
-        //console.log(this.userCollection)
       }
     },
     mounted() {
@@ -62,7 +61,6 @@
         for (const collectionKey in this.userCollection) {
           if (this.userCollection[collectionKey].product_id === this.list.product_id)
             this.isLove = true
-          //console.log(this.userCollection[collectionKey].product_id,this.list.product_id)
         }
       },0)
     },
@@ -72,11 +70,11 @@
         //点击当前商品的收藏按钮，先判断当前用户是否已经收藏了该商品，如果是已经收藏了商品，说明当前用户需要取消该商品的收藏，反之则执行收藏商品请求
         if (this.isLove){
           changeUserProductCollectionStatus(userInfo.user_id,product_id,1).then(res =>{
-            this.isLove = res.data.current_status
             if (res.data.current_status === false){
               this.$props.list.favorite = Number(this.$props.list.favorite) -1
+              this.isLove = res.data.current_status
+              this.$toast.showToast('取消收藏')
             }
-            this.$toast.showToast('取消收藏')
           }).catch(err =>{
             this.$toast.showToast(err)
           })
@@ -84,27 +82,15 @@
         //为收藏商品，点击按钮，收藏当前商品
         else {
           changeUserProductCollectionStatus(userInfo.user_id,product_id,0).then(res =>{
-            this.isLove = res.data.current_status
             if (res.data.current_status === true){
               this.$props.list.favorite = Number(this.$props.list.favorite) +1
+              this.isLove = res.data.current_status
+              this.$toast.showToast('收藏成功')
             }
-            this.$toast.showToast('收藏成功')
           }).catch(err =>{
             this.$toast.showToast(err)
           })
         }
-        //console.log(this.isLove)
-        // this.clickCount ++
-        //
-        // //判断点击次数来控制小红心颜色以及favorite的数量
-        // if(this.clickCount%2===0){
-        //   this.isLove = !this.isLove
-        //   this.list.favorite -=1
-        // }
-        // else {
-        //   this.isLove = !this.isLove
-        //   this.list.favorite = parseInt(this.list.favorite) +1
-        // }
       },
       //监听图片是否加载完成(原生的js监听img.onLoad = function())
       //vue监听图片加载,在img标签加上@load = “方法”，在methods实现方法

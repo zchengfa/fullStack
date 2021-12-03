@@ -67,10 +67,8 @@ module.exports = app =>{
                         if (err) throw err
                         else {
                             if (doc){
-                                //console.log(doc.favorite,70)
                                 let favorite
                                 favorite =  Number(doc.favorite) -1
-                                console.log(favorite,typeof favorite,73)
                                 shopDataModel.updateOne({'product_id':paramsObj.product_id},{'favorite':favorite},(err,result)=>{
                                     if (err)throw err
                                     else{
@@ -98,7 +96,6 @@ module.exports = app =>{
                             if (doc){
                                 let favorite
                                 favorite =  Number(doc.favorite) +1
-                                console.log(favorite,typeof favorite,104)
                                 shopDataModel.updateOne({'product_id':paramsObj.product_id},{'favorite':favorite},(err,result)=>{
                                     if (err)throw err
                                     else{

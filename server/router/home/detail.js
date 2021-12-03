@@ -52,17 +52,36 @@ module.exports = app =>{
         console.log(paramsObj)
         //连接数据库
         const connection = connect()
+        const  shopDataModel= require('../../model/goodsDataModel')
         //通过接受的请求参数currentStatus判断，若currentStatus为1表示已收藏，需要取消收藏，若为0表示未收藏，需要收藏商品
         if (Number(paramsObj.currentStatus) === 1) {
             //currentStatus为1，商品已收藏，用户需要取消收藏，将对应用户对应的商品数据进行删除操作
-            const deleteQuery = mysql_query.delete('user_collection',`users_id = '${paramsObj.user_id}' AND product_id = '${paramsObj.product_id}'`)
+            const deleteQuery = mysql_query.deleteOperation('user_collection',`users_id = '${paramsObj.user_id}' AND product_id = '${paramsObj.product_id}'`)
 
             connection.query(deleteQuery, err => {
                 if (err) throw err
                 else {
-                    res.send({'current_status':false})
-
-                    //后续修改，将该商品从该用户中删除后，需要将对应的favorite数量减一
+                    //有用户取消了收藏，将对应的商品收藏数减一
+                    //1.先查询当前商品的收藏总数
+                    shopDataModel.findOne({'product_id':paramsObj.product_id},(err,doc)=>{
+                        if (err) throw err
+                        else {
+                            if (doc){
+                                //console.log(doc.favorite,70)
+                                let favorite
+                                favorite =  Number(doc.favorite) -1
+                                console.log(favorite,typeof favorite,73)
+                                shopDataModel.updateOne({'product_id':paramsObj.product_id},{'favorite':favorite},(err,result)=>{
+                                    if (err)throw err
+                                    else{
+                                        if (result.ok === 1){
+                                            res.send({'current_status':false})
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    })
                 }
             })
         }
@@ -73,7 +92,25 @@ module.exports = app =>{
             connection.query(insertQuery, err => {
                 if (err) throw err
                 else {
-                    res.send({'current_status':true})
+                    shopDataModel.findOne({'product_id':paramsObj.product_id},(err,doc)=>{
+                        if (err) throw err
+                        else {
+                            if (doc){
+                                let favorite
+                                favorite =  Number(doc.favorite) +1
+                                console.log(favorite,typeof favorite,104)
+                                shopDataModel.updateOne({'product_id':paramsObj.product_id},{'favorite':favorite},(err,result)=>{
+                                    if (err)throw err
+                                    else{
+                                        if (result.ok ===1){
+                                            res.send({'current_status':true})
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    })
+
                 }
 
                 //后续修改，将该商品从该用户中删除后，需要将对应的favorite数量加一

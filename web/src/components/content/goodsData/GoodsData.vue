@@ -1,6 +1,6 @@
 <template>
   <div class="goods-data">
-      <goods-data-item v-for="(item, index) in goods" :key="index" :list="goods[index]" :type="currentType"></goods-data-item>
+      <goods-data-item v-for="(item, index) in goods" :user-collections="userCollections" :key="index" :list="goods[index]" :type="currentType"></goods-data-item>
   </div>
 </template>
 
@@ -18,7 +18,15 @@
       },
       currentType:{
         type:String,
-        default: ''
+        default(){
+          return ''
+        }
+      },
+      userCollections:{
+        type:Array,
+        default() {
+          return [];
+        }
       }
     },
     components:{

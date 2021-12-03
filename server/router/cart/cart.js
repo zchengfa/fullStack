@@ -152,7 +152,7 @@ module.exports = app => {
         //定义开关变量，解决Cannot set headers after they are sent to the client错误
         let isOver = false
         product_id_array.map(item => {
-            const deleteQuery = mysql_query.deleteOpration('user_shop',`users_id = '${user_id}' AND product_id = '${item}'`)
+            const deleteQuery = mysql_query.deleteOperation('user_shop',`users_id = '${user_id}' AND product_id = '${item}'`)
             try {
                 connection.query(deleteQuery, err => {
                     if (err) throw err

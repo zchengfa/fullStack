@@ -7,7 +7,7 @@
       <swiper class="swiper" :banner="banner" @swiperImageLoad="swiperImageLoad"></swiper>
       <menu-list :menu-list="menuList"></menu-list>
       <tab-control :class="{fixed: isTabFixed}" ref="tabControlTwo" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
-      <goods-data :goods="goods[currentType].list" :current-type="currentType"></goods-data>
+      <goods-data :goods="goods[currentType].list" :user-collections="userCollections" :current-type="currentType"></goods-data>
       <div class="no-more" v-if="noMore"><p>没有更多了哦!</p></div>
     </Scroll>
     <back-top v-show="isShowBackTop" @click.native="backTop"></back-top>
@@ -46,7 +46,8 @@
           'new':{page: 0, list: []}
         },
         tabOffsetTop:0,
-        noMore:false
+        noMore:false,
+        userCollections:[]
       }
     },
 		components:{
@@ -141,7 +142,10 @@
       if (this.$store.state.token){
         let userInfo = this.$store.state.userInfo
         getUserCollectionProductId(userInfo.user_id).then(res =>{
-          console.log(res)
+          //console.log(res.data.userCollections)
+          if (res.data.userCollections){
+           this.userCollections = res.data.userCollections
+          }
         }).catch(err=>{
           console.log(err)
         })

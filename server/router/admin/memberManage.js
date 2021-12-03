@@ -2,7 +2,7 @@ module.exports = app => {
     const express = require('express')
     const router = express.Router()
     const connect = require('../../plugins/connectMysql')
-    const {selectFields,deleteOpration} = require('../../plugins/mysql_query')
+    const {selectFields,deleteOperation} = require('../../plugins/mysql_query')
 
 		const connection = connect()
     router.get('/memberManage',(req, res) => {
@@ -19,7 +19,7 @@ module.exports = app => {
 		router.post('/deleteUser',(req,res)=>{
 			const user_id = JSON.parse(JSON.stringify(req.body)).user_id
 			//console.log(user_id)
-			const deleteUserQuery = deleteOpration('user',`user_id = '${user_id}'`)
+			const deleteUserQuery = deleteOperation('user',`user_id = '${user_id}'`)
 			connection.query(deleteUserQuery,(err,result) => {
 				if(err) {
 					throw err

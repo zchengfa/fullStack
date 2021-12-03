@@ -31,12 +31,19 @@ module.exports = app =>{
 
         const select_query = selectFields('user_collection','product_id',`users_id = '${req.query.user_id}'`)
         connection.query(select_query,(err,result)=>{
-            if (err) throw err
+            if (err) {
+                res.send({'error':err})
+            }
             else {
-                console.log(result)
+                if (result.length){
+
+                    res.send({'userCollections':result})
+                }
+                else {
+                    res.send([])
+                }
             }
         })
-        res.send(req.query)
     })
 
     app.use('/home/api', router)

@@ -9,7 +9,7 @@
             <span class="price">{{list.price || list.product_price}}</span>
             <span class="origin_price">{{list.origin_price}}</span>
           </div>
-          <div class="love-box" @click="collectFavorite">
+          <div class="love-box" @click="collectFavorite(list.product_id)">
             <span :class="{active:isLove}">♡</span>
             <span class="favorite">{{list.favorite}}</span>
           </div>
@@ -20,6 +20,8 @@
 </template>
 
 <script>
+  import {changeUserProductCollectionStatus} from "@/network/home";
+
   export default {
     name: "GoodsDtaItem",
     props:{
@@ -34,19 +36,64 @@
         default() {
           return ''
         }
+      },
+      userCollections: {
+        type:Array,
+        default(){
+          return []
+        }
       }
     },
     data(){
       return {
         isLove:false,
-        clickCount:0
+        clickCount:0,
+        userCollection: []
       }
     },
-    computed:{
-
+    watch:{
+      userCollections:function (newV){
+        this.userCollection = newV
+        //console.log(this.userCollection)
+      }
+    },
+    mounted() {
+      setTimeout(()=>{
+        for (const collectionKey in this.userCollection) {
+          if (this.userCollection[collectionKey].product_id === this.list.product_id)
+            this.isLove = true
+          //console.log(this.userCollection[collectionKey].product_id,this.list.product_id)
+        }
+      },0)
     },
     methods:{
-      collectFavorite(){
+      collectFavorite(product_id){
+        let userInfo = this.$store.state.userInfo
+        //点击当前商品的收藏按钮，先判断当前用户是否已经收藏了该商品，如果是已经收藏了商品，说明当前用户需要取消该商品的收藏，反之则执行收藏商品请求
+        if (this.isLove){
+          changeUserProductCollectionStatus(userInfo.user_id,product_id,1).then(res =>{
+            this.isLove = res.data.current_status
+            if (res.data.current_status === false){
+              this.$props.list.favorite = Number(this.$props.list.favorite) -1
+            }
+            this.$toast.showToast('取消收藏')
+          }).catch(err =>{
+            this.$toast.showToast(err)
+          })
+        }
+        //为收藏商品，点击按钮，收藏当前商品
+        else {
+          changeUserProductCollectionStatus(userInfo.user_id,product_id,0).then(res =>{
+            this.isLove = res.data.current_status
+            if (res.data.current_status === true){
+              this.$props.list.favorite = Number(this.$props.list.favorite) +1
+            }
+            this.$toast.showToast('收藏成功')
+          }).catch(err =>{
+            this.$toast.showToast(err)
+          })
+        }
+        //console.log(this.isLove)
         // this.clickCount ++
         //
         // //判断点击次数来控制小红心颜色以及favorite的数量

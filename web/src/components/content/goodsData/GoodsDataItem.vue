@@ -66,30 +66,37 @@
     },
     methods:{
       collectFavorite(product_id){
-        let userInfo = this.$store.state.userInfo
-        //点击当前商品的收藏按钮，先判断当前用户是否已经收藏了该商品，如果是已经收藏了商品，说明当前用户需要取消该商品的收藏，反之则执行收藏商品请求
-        if (this.isLove){
-          changeUserProductCollectionStatus(userInfo.user_id,product_id,1).then(res =>{
-            if (res.data.current_status === false){
-              this.$props.list.favorite = Number(this.$props.list.favorite) -1
-              this.isLove = res.data.current_status
-              this.$toast.showToast('取消收藏')
-            }
-          }).catch(err =>{
-            this.$toast.showToast(err)
-          })
+        //点击按钮先判断用户是否已经登录，若未登录，引导用户进入登录页面，若已经登录，执行收藏操作
+        if (this.$store.state.token){
+          let userInfo = this.$store.state.userInfo
+          //点击当前商品的收藏按钮，先判断当前用户是否已经收藏了该商品，如果是已经收藏了商品，说明当前用户需要取消该商品的收藏，反之则执行收藏商品请求
+          if (this.isLove){
+            changeUserProductCollectionStatus(userInfo.user_id,product_id,1).then(res =>{
+              if (res.data.current_status === false){
+                this.$props.list.favorite = Number(this.$props.list.favorite) -1
+                this.isLove = res.data.current_status
+                this.$toast.showToast('取消收藏')
+              }
+            }).catch(err =>{
+              this.$toast.showToast(err)
+            })
+          }
+          //为收藏商品，点击按钮，收藏当前商品
+          else {
+            changeUserProductCollectionStatus(userInfo.user_id,product_id,0).then(res =>{
+              if (res.data.current_status === true){
+                this.$props.list.favorite = Number(this.$props.list.favorite) +1
+                this.isLove = res.data.current_status
+                this.$toast.showToast('收藏成功')
+              }
+            }).catch(err =>{
+              this.$toast.showToast(err)
+            })
+          }
         }
-        //为收藏商品，点击按钮，收藏当前商品
+        //用户未登录，引导用户进入登录页面
         else {
-          changeUserProductCollectionStatus(userInfo.user_id,product_id,0).then(res =>{
-            if (res.data.current_status === true){
-              this.$props.list.favorite = Number(this.$props.list.favorite) +1
-              this.isLove = res.data.current_status
-              this.$toast.showToast('收藏成功')
-            }
-          }).catch(err =>{
-            this.$toast.showToast(err)
-          })
+          this.$router.push('/login')
         }
       },
       //监听图片是否加载完成(原生的js监听img.onLoad = function())

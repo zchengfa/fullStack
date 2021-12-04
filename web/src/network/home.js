@@ -85,11 +85,11 @@ export function sendMailVerifyCode (email) {
 }
 
 //导出注册函数
-export function register (username,pwd,verifyCode) {
+export function register (account,pwd,verifyCode) {
   return requestPost({
     url:'/register',
     data:qs.stringify({
-      username,
+      account,
       pwd,
       verifyCode
     })

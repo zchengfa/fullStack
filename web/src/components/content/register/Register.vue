@@ -4,7 +4,7 @@
     <form class="register-form">
       <div class="title"><h4>欢迎来到注册页面</h4></div>
       <div class="input-box">
-        <input type="text" placeholder="手机号/QQ邮箱" @input="onChange" v-model="username" />
+        <input type="text" placeholder="手机号/QQ邮箱" @input="onChange" v-model="account" />
         <input type="password" placeholder="密码:" @input="onChange" v-model="password" />
         <input type="password" placeholder="确认密码:" @input="onChange" v-model="confirmPwd" />
         <div class="mail-verify" v-show="isMail">
@@ -59,10 +59,10 @@ export default {
       this.encryptConfirmPwd = encrypt(this.confirmPwd)
       //判断账号类型，根据账号类型决定注册按钮能点击的条件
       if (this.adjustAccountType()) {
-       this.changeDisabledStatus(this.username.length && this.password.length && this.confirmPwd.length && this.mailVerifyCode.length === 6)
+       this.changeDisabledStatus(this.account.length && this.password.length && this.confirmPwd.length && this.mailVerifyCode.length === 6)
       }
       else {
-        this.changeDisabledStatus(this.username.length && this.password.length && this.confirmPwd.length)
+        this.changeDisabledStatus(this.account.length && this.password.length && this.confirmPwd.length)
       }
 
     },
@@ -77,7 +77,7 @@ export default {
     },
     adjustAccountType() {
       //判断账号是否为QQ邮箱类型，若是则显示发送邮箱验证元素
-      if (this.RegExpMail.test(this.username)) {
+      if (this.RegExpMail.test(this.account)) {
         this.isMail = true
         return true
       }
@@ -102,11 +102,11 @@ export default {
     },
     submitRegister() {
       //先判断用户注册所用的账号是否为手机号或者qq邮箱
-      if (this.RegExpPhone.test(this.username) || this.adjustAccountType()) {
+      if (this.RegExpPhone.test(this.account) || this.adjustAccountType()) {
         //若是手机号
-        if (this.RegExpPhone.test(this.username)) {
+        if (this.RegExpPhone.test(this.account)) {
           if (this.verifyPass()) {
-            register(this.username,this.encryptPwd).then((res)=> {
+            register(this.account,this.encryptPwd).then((res)=> {
               if (res.data.success) {
                 //注册成功跳转页面
                 this.$toast.showToast(res.data.success)
@@ -121,7 +121,7 @@ export default {
         //若是QQ邮箱
         else {
           if (this.verifyPass()) {
-            register(this.username,this.encryptPwd,this.mailVerifyCode).then(res => {
+            register(this.account,this.encryptPwd,this.mailVerifyCode).then(res => {
               console.log(res)
               if (res.data.success) {
                 //注册成功跳转页面
@@ -152,7 +152,7 @@ export default {
     //给邮箱发送验证码,并将验证码赋值给mailVerifyCode，以便注册按钮可以接收到验证码后提交给后端进行校验
     sendVerifyCode() {
       this.isSendAgain = true
-      sendMailVerifyCode(this.username).then(res => {
+      sendMailVerifyCode(this.account).then(res => {
         console.log(res)
         if (res.data.email_non_exist) {
           this.$toast.showToast(res.data.email_non_exist,1000)
@@ -185,7 +185,7 @@ export default {
 }
 .register{
   position: relative;
-  top:-1rem;
+  top:0;
   width: 100vw;
   height: 100vh;
   background-color: #e78ba9;

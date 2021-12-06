@@ -21,16 +21,17 @@ export default {
     showCount(){
       return this.count !== 0
     }
-  }
+  },
 }
 </script>
 
 <style scoped>
 .message-bubble {
   position: absolute;
-  left: 65%;
-  width: 1rem;
-  height: 1rem;
+  top: .6rem;
+  left: 68%;
+  width: 1.2rem;
+  height: 1.2rem;
   background-color: #e02929 !important;
   color: #fff;
   border-radius: 50%;

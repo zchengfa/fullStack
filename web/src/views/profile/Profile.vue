@@ -136,71 +136,117 @@ export default {
 .nav {
   box-shadow: 0 1px #ece6e6;
 }
-
-.user-info {
+.user-info{
   width: 100%;
-  height: 24vh;
-}
-.user-info .info{
-  position: relative;
-  top: 1rem;
+  height: 10rem;
   text-align: center;
 }
-.user-header-custom img,
-.user-header-default img{
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  background-size: contain;
-  overflow: hidden;
+.user-info .login-register,
+.user-info .collection{
+  width: 100%;
+  height: 50%;
+  line-height: 5rem;
 }
-.login-register{
-  position: relative;
-  top:1rem;
-  bottom:1rem;
-  text-align: center;
-}
-.login,.register{
-  width: 5rem;
+.user-info .login-register button{
+  width: 22%;
   height: 2rem;
-  border:1px solid #e02929;
   border-radius: 1rem;
-  color: #e02929;
-}
-.register{
-  margin-right: 1rem;
-}
-.login{
-  background-color: #e02929;
   color: #fff;
 }
-.collection{
-  display: flex;
-  position: relative;
-  top:2rem;
-  text-align: center;
-  font-size: .8rem;
-  line-height: 1.5rem;
+.user-info .login-register button.login{
+  margin-left: 1rem;
+  background-color: red;
 }
-.collection a.collection-item{
+.user-info .login-register button.register{
+  background-color: #156fe3;
+}
+.user-info .collection{
+  position: relative;
+  display: flex;
+}
+.user-info .collection .collection-item{
   position: relative;
   flex: 1;
-  margin-bottom: .5rem;
 }
-.collection span{
+.collection-item span{
   display: block;
-  height: 1.5rem;
+  width: 100%;
 }
-.collection .count {
-  color: #e02929;
-}
-.collection .title::before{
+.collection-item span.count{
   position: relative;
-  right: 32%;
-  display: inline-block;
-  content: '|';
-  color: #bfbaba;
+  top: .5rem;
+  height: 30%;
+  line-height: 2rem;
+  color: #d94141;
 }
+.collection-item span.title{
+  height: 60%;
+  line-height: 3rem;
+}
+/*.user-info {*/
+/*  width: 100%;*/
+/*  height: 24vh;*/
+/*}*/
+/*.user-info .info{*/
+/*  position: relative;*/
+/*  top: 1rem;*/
+/*  text-align: center;*/
+/*}*/
+/*.user-header-custom img,*/
+/*.user-header-default img{*/
+/*  width: 3rem;*/
+/*  height: 3rem;*/
+/*  border-radius: 50%;*/
+/*  background-size: contain;*/
+/*  overflow: hidden;*/
+/*}*/
+/*.login-register{*/
+/*  position: relative;*/
+/*  top:2rem;*/
+/*  bottom:1rem;*/
+/*  text-align: center;*/
+/*}*/
+/*.login,.register{*/
+/*  width: 5rem;*/
+/*  height: 2rem;*/
+/*  border:1px solid #e02929;*/
+/*  border-radius: 1rem;*/
+/*  color: #e02929;*/
+/*}*/
+/*.register{*/
+/*  margin-right: 1rem;*/
+/*}*/
+/*.login{*/
+/*  background-color: #e02929;*/
+/*  color: #fff;*/
+/*}*/
+/*.collection{*/
+/*  display: flex;*/
+/* */
+/*  margin-top:3rem;*/
+/*  text-align: center;*/
+/*  font-size: .8rem;*/
+/*  line-height: 1.5rem;*/
+/*}*/
+/*.collection a.collection-item{*/
+/*  position: relative;*/
+/*  flex: 1;*/
+/*  margin-bottom: .5rem;*/
+/*}*/
+/*.collection span{*/
+/*  display: block;*/
+/*  height: 1.5rem;*/
+/*}*/
+/*.collection .count {*/
+/*  color: #e02929;*/
+/*}*/
+/*.collection .title::before{*/
+/*  position: relative;*/
+/*  right: 32%;*/
+/*  display: inline-block;*/
+/*  content: '|';*/
+/*  color: #bfbaba;*/
+/*}*/
 .other-menu {
   margin-top: 1rem;
   margin-left: auto;

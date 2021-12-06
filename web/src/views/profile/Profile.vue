@@ -5,14 +5,14 @@
     </nav-bar>
     <div class="user-info">
       <div class="info" v-if="isLogin">
-        <div class="user-header-default" v-if="!hasHeader">
+        <div class="user-header-default user-header" v-if="!hasHeader">
           <img src="~assets/image/profile/header.png" alt="header_default">
         </div>
-        <div class="user-header-custom" v-else>
+        <div class="user-header-custom user-header" v-else>
           <img :src="headerCustom" alt="header-image" title="header-image">
         </div>
-        <div class="username" v-show="username"><span>欢迎您,{{username}}</span></div>
-        <div class="account" v-show="account"><span>欢迎您,{{account}}</span></div>
+        <div class="username" v-if="username"><span>{{username}}</span></div>
+        <div class="account" v-else><span>{{account}}</span></div>
       </div>
       <div class="login-register" v-else>
         <button class="register" @click="register">注册</button>
@@ -182,6 +182,33 @@ export default {
 .collection-item span.title{
   height: 60%;
   line-height: 3rem;
+}
+.user-info .info{
+  display: flex;
+  width: 100%;
+  height: 50%;
+  line-height:5rem;
+  text-align: center;
+}
+.info img{
+  position: relative;
+  top:1rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+}
+.info span{
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.info .user-header{
+  flex:3;
+}
+.info .account,
+.info .username{
+  flex: 9;
+  text-align: left;
 }
 /*.user-info {*/
 /*  width: 100%;*/

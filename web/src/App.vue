@@ -20,4 +20,10 @@
 <style scoped>
 	@import url("assets/css/normalize.css");
   @import url("assets/css/reset.css");
+  #app{
+    position: relative;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+  }
 </style>

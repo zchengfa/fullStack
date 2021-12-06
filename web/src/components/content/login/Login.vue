@@ -1,11 +1,7 @@
 <template>
   <div class="login" v-if="isClose">
     <Close @close="closeCurrentPage"></Close>
-    <div class="bg"></div>
     <form class="form" name="login">
-      <div class="header">
-        <img src="~assets/image/profile/header.png" alt="header_img">
-      </div>
       <div class="content">
         <div class="input-box">
           <input type="text" placeholder="手机号/QQ邮箱" @input="onChange" v-model="account"/>
@@ -16,7 +12,7 @@
           <label for="remember">记住密码</label>
           <router-link class="register-link" :to="{path:'/register'}" replace>没有账号?去注册</router-link>
         </div>
-        <button type="button" @click="login" :disabled="isAble" :class="{active:!isAble}">登录</button>
+        <button type="button" class="login-button" @click="login" :disabled="isAble" :class="{active:!isAble}">登录</button>
       </div>
       <div class="login-way" @click="loginWay">
         <div class="qq"><img src="~assets/image/login/QQ.svg" alt="QQ"><span>QQ登录</span></div>
@@ -45,7 +41,7 @@ export default {
   },
   methods:{
     onChange(){
-      this.isAble = !(this.account.length && this.password.length);
+      this.isAble = this.account.length > 0 && this.password.length > 0;
     },
     login(){
       //对用户输入的密码进行加密
@@ -107,116 +103,56 @@ export default {
 
 <style scoped>
 .active {
-  background-color: #f31b1b;
+  background-color: #f31b1b !important;
   border: none;
-  color: #fff;
 }
 .login{
-  position: relative;
-  width: 100vw;
+  display: flex;
+  position: absolute;
+  width: 100%;
   height: 100vh;
-  background-color: #fff;
-  z-index: 12;
-}
-.bg{
-  position: relative;
-  width: 100%;
-  height: 20vh;
-  background-color: #5d5ddc;
-}
-.bg::after{
-  position: absolute;
-  top: 0;
-  display: block;
-  content: '';
-  width: 100%;
-  height: 36vh;
-  border-radius: 50%;
-  background-color: #5d5ddc;
-}
-.form{
-  position: relative;
-  margin: 20vh auto 1rem;
-  width: 80vw;
-  background-color: #fff;
-  z-index: 9;
-}
-.header{
-  position: absolute;
-  top: -4rem;
-  width: 100%;
-  text-align: center;
-}
-.content{
-  position: relative;
-  top:1rem
-}
-input{
-  display: block;
-  margin-top: 1.5rem;
-  margin-left: auto;
-  margin-right: auto;
-  width: 80%;
-  height: 2rem;
-  outline: none;
-  text-indent: 1rem;
-  color: #aaa7a7;
-  border-bottom: 1px solid #aaa7a7;
-}
-#remember{
-  display: inline-block;
-  margin-left: 10%;
-  width: 1rem;
-  height: 1rem;
-}
-label{
-  position: relative;
-  top: -.2rem;
-  padding-left: .5rem;
-  font-size: .6rem;
-}
-.register-link {
-  position: relative;
-  top: -2px;
-  left: 30%;
-  font-size: .8rem;
-  color: deepskyblue;
-}
-button{
-  display: block;
-  margin: 1rem auto;
-  width: 80%;
-  height: 2rem;
-  background-color: #c2bdbd;
-  border-radius: 1rem;
-  border: none;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-image: url("~assets/image/login/login_bg.png");
+  justify-content: center;
+  align-items: center;
   color: #fff;
-  outline: none;
+  z-index: 10;
+  background-color: #7b7171;
+}
+.login .form{
+  width: 90%;
+  height: 40%;
+  text-align: center;
+  background: rgba(83, 76, 76, 0.3);
+}
+.input-box input{
+  position: relative;
+  margin-top:1rem;
+  width: 80%;
+  height: 2.2rem;
+  background: transparent;
+  border: 1px solid #d7c5c5;
+  color: #fff;
+}
+.option{
+  margin-top: 1rem;
+  width: 80%;
 }
 .login-way{
-  position: relative;
-  top: 1rem;
   display: flex;
-  margin: auto;
-  width: 80%;
-  text-align: center;
+  margin-top: 1rem;
 }
-.login-way div {
+.login-way div{
   flex: 1;
-  font-size: .9rem;
 }
-.login-way img{
-  display: block;
+.login-button{
   position: relative;
-  top: 0;
-  left: 50%;
-  width: 1.5rem;
-  height: 1.5rem;
-  background-size: contain;
-  transform: translateX(-50%);
-}
-.login-way span {
-  display: block;
-  margin-top: .4rem;
+  margin-top: 1rem;
+  width: 60%;
+  height: 2.2rem;
+  border-radius: 1rem;
+  background-color: #3b75d9;
+  color: #fff;
 }
 </style>

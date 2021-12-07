@@ -4,8 +4,8 @@
     <form class="form" name="login">
       <div class="content">
         <div class="input-box">
-          <input type="text" placeholder="手机号/QQ邮箱" @input="onChange" v-model="account"/>
-          <input type="password" placeholder="密码" @input="onChange" v-model="password"/>
+          <input type="text" placeholder="手机号/QQ邮箱" @blur="autoJoinPassword" @input="onChange" v-model="account"/>
+          <input type="password" placeholder="密码" @input="onChange" v-model="password" autocomplete/>
         </div>
         <div class="option">
           <input type="checkbox" @click="checkBox" id="remember" :checked="isChecked" :disabled="isAble" />
@@ -27,7 +27,7 @@ import {login} from "@/network/home";
 import {getCookie, setCookie} from "@/common/cookie";
 
 //引入密码加密模块
-import {encrypt} from '@/common/crypt'
+import {decrypt, encrypt} from '@/common/crypt'
 
 import {closeCurrentPageMixins} from '@/common/mixins/mixins'
 
@@ -42,6 +42,14 @@ export default {
   methods:{
     onChange(){
       this.isAble = !(this.account.length && this.password.length);
+    },
+    //自动填充密码
+    autoJoinPassword(){
+      let cookie = getCookie(this.account)
+      if (cookie){
+        this.password = decrypt(cookie.password)
+      }
+      console.log(cookie)
     },
     login(){
       //对用户输入的密码进行加密
@@ -91,7 +99,7 @@ export default {
     }
   },
   mounted() {
-    console.log(getCookie(15797687476))
+
   }
 }
 </script>

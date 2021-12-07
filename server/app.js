@@ -34,9 +34,12 @@ app.use((req,res,next)=>{
         '/admin/loginAdministrator',
         '/home/api/multiData',
         `/home/api/goodsData?type=${requestQuery.type}&page=${requestQuery.page}`,
-        '/login' ,'/home/api/commonRecommend','/home/api/category_list',
+        '/login' ,
+        '/home/api/commonRecommend',
+        '/home/api/category_list',
         `/home/api/category_detail?type=${encodeURI(category_type)}`,
-        `/home/api/detail?product_type=${product_type}&product_id=${product_id}`
+        `/home/api/detail?product_type=${product_type}&product_id=${product_id}`,
+        '/register'
     ]
     if (urlWhiteList.indexOf(req.url) >= 0){
         next()

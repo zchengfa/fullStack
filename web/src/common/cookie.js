@@ -13,36 +13,42 @@ export function setCookie (username, password, expiresTime=1) {
     document.cookie = username + '=' +password + ';' +expires
 }
 //获取cookie
-export function getCookie (username) {
+export function getCookie (account) {
     //思路：1.检测cookie是否有分号，有分号，则说明有两个及以上的cookie值，需要进行处理在准确返回相应的cookie字段
     //没有分号，只有一条cookie
     const cookie = document.cookie
     if (cookie){
+        let cookieArray = []
+        let itemArray = []
+        let cookieObject = {
+            account:'',
+            password:''
+        }
         //没有分号。只有一条cookie
         if (document.cookie.indexOf(';') === -1){
-           if (cookie.indexOf(username) >=0){
-               let cookieArray = []
+           if (cookie.indexOf(account) >=0){
                cookieArray = cookie.split('=')
-               return cookieArray
+               cookieObject.account = cookieArray[0]
+               cookieObject.password = cookieArray[1]
+               return cookieObject
            }
         }
+        //有分号，有两条及以上的cookie
         else{
-            return cookie
+            cookieArray = cookie.split(';')
+            cookieArray.map(item =>{
+                //去除空格
+                item = item.trim()
+                if (item.indexOf(account)>=0){
+                    itemArray = item.split('=')
+                }
+            })
+            //返回处理好的cookie
+            cookieObject.account = itemArray[0]
+            cookieObject.password = itemArray[1]
+            return cookieObject
         }
     }
-    return document.cookie.indexOf(';')
-    // let name = username + '='
-    // //将字符串以分号作为分割条件并返回一个数组
-    // let cookieArray = document.cookie.split(';')
-    //
-    // //遍历数组
-    // cookieArray.map((value)=> {
-    //     //去除空格
-    //     let trimString = value.trim()
-    //     //查看是否已有与给定name一致的字符串，有则返回对应字符串
-    //     if (trimString.indexOf(name)) return trimString.substring(name.length, trimString.length)
-    // })
-    //
-    // //没有匹配的cookie返回空字符串
-    // return ''
+    //没有符合条件的cookie，返回空字符串
+    return ''
 }

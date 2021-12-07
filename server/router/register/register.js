@@ -54,14 +54,14 @@ module.exports = app => {
 
         //将请求参数转换成对象
         const paramsObj = JSON.parse(JSON.stringify(req.body))
-        console.log(verifyCode,verifyCodeExpired,paramsObj.verifyCode)
-
+        //console.log(verifyCode,verifyCodeExpired,paramsObj.verifyCode)
+        console.log(paramsObj)
         function registerUser () {
             const connect = require('../../plugins/connectMysql')
             const mysql_query = require('../../plugins/mysql_query')
 
             //创建数据库查询语句
-            const selectQuery = mysql_query.selectAll('user',`account = '${paramsObj.username}'`)
+            const selectQuery = mysql_query.selectAll('user',`account = '${paramsObj.account}'`)
             const selectUserCount = mysql_query.selectCount('user')
 
             //连接数据库
@@ -102,16 +102,15 @@ module.exports = app => {
         //判断用户传过来的验证码是否合法，不合法则是手机注册，反之则为邮箱注册
         if (paramsObj.verifyCode) {
             //判断用户传过来的验证码是否与之前给该用户发送的验证码一致,且验证码是否过期，若一致则执行注册等操作
-            if (paramsObj.username === userEmail && verifyCode === paramsObj.verifyCode && verifyCodeExpired !== 0) {
+            if (paramsObj.account === userEmail && verifyCode === paramsObj.verifyCode && verifyCodeExpired !== 0) {
                 registerUser()
             }
-            else if (paramsObj.username === userEmail && verifyCode === paramsObj.verifyCode && verifyCodeExpired === 0) {
+            else if (paramsObj.account === userEmail && verifyCode === paramsObj.verifyCode && verifyCodeExpired === 0) {
                 res.setHeader('Access-Control-Allow-Origin', '*')
                 res.send({'code_expired':'验证码已过期,注册失败'})
                 console.log('验证码已过期,注册失败')
             }
             else {
-                res.setHeader('Access-Control-Allow-Origin', '*')
                 res.send({'code_err':'验证码不正确,注册失败'})
                 console.log('验证码不正确,注册失败')
             }

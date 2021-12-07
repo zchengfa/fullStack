@@ -43,13 +43,12 @@ export default {
     onChange(){
       this.isAble = !(this.account.length && this.password.length);
     },
-    //自动填充密码
     autoJoinPassword(){
       let cookie = getCookie(this.account)
       if (cookie){
         this.password = decrypt(cookie.password)
+        this.isAble = false
       }
-      console.log(cookie)
     },
     login(){
       //对用户输入的密码进行加密
@@ -57,6 +56,7 @@ export default {
 
       //将用户名和加密后的密码传给服务端进行校验
       login(this.account,encryptPwd).then(res => {
+        console.log(decrypt(encryptPwd))
         //判断是否有token值,后端返回了token值，登录成功
           if (res.data.token) {
             //判断是否勾选记住密码项

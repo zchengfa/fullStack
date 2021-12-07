@@ -8,8 +8,10 @@
           <input type="password" placeholder="密码" @input="onChange" v-model="password" autocomplete/>
         </div>
         <div class="option">
-          <input type="checkbox" @click="checkBox" id="remember" :checked="isChecked" :disabled="isAble" />
-          <label for="remember">记住密码</label>
+          <div class="remember-box">
+            <input type="checkbox" @click="checkBox" id="remember" :checked="isChecked" :disabled="isAble" />
+            <label for="remember">记住密码</label>
+          </div>
           <router-link class="register-link" :to="{path:'/register'}" replace>没有账号?去注册</router-link>
         </div>
         <button type="button" class="login-button" @click="login" :disabled="isAble" :class="{active:!isAble}">登录</button>
@@ -120,11 +122,13 @@ export default {
   justify-content: center;
   align-items: center;
   color: #fff;
+  font-size: .9rem;
   z-index: 10;
 }
 .login .form{
   width: 90%;
   height: 40%;
+  min-height: 18rem;
   text-align: center;
   background: rgba(83, 76, 76, 0.3);
 }
@@ -141,15 +145,34 @@ export default {
   color: #fff;
 }
 .option{
-  margin-top: 1rem;
+  margin: 1rem auto 0;
   width: 80%;
+}
+.remember-box{
+  display: inline-block;
+  width: 50%;
+  text-align: left;
+}
+.register-link{
+  color: #1e8efc;
 }
 .login-way{
   display: flex;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
 }
 .login-way div{
   flex: 1;
+}
+.login-way span{
+  position: relative;
+  display: inline-block;
+  top: -.5rem;
+  width: 50%;
+  text-align: left;
+}
+.login-way img{
+  width: 1.5rem;
+  height: 1.5rem;
 }
 .login-button{
   position: relative;

@@ -24,7 +24,7 @@
 
 <script>
 import {login} from "@/network/home";
-import {setCookie} from "@/common/cookie";
+import {getCookie, setCookie} from "@/common/cookie";
 
 //引入密码加密模块
 import {encrypt} from '@/common/crypt'
@@ -41,7 +41,7 @@ export default {
   },
   methods:{
     onChange(){
-      this.isAble = this.account.length > 0 && this.password.length > 0;
+      this.isAble = !(this.account.length && this.password.length);
     },
     login(){
       //对用户输入的密码进行加密
@@ -49,16 +49,14 @@ export default {
 
       //将用户名和加密后的密码传给服务端进行校验
       login(this.account,encryptPwd).then(res => {
-          console.log(res)
-
-        //判断是否勾选记住密码项
-          if (this.isChecked) {
-
-            //记住密码进入勾选状态，设置cookie
-            setCookie(this.account,encryptPwd,1)
-          }
         //判断是否有token值,后端返回了token值，登录成功
           if (res.data.token) {
+            //判断是否勾选记住密码项
+            if (this.isChecked) {
+
+              //记住密码进入勾选状态，设置cookie
+              setCookie(this.account,encryptPwd,1)
+            }
             //将token和用户信息分发给vuex进行状态管理
               this.$store.dispatch('userInfo',res.data.userInfo)
               this.$store.dispatch('setToken',JSON.parse(JSON.stringify(res.data.token)))
@@ -79,7 +77,7 @@ export default {
 
     },
     checkBox(){
-      if (Object.keys(this.username).length && Object.keys(this.password).length){
+      if (this.account.length && this.password.length){
         this.isChecked = true
         this.isAble = false
       }
@@ -87,16 +85,13 @@ export default {
         this.isChecked = false
         this.isAble = true
       }
-      console.log(document.cookie)
     },
     loginWay(){
       this.$toast.showToast('功能暂时还未开发')
     }
   },
   mounted() {
-    if (sessionStorage.getItem('token')) {
-      console.log(sessionStorage.getItem('token'))
-    }
+    console.log(getCookie(15797687476))
   }
 }
 </script>
@@ -112,13 +107,12 @@ export default {
   width: 100%;
   height: 100vh;
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
   background-image: url("~assets/image/login/login_bg.png");
   justify-content: center;
   align-items: center;
   color: #fff;
   z-index: 10;
-  background-color: #7b7171;
 }
 .login .form{
   width: 90%;
@@ -133,6 +127,9 @@ export default {
   height: 2.2rem;
   background: transparent;
   border: 1px solid #d7c5c5;
+  color: #fff;
+}
+.input-box input::placeholder{
   color: #fff;
 }
 .option{

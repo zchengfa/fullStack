@@ -2,7 +2,6 @@
   <div class="register" v-if="isClose">
     <Close @close="closeCurrentPage"></Close>
     <form class="register-form">
-      <div class="title"><h4>欢迎来到注册页面</h4></div>
       <div class="input-box">
         <input type="text" placeholder="手机号/QQ邮箱" @input="onChange" v-model="account" />
         <input type="password" placeholder="密码:" @input="onChange" v-model="password" />
@@ -25,6 +24,7 @@
         <router-link class="login" :to="{path:'/login'}" replace>登录</router-link>
       </div>
     </form>
+    <registration-agreement></registration-agreement>
   </div>
 </template>
 
@@ -36,6 +36,8 @@ import {closeCurrentPageMixins} from '@/common/mixins/mixins'
 import {encrypt} from "@/common/crypt";
 
 import {register,sendMailVerifyCode} from "@/network/home";
+
+import RegistrationAgreement from "@/components/content/register/RegistrationAgreement";
 
 export default {
   name: "Register",
@@ -52,6 +54,9 @@ export default {
       encryptConfirmPwd:'',
       verifyCodeExpired: 0
     }
+  },
+  components:{
+    RegistrationAgreement
   },
   methods:{
     onChange(){
@@ -186,15 +191,17 @@ export default {
 .register{
   position: relative;
   top:0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100vw;
   height: 100vh;
-  background-color: #e78ba9;
+  background-image: url("~assets/image/register/register_bg.png");
+  background-size: cover;
   text-align: center;
   z-index: 12;
 }
 .register-form{
-  position: relative;
-  top:20%;
   margin: 0 auto;
   width: 80%;
   background-color: rgba(26, 25, 25, 0.5);
@@ -202,7 +209,7 @@ export default {
 input{
   display: block;
   margin: 1rem auto;
-  width: 85%;
+  width: 80%;
   height: 2rem;
   color: #fff;
   background-color: transparent;
@@ -218,10 +225,10 @@ input::-webkit-input-placeholder{
 button{
   margin-top: 1rem;
   margin-bottom: 1rem;
-  width: 90%;
+  width: 65%;
   height: 2rem;
   color: #fff;
-  background-color: #c2bdbd;
+  background-color: #2791d9;
   border-radius: 1rem;
 }
 .to-login {

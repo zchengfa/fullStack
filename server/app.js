@@ -39,7 +39,8 @@ app.use((req,res,next)=>{
         '/home/api/category_list',
         `/home/api/category_detail?type=${encodeURI(category_type)}`,
         `/home/api/detail?product_type=${product_type}&product_id=${product_id}`,
-        '/register'
+        '/register',
+        '/termsService'
     ]
     if (urlWhiteList.indexOf(req.url) >= 0){
         next()

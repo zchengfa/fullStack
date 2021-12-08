@@ -96,6 +96,13 @@ export function register (account,pwd,verifyCode) {
   })
 }
 
+//导出获取服务条款数据函数
+export function getTermsServiceData(){
+  return requestPost({
+    url:'/termsService'
+  })
+}
+
 //导出商品详情页添加商品到购物车函数
 export function addShopToCart (user_id,product_id,title,image,price,count) {
   return requestPost({

@@ -122,5 +122,18 @@ module.exports = app => {
 
     })
 
+    router.post('/termsService',(req,res)=>{
+        const termsServiceModel = require('../../model/termsServiceModel')
+        termsServiceModel.find({},(err,doc)=>{
+            if (err) throw err
+            else{
+                console.log(doc[0])
+                if (Object.keys(doc).length){
+                    res.send(doc[0])
+                }
+            }
+        })
+    })
+
     app.use('/', router)
 }

@@ -5,7 +5,7 @@
       <div class="content">在您注册成为mall用户的过程中，您需要完成我们的注册流程并通过点击同意的形式在线签署以下协议，
         <span class="warning underline">请您务必仔细阅读、充分理解协议中的条款内容后再点击同意（尤其是以粗体并下划线标识的条款，因为这些条款可能会明确您应履行的义务或对您的权利有所限制）</span>:
         <div class="agreement-box">
-          <p><router-link class="agreement underline" to="/">《mall服务条款》</router-link></p>
+          <p><router-link class="agreement underline" :to="{path:'/termsService'}">《mall服务条款》</router-link></p>
           <p><router-link class="agreement underline" to="/">《隐私条款》</router-link></p>
           <p><router-link class="agreement underline" to="/">《mall支付服务协议》</router-link></p>
         </div>

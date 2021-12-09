@@ -1,4 +1,4 @@
-import Vue from 'vue'
+  import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from "@/store";
@@ -10,6 +10,21 @@ import {URL} from "@/common/utils";
 //将用户token值加入到vue原型中成为全局变量
 // const token = sessionStorage.getItem('token')
 // Vue.prototype.$token = token
+
+//全局的路由守卫
+// router.beforeEach((to, from, next) => {
+//   if (to.name === from.name && to.params.type !== from.params.type) {
+//     next({ name: 'empty', query: { toPath: to.fullPath } })
+//   } else {
+//     next()
+//   }
+// })
+//
+//   // 中间过渡路由
+//   let toPath = this.$route.query.toPath
+//   if (toPath) {
+//     this.$router.push({ path: this.toPath }).then()
+//   }
 
 //将请求地址加入到vue原型中成为全局变量
 Vue.prototype.$link = URL

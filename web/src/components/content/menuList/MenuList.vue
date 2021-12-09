@@ -32,6 +32,10 @@
 </script>
 
 <style scoped>
+.menu-list{
+  width: 100%;
+  min-height: 10rem;
+}
   ul{
     display: flex;
     flex-wrap: wrap;

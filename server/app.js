@@ -26,9 +26,9 @@ app.use((req,res,next)=>{
     else if(req.url.indexOf('/home/api/detail?') >=0){
         product_type = req.query.product_type
         product_id = req.query.product_id
-        console.log(encodeURI(product_id))
+       // console.log(encodeURI(product_id))
     }
-    console.log(req.url)
+    console.log(req.url,'app.js')
     //设置请求地址白名单，只要请求地址是白名单内的都不需要进行token验证
     const urlWhiteList = [
         '/admin/loginAdministrator',

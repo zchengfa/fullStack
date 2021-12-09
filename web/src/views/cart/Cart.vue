@@ -295,6 +295,7 @@
 
 <style scoped>
   .nav-cart{
+    width: 100vw;
     height: 100vh;
   }
   .cart-nav-bar{
@@ -307,7 +308,7 @@
   .content{
     height: calc(100vh - 98px);
     overflow: hidden;
-    background-color: #fff;
+    background-color: rgba(205, 198, 198, 0.2);
   }
   .login-tip{
     margin-left: auto;
@@ -335,12 +336,16 @@
     text-align: center;
   }
   .cart{
-
+    position: relative;
+    top:1rem;
   }
   .cart-item{
     display: flex;
-    margin:0 auto 1rem;
-    width: 96vw;
+    margin:1rem auto 1rem;
+    padding:1rem;
+    width: 90vw;
+    border-radius: .5rem;
+    background-color: #fff;
   }
   .check{
     flex: 1;
@@ -376,6 +381,8 @@
     position: relative;
     left: 60%;
     width: 40%;
+    min-width: 5rem;
+    height: 2rem;
   }
   .button-box button{
     width: 1.6rem;

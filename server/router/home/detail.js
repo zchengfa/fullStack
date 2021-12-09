@@ -9,7 +9,7 @@ module.exports = app =>{
     router.get('/detail', (req, res)=>{
         //获取请求参数
         const query = req.query
-        console.log(query)
+        console.log(query,12)
 
         //根据请求参数来查询数据库里的数据
         collectionModel.find(query, (err, doc)=>{
@@ -25,7 +25,7 @@ module.exports = app =>{
 
     //获取对应用户里对应商品的收藏状态，若该用户已收藏该商品，给前端返回true，反之返回false表示为收藏该商品
     router.get('/userProductCollectionStatus',(req,res) => {
-        console.log(req.query)
+        //console.log(req.query)
         const paramsObj = req.query
 
         const connection = connect()

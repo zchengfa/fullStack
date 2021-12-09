@@ -1,7 +1,7 @@
 <template>
   <div class="recommend">
     <div :class="{alignCenter:alignCenter}" class="title"><h4>{{ recommendTitle }}</h4></div>
-    <goods-data :goods="recommendData"></goods-data>
+    <goods-data :goods="recommendData" :current-type="currentType"></goods-data>
   </div>
 </template>
 
@@ -14,6 +14,12 @@ export default {
       type:Array,
       default(){
         return []
+      }
+    },
+    currentType:{
+      type:String,
+      default(){
+        return ''
       }
     },
     recommendTitle:{

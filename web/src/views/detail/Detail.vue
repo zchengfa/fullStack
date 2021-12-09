@@ -7,7 +7,7 @@
         <detail-image ref="image" :images-data="detailData.images" @imageLoadOver="imageLoad"></detail-image>
         <detail-params ref="params" :params="detailData.shop_detail_params"></detail-params>
         <detail-comment ref="comment" :comment-num="Number(comment_num)"></detail-comment>
-        <Recommend ref="recommend" :recommend-data="detailData.shop_recommend" recommend-title="商品推荐"></Recommend>
+        <Recommend ref="recommend" :recommend-data="detailData.shop_recommend" :current-type="type" recommend-title="商品推荐"></Recommend>
       </div>
     </Scroll>
     <back-top v-show="isShowBackTop" @click.native="backTop"></back-top>
@@ -207,8 +207,7 @@
           }
         })
       }
-    }
-    ,
+    },
     created() {
 
       //将路由传过来的参数赋值给id和type

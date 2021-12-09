@@ -6,8 +6,8 @@
         <span class="warning underline">请您务必仔细阅读、充分理解协议中的条款内容后再点击同意（尤其是以粗体并下划线标识的条款，因为这些条款可能会明确您应履行的义务或对您的权利有所限制）</span>:
         <div class="agreement-box">
           <p><router-link class="agreement underline" :to="{path:'/termsService'}">《mall服务条款》</router-link></p>
-          <p><router-link class="agreement underline" to="/">《隐私条款》</router-link></p>
-          <p><router-link class="agreement underline" to="/">《mall支付服务协议》</router-link></p>
+          <p><router-link class="agreement underline" :to="{path:'/termsService'}">《隐私条款》</router-link></p>
+          <p><router-link class="agreement underline" :to="{path:'/termsService'}">《mall支付服务协议》</router-link></p>
         </div>
         <p class="warning underline">【请您注意】 如果您不同意以上协议或其中任何条款约定、请您停止注册。您停止注册后将仅可以浏览我们的商品信息但无法享受我们的产品或服务。如果您按照注册流程提示填写信息、阅读并点击同意上述协议且完成全部注册流程后，即表示您已充分阅读、理解并接受协议的全部内容；并表明您也同意mall可以依据以上隐私政策内容来处理您的个人信息。 如您对以上协议内容有任何疑问，您随时可与mall客服联系。
         </p>
@@ -60,6 +60,7 @@ export default {
   background-color: rgba(45, 41, 41, 0.8);
   font-size: .9rem;
   color: #504e4e;
+  line-height: 145%;
   text-align: left;
   z-index: 16;
 }

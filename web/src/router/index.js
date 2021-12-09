@@ -20,6 +20,7 @@ const Login = ()=> import('@/components/content/login/Login')
 const Register = ()=> import('@/components/content/register/Register')
 const Customer = ()=> import('@/components/content/customer/Customer')
 const TermsService = ()=> import('@/components/content/register/TermsService')
+const ProductCollection = ()=> import('@/views/profile/components/ProductCollection')
 
 //创建路由映射表对象
 const routes =[
@@ -72,6 +73,10 @@ const routes =[
 	{
 		path: '/termsService',
 		component:TermsService
+	},
+	{
+		path: '/productCollection',
+		component:ProductCollection
 	}
 
 ]

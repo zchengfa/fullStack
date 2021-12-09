@@ -19,7 +19,7 @@
         <button class="login" @click="login">登录</button>
       </div>
       <div class="collection">
-        <a href="javascript:void (0)" class="collection-item"  v-for="(item, index) in userInfoList" :key="index">
+        <a :href="RouterList[0]" class="collection-item"  v-for="(item, index) in userInfoList" :key="index">
           <span class="count" v-if="!isLogin">--</span>
           <Bubble :count="item.count" v-else></Bubble>
           <span class="title">{{item.title}}</span>
@@ -29,6 +29,7 @@
     <order-menu :order-list="orderList"></order-menu>
     <order-menu :order-list="meansList"></order-menu>
     <menu-list class="other-menu" :menu-list="otherList" :padding="true"></menu-list>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -57,6 +58,7 @@ export default {
           'title':'我的足迹'
         }
       ],
+      RouterList:['/productCollection'],
       orderList: [],
       meansList:[],
       otherList:[],
@@ -76,8 +78,6 @@ export default {
   methods:{
     getUserCollectionInfo(user_id){
       getUserInfo(user_id).then(res => {
-        console.log(res)
-
         this.userInfoList = res.data.content
       })
           .catch(err => {

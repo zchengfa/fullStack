@@ -53,6 +53,7 @@ const routes =[
 	{
 		//路由传参
 		path: '/detail/:product_type/:product_id',
+		name:'detail',
 		component:Detail
 	},
 	{

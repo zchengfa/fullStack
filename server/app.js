@@ -17,6 +17,7 @@ app.use((req,res,next)=>{
     let category_type = ''
     let product_type = ''
     let product_id = ''
+    let user_id =''
     if (req.url.indexOf('/home/api/goodsData?') >=0){
         requestQuery = req.query
     }
@@ -28,6 +29,11 @@ app.use((req,res,next)=>{
         product_id = req.query.product_id
        // console.log(encodeURI(product_id))
     }
+    else if(req.url.indexOf('/home/api/userProductCollectionStatus?')>=0){
+        user_id = req.query.user_id
+        product_id = req.query.product_id
+    }
+
     console.log(req.url,'app.js')
     //设置请求地址白名单，只要请求地址是白名单内的都不需要进行token验证
     const urlWhiteList = [
@@ -39,6 +45,7 @@ app.use((req,res,next)=>{
         '/home/api/category_list',
         `/home/api/category_detail?type=${encodeURI(category_type)}`,
         `/home/api/detail?product_type=${product_type}&product_id=${product_id}`,
+        `/home/api/userProductCollectionStatus??user_id=${user_id}&product_id=${product_id}`,
         '/register',
         '/termsService'
     ]

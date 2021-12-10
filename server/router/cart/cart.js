@@ -18,15 +18,13 @@ module.exports = app => {
     router.post('/cart',(req, res) => {
         const paramsObj = JSON.parse(JSON.stringify(req.body))
         const user_id = paramsObj.user_id
-        console.log(paramsObj)
-
+    
         //创建查询语句，查询该用户在USER_SHOP表中是否存在商品数据
         const  selectQuery = mysql_query.selectFields('user_shop','product_id,product_title,product_image,product_price,product_count,isChecked',
             `users_id = '${user_id}'`)
 
         //查询数据
         connection.query(selectQuery,(err,result) => {
-            console.log(result)
             if (err) throw err
             //console.log(Object.keys(result).length)
             if (Object.keys(result).length) {
@@ -136,7 +134,7 @@ module.exports = app => {
         //接收参数
         const paramsObj = JSON.parse(JSON.stringify(req.body))
         let product_id_array = []
-
+       
         //遍历对象
         for (const paramsObjKey in paramsObj) {
             //将参数push到新数组中
@@ -160,6 +158,7 @@ module.exports = app => {
             }
             catch (err){
                 console.log(err)
+                res.send(err)
             }
             finally {
                 isOver = true
@@ -170,8 +169,65 @@ module.exports = app => {
         if (isOver){
             res.send({'success':'删除成功'})
         }
+    })
 
+    //接收前端发起的商品移入用户收藏夹请求
+    router.post('/moveToCollection',(req,res)=>{
+       //接收参数
+       const paramsObj = JSON.parse(JSON.stringify(req.body))
+       let product_id_array = []
+      
+       //遍历对象
+       for (const paramsObjKey in paramsObj) {
+           //将参数push到新数组中
+           product_id_array.push(paramsObj[paramsObjKey])
+       }
 
+       //从新数组中拿到user_id
+       let user_id = product_id_array.shift()
+
+       //连接数据库
+       const connection = connect()
+
+       //定义开关变量，解决Cannot set headers after they are sent to the client错误
+       let isOver = false
+       let id_count = product_id_array.length
+       product_id_array.map(item => {
+           //插入数据之前需要查询当前用户的收藏表内是否已经收藏过该商品
+           const selectQuery = mysql_query.selectFields('user_collection','product_id',`users_id = '${user_id}' AND product_id = '${item}'`)
+           connection.query(selectQuery,(err,result)=>{
+                if(err) throw err
+                else{
+                    //判断result中是否有值，有值则表示当前用户已经收藏过当前商品，不需要再进行收藏了,反之则进行收藏操作
+                    if(!Object.keys(result).length){
+                        const insertQuery = mysql_query.insert('user_collection','users_id,product_id',`'${user_id}','${item}'`)
+                       
+                        try{
+                            connection.query(insertQuery,(err,results)=>{
+                                if(err) throw err
+                                else{
+                                    console.log(results,206)
+                                    if(results){
+                                       
+                                    }
+                                }
+                            })
+                            console.log(isOver,210)  
+                           }catch(err){
+                                console.log(err)
+                           }finally{
+                            res.send({'success':'移入收藏夹成功'})
+                           }
+                    }
+                    else if(Object.keys(result).length === id_count){
+                        isOver = true
+                        res.send({'no_operation':'您已将这些商品收藏过了，无需再收藏了'})
+                        console.log(result,211)
+                    }
+                }
+           })
+           
+       })  
     })
 
     app.use('/home/api',router)

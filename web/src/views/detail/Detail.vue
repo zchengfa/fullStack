@@ -206,35 +206,40 @@
             this.isCollected = res.data.collection_status
           }
         })
+      },
+      initData(){
+        //将路由传过来的参数赋值给id和type
+        this.id = this.$route.params.product_id
+        this.type = this.$route.params.product_type
+        //console.log(this.id)
+
+        //将id和type作为参数进行请求
+        getGoodsDetail(this.type,this.id).then(res=> {
+          console.log(res)
+          //将请求到的数据赋给detailData
+          this.productInfo.product_id = res.data[0].product_id
+          this.detailData = res.data[0].product_detail[0]
+          //获取detailData中的评论数据
+          this.comment_num = this.detailData.baseData.comment_num
+          //console.log(res)
+        }).catch((err) => {
+          console.log(err)
+        })
+
+        //防抖函数处理获取页面元素位置函数
+        this.contentTopYs = debounce(()=>{
+          this.scrollToTopY = []
+          this.scrollToTopY.push(0)
+          this.scrollToTopY.push(this.$refs.params.$el.offsetTop)
+          this.scrollToTopY.push(this.$refs.comment.$el.offsetTop)
+          this.scrollToTopY.push(this.$refs.recommend.$el.offsetTop)
+        },100)
       }
     },
     created() {
+      console.log('created>detail.vue')
 
-      //将路由传过来的参数赋值给id和type
-      this.id = this.$route.params.product_id
-      this.type = this.$route.params.product_type
-      //console.log(this.id)
-
-      //将id和type作为参数进行请求
-      getGoodsDetail(this.type,this.id).then(res=> {
-        //将请求到的数据赋给detailData
-        this.productInfo.product_id = res.data[0].product_id
-        this.detailData = res.data[0].product_detail[0]
-        //获取detailData中的评论数据
-        this.comment_num = this.detailData.baseData.comment_num
-        //console.log(res)
-      }).catch((err) => {
-        console.log(err)
-      })
-
-      //防抖函数处理获取页面元素位置函数
-      this.contentTopYs = debounce(()=>{
-        this.scrollToTopY = []
-        this.scrollToTopY.push(0)
-        this.scrollToTopY.push(this.$refs.params.$el.offsetTop)
-        this.scrollToTopY.push(this.$refs.comment.$el.offsetTop)
-        this.scrollToTopY.push(this.$refs.recommend.$el.offsetTop)
-      },100)
+      this.initData()
 
     },
     mounted() {
@@ -250,6 +255,15 @@
           //若用户已经登录
           this.getProductCollectionStatus(userInfo.user_id,this.id)
         }
+      }
+    },
+    watch:{
+      $route(to,from){
+        if (to.path !== from.path){
+          console.log(to,from)
+          this.initData()
+        }
+
       }
     }
   }

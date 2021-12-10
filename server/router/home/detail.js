@@ -9,7 +9,7 @@ module.exports = app =>{
     router.get('/detail', (req, res)=>{
         //获取请求参数
         const query = req.query
-        console.log(query,12)
+        console.log(query,'detail.js',12)
 
         //根据请求参数来查询数据库里的数据
         collectionModel.find(query, (err, doc)=>{

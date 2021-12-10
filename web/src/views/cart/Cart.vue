@@ -125,7 +125,7 @@
 
         //提交减少该产品的数量的请求
         updateProductCount(this.user_id,this.cartList[index].product_id,this.cartList[index].product_count).then()
-        console.log(index,this.cartList[index])
+        //console.log(index,this.cartList[index])
       },
       //增加用户所点击的商品数量函数
       addCount(index){
@@ -137,6 +137,7 @@
         console.log(index,this.cartList[index])
       },
       changeChecked(index){
+        console.log(this.targets)
         //点击选中按钮，修改按钮状态，并将修改后的状态提交到后端
         this.cartList[index].isChecked = !this.cartList[index].isChecked
 
@@ -187,26 +188,52 @@
           this.$toast.showToast('支付系统暂未开发')
         }
         else {
-          this.$toast.showToast('您为选中任何要结算的商品')
+          this.$toast.showToast('您未选中任何要结算的商品')
         }
       },
       //将选择的商品移入收藏夹
       moveToCollection() {
-        moveToCollection(this.user_id,this.targets)
+        console.log(this.targets)
+        if(this.targets.length){
+          moveToCollection(this.user_id,this.targets).then(res=>{
+          console.log(res.data)
+            if(res.data.success){
+              this.$toast.showToast(res.data.success)
+              //清空用户选择的商品
+              //this.targets = []
+            }
+          }).catch(err=>{
+            console.log(err)
+          })
+        }
+        else{
+          this.$toast.showToast('您还没有选择任何商品！')
+        }
       },
       //将商品从用户购物车中移除
       remove() {
-        remove(this.user_id,this.targets).then(res => {
+        console.log(this.targets)
+        //当用户勾选了商品后才发起请求
+        if(this.targets.length){
+          remove(this.user_id,this.targets).then(res => {
           if (res.data.success){
             //删除成功后再删除cartList中对应的产品数据，并给用户作出删除成功提示
             this.targets.map(item => {
               this.cartList.splice(this.cartList.indexOf(item),1)
+              console.log(this.cartList.splice(this.cartList.indexOf(item),1))
             })
-            this.getUserCartData(this.$token)
+            //this.cartList对应数据删除的同时，删除之前用户选择删除的数据
+            this.targets = []
+            this.getUserCartData(this.user_id)
             this.$toast.showToast(res.data.success)
           }
-          console.log(res.data)
-        })
+          //console.log(res.data)
+          })
+        }
+         else{
+          this.$toast.showToast('您还没有选择任何商品！')
+        }
+        
       },
       //获取商品推荐数据函数
       getCommonRecommend(){
@@ -225,8 +252,8 @@
         })
       },
       //获取用户购物车数据函数
-      getUserCartData (token) {
-        getUserCartData(token).then(res => {
+      getUserCartData (user_id) {
+        getUserCartData(user_id).then(res => {
           //清空之前的数据
           this.cartList = []
           //判断是否存在用户购物车数据
@@ -239,26 +266,28 @@
               //提取数据中的购物车数据
               this.cartList.push(item)
             })
-
+             this.checkProductIsCheck()
           }
           else {
             this.emptyMessage = res.data.empty
           }
         })
-      }
-    },
-    mounted() {
-      //元素挂载完成后，遍历cartList数组，若是已选中状态则将该商品id加入targets数组中
-      setTimeout(() => {
+      },
+      checkProductIsCheck(){
+        //元素挂载完成后，遍历cartList数组，若是已选中状态则将该商品id加入targets数组中
+        
         if (this.cartList.length){
           this.cartList.map(item => {
             if (item.isChecked){
               this.targets.push(item.product_id)
             }
-          })
-
+          }) 
+          console.log(this.cartList.length,this.targets)
         }
-      },50)
+      }
+    },
+    mounted() {
+      
 
       const refresh = debounce(this.$refs.scroll.refresh, 200)
       this.$bus.$on('itemImageLoad',() => {

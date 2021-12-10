@@ -201,33 +201,28 @@ module.exports = app => {
                     //判断result中是否有值，有值则表示当前用户已经收藏过当前商品，不需要再进行收藏了,反之则进行收藏操作
                     if(!Object.keys(result).length){
                         const insertQuery = mysql_query.insert('user_collection','users_id,product_id',`'${user_id}','${item}'`)
-                       
-                        try{
-                            connection.query(insertQuery,(err,results)=>{
-                                if(err) throw err
-                                else{
-                                    console.log(results,206)
-                                    if(results){
-                                       
-                                    }
-                                }
-                            })
-                            console.log(isOver,210)  
-                           }catch(err){
-                                console.log(err)
-                           }finally{
-                            res.send({'success':'移入收藏夹成功'})
-                           }
+												connection.query(insertQuery,(err,results)=>{
+													if(err)throw err
+													else{
+														if(results){
+															isOver = true
+														}
+													}
+												})
                     }
-                    else if(Object.keys(result).length === id_count){
-                        isOver = true
-                        res.send({'no_operation':'您已将这些商品收藏过了，无需再收藏了'})
-                        console.log(result,211)
-                    }
+										else if(Objec.key(result).length === id_count)
+										//判断result中已经收藏的商品数量是否跟请求参数中收藏的商品数量一致，若一致，提示用户要收藏的商品已经收藏过了，不需要再收藏了
+											isOver =true
+											if(isOver){
+												res.send({'non_operation':'您收藏的商品已经收藏过了，无需再收藏了！'})
+											}
                 }
            })
            
-       })  
+       }) 
+				if(isOver){
+					res.send({'success':'收藏成功'})
+				}
     })
 
     app.use('/home/api',router)

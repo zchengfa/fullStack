@@ -187,12 +187,10 @@ module.exports = app => {
        let user_id = product_id_array.shift()
 
        //连接数据库
-       const connection = connect()
-
+        const connection = connect()
        //定义开关变量，解决Cannot set headers after they are sent to the client错误
-       let isOver = false
-       let id_count = product_id_array.length
-       product_id_array.map(item => {
+        let isOver = false
+        product_id_array.map(item => {
            //插入数据之前需要查询当前用户的收藏表内是否已经收藏过该商品
            const selectQuery = mysql_query.selectFields('user_collection','product_id',`users_id = '${user_id}' AND product_id = '${item}'`)
            connection.query(selectQuery,(err,result)=>{
@@ -200,29 +198,24 @@ module.exports = app => {
                 else{
                     //判断result中是否有值，有值则表示当前用户已经收藏过当前商品，不需要再进行收藏了,反之则进行收藏操作
                     if(!Object.keys(result).length){
+
                         const insertQuery = mysql_query.insert('user_collection','users_id,product_id',`'${user_id}','${item}'`)
-												connection.query(insertQuery,(err,results)=>{
-													if(err)throw err
-													else{
-														if(results){
-															isOver = true
-														}
-													}
-												})
+                        connection.query(insertQuery,(err,results)=>{
+                            if(err)throw err
+                            else{
+                                if (results){
+                                   console.log(results)
+                                }
+                            }
+                        })
                     }
-										else if(Objec.key(result).length === id_count)
-										//判断result中已经收藏的商品数量是否跟请求参数中收藏的商品数量一致，若一致，提示用户要收藏的商品已经收藏过了，不需要再收藏了
-											isOver =true
-											if(isOver){
-												res.send({'non_operation':'您收藏的商品已经收藏过了，无需再收藏了！'})
-											}
                 }
            })
-           
-       }) 
-				if(isOver){
-					res.send({'success':'收藏成功'})
-				}
+           return isOver = true
+       })
+        if (isOver){
+            res.send({'success':"收藏成功"})
+        }
     })
 
     app.use('/home/api',router)

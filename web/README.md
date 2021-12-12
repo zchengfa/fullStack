@@ -54,7 +54,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
   }
 </script>
 ```
-石膏板十多个不打算搞不懂
+
 
 
 

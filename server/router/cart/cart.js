@@ -200,13 +200,8 @@ module.exports = app => {
                     if(!Object.keys(result).length){
 
                         const insertQuery = mysql_query.insert('user_collection','users_id,product_id',`'${user_id}','${item}'`)
-                        connection.query(insertQuery,(err,results)=>{
+                        connection.query(insertQuery,err=>{
                             if(err)throw err
-                            else{
-                                if (results){
-                                   console.log(results)
-                                }
-                            }
                         })
                     }
                 }

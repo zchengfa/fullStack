@@ -5,7 +5,7 @@
     <Scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll"
             :pull-up-load="true" @pullingUp="loadMore">
       <swiper class="swiper" :banner="banner" @swiperImageLoad="swiperImageLoad"></swiper>
-      <menu-list :menu-list="menuList"></menu-list>
+      <menu-list v-if="hasMenuData" :menu-list="menuList"></menu-list>
       <tab-control :class="{fixed: isTabFixed}" ref="tabControlTwo" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
       <goods-data :goods="goods[currentType].list" :user-collections="userCollections" :current-type="currentType"></goods-data>
       <div class="no-more" v-if="noMore"><p>没有更多了哦!</p></div>
@@ -47,7 +47,8 @@
         },
         tabOffsetTop:0,
         noMore:false,
-        userCollections:[]
+        userCollections:[],
+        hasMenuData:true
       }
     },
 		components:{
@@ -92,7 +93,9 @@
       getHomeMultiData(){
         getHomeMultiData().then(res =>{
           this.banner =res.data[0].multiData[0].banner
-          this.menuList = res.data[0].multiData[0].iconList
+          let result = res.data[0].multiData[0]['iconList']
+          result ? this.menuList = result : null
+          result ? this.hasMenuData = true : this.hasMenuData = false
         }).catch(err => {
           console.log(err)
         })
@@ -142,7 +145,6 @@
       if (this.$store.state.token){
         let userInfo = this.$store.state.userInfo
         getUserCollectionProductId(userInfo.user_id).then(res =>{
-          //console.log(res.data.userCollections)
           if (res.data.userCollections){
            this.userCollections = res.data.userCollections
           }

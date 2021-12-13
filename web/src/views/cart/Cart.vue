@@ -134,10 +134,10 @@
 
         //提交增加该产品的数量的请求
         updateProductCount(this.user_id,this.cartList[index].product_id,this.cartList[index].product_count).then()
-        console.log(index,this.cartList[index])
+        //console.log(index,this.cartList[index])
       },
       changeChecked(index){
-        console.log(this.targets)
+        //console.log(this.targets)
         //点击选中按钮，修改按钮状态，并将修改后的状态提交到后端
         this.cartList[index].isChecked = !this.cartList[index].isChecked
 
@@ -193,26 +193,36 @@
       },
       //将选择的商品移入收藏夹
       moveToCollection() {
-        console.log(this.targets)
         if(this.targets.length){
           moveToCollection(this.user_id,this.targets).then(res=>{
-          console.log(res.data)
+
             if(res.data.success){
-              this.$toast.showToast(res.data.success)
-              //清空用户选择的商品
-              //this.targets = []
+              remove(this.user_id,this.targets).then(result => {
+                if (result.data.success){
+                  //删除成功后再删除cartList中对应的产品数据，并给用户作出删除成功提示
+                  this.targets.map(item => {
+                    this.cartList.splice(this.cartList.indexOf(item),1)
+                    console.log(this.cartList.splice(this.cartList.indexOf(item),1))
+                  })
+                  //this.cartList对应数据删除后，删除之前用户选择收藏的数据
+                  this.targets = []
+                  this.getUserCartData(this.user_id)
+                  this.$toast.showToast(res.data.success)
+                }
+
+              })
+
             }
           }).catch(err=>{
             console.log(err)
           })
         }
         else{
-          this.$toast.showToast('您还没有选择任何商品！')
+          this.$toast.showToast('您未选择任何商品！')
         }
       },
       //将商品从用户购物车中移除
       remove() {
-        console.log(this.targets)
         //当用户勾选了商品后才发起请求
         if(this.targets.length){
           remove(this.user_id,this.targets).then(res => {
@@ -220,14 +230,12 @@
             //删除成功后再删除cartList中对应的产品数据，并给用户作出删除成功提示
             this.targets.map(item => {
               this.cartList.splice(this.cartList.indexOf(item),1)
-              console.log(this.cartList.splice(this.cartList.indexOf(item),1))
             })
-            //this.cartList对应数据删除的同时，删除之前用户选择删除的数据
+            //this.cartList对应数据删除后，删除之前用户选择删除的数据
             this.targets = []
             this.getUserCartData(this.user_id)
             this.$toast.showToast(res.data.success)
-          }
-          //console.log(res.data)
+            }
           })
         }
          else{
@@ -254,6 +262,7 @@
       //获取用户购物车数据函数
       getUserCartData (user_id) {
         getUserCartData(user_id).then(res => {
+          console.log(res.data)
           //清空之前的数据
           this.cartList = []
           //判断是否存在用户购物车数据

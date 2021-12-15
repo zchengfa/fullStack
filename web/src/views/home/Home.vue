@@ -48,7 +48,8 @@
         tabOffsetTop:0,
         noMore:false,
         userCollections:[],
-        hasMenuData:true
+        hasMenuData:true,
+        collectedStateArray:[]
       }
     },
 		components:{
@@ -101,10 +102,13 @@
         })
       },
       getGoodsData(type){
+        let user_id = ''
+        const token = this.$store.state.token
+        token?user_id=this.$store.state.userInfo.user_id:''
+
         //每获取一次数据就让当前类型商品的页数加一
         const page = this.goods[type].page +1
-        getGoodsData(type, page).then(res => {
-					//console.log(res)
+        getGoodsData(user_id,type, page).then(res => {
          if(res.data.length===0){
            this.noMore = true
            setTimeout(() => {
@@ -114,7 +118,16 @@
          }
          else {
            //将获取到的数据数组通过...语法糖对数组进行解构加入到list数组中
-           this.goods[type].list.push(...res.data[0])
+           this.goods[type].list.push(...res.data)
+            res.data.map(item =>{
+              this.collectedStateArray.push({
+                product_id:item.product_id,
+                isCollected:item.isCollected
+              })
+            })
+           //将每个商品的收藏状态发送给状态管理
+           this.$store.dispatch('isCollected',JSON.stringify(this.collectedStateArray))
+
            this.goods[type].page += 1
          }
           //上拉加载一次调用一次结束上拉
@@ -142,17 +155,17 @@
     },
     activated() {
 		  //进入页面时，判断用户有没有登录，若已登录，获取一些该页面需要用户登录后才需要的数据
-      if (this.$store.state.token){
-        let userInfo = this.$store.state.userInfo
-        getUserCollectionProductId(userInfo.user_id).then(res =>{
-          if (res.data.userCollections){
-           this.userCollections = res.data.userCollections
-          }
-        }).catch(err=>{
-          console.log(err)
-        })
-      }
-      this.$refs.scroll.refresh()
+      // if (this.$store.state.token){
+      //   let userInfo = this.$store.state.userInfo
+      //   getUserCollectionProductId(userInfo.user_id).then(res =>{
+      //     if (res.data.userCollections){
+      //      this.userCollections = res.data.userCollections
+      //     }
+      //   }).catch(err=>{
+      //     console.log(err)
+      //   })
+      // }
+      // this.$refs.scroll.refresh()
     },
     deactivated() {
 

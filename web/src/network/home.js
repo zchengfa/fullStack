@@ -10,10 +10,11 @@ export function getHomeMultiData(){
 }
 
 //导出获取商品数据函数
-export function getGoodsData(type, page){
+export function getGoodsData(user_id,type, page){
   return request({
     url:'/goodsData',
     params:{
+      user_id,
       type,
       page
     }

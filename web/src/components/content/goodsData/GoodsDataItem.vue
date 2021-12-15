@@ -10,7 +10,7 @@
             <span class="origin_price">{{list.origin_price}}</span>
           </div>
           <div class="love-box" @click="collectFavorite(list.product_id)">
-            <span :class="{active:isLove}">♡</span>
+            <span :class="{active:list.isCollected}">♡</span>
             <span class="favorite">{{list.favorite}}</span>
           </div>
         </div>

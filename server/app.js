@@ -39,7 +39,7 @@ app.use((req,res,next)=>{
     const urlWhiteList = [
         '/admin/loginAdministrator',
         '/home/api/multiData',
-        `/home/api/goodsData?type=${requestQuery.type}&page=${requestQuery.page}`,
+        `/home/api/goodsData?user_id=${requestQuery.user_id}&type=${requestQuery.type}&page=${requestQuery.page}`,
         '/login' ,
         '/home/api/commonRecommend',
         '/home/api/category_list',

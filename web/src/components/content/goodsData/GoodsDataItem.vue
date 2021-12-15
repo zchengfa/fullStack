@@ -10,7 +10,7 @@
             <span class="origin_price">{{list.origin_price}}</span>
           </div>
           <div class="love-box" @click="collectFavorite(list.product_id)">
-            <span :class="{active:list.isCollected}">♡</span>
+            <span :class="{active:$store.state.goods[0][type][list].isCollected}">♡</span>
             <span class="favorite">{{list.favorite}}</span>
           </div>
         </div>
@@ -55,6 +55,9 @@
       userCollections:function (newV){
         this.userCollection = newV
       }
+    },
+    created() {
+
     },
     mounted() {
       this.updateUserCollection()

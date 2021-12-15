@@ -39,6 +39,7 @@ module.exports = app =>{
                     connection.query(selectQuery,(err,result)=>{
                         if (err) throw err
                         else{
+
                             doc.map(item =>{
                                 pushData(data,item)
                             })

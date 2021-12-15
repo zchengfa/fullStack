@@ -1,6 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {ADD_CART, UPDATE_CART_COUNT, SAVE_POSITION, USER_INFO, SET_TOKEN} from "@/store/mutations-types";
+import {
+    ADD_CART,
+    UPDATE_CART_COUNT,
+    SAVE_POSITION,
+    USER_INFO,
+    SET_TOKEN,
+    GOODS
+} from "@/store/mutations-types";
 
 
 Vue.use(Vuex)
@@ -11,7 +18,8 @@ const store = new Vuex.Store({
         position:[],
         token:sessionStorage.getItem('token'),
         //将sessionStorage存储的字符串化对象，转换成对象
-        userInfo:JSON.parse(sessionStorage.getItem('userInfo'))
+        userInfo:JSON.parse(sessionStorage.getItem('userInfo')),
+        goods:[]
     },
     mutations:{
         [USER_INFO](state,userInfo){
@@ -34,6 +42,9 @@ const store = new Vuex.Store({
         },
         [SAVE_POSITION](state,payload) {
             state.position.push(payload)
+        },
+        [GOODS](state,payload){
+            state.goods.push(JSON.parse(payload))
         }
 
     },
@@ -73,6 +84,9 @@ const store = new Vuex.Store({
         },
         savePosition(context,payload) {
             context.commit('savePosition',payload)
+        },
+        manageGoodData(context,payload){
+            context.commit('manageGoodData',payload)
         }
     }
 })

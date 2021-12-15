@@ -49,7 +49,12 @@
         noMore:false,
         userCollections:[],
         hasMenuData:true,
-        collectedStateArray:[]
+        collectedStateArray:{
+          'pop':[],
+          'sell':[],
+          'new':[]
+        },
+        getDataCount:0
       }
     },
 		components:{
@@ -62,6 +67,15 @@
       MenuList
 		},
     methods:{
+		  initData(){
+        this.getHomeMultiData()
+        /*
+        * 获取首页中（“流行”“新款”“精选”）的数据
+        */
+        this.getGoodsData("pop")
+        this.getGoodsData("new")
+        this.getGoodsData("sell")
+      },
       /*
       * 事件监听
       */
@@ -119,30 +133,29 @@
          else {
            //将获取到的数据数组通过...语法糖对数组进行解构加入到list数组中
            this.goods[type].list.push(...res.data)
-            res.data.map(item =>{
-              this.collectedStateArray.push({
-                product_id:item.product_id,
-                isCollected:item.isCollected
-              })
-            })
-           //将每个商品的收藏状态发送给状态管理
-           this.$store.dispatch('isCollected',JSON.stringify(this.collectedStateArray))
+            // res.data.map(item =>{
+            //   this.collectedStateArray[type].push({
+            //     'product_id':item.product_id,
+            //     'isCollected':item.isCollected
+            //   })
+            // })
 
            this.goods[type].page += 1
+           this.getDataCount ++
          }
+         // console.log(this.collectedStateArray)
+          if (this.getDataCount===3){
+            //当3类数据都获取完后
+            //将每个商品的收藏状态发送给状态管理
+            this.$store.dispatch('manageGoodData',JSON.stringify(this.goods))
+          }
           //上拉加载一次调用一次结束上拉
           this.$refs.scroll.finishPullUp()
         })
       }
     },
     created() {
-		  this.getHomeMultiData()
-      /*
-      * 获取首页中（“流行”“新款”“精选”）的数据
-      */
-      this.getGoodsData("pop")
-      this.getGoodsData("new")
-      this.getGoodsData("sell")
+		  this.initData()
     },
     mounted() {
       const refresh = debounce(this.$refs.scroll.refresh, 200)
@@ -154,6 +167,8 @@
       })
     },
     activated() {
+		  // this.initData()
+      // console.log('activated')
 		  //进入页面时，判断用户有没有登录，若已登录，获取一些该页面需要用户登录后才需要的数据
       // if (this.$store.state.token){
       //   let userInfo = this.$store.state.userInfo

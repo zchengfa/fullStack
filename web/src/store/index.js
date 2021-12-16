@@ -18,7 +18,7 @@ const store = new Vuex.Store({
         token:sessionStorage.getItem('token'),
         //将sessionStorage存储的字符串化对象，转换成对象
         userInfo:JSON.parse(sessionStorage.getItem('userInfo')),
-        
+
     },
     getters:{
 

@@ -1,6 +1,6 @@
 <template>
   <div class="goods-data">
-      <goods-data-item v-for="(item, index) in goods" :user-collections="userCollections" :key="item[index]" :list="goods[index]" :type="currentType"></goods-data-item>
+    <goods-data-item v-for="(item, index) in goods" :key="item[index]" :list="goods[index]" ></goods-data-item>
   </div>
 </template>
 
@@ -46,5 +46,9 @@
     text-align: center;
     background-color: rgba(234,230,230,.3);
     border-radius: .4rem;
+  }
+  .goods-data div:last-child{
+    float: left;
+    margin-left: .5rem;
   }
 </style>

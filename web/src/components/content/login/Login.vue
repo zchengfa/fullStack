@@ -58,7 +58,6 @@ export default {
 
       //将用户名和加密后的密码传给服务端进行校验
       login(this.account,encryptPwd).then(res => {
-        console.log(decrypt(encryptPwd))
         //判断是否有token值,后端返回了token值，登录成功
           if (res.data.token) {
             //判断是否勾选记住密码项

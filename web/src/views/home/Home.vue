@@ -7,7 +7,7 @@
       <swiper class="swiper" :banner="banner" @swiperImageLoad="swiperImageLoad"></swiper>
       <menu-list v-if="hasMenuData" :menu-list="menuList"></menu-list>
       <tab-control :class="{fixed: isTabFixed}" ref="tabControlTwo" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
-      <goods-data :goods="goods[currentType].list" :user-collections="userCollections" :current-type="currentType"></goods-data>
+      <goods-data :goods="goods[currentType].list"></goods-data>
       <div class="no-more" v-if="noMore"><p>没有更多了哦!</p></div>
     </Scroll>
     <back-top v-show="isShowBackTop" @click.native="backTop"></back-top>
@@ -28,20 +28,18 @@
 
   import {backTopMixins} from "@/common/mixins/mixins";
   //引入获取首页数据方法
-  import {getHomeMultiData, getGoodsData, getUserCollectionProductId} from "@/network/home"
-
+  import {getHomeMultiData, getGoodsData} from "@/network/home"
   import {debounce} from "@/common/utils";
-
   export default {
-		name:'Home',
+    name:'Home',
     mixins:[backTopMixins],
     data(){
-		  return {
-		    banner:null,
+      return {
+        banner:null,
         menuList: [],
         currentType:'pop',
         goods:{
-		      'pop':{page: 0,  list: []},
+          'pop':{page: 0,  list: []},
           'sell':{page: 0, list: []},
           'new':{page: 0, list: []}
         },
@@ -57,28 +55,19 @@
         getDataCount:0
       }
     },
-		components:{
-			NavBar,
+    components:{
+      NavBar,
       Swiper,
       Scroll,
       BackTop,
       TabControl,
       GoodsData,
       MenuList
-		},
+    },
     methods:{
-		  initData(){
-        this.getHomeMultiData()
-        /*
-        * 获取首页中（“流行”“新款”“精选”）的数据
-        */
-        this.getGoodsData("pop")
-        this.getGoodsData("new")
-        this.getGoodsData("sell")
-      },
       /*
-      * 事件监听
-      */
+       * 事件监听
+       */
       tabClick(index){
         switch (index){
           case(0):
@@ -100,11 +89,11 @@
       },
       swiperImageLoad(){
         //当轮播图的图片加载完成时就获取轮播组件距离顶部的高度
-       this.tabOffsetTop = this.$refs.tabControlTwo.$el.offsetTop
+        this.tabOffsetTop = this.$refs.tabControlTwo.$el.offsetTop
       },
       /*
-      * 请求数据事件
-      */
+       * 请求数据事件
+       */
       getHomeMultiData(){
         getHomeMultiData().then(res =>{
           this.banner =res.data[0].multiData[0].banner
@@ -123,39 +112,40 @@
         //每获取一次数据就让当前类型商品的页数加一
         const page = this.goods[type].page +1
         getGoodsData(user_id,type, page).then(res => {
-         if(res.data.length===0){
-           this.noMore = true
-           setTimeout(() => {
-             this.noMore = false
-           },1000)
-           console.log('没有数据！')
-         }
-         else {
-           //将获取到的数据数组通过...语法糖对数组进行解构加入到list数组中
-           this.goods[type].list.push(...res.data)
-            // res.data.map(item =>{
-            //   this.collectedStateArray[type].push({
-            //     'product_id':item.product_id,
-            //     'isCollected':item.isCollected
-            //   })
-            // })
+          if(res.data.length===0){
+            this.noMore = true
+            setTimeout(() => {
+              this.noMore = false
+            },1000)
+            console.log('没有数据！')
+          }
+          else {
+            //将获取到的数据数组通过...语法糖对数组进行解构加入到list数组中
+            this.goods[type].list.push(...res.data)
+            this.goods[type].page += 1
+            this.getDataCount ++
 
-           this.goods[type].page += 1
-           this.getDataCount ++
-         }
-         // console.log(this.collectedStateArray)
-          if (this.getDataCount===3){
-            //当3类数据都获取完后
-            //将每个商品的收藏状态发送给状态管理
-            this.$store.dispatch('manageGoodData',JSON.stringify(this.goods))
           }
           //上拉加载一次调用一次结束上拉
           this.$refs.scroll.finishPullUp()
         })
+      },
+      refreshGoodsData(){
+        this.goods = {
+          'pop':{page: 0,  list: []},
+          'sell':{page: 0, list: []},
+          'new':{page: 0, list: []}
+        }
+        /*
+         * 获取首页中（“流行”“新款”“精选”）的数据
+         */
+        this.getGoodsData("pop")
+        this.getGoodsData("new")
+        this.getGoodsData("sell")
       }
     },
     created() {
-		  this.initData()
+      this.getHomeMultiData()
     },
     mounted() {
       const refresh = debounce(this.$refs.scroll.refresh, 200)
@@ -163,27 +153,10 @@
       this.$bus.$on('itemImageLoad', ()=>{
         //使用scroll中的refresh
         refresh()
-
       })
     },
     activated() {
-		  // this.initData()
-      // console.log('activated')
-		  //进入页面时，判断用户有没有登录，若已登录，获取一些该页面需要用户登录后才需要的数据
-      // if (this.$store.state.token){
-      //   let userInfo = this.$store.state.userInfo
-      //   getUserCollectionProductId(userInfo.user_id).then(res =>{
-      //     if (res.data.userCollections){
-      //      this.userCollections = res.data.userCollections
-      //     }
-      //   }).catch(err=>{
-      //     console.log(err)
-      //   })
-      // }
-      // this.$refs.scroll.refresh()
-    },
-    deactivated() {
-
+      this.refreshGoodsData()
     }
   }
 </script>
@@ -211,7 +184,7 @@
   }
   .content{
     width: 100vw;
-    height: calc(100vh - 44px - 49px);
+    height: calc(100vh - 44px - 4rem);
     overflow: hidden;
   }
   .no-more {

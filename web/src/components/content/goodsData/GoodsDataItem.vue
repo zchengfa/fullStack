@@ -1,5 +1,5 @@
 <template>
-  <div class="goods-data-item" >
+  <div class="goods-data-item">
     <div class="list-box">
       <div class="list-image" @click="itemClick"><img :src="list.imagePath || list.product_image" alt="itemImage" @load="imageLoad"></div>
       <div class="list-content">
@@ -10,7 +10,7 @@
             <span class="origin_price">{{list.origin_price}}</span>
           </div>
           <div class="love-box" @click="collectFavorite(list.product_id)">
-            <span :class="{active:$store.state.goods[0][type][list].isCollected}">♡</span>
+            <span :class="{active:list.isCollected}">♡</span>
             <span class="favorite">{{list.favorite}}</span>
           </div>
         </div>
@@ -30,37 +30,7 @@
         default(){
           return {}
         }
-      },
-      type:{
-        type:String,
-        default() {
-          return ''
-        }
-      },
-      userCollections: {
-        type:Array,
-        default(){
-          return []
-        }
       }
-    },
-    data(){
-      return {
-        isLove:false,
-        clickCount:0,
-        userCollection: []
-      }
-    },
-    watch:{
-      userCollections:function (newV){
-        this.userCollection = newV
-      }
-    },
-    created() {
-
-    },
-    mounted() {
-      this.updateUserCollection()
     },
     methods:{
       collectFavorite(product_id){
@@ -68,11 +38,11 @@
         if (this.$store.state.token){
           let userInfo = this.$store.state.userInfo
           //点击当前商品的收藏按钮，先判断当前用户是否已经收藏了该商品，如果是已经收藏了商品，说明当前用户需要取消该商品的收藏，反之则执行收藏商品请求
-          if (this.isLove){
+          if (this.$props.list.isCollected){
             changeUserProductCollectionStatus(userInfo.user_id,product_id,1).then(res =>{
               if (res.data.current_status === false){
                 this.$props.list.favorite = Number(this.$props.list.favorite) -1
-                this.isLove = res.data.current_status
+                this.$props.list.isCollected = false
                 this.$toast.showToast('取消收藏')
               }
             }).catch(err =>{
@@ -85,6 +55,7 @@
               if (res.data.current_status === true){
                 this.$props.list.favorite = Number(this.$props.list.favorite) +1
                 this.isLove = res.data.current_status
+                this.$props.list.isCollected = true
                 this.$toast.showToast('收藏成功')
               }
             }).catch(err =>{
@@ -106,14 +77,6 @@
       itemClick(){
         //动态路由传参(先要从父组件传入id和type给子组件)
         this.$router.push('/detail/'+this.type +'/'+(this.list.product_id))
-      },
-      updateUserCollection(){
-        setTimeout(()=>{
-          for (const collectionKey in this.userCollection) {
-            if (this.userCollection[collectionKey].product_id === this.list.product_id)
-              this.isLove = true
-          }
-        },0)
       }
     }
   }
@@ -123,7 +86,6 @@
   .active{
     color: #ff0000;
   }
-
   .goods-data-item{
     width: 46%;
     margin: 1rem auto;

@@ -237,8 +237,6 @@
       }
     },
     created() {
-      console.log('created>detail.vue')
-
       this.initData()
 
     },

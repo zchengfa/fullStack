@@ -10,7 +10,7 @@ module.exports = app => {
    router.post('/loginAdministrator',(req,res)=> {
        //接受请求参数
        const paramsObj = JSON.parse(JSON.stringify(req.body))
-       //console.log(paramsObj)
+       console.log(paramsObj)
         //连接数据库
        const connection = require('../../plugins/connectMysql')()
        const mysql_query = require('../../plugins/mysql_query')
@@ -41,14 +41,31 @@ module.exports = app => {
                        if (err) throw err
                        else {
                            console.log('token write success')
-                           res.send({'success':'登录成功','token':token})
+													 //用户token写入成功，将token和用户信息返回给前台
+													 try{
+													 	
+													 	//将当前时间作为用户登录时间，并记录在数据库中
+													 	const {timeFormatting} = require('../../util/timeFormatting')
+													 	let loginTime = timeFormatting("YYYY-MM-DD HH:MM:SS")
+													 	const updateQuery = mysql_query.update('user',`last_login_time = '${loginTime}'`,`account = "${results[0]['account']}"`)
+													 	connection.query(updateQuery,(err,l)=>{
+													 		if(err) throw err
+													 		else{
+													 			console.log('用户登录时间已保存至数据库',l)
+													 			 res.send({'success':'登录成功','token':token})
+													 		}
+													 	})
+													 }catch(e){
+													 	console.log(e)
+													 }
+                          
                        }
                    })
                }
                else {
                    res.send({'failed':'账号密码错误或不是管理员'})
                }
-               //console.log(results)
+               console.log(results)
            }
        })
    })

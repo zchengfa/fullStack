@@ -271,7 +271,7 @@
           getMemberManageData().then(result => {
             tableLogic.memberData = result.data
             tableLogic.memberData.filter(item => {
-              //console.log(item.username)
+              console.log(result,274)
               if (!item.username){
                 item.username = '暂未设置昵称'
               }

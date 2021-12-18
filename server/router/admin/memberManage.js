@@ -7,7 +7,7 @@ module.exports = app => {
 		const connection = connect()
     router.get('/memberManage',(req, res) => {
         
-      const selectUser = selectFields('user','user_id,account,username,identity,register_time')
+      const selectUser = selectFields('user','user_id,account,username,identity,register_time,last_login_time')
       connection.query(selectUser, (err,result) => {
           if (err) throw err
           else {

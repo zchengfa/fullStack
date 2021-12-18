@@ -13,6 +13,11 @@
 				<span class="register-time">{{scope.row.register_time}}</span>
 			</template>
 		</el-table-column>
+		<el-table-column prop="last_login_time" label="最近登录时间" align="center">
+			<template #default="scope">
+				<span class="last-login-time">{{scope.row.last_login_time}}</span>
+			</template>
+		</el-table-column>
     <el-table-column label="操作" fixed="right" align="center">
       <template #default="scope">
         <div class="operation-btn">
@@ -116,6 +121,10 @@ export default defineComponent({
 .register-time{
 	font-weight: bold;
 	color: #55007f;
+}
+.last-login-time{
+	font-weight: bold;
+	color: #ff5500;
 }
 .delete-btn{
 	background-color: #ff0000;

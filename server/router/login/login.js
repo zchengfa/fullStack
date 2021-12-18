@@ -39,8 +39,9 @@ module.exports = app => {
                             }
                             //生成token,当过期时间number类型时以秒计算
                             const token = createToken(user,'1d')
+									
 
-                            //console.log(results[0])
+                    
                             //将生成的token存入数据库中
                             const update = mysql_query.update('user',`token = '${token}'`,`account = '${results[0]['account']}'`)
 
@@ -49,7 +50,23 @@ module.exports = app => {
                                 else {
                                     console.log('token write success')
                                     //用户token写入成功，将token和用户信息返回给前台
-                                    res.send({'token':token,'userInfo':user})
+																		try{
+																			
+																			//将当前时间作为用户登录时间，并记录在数据库中
+																			const {timeFormatting} = require('../../util/timeFormatting')
+																			let loginTime = timeFormatting("YYYY-MM-DD HH:MM:SS")
+																			const updateQuery = mysql_query.update('user',`last_login_time = '${loginTime}'`,`user_id = "${results[0]['user_id']}"`)
+																			connection.query(updateQuery,(err,l)=>{
+																				if(err) throw err
+																				else{
+																					console.log('用户登录时间已保存至数据库',l)
+																					res.send({'token':token,'userInfo':user})
+																				}
+																			})
+																		}catch(e){
+																			console.log(e)
+																		}
+																		
                                 }
                             })
 

@@ -7,7 +7,7 @@
       <swiper class="swiper" :banner="banner" @swiperImageLoad="swiperImageLoad"></swiper>
       <menu-list v-if="hasMenuData" :menu-list="menuList"></menu-list>
       <tab-control :class="{fixed: isTabFixed}" ref="tabControlTwo" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
-      <goods-data :goods="goods[currentType].list"></goods-data>
+      <goods-data :goods="goods[currentType].list" :current-type="currentType"></goods-data>
       <div class="no-more" v-if="noMore"><p>没有更多了哦!</p></div>
     </Scroll>
     <back-top v-show="isShowBackTop" @click.native="backTop"></back-top>

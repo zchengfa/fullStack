@@ -1,6 +1,7 @@
 <template>
   <div class="goods-data-item">
     <div class="list-box">
+      <trademark></trademark>
       <div class="list-image" @click="itemClick"><img :src="list.imagePath || list.product_image" alt="itemImage" @load="imageLoad"></div>
       <div class="list-content">
         <div class="title">{{list.title || list.product_title}}</div>
@@ -21,6 +22,7 @@
 
 <script>
   import {changeUserProductCollectionStatus} from "@/network/home";
+  import Trademark from "@/components/common/trademark/Trademark";
 
   export default {
     name: "GoodsDtaItem",
@@ -30,7 +32,16 @@
         default(){
           return {}
         }
+      },
+      type:{
+        type:String,
+        default() {
+          return '';
+        }
       }
+    },
+    components:{
+      Trademark
     },
     methods:{
       collectFavorite(product_id){
@@ -76,7 +87,7 @@
       },
       itemClick(){
         //动态路由传参(先要从父组件传入id和type给子组件)
-        this.$router.push('/detail/'+this.type +'/'+(this.list.product_id))
+        this.$router.push('/detail/'+this.$props.type +'/'+(this.list.product_id))
       }
     }
   }
@@ -87,6 +98,7 @@
     color: #ff0000;
   }
   .goods-data-item{
+    position: relative;
     width: 46%;
     margin: 1rem auto;
     overflow: hidden;

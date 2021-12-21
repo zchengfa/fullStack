@@ -211,16 +211,16 @@
         //将路由传过来的参数赋值给id和type
         this.id = this.$route.params.product_id
         this.type = this.$route.params.product_type
-        //console.log(this.id)
 
         //将id和type作为参数进行请求
         getGoodsDetail(this.type,this.id).then(res=> {
-          console.log(res)
-          //将请求到的数据赋给detailData
-          this.productInfo.product_id = res.data[0].product_id
-          this.detailData = res.data[0].product_detail[0]
-          //获取detailData中的评论数据
-          this.comment_num = this.detailData.baseData.comment_num
+          if (!res.data.err){
+            //将请求到的数据赋给detailData
+            this.productInfo.product_id = res.data[0].product_id
+            this.detailData = res.data[0].product_detail[0]
+            //获取detailData中的评论数据
+            this.comment_num = this.detailData.baseData.comment_num
+          }
           //console.log(res)
         }).catch((err) => {
           console.log(err)
@@ -241,10 +241,9 @@
 
     },
     mounted() {
-      setTimeout(()=>{
+      if (this.$refs.scroll){
         this.$refs.scroll.refresh()
-      },50)
-
+      }
       //判断该组件是否创建
       if (this.$refs.detailBottomBar) {
         //创建完页面后检测用户是否登录，若已经登录，获取该用户是否已经收藏过该商品，从而改变收藏按钮的状态，若未登录，让收藏按钮处于默认状态

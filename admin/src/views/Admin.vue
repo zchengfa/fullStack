@@ -272,14 +272,20 @@
             tableLogic.memberData = result.data
             tableLogic.memberData.filter(item => {
               console.log(result,274)
-              if (!item.username){
-                item.username = '暂未设置昵称'
-              }
-              if (item.identity === 'administrator'){
-                item.identity = '管理员'
-              }
-              else {
-                item.identity = '普通用户'
+              !item.username?item.username = '暂未设置昵称': item.username
+              !item.last_login_time?item.last_login_time = '暂未登录过': item.last_login_time
+              switch (item.identity){
+                case 0:
+                  item.identity = '普通用户';
+                  break;
+                case 999:
+                  item.identity = '客服';
+                  break;
+                case 1000:
+                  item.identity = 'VIP';
+                  break;
+                default:
+                  item.identity = '未知身份'
               }
             })
 						tableLogic.memberDataCopy = tableLogic.memberData

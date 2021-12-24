@@ -31,7 +31,7 @@ module.exports = app =>{
         const connection = connect()
 
         //创建查询语句
-        const selectQuery = mysql_query.selectCount('user_collection',`users_id = '${paramsObj.user_id}' AND product_id = '${paramsObj.product_id}'`)
+        const selectQuery = mysql_query.selectCount('mall_user_collection',`user_id = '${paramsObj.user_id}' AND product_id = '${paramsObj.product_id}'`)
 
         connection.query(selectQuery,(err, result) => {
             if (err) throw err
@@ -56,7 +56,7 @@ module.exports = app =>{
         //通过接受的请求参数currentStatus判断，若currentStatus为1表示已收藏，需要取消收藏，若为0表示未收藏，需要收藏商品
         if (Number(paramsObj.currentStatus) === 1) {
             //currentStatus为1，商品已收藏，用户需要取消收藏，将对应用户对应的商品数据进行删除操作
-            const deleteQuery = mysql_query.deleteOperation('user_collection',`users_id = '${paramsObj.user_id}' AND product_id = '${paramsObj.product_id}'`)
+            const deleteQuery = mysql_query.deleteOperation('mall_user_collection',`user_id = '${paramsObj.user_id}' AND product_id = '${paramsObj.product_id}'`)
 
             connection.query(deleteQuery, err => {
                 if (err) throw err
@@ -85,7 +85,7 @@ module.exports = app =>{
         }
         else if (Number(paramsObj.currentStatus) === 0) {
             //currentStatus为0，商品未收藏，用户需要收藏该商品，将该商品数据添加到该用户中
-            const insertQuery = mysql_query.insert('user_collection','users_id,product_id',`'${paramsObj.user_id}','${paramsObj.product_id}'`)
+            const insertQuery = mysql_query.insert('mall_user_collection','user_id,product_id',`'${paramsObj.user_id}','${paramsObj.product_id}'`)
 
             connection.query(insertQuery, err => {
                 if (err) throw err

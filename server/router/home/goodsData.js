@@ -35,7 +35,7 @@ module.exports = app =>{
                     //查询用户收藏过的商品id，改变对应商品的收藏状态
                     const connection = require('../../plugins/connectMysql')()
                     const {selectFields} = require('../../plugins/mysql_query')
-                    const selectQuery = selectFields('user_collection','product_id',`users_id = '${query.user_id}'`)
+                    const selectQuery = selectFields('mall_user_collection','product_id',`user_id = '${query.user_id}'`)
                     connection.query(selectQuery,(err,result)=>{
                         if (err) throw err
                         else{
@@ -75,7 +75,7 @@ module.exports = app =>{
         const connection = require('../../plugins/connectMysql')()
         const {selectFields} = require('../../plugins/mysql_query')
 
-        const select_query = selectFields('user_collection','product_id',`users_id = '${req.query.user_id}'`)
+        const select_query = selectFields('mall_user_collection','product_id',`user_id = '${req.query.user_id}'`)
         connection.query(select_query,(err,result)=>{
             if (err) {
                 res.send({'error':err})

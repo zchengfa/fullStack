@@ -1,3 +1,5 @@
+const {timeFormatting} = require("../../util/timeFormatting");
+const mysql_query = require("../../plugins/mysql_query");
 module.exports = app => {
     const express = require('express')
     const bodyParser = require('body-parser')
@@ -15,9 +17,9 @@ module.exports = app => {
         const connection = require('../../plugins/connectMysql')()
         const mysql_query = require('../../plugins/mysql_query')
         //创建查询用户名语句
-        const selectUser_id = mysql_query.selectFields('user','account',`account = '${paramsObj.account}'`)
+        const selectUser_id = mysql_query.selectFields('mall_user','account',`account = '${paramsObj.account}'`)
 
-        const select_query = mysql_query.selectFields('user','account,username,user_id,header_image',`account = '${paramsObj.account}' AND password = '${paramsObj.pwd}'`)
+        const select_query = mysql_query.selectFields('mall_user','account,username,user_id,avatar',`account = '${paramsObj.account}' AND password = '${paramsObj.pwd}'`)
 
         connection.query(selectUser_id, (err, result) => {
             if (err) throw err
@@ -35,7 +37,7 @@ module.exports = app => {
                                 username:results[0]['username'],
                                 account:results[0]['account'],
                                 user_id:results[0]['user_id'],
-                                avatar:results[0]['header_image']
+                                avatar:results[0]['avatar']
                             }
                             //生成token,当过期时间number类型时以秒计算
                             const token = createToken(user,'1d')
@@ -43,29 +45,29 @@ module.exports = app => {
 
                     
                             //将生成的token存入数据库中
-                            const update = mysql_query.update('user',`token = '${token}'`,`account = '${results[0]['account']}'`)
+                            const update = mysql_query.update('mall_user',`token = '${token}'`,`account = '${results[0]['account']}'`)
 
                             connection.query(update, (err) => {
                                 if (err) throw err
                                 else {
                                     console.log('token write success')
                                     //用户token写入成功，将token和用户信息返回给前台
-																		try{
-																			
-																			//将当前时间作为用户登录时间，并记录在数据库中
-																			const {timeFormatting} = require('../../util/timeFormatting')
-																			let loginTime = timeFormatting("YYYY-MM-DD HH:MM:SS")
-																			const updateQuery = mysql_query.update('user',`last_login_time = '${loginTime}'`,`user_id = "${results[0]['user_id']}"`)
-																			connection.query(updateQuery,(err,l)=>{
-																				if(err) throw err
-																				else{
-																					console.log('用户登录时间已保存至数据库',l)
-																					res.send({'token':token,'userInfo':user})
-																				}
-																			})
-																		}catch(e){
-																			console.log(e)
-																		}
+                                    try{
+
+                                        //将当前时间作为用户登录时间，并记录在数据库中
+                                        const {timeFormatting} = require('../../util/timeFormatting')
+                                        let loginTime = timeFormatting("YYYY-MM-DD HH:MM:SS")
+                                        const updateQuery = mysql_query.update('mall_user',`last_login_time = '${loginTime}'`,`user_id = "${results[0]['user_id']}"`)
+                                        connection.query(updateQuery,(err,l)=>{
+                                            if(err) throw err
+                                            else{
+                                                console.log('用户登录时间已保存至数据库',l)
+                                                res.send({'token':token,'userInfo':user})
+                                            }
+                                        })
+                                    }catch(e){
+                                        console.log(e)
+                                    }
 																		
                                 }
                             })

@@ -61,8 +61,8 @@ module.exports = app => {
             const mysql_query = require('../../plugins/mysql_query')
 
             //创建数据库查询语句
-            const selectQuery = mysql_query.selectAll('user',`account = '${paramsObj.account}'`)
-            const selectUserCount = mysql_query.selectCount('user')
+            const selectQuery = mysql_query.selectAll('mall_user',`account = '${paramsObj.account}'`)
+            const selectUserCount = mysql_query.selectCount('mall_user')
 
             //连接数据库
             const connection = connect()
@@ -84,8 +84,8 @@ module.exports = app => {
                         const {timeFormatting} = require('../../util/timeFormatting')
 
                         //创建查询语句，查询该表已有多少条数据，将user_id字段在原有的数据数量上加一
-                        const insertQuery = mysql_query.insert('user','id,user_id,account,password,register_time',
-                            `${result[0]['COUNT(1)'] + 1 },'${ID()}','${paramsObj.account}','${paramsObj.pwd}',
+                        const insertQuery = mysql_query.insert('mall_user','id,user_id,account,password,register_time',
+                            `${result[0]['COUNT(1)'] + 1 },${ID()},'${paramsObj.account}','${paramsObj.pwd}',
                             '${timeFormatting('YYYY-MM-DD HH:MM:SS')}'`)
                         connection.query(insertQuery, (err) => {
                             if (err) throw err

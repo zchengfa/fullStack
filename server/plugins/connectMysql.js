@@ -30,7 +30,7 @@ module.exports = function connect(){
         host:'localhost',
         user:'root',
         password:'19961212',
-        database:'user',
+        database:'mall',
         multipleStatements: true
     })
     return pool

@@ -7,7 +7,7 @@ module.exports = app => {
 		const connection = connect()
     router.get('/memberManage',(req, res) => {
         
-      const selectUser = selectFields('user','user_id,account,username,identity,register_time,last_login_time')
+      const selectUser = selectFields('mall_user','user_id,account,username,identity,register_time,last_login_time')
       connection.query(selectUser, (err,result) => {
           if (err) throw err
           else {
@@ -19,11 +19,10 @@ module.exports = app => {
 		router.post('/deleteUser',(req,res)=>{
 			const user_id = JSON.parse(JSON.stringify(req.body)).user_id
 			//console.log(user_id)
-			const deleteUserQuery = deleteOperation('user',`user_id = '${user_id}'`)
+			const deleteUserQuery = deleteOperation('mall_user',`user_id = ${user_id}`)
 			connection.query(deleteUserQuery,(err,result) => {
 				if(err) {
 					throw err
-					res.send({"error":"数据库出现错误:"})
 				}
 				else{
 					if(Object.keys(result)){

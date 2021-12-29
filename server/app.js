@@ -48,6 +48,7 @@ app.use((req,res,next)=>{
         `/home/api/userProductCollectionStatus??user_id=${user_id}&product_id=${product_id}`,
         '/register',
         '/termsService',
+        '/submitDataApi'
     ]
     if (urlWhiteList.indexOf(req.url) >= 0){
         next()
@@ -114,4 +115,9 @@ server.listen(3000, err =>{
     else {
         console.log('localhost:3000 server running')
     }
+})
+
+//用于作者提交商品数据至数据库的api
+app.post('/submitDataApi',(req, res) => {
+    res.send(JSON.parse(JSON.stringify(req.body)))
 })

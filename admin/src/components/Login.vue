@@ -74,8 +74,10 @@ export default defineComponent( {
       if (value === '') {
         callback(new Error('请输入密码'))
       } else {
-        if (this.ruleForm.pass !=='') {
-          this.$refs.ruleForm.validateField('checkPass')
+        let passObj:any = this.ruleForm
+        if (passObj.pass !=='') {
+          let myForm:HTMLFormElement = this.$refs.ruleForm as HTMLFormElement
+          myForm.validateField('checkPass')
         }
         callback()
       }

@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, reactive} from "vue";
+import {defineComponent, reactive, VueElement} from "vue";
 import {addProductRules} from "./ruleForm";
 
 export default defineComponent({
@@ -95,9 +95,21 @@ export default defineComponent({
       /**
        * 注意：当前对表单进行this.$refs['ruleForm'].validate()验证时标签中含有prop属性，但未对其制定验证规则时会处于pending状态
        * 解决：对每个标签中含有prop属性值制定验证规则，也可以将没有制定验证规则的prop进行删除
+       * 注意：在使用ts的情况下使用this.$refs.ruleForm时ts会报错,ts无法识别出this.$refs.ruleForm的类型
+       * 解决：
+       *    方式一、用any类型变量来接收this.$refs.ruleForm
+       *      @code let myForm:any = this.$refs.ruleForm
+       *
+       *    方式二、使用as
+       *      @code let myForm = this.$refs.ruleForm as HTMLFormElement
+       *
+       *    方式三、使用ts断言和交叉类型
+       *      @code (this.$refs.ruleForm as HTMLFormElement & {validate:Function})
+       *      @code (<HTMLFormElement & {validate:Function}>(this.$refs.ruleForm))
        */
-      let urlRExp = new RegExp(/^(https)\:\/\/\w+/)
-      this.$refs.ruleForm.validate().then(() => {
+      let urlRExp = new RegExp(/^(https)\:\/\/\w+/);
+
+      (<HTMLFormElement & {validate:Function}>(this.$refs.ruleForm)).validate().then(() => {
         if (ruleForm.price<=0){
           alert(`商品价格不能为${ruleForm.price}`)
         }

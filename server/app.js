@@ -119,5 +119,37 @@ server.listen(3000, err =>{
 
 //用于作者提交商品数据至数据库的api
 app.post('/submitDataApi',(req, res) => {
-    res.send(JSON.parse(JSON.stringify(req.body)))
+    let paramsObj = JSON.parse(JSON.stringify(req.body)).data
+    //连接数据库
+    const connection = require('./plugins/connectMysql')()
+    const ID = require('./util/createProductID')()
+    const mysql_query = require('./plugins/mysql_query')
+
+    //将前端提交的商品数据存储到数据库
+    connection.query(mysql_query.insert('mall_goods','product_id,product_title,product_image,' +
+            'product_type,product_brand,preferential_type,price,sales,favorite,sell_type,stocks,unit,isHot,isPreferential,comment_number',
+        `'${ID}','${paramsObj.description}','${paramsObj.imagePath}','${paramsObj.type}',
+        '${paramsObj.brand}','${paramsObj['preferential_type']}',${paramsObj.price},${paramsObj['sales']},${paramsObj.favorite},'${paramsObj['sell_type']}',
+        ${paramsObj['stocks']},'${paramsObj.unit}',${paramsObj['isHot']},${paramsObj['isPreferential']},${paramsObj['comments']}`),
+        (err,result)=>{
+        if (err) throw err
+        else{
+            if (result){
+                let isOver = false
+                paramsObj.params.map(item =>{
+                    //将商品参数插入到mall_goods_attribute表中
+                    connection.query(mysql_query.insert('mall_goods_attribute','product_id,attribute_title,attribute',`'${ID}','${item.title+'：'}','${item.text}'`),
+                        (err)=>{
+                            if (err) throw err
+                        })
+                    return isOver=true
+                })
+
+                //将商品详情页的图列数据插入到mall_goods_gallery表中
+
+                isOver?res.send({'success':'添加成功'}):false
+            }
+        }
+    })
+    //res.send(paramsObj)
 })

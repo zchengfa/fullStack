@@ -214,12 +214,13 @@
 
         //将id和type作为参数进行请求
         getGoodsDetail(this.type,this.id).then(res=> {
+          console.log(res.data)
           if (!res.data.err){
             //将请求到的数据赋给detailData
-            this.productInfo.product_id = res.data[0].product_id
-            this.detailData = res.data[0].product_detail[0]
+            this.productInfo.product_id = res.data.baseData.product_id
+            this.detailData = res.data
             //获取detailData中的评论数据
-            this.comment_num = this.detailData.baseData.comment_num
+            this.comment_num = this.detailData.baseData.comment_number
           }
           //console.log(res)
         }).catch((err) => {

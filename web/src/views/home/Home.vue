@@ -120,6 +120,7 @@
             console.log('没有数据！')
           }
           else {
+            console.log(res.data)
             //将获取到的数据数组通过...语法糖对数组进行解构加入到list数组中
             this.goods[type].list.push(...res.data)
             this.goods[type].page += 1

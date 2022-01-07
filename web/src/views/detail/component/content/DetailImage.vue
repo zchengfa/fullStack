@@ -1,8 +1,8 @@
 <template>
   <div class="image">
     <div class="title"><h4>详情介绍</h4></div>
-    <div class="image-detail-box" v-for="(item, index) in imagesData" :key="index">
-      <img :src="item.imagePath" alt="image_detail" @load="loadOver">
+    <div class="image-detail-box" v-for="(item, index) in imagesData" :key="index+item">
+      <img :src="item['product_image']" alt="image_detail" @load="loadOver">
     </div>
   </div>
 </template>

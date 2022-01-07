@@ -2,7 +2,10 @@
 <div class="params">
   <div class="title"><h4>参数</h4></div>
   <div class="params-box">
-    <div class="params" v-for="(item, index) in params" :key="index">{{item}}</div>
+    <div class="params" v-for="(item, index) in params" :key="item+index">
+      <span>{{item['attribute_title']}}</span>
+      <span>{{item['attribute']}}</span>
+    </div>
   </div>
 </div>
 </template>

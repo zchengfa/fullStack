@@ -3,6 +3,7 @@ const express = require('express')
 const http = require('http')
 const cors = require('cors')
 const {verifyToken} = require("./util/token");
+const mysql_query = require("./plugins/mysql_query");
 const app = express()
 const server = http.createServer(app)
 
@@ -135,6 +136,7 @@ app.post('/submitDataApi',(req, res) => {
         if (err) throw err
         else{
             if (result){
+
                 let isOver = false
                 paramsObj.params.map(item =>{
                     //将商品参数插入到mall_goods_attribute表中
@@ -146,10 +148,30 @@ app.post('/submitDataApi',(req, res) => {
                 })
 
                 //将商品详情页的图列数据插入到mall_goods_gallery表中
+                //1.查看图列字符串中是否含有分号，若有判断有几个，若没有，当成一张图片地址进行插入
+
+                //没有分号
+                if (paramsObj['gallery'].indexOf(';')===-1){
+                    insertImageGallery(ID,paramsObj['gallery'])
+                }
+                //有分号
+                else{
+                    //1.先判断有几个分号
+                    let gallery_arr = paramsObj['gallery'].split(';')
+                    gallery_arr.map(item =>{
+                        item?insertImageGallery(ID,item):null
+                    })
+                }
 
                 isOver?res.send({'success':'添加成功'}):false
             }
         }
     })
-    //res.send(paramsObj)
+
+
+    function insertImageGallery(ID,gallery){
+        connection.query(mysql_query.insert('mall_goods_gallery','product_id,product_image',`'${ID}','${gallery}'`),(err,re)=>{
+            if (err) throw err
+        })
+    }
 })

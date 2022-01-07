@@ -2,14 +2,14 @@
   <div class="base">
     <div class="content">
       <div class="image-box">
-        <img :src="baseData.bigImage" alt="bigImage">
+        <img :src="baseData['product_image']" alt="bigImage">
       </div>
       <div class="introduction-box">
-        <p class="price">{{baseData.price}}</p>
+        <p class="price">￥{{baseData.price}}</p>
         <p class="title">{{baseData.title}}</p>
         <p class="other">
-          <span class="comment-num">评论：{{baseData.comment_num}}条</span>
-          <span class="sell-num">销量：{{baseData.sell_num}}件</span>
+          <span class="comment-num">评论：{{baseData['comment_number']}}条</span>
+          <span class="sell-num">销量：{{baseData['sales']}}件</span>
         </p>
       </div>
     </div>

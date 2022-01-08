@@ -1,3 +1,4 @@
+const mysql_query = require("../../plugins/mysql_query");
 module.exports = app =>{
     const express = require('express')
     const router = express.Router()
@@ -96,6 +97,7 @@ module.exports = app =>{
         //接收请求参数
         const paramsObj = req.query
         console.log(paramsObj)
+        let table_name = 'mall_goods'
 
         const  shopDataModel= require('../../model/goodsDataModel')
         //通过接受的请求参数currentStatus判断，若currentStatus为1表示已收藏，需要取消收藏，若为0表示未收藏，需要收藏商品
@@ -108,21 +110,19 @@ module.exports = app =>{
                 else {
                     //有用户取消了收藏，将对应的商品收藏数减一
                     //1.先查询当前商品的收藏总数
-                    shopDataModel.findOne({'product_id':paramsObj.product_id},(err,doc)=>{
+                    const selectFavorite = mysql_query.selectFields(table_name,'favorite',`product_id = '${paramsObj.product_id}'`)
+                    connection.query(selectFavorite,(err,result)=>{
                         if (err) throw err
-                        else {
-                            if (doc){
-                                let favorite
-                                favorite =  Number(doc.favorite) -1
-                                shopDataModel.updateOne({'product_id':paramsObj.product_id},{'favorite':favorite},(err,result)=>{
-                                    if (err)throw err
-                                    else{
-                                        if (result.ok === 1){
-                                            res.send({'current_status':false})
-                                        }
-                                    }
-                                })
-                            }
+                        else{
+                            //2.将该商品的喜爱数减一
+                            let favorite = result[0].favorite +1
+                            const updateFavorite = mysql_query.update(table_name,`favorite = ${favorite}`,`product_id = '${paramsObj.product_id}'`)
+                            connection.query(updateFavorite,(err,results)=>{
+                                if (err) throw err
+                                else{
+                                    results?res.send({'current_status':false}):null
+                                }
+                            })
                         }
                     })
                 }
@@ -130,33 +130,25 @@ module.exports = app =>{
         }
         else if (Number(paramsObj.currentStatus) === 0) {
             //currentStatus为0，商品未收藏，用户需要收藏该商品，将该商品数据添加到该用户中
-            const insertQuery = mysql_query.insert('mall_user_collection','user_id,product_id',`'${paramsObj.user_id}','${paramsObj.product_id}'`)
-
-            connection.query(insertQuery, err => {
-                if (err) throw err
-                else {
-                    shopDataModel.findOne({'product_id':paramsObj.product_id},(err,doc)=>{
+            //1.查询mall_user_collection需要的字段数据
+            const selectField = mysql_query.selectFields(table_name,'product_title,product_type,price,product_image',`product_id = '${paramsObj.product_id}'`)
+            connection.query(selectField,(err,result)=>{
+                if (err) throw  err
+                else{
+                    //2.插入数据
+                    const insertQuery = mysql_query.insert('mall_user_collection','user_id,product_id',`'${paramsObj.user_id}','${paramsObj.product_id}'`)
+                    Object.keys(result).length?connection.query(insertQuery,(err,results)=>{
                         if (err) throw err
-                        else {
-                            if (doc){
-                                let favorite
-                                favorite =  Number(doc.favorite) +1
-                                shopDataModel.updateOne({'product_id':paramsObj.product_id},{'favorite':favorite},(err,result)=>{
-                                    if (err)throw err
-                                    else{
-                                        if (result.ok ===1){
-                                            res.send({'current_status':true})
-                                        }
-                                    }
-                                })
-                            }
+                        else{
+                            results?res.send({'current_status':true}):null
                         }
-                    })
-
+                    }):null
                 }
-
-                //后续修改，将该商品从该用户中删除后，需要将对应的favorite数量加一
             })
+
+
+
+
         }
 
     })

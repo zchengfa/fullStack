@@ -28,7 +28,10 @@ module.exports = app =>{
                 isCollected:isCollected,
                 isHot:item['isHot'],
                 isPreferential:item['isPreferential'],
-                preferential_type:item.preferential_type
+                preferential_type:item.preferential_type,
+                self_support:item.self_support,
+                comment_num:item['comment_number'],
+                discount:item.discount
             })
         }
         if (query.user_id){

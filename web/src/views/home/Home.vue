@@ -112,6 +112,7 @@
         //每获取一次数据就让当前类型商品的页数加一
         const page = this.goods[type].page +1
         getGoodsData(user_id,type, page).then(res => {
+          console.log(res.data)
           if(res.data.length===0){
             this.noMore = true
             setTimeout(() => {
@@ -120,7 +121,6 @@
             console.log('没有数据！')
           }
           else {
-            console.log(res.data)
             //将获取到的数据数组通过...语法糖对数组进行解构加入到list数组中
             this.goods[type].list.push(...res.data)
             this.goods[type].page += 1

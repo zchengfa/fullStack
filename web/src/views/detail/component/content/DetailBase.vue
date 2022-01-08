@@ -5,7 +5,12 @@
         <img :src="baseData['product_image']" alt="bigImage">
       </div>
       <div class="introduction-box">
-        <p class="price">￥{{baseData.price}}</p>
+        <p class="price">
+          <span>￥{{baseData.price}}</span>
+          <span class="origin-price">{{originPrice}}</span>
+          <label class="discount-label" for="discountTitle">折扣：</label>
+          <span class="discount" id="discountTitle">{{baseData.discount}}折</span>
+        </p>
         <p class="title">{{baseData.title}}</p>
         <p class="other">
           <span class="comment-num">评论：{{baseData['comment_number']}}条</span>
@@ -25,6 +30,11 @@ export default {
       default(){
         return {}
       }
+    }
+  },
+  computed:{
+    originPrice(){
+      return (this.baseData.price/this.baseData.discount).toFixed(2)
     }
   }
 }
@@ -64,5 +74,23 @@ p span.comment-num{
 span.comment-num,span.sell-num{
   color: gray;
   font-size: .8rem;
+}
+.introduction-box .origin-price{
+  text-decoration-line: line-through;
+  font-size: .9rem;
+  color: #8a8686;
+}
+.introduction-box .discount-label{
+  display: inline-block;
+  margin-left: 1rem;
+  color: #8a8686;
+  font-size: .8rem;
+  font-weight: normal;
+}
+.introduction-box .discount{
+  display: inline-block;
+  padding-left:.2rem;
+  font-size: 1rem;
+  font-weight: normal;
 }
 </style>

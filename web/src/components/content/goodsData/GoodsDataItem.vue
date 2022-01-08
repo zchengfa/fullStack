@@ -2,17 +2,29 @@
   <div class="goods-data-item">
     <div class="list-box">
       <trademark></trademark>
-      <div class="list-image" @click="itemClick"><img :src="list.imagePath || list.product_image" alt="itemImage" @load="imageLoad"></div>
+      <div class="list-image" @click="itemClick"><img :src="list['imagePath']" alt="itemImage" @load="imageLoad"></div>
       <div class="list-content">
-        <div class="title">{{list.title || list.product_title}}</div>
+        <div class="title">{{list.title}}</div>
         <div class="list-others">
+          <div v-if="list.self_support" class="self-support">
+            <span>自营</span>
+            <span>mall超市</span>
+          </div>
+          <div class="preferential" v-if="list.isPreferential || list.isHot">
+            <span class="preferential">优惠：</span>
+            <span v-show="list.isPreferential" class="discount">{{list.preferential_type}}</span>
+            <span v-show="list.isHot" class="hot">热卖</span>
+          </div>
           <div class="price-box">
-            <span class="price">{{list.price || list.product_price}}</span>
-            <span class="origin_price">{{list.origin_price}}</span>
+            <span class="price">￥{{list.price}}</span>
+            <span class="origin_price">{{originPrice}}</span>
           </div>
           <div class="love-box" @click="collectFavorite(list.product_id)">
             <span :class="{active:list.isCollected}">♡</span>
             <span class="favorite">{{list.favorite}}</span>
+          </div>
+          <div class="comments">
+            <span>近期{{list.comment_num}}条评价</span>
           </div>
         </div>
       </div>
@@ -42,6 +54,11 @@
     },
     components:{
       Trademark
+    },
+    computed:{
+      originPrice(){
+        return Number((this.list.price/this.list.discount).toFixed(2))
+      }
     },
     methods:{
       collectFavorite(product_id){
@@ -110,17 +127,55 @@
   }
   .title{
     margin: .6rem auto;
-    width: 80%;
+    width: 98%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: #000;
   }
   .price-box,
   .love-box{
+    position: relative;
     display: inline-block;
+    margin-top:.5rem;
+  }
+  .love-box{
+    width: 30%;
+  }
+  .price-box{
+    width:70%;
   }
   .love-box span:first-child{
     font-size: 1.01rem;
+  }
+  .self-support{
+    width: 100%;
+    color: #fff;
+    text-align: left;
+  }
+  .self-support span{
+    display: inline-block;
+    margin-left: .2rem;
+    padding-left: .2rem;
+    padding-right: .2rem;
+    background-color: #f54f2a;
+    border-radius: .2rem;
+    font-size: .8rem;
+  }
+  .preferential{
+    margin-top: .5rem;
+    text-align: left;
+    text-indent: .2rem;
+  }
+  .preferential .discount,
+  .preferential .hot{
+    margin-left: .2rem;
+    padding-right: .2rem;
+    padding-left: .2rem;
+    background-color: #f00;
+    font-size: .8rem;
+    border-radius: .2rem;
+    color: #fff;
   }
   .price,.favorite{
     color: #cd5c5c;
@@ -130,5 +185,12 @@
     padding-right: .6rem;
     text-decoration: line-through;
     font-size: 12px;
+  }
+  .comments span{
+    display: inline-block;
+    margin-top: .4rem;
+    width: 100%;
+    text-indent: .2rem;
+    text-align: left;
   }
 </style>

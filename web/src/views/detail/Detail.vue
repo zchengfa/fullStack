@@ -4,9 +4,9 @@
     <Scroll class="content" @click.native="closeAddCart" ref="scroll" :probe-type="3" @scroll="contentScroll">
       <div class="shop-show" v-if="Object.keys(detailData).length">
         <detail-base ref="base" class="detail-base" :base-data="detailData.baseData"></detail-base>
-        <detail-image ref="image" :images-data="detailData.images" @imageLoadOver="imageLoad"></detail-image>
         <detail-params ref="params" :params="detailData.shop_detail_params"></detail-params>
         <detail-comment ref="comment" :comment-num="Number(comment_num)"></detail-comment>
+        <detail-image ref="image" :images-data="detailData.images" @imageLoadOver="imageLoad"></detail-image>
         <Recommend ref="recommend" :recommend-data="detailData.shop_recommend" :current-type="type" recommend-title="商品推荐"></Recommend>
       </div>
     </Scroll>

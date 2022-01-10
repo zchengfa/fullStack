@@ -121,6 +121,7 @@ server.listen(3000, err =>{
 //用于作者提交商品数据至数据库的api
 app.post('/submitDataApi',(req, res) => {
     let paramsObj = JSON.parse(JSON.stringify(req.body)).data
+    console.log(paramsObj)
     //连接数据库
     const connection = require('./plugins/connectMysql')()
     const ID = require('./util/createProductID')()
@@ -162,6 +163,13 @@ app.post('/submitDataApi',(req, res) => {
                         item?insertImageGallery(ID,item):null
                     })
                 }
+
+                connection.query(mysql_query.insert('mall_goods_size','product_id,size',`'${ID}','${paramsObj.size}'`),(err,doc)=>{
+                    if (err) throw err
+                    else{
+                        console.log(doc)
+                    }
+                })
 
                 isOver?res.send({'success':'添加成功'}):false
             }

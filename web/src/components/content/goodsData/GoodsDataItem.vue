@@ -8,7 +8,7 @@
         <div class="list-others">
           <div v-if="list.self_support" class="self-support">
             <span>自营</span>
-            <span>mall超市</span>
+            <span>mall商城自营</span>
           </div>
           <div class="preferential" v-if="list.isPreferential || list.isHot">
             <span class="preferential">优惠：</span>

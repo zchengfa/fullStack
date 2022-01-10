@@ -2,16 +2,16 @@
   <div class="detail">
     <detail-nav-bar :nav-list="nav_list" @scrollThere="scrollThere" ref="detailNav"></detail-nav-bar>
     <Scroll class="content" @click.native="closeAddCart" ref="scroll" :probe-type="3" @scroll="contentScroll">
-      <div class="shop-show" v-if="Object.keys(detailData).length">
+      <div class="shop-show" v-if="Object.keys(detailData).length" >
         <detail-base ref="base" class="detail-base" :base-data="detailData.baseData"></detail-base>
-        <detail-params ref="params" :params="detailData.shop_detail_params"></detail-params>
+        <detail-params  @refresh="refreshScroll" ref="params" :params="detailData.shop_detail_params"></detail-params>
         <detail-comment ref="comment" :comment-num="Number(comment_num)"></detail-comment>
         <detail-image ref="image" :images-data="detailData.images" @imageLoadOver="imageLoad"></detail-image>
         <Recommend ref="recommend" :recommend-data="detailData.shop_recommend" :current-type="type" recommend-title="商品推荐"></Recommend>
       </div>
     </Scroll>
     <back-top v-show="isShowBackTop" @click.native="backTop"></back-top>
-    <detail-add-cart :product-info="productInfo" v-if="isShowAddCart" @submitAdd="submitAdd"></detail-add-cart>
+    <detail-add-cart :product-info="productInfo" v-if="isShowAddCart" @submitAdd="submitAdd" :chose-size-obj="choseSizeObj"></detail-add-cart>
     <detail-bottom-bar ref="detailBottomBar" @addCart="addCart" :is-collected="isCollected"
                        @collectProduct="collectProduct"
                         @contactCustomer="contactCustomer">
@@ -53,7 +53,12 @@
         isShowAddCart:false,
         productInfo:{},
         isCollected:false,
-        token:this.$store.state.token
+        token:this.$store.state.token,
+        choseSizeObj:{
+          item:null,
+          index:null
+        }
+
       }
     },
     components:{
@@ -108,8 +113,8 @@
         if (this.token) {
           //token存在，点击加入购物车按钮，显示确认加入购物车组件，并将要加入购物车的商品信息添加到productInfo对象中
           this.isShowAddCart = !this.isShowAddCart
-          this.productInfo.title = this.detailData.baseData.title
-          this.productInfo.image = this.detailData.baseData.bigImage
+          this.productInfo.title = this.detailData.baseData['product_title']
+          this.productInfo.image = this.detailData.baseData['product_image']
           this.productInfo.price = this.detailData.baseData.price
         }
         //token不存在，用户未登录，引导用户进入登录页面
@@ -182,7 +187,6 @@
             console.log(err)
           })
         }
-
         //使用vuex状态管理来管理购物车数据
         // this.productInfo.shopCount = count
         // this.productInfo.product_id = this.id
@@ -235,16 +239,28 @@
           this.scrollToTopY.push(this.$refs.comment.$el.offsetTop)
           this.scrollToTopY.push(this.$refs.recommend.$el.offsetTop)
         },100)
+      },
+      //接收参数组件发出来的刷新scroll组件事件
+      refreshScroll(){
+        //当参数组件高度变化后，刷新scroll组件
+        this.$refs.scroll.refresh()
       }
+
     },
     created() {
       this.initData()
 
     },
     mounted() {
-      if (this.$refs.scroll){
-        this.$refs.scroll.refresh()
-      }
+     //接收深层组件发出的choseSize事件(来自DetailBase组件中的ProductSize组件)
+      this.$bus.$on('choseSize',(e)=>{
+        //当用户点击某一尺寸项后，将发出的值跟索引用choseSizeObj来接收
+        this.choseSizeObj.item = e.item
+        this.choseSizeObj.index = e.index
+        console.log(this.choseSizeObj)
+        //将接收好的值传入detail-bottom-bar组件（在组件中进行传值操作）
+      })
+
       //判断该组件是否创建
       if (this.$refs.detailBottomBar) {
         //创建完页面后检测用户是否登录，若已经登录，获取该用户是否已经收藏过该商品，从而改变收藏按钮的状态，若未登录，让收藏按钮处于默认状态
@@ -258,7 +274,7 @@
     watch:{
       $route(to,from){
         if (to.path !== from.path){
-          console.log(to,from)
+          //console.log(to,from)
           this.initData()
         }
 

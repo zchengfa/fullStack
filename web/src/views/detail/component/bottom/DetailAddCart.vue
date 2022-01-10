@@ -6,7 +6,7 @@
         <div class="image-box"><img :src="productInfo.image" alt="image"></div>
         <div class="info">
           <p class="info-title">{{productInfo.title}}</p>
-          <p class="price">{{productInfo.price}}</p>
+          <p class="price">￥{{productInfo.price}}</p>
         </div>
       </div>
       <div class="count">
@@ -33,6 +33,12 @@ export default {
       default(){
         return {}
       }
+    },
+    choseSizeObj:{
+      type:Object,
+      default() {
+        return {};
+      }
     }
   },
   data(){
@@ -53,6 +59,9 @@ export default {
     submitAdd(){
       this.$emit('submitAdd',this.count)
     }
+  },
+  created() {
+    console.log(this.choseSizeObj)
   }
 }
 </script>

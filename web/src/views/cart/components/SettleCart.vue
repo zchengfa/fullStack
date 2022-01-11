@@ -1,9 +1,7 @@
 <template>
   <div class="settle-cart">
     <div class="check" @click="selectAll">
-      <div class="check-button" id="check-button">
-        <button :class="{checked:isAllChecked}"></button>
-      </div>
+      <check-button  id="check-button" :class="{checked:isAllChecked}"></check-button>
       <label v-show="!isAllChecked" for="check-button" class="select-all">全选</label>
       <label v-show="isAllChecked" for="check-button" class="deselect-all">取消全选</label>
     </div>
@@ -22,6 +20,7 @@
 </template>
 
 <script>
+import CheckButton from "@/views/cart/components/CheckButton";
 export default {
   name: "SettleCart",
   props:{
@@ -59,6 +58,9 @@ export default {
   data(){
     return {}
   },
+  components:{
+    CheckButton
+  },
   methods:{
     //全选
     selectAll() {
@@ -86,42 +88,29 @@ export default {
 
 <style scoped>
 .settle-cart{
-  display: flex;
   position: fixed;
-  bottom:50px;
-  width: 100vw;
+  display: flex;
+  width: 100%;
   height: 3rem;
-  text-align: center;
+  bottom: 3rem;
   line-height: 3rem;
-  border: 1px solid transparent;
-  border-top-color: #d5cbcb;
   background-color: #fff;
 }
 .check{
+  display: flex;
   flex: 1;
+  justify-items: center;
+  align-items: center;
 }
 #check-button{
-  display: inline-block;
-  width: 2rem;
-  height: 100%;
-}
-#check-button button{
-  position: relative;
-  top: 50%;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  background-image: url("~assets/image/cart/check.svg");
-  transform: translateY(-50%);
-}
-#check-button button.checked{
-  background-image: url("~assets/image/cart/checked.svg");
+  margin-left: .8rem;
 }
 label{
-  position: relative;
-  left: .5rem;
-  font-size: .6rem;
+  flex: 1;
+  font-size: .8rem;
+  text-align: center;
 }
+
 .total-price{
   flex: 1.5;
 }
@@ -137,8 +126,8 @@ label{
   flex: 1.2;
 }
 .settle button{
-  width: 80%;
-  height: 80%;
+  width: 70%;
+  height: 70%;
   color: #fff;
   border-radius: 2rem;
   background-color: #f00;

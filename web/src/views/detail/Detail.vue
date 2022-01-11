@@ -169,15 +169,16 @@
           this.$router.push('/login')
         }
       },
-      submitAdd(count) {
+      submitAdd(e) {
         //确认加入购物车，隐藏确认加入购物车组件，并将要加入购物车的商品数据提交给后端
         this.isShowAddCart = !this.isShowAddCart
-        this.productInfo.product_count = count
+        this.productInfo.product_count = e.count
+        this.productInfo.size = e.size
         const product = this.productInfo
-
+        //console.log(product)
         if (this.token){
           let userInfo = this.$store.state.userInfo
-          addShopToCart(userInfo.user_id,product.product_id,product.title,product.image,product.price,product.product_count).then(res => {
+          addShopToCart(userInfo.user_id,product).then(res => {
             console.log(res)
             if (res.data.message) {
               this.$toast.showToast(res.data.message)

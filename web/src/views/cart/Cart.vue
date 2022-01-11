@@ -12,15 +12,21 @@
     <Scroll class="content" ref="scroll">
       <div class="cart" v-if="cartList.length">
         <div class="cart-item" v-for="(item,index) in cartList" :key="index">
-          <check-button class="check" :is-checked="Boolean(item.isChecked)" @click.native="changeChecked(index)"></check-button>
+          <div  class="check">
+            <check-button :is-checked="Boolean(item.isChecked)" @click.native="changeChecked(index)"></check-button>
+          </div>
           <div class="shop-info">
-            <div class="image-box"><img :src="item.product_image" alt="cart_image"></div>
+            <div class="image-box"><img :src="item['product_image']" alt="cart_image"></div>
             <div class="info">
-              <p class="title">{{item.product_title}}</p>
-              <p class="price">{{item.product_price}}</p>
+              <p class="title">{{item['product_title']}}</p>
+              <div class="price-size">
+                <div class="price"><span class="discount-character">￥</span><span>{{item['product_price']}}</span></div>
+                <div class="size"><span>尺码：</span><span>{{item['size']}}</span><span class="down-character">﹀</span></div>
+              </div>
+
               <div class="button-box">
-                <button class="reduce" :disabled="item.product_count <= 1" @click="reduceCount(index)">-</button>
-                <span class="quantity">{{item.product_count}}</span>
+                <button class="reduce" :disabled="item['quantity'] <= 1" @click="reduceCount(index)">-</button>
+                <span class="quantity">{{item['quantity']}}</span>
                 <button class="add" @click="addCount(index)">+</button>
               </div>
             </div>
@@ -61,6 +67,7 @@
 
   import {getCommonRecommend,getUserRecommend,getUserCartData,updateChecked,
     updateProductCount,moveToCollection,remove} from "@/network/cart";
+
   export  default {
     name:'Cart',
     data(){
@@ -91,7 +98,7 @@
         let price = 0
         this.cartList.map((item) => {
           if (item.isChecked) {
-            price += item.product_count * item.product_price.substr(1,5)
+            (price += item['quantity'] * item['product_price']).toFixed(2)
           }
         })
         return Number(price.toFixed(2))
@@ -121,19 +128,19 @@
       //减少用户所点击的商品数量函数
       reduceCount(index){
         //减少对应商品的数量
-        this.cartList[index].product_count --
+        this.cartList[index]['quantity'] --
 
         //提交减少该产品的数量的请求
-        updateProductCount(this.user_id,this.cartList[index].product_id,this.cartList[index].product_count).then()
+        updateProductCount(this.user_id,this.cartList[index].product_id,this.cartList[index]['quantity']).then()
         //console.log(index,this.cartList[index])
       },
       //增加用户所点击的商品数量函数
       addCount(index){
          //增加对应商品的数量
-         this.cartList[index].product_count ++
+         this.cartList[index]['quantity'] ++
 
         //提交增加该产品的数量的请求
-        updateProductCount(this.user_id,this.cartList[index].product_id,this.cartList[index].product_count).then()
+        updateProductCount(this.user_id,this.cartList[index].product_id,this.cartList[index]['quantity']).then()
         //console.log(index,this.cartList[index])
       },
       changeChecked(index){
@@ -262,20 +269,16 @@
       //获取用户购物车数据函数
       getUserCartData (user_id) {
         getUserCartData(user_id).then(res => {
-          console.log(res.data)
           //清空之前的数据
           this.cartList = []
           //判断是否存在用户购物车数据
           if(res.data.user_cart_data) {
             //获取user_id
-            this.user_id = res.data.user_cart_data[1].user_id
-
+            this.user_id = res.data.user_id
             //遍历数组
-            res.data.user_cart_data[0].map((item) => {
-              //提取数据中的购物车数据
-              this.cartList.push(item)
-            })
-             this.checkProductIsCheck()
+            this.cartList =  res.data.user_cart_data
+            console.log(this.cartList)
+            this.checkProductIsCheck()
           }
           else {
             this.emptyMessage = res.data.empty
@@ -291,13 +294,13 @@
               this.targets.push(item.product_id)
             }
           }) 
-          console.log(this.cartList.length,this.targets)
+         // console.log(this.cartList.length,this.targets)
         }
       }
     },
     mounted() {
      
-
+      //console.log(this.cartList)
       const refresh = debounce(this.$refs.scroll.refresh, 200)
       this.$bus.$on('itemImageLoad',() => {
         refresh()
@@ -379,6 +382,8 @@
   }
   .cart-item{
     display: flex;
+    justify-items: center;
+    align-items: center;
     margin:1rem auto 1rem;
     padding:1rem;
     width: 90vw;
@@ -401,34 +406,75 @@
   }
   .image-box img{
     position: relative;
-    top:1rem
+    top:1rem;
+    width: 5rem;
   }
   .info{
     flex: 3;
   }
-  .image-box img{
-    width: 5rem;
-    height: 6rem;
+  .price-size{
+    display: flex;
+    margin: .8rem auto;
+    align-items: center;
+    justify-items: center;
   }
+  .price-size div{
+    flex: 1;
+  }
+  .size{
+    display: flex;
+    margin-left: 1rem;
+    height: 1.5rem;
+    color: #8a8686;
+    font-size: .8rem;
+    background-color: #f1eeee;
+    text-align: center;
+  }
+  .size span {
+    flex: 1;
+    height: 100%;
+    line-height: 1.5rem;
+  }
+  .size span:first-child{
+    flex: 1.5;
+  }
+  .discount-character{
+    font-size: .9rem;
+  }
+
   .price{
     color: #e02929;
     font-size: 1.2rem;
     font-weight: bold;
   }
   .button-box{
-    position: relative;
-    left: 60%;
-    width: 40%;
+    display: flex;
+    margin-left: 50%;
+    width: 6rem;
+    height: 1.5rem;
     min-width: 5rem;
-    height: 2rem;
+    text-align: center;
+    border: 1px solid #a9a9a9;
+    border-radius: .75rem;
+    line-height: 1.5rem;
+  }
+  .button-box>button,.button-box>span{
+    flex: 1;
   }
   .button-box button{
-    width: 1.6rem;
-    height: 1.6rem;
-    font-weight: bold;
+    font-size: 1.2rem;
+    line-height: 0;
+  }
+  .button-box button:first-child{
+
   }
   .button-box span{
-    padding: 0 .5rem;
+    height: 100%;
+    border: 1px solid #a9a9a9;
+    border-bottom: transparent;
+    border-top: transparent;
+    font-size: .9rem;
+
   }
 
 </style>

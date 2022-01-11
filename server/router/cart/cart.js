@@ -1,5 +1,3 @@
-const connect = require("../../plugins/connectMysql");
-const mysql_query = require("../../plugins/mysql_query");
 
 module.exports = app => {
     const express = require('express')
@@ -20,17 +18,17 @@ module.exports = app => {
         const user_id = paramsObj.user_id
     
         //创建查询语句，查询该用户在USER_SHOP表中是否存在商品数据
-        const  selectQuery = mysql_query.selectFields('mall_user_cart','product_id,product_title,product_image,product_price,quantity,isChecked',
+        const  selectQuery = mysql_query.selectFields('mall_user_cart','product_id,product_title,product_image,product_price,quantity,isChecked,size',
             `user_id = '${user_id}'`)
 
         //查询数据
         connection.query(selectQuery,(err,result) => {
             if (err) throw err
-            //console.log(Object.keys(result).length)
+
             if (Object.keys(result).length) {
                 //该用户已有商品数据，先进行数据处理再返回给前端
-                res.send({'user_cart_data':[result,{'user_id':user_id}]})
-                //console.log(result[0])
+                res.send({'user_cart_data':result,'user_id':user_id})
+
             }
             else {
                 res.send({'empty':'您的购物车空空如也...'})
@@ -43,9 +41,6 @@ module.exports = app => {
         //接收请求参数
         const paramsObj = JSON.parse(JSON.stringify(req.body))
         console.log(paramsObj)
-
-        //连接数据库
-        const connection = connect()
 
         //创建数据库修改语句
         const updateChecked = mysql_query.update('mall_user_cart',`isChecked = ${paramsObj.status}`,
@@ -64,10 +59,7 @@ module.exports = app => {
     router.post('/updateProductCount', (req,res) => {
         //接收请求参数
         const paramsObj = JSON.parse(JSON.stringify(req.body))
-        //console.log(paramsObj)
-
-        //连接数据库
-        const connection = connect()
+        console.log(paramsObj)
 
         //创建更新数据库语句
         const updateCount = mysql_query.update('mall_user_cart',`quantity = ${paramsObj.count}`,
@@ -78,15 +70,13 @@ module.exports = app => {
         connection.query(updateCount, (err) => {
             if (err) throw err
             res.send({'empty':'商品推荐数据暂无'})
-            console.log(`ID为：${paramsObj.user_id}的用户下的${paramsObj.product_id}产品数量+${paramsObj.count}`)
+            console.log(`ID为：${paramsObj.user_id}的用户下的${paramsObj.product_id}产品数量为${paramsObj.count}`)
         })
     })
 
     //接收前端获取商品推荐数据的请求，将数据返回给前端
     const selectDefault = mysql_query.selectAll('mall_common_recommend_goods')
     router.get('/commonRecommend', (req, res) => {
-        const connection = connect()
-
 
         connection.query(selectDefault, (err,result) => {
             if (err) throw err
@@ -103,8 +93,6 @@ module.exports = app => {
         const user_id= paramsObj.user_id
 
         const selectUser = mysql_query.selectAll('mall_user_recommend_goods',`user_id = '${user_id}'`)
-
-        const connection = connect()
 
         connection.query(selectUser,(err,result) => {
             if (err) throw err
@@ -141,10 +129,7 @@ module.exports = app => {
         //从新数组中拿到user_id
         let user_id = product_id_array.shift()
 
-        //连接数据库
-        const connection = connect()
-
-        //定义开关变量，解决Cannot set headers after they are sent to the client错误
+        //定义开关变量，解决Cannot set headers after they are sent to the client(发生了多次响应造成的)错误
         let isOver = false
         product_id_array.map(item => {
             const deleteQuery = mysql_query.deleteOperation('mall_user_cart',`user_id = '${user_id}' AND product_id = '${item}'`)
@@ -183,8 +168,6 @@ module.exports = app => {
        //从新数组中拿到user_id
        let user_id = product_id_array.shift()
 
-       //连接数据库
-        const connection = connect()
        //定义开关变量，解决Cannot set headers after they are sent to the client错误
         let isOver = false
         product_id_array.map(item => {

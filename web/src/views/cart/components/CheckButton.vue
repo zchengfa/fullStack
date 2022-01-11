@@ -1,6 +1,6 @@
 <template>
-  <div class="check-button">
-    <button :class="{checked:isChecked}"></button>
+  <div class="check-button" :class="{checked:isChecked}">
+    <button ></button>
   </div>
 
 </template>
@@ -20,16 +20,16 @@ export default {
 </script>
 
 <style scoped>
-  button{
-    position: relative;
-    top: 50%;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    background-image: url("~assets/image/cart/check.svg");
-    transform: translateY(-50%);
-  }
-  .checked{
-    background-image: url("~assets/image/cart/checked.svg");
-  }
+.check-button{
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  background-image: url("~assets/image/cart/check.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: transparent;
+}
+.checked{
+  background-image: url("~assets/image/cart/checked.png");
+}
 </style>

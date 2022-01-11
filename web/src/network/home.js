@@ -105,16 +105,12 @@ export function getTermsServiceData(){
 }
 
 //导出商品详情页添加商品到购物车函数
-export function addShopToCart (user_id,product_id,title,image,price,count) {
+export function addShopToCart (user_id,product) {
   return requestPost({
     url:'/addShopToCart',
-    data:qs.stringify({
+    data:{
       user_id,
-      product_id,
-      title,
-      image,
-      price,
-      count
-    })
+      product
+    }
   })
 }

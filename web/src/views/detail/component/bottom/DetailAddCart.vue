@@ -6,16 +6,18 @@
         <div class="image-box"><img :src="productInfo.image" alt="image"></div>
         <div class="info">
           <p class="info-title">{{productInfo.title}}</p>
-          <p class="price">￥{{productInfo.price}}</p>
+          <p class="price"><span class="discount-character">￥</span>{{productInfo.price}}</p>
         </div>
       </div>
+      <product-size :index="choseSizeObj.index"></product-size>
       <div class="count">
         <span class="label">数量</span>
-        <div class="button-box">
-          <button class="reduce" :disabled="count<=1" @click="reduceCount">-</button>
-          <span class="quantity">{{count}}</span>
-          <button class="add" @click="addCount">+</button>
-        </div>
+        <count :quantity="count" @reduce-count="reduceCount" @add-count="addCount"></count>
+<!--        <div class="button-box">-->
+<!--          <button class="reduce" :disabled="count<=1" @click="reduceCount">-</button>-->
+<!--          <span class="quantity">{{count}}</span>-->
+<!--          <button class="add" @click="addCount">+</button>-->
+<!--        </div>-->
       </div>
       <div class="submit">
         <button @click="submitAdd">确定</button>
@@ -25,6 +27,8 @@
 </template>
 
 <script>
+import ProductSize from "@/views/detail/component/content/ProductSize";
+import Count from "@/components/content/count/Count";
 export default {
   name: "DetailAddCart",
   props:{
@@ -40,6 +44,10 @@ export default {
         return {};
       }
     }
+  },
+  components:{
+    ProductSize,
+    Count
   },
   data(){
     return {
@@ -57,11 +65,11 @@ export default {
     },
     //提交商品添加信息
     submitAdd(){
-      this.$emit('submitAdd',this.count)
+      this.$emit('submitAdd',{
+        count:this.count,
+        size:this.choseSizeObj.item
+      })
     }
-  },
-  created() {
-    console.log(this.choseSizeObj)
   }
 }
 </script>
@@ -93,6 +101,9 @@ export default {
     font-size: 1.3rem;
     font-weight: bold;
     color: #e02929;
+  }
+  .discount-character{
+    font-size: .9rem;
   }
   .count{
     margin: 1rem auto 0;

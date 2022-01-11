@@ -65,6 +65,13 @@ export default {
     this.$bus.$on('addCount',(e)=>{
       this.count = e.quantity
     })
+  },
+  beforeDestroy() {
+    this.$bus.$emit('sizeChoseOver',{quantity:this.count,index:this.index})
+    console.log('beforeD')
+  },
+  destroyed() {
+    console.log('destroyed')
   }
 }
 </script>

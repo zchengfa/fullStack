@@ -1,5 +1,5 @@
 <template>
-  <div class="detail">
+  <div class="detail" >
     <detail-nav-bar :nav-list="nav_list" @scrollThere="scrollThere" ref="detailNav"></detail-nav-bar>
     <Scroll class="content" @click.native="closeAddCart" ref="scroll" :probe-type="3" @scroll="contentScroll">
       <div class="shop-show" v-if="Object.keys(detailData).length" >
@@ -250,7 +250,7 @@
       refreshScroll(){
         //当参数组件高度变化后，刷新scroll组件
         this.$refs.scroll.refresh()
-      }
+      },
 
     },
     created() {
@@ -266,7 +266,9 @@
         console.log(this.choseSizeObj)
         //将接收好的值传入detail-bottom-bar组件（在组件中进行传值操作）
       })
-
+      this.$bus.$on('sizeChoseOver',(e)=>{
+        console.log(e)
+      })
       //判断该组件是否创建
       if (this.$refs.detailBottomBar) {
         //创建完页面后检测用户是否登录，若已经登录，获取该用户是否已经收藏过该商品，从而改变收藏按钮的状态，若未登录，让收藏按钮处于默认状态

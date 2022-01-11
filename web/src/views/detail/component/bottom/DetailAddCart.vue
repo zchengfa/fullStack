@@ -12,12 +12,7 @@
       <product-size :index="choseSizeObj.index"></product-size>
       <div class="count">
         <span class="label">数量</span>
-        <count :quantity="count" @reduce-count="reduceCount" @add-count="addCount"></count>
-<!--        <div class="button-box">-->
-<!--          <button class="reduce" :disabled="count<=1" @click="reduceCount">-</button>-->
-<!--          <span class="quantity">{{count}}</span>-->
-<!--          <button class="add" @click="addCount">+</button>-->
-<!--        </div>-->
+        <count :count="count" class="count-component"></count>
       </div>
       <div class="submit">
         <button @click="submitAdd">确定</button>
@@ -55,14 +50,6 @@ export default {
     }
   },
   methods:{
-    //减少数量
-    reduceCount(){
-      return this.count>1? this.count--:this.count=1
-    },
-    //增加数量
-    addCount(){
-      return this.count ++
-    },
     //提交商品添加信息
     submitAdd(){
       this.$emit('submitAdd',{
@@ -70,6 +57,14 @@ export default {
         size:this.choseSizeObj.item
       })
     }
+  },
+  mounted() {
+    this.$bus.$on('reduceCount',(e)=>{
+      this.count = e.quantity
+    })
+    this.$bus.$on('addCount',(e)=>{
+      this.count = e.quantity
+    })
   }
 }
 </script>
@@ -106,31 +101,14 @@ export default {
     font-size: .9rem;
   }
   .count{
+    display:flex;
     margin: 1rem auto 0;
     width: 90%;
     height: 3rem;
   }
-  .button-box{
-    position: relative;
-    left: 1rem;
-    display: inline-block;
-    width: 80vw;
-    text-align: right;
-  }
-  button,.quantity{
-    width: 2rem;
-    height: 2rem;
-    line-height: 2rem;
-  }
-  button{
-    font-size: 1.3rem;
-    font-weight: bold;
-    background-color: transparent;
-  }
-  .quantity{
-    display: inline-block;
-    text-align: center;
-    background-color: #e3dede;
+  .count-component{
+    margin-left: 60%;
+    width: 30%;
   }
   .submit{
     margin: 1rem auto;

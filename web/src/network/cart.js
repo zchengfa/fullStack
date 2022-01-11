@@ -41,13 +41,14 @@ export function updateChecked (user_id,product_id,status) {
 }
 
 //导出更新用户对应商品数量函数
-export function updateProductCount (user_id,product_id,count) {
+export function updateProductCount (user_id,product_id,count,size) {
     return requestPost({
         url:'home/api/updateProductCount',
         data:qs.stringify({
             user_id,
             product_id,
-            count
+            count,
+            size
         })
     })
 }

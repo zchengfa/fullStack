@@ -55,13 +55,16 @@ export default {
    return{
      size:[],
      isActive:false,
-     currentIndex:-1
+     currentIndex:-1,
+     clickCount:0
    }
   },
   methods:{
     choseSize(item,index){
-      this.currentIndex = index
-      this.$bus.$emit('choseSize',{item,index})
+      this.clickCount++
+      this.currentIndex === index?this.currentIndex = -1:this.currentIndex = index
+      // this.currentIndex = index
+      this.currentIndex === index?this.$bus.$emit('choseSize',{item,index}):this.$bus.$emit('choseSize',{item:null,index:-1})
     }
   },
   created() {

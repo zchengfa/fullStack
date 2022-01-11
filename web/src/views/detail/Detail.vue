@@ -170,23 +170,28 @@
         }
       },
       submitAdd(e) {
-        //确认加入购物车，隐藏确认加入购物车组件，并将要加入购物车的商品数据提交给后端
-        this.isShowAddCart = !this.isShowAddCart
-        this.productInfo.product_count = e.count
-        this.productInfo.size = e.size
-        const product = this.productInfo
-        //console.log(product)
-        if (this.token){
-          let userInfo = this.$store.state.userInfo
-          addShopToCart(userInfo.user_id,product).then(res => {
-            console.log(res)
-            if (res.data.message) {
-              this.$toast.showToast(res.data.message)
-            }
-            //this.$toast.showToast(res.data.message)
-          }).catch(err => {
-            console.log(err)
-          })
+        console.log(e)
+        if (e.size !==null){
+          this.productInfo.product_count = e.count
+          this.productInfo.size = e.size
+          const product = this.productInfo
+          if (this.token){
+            let userInfo = this.$store.state.userInfo
+            addShopToCart(userInfo.user_id,product).then(res => {
+              console.log(res)
+              //确认加入购物车，隐藏确认加入购物车组件，并将要加入购物车的商品数据提交给后端
+              this.isShowAddCart = !this.isShowAddCart
+              if (res.data.message) {
+                this.$toast.showToast(res.data.message)
+              }
+              //this.$toast.showToast(res.data.message)
+            }).catch(err => {
+              console.log(err)
+            })
+          }
+        }
+        else{
+          this.$toast.showToast('请选择尺码')
         }
         //使用vuex状态管理来管理购物车数据
         // this.productInfo.shopCount = count

@@ -23,12 +23,7 @@
                 <div class="price"><span class="discount-character">￥</span><span>{{item['product_price']}}</span></div>
                 <div class="size"><span>尺码：</span><span>{{item['size']}}</span><span class="down-character">﹀</span></div>
               </div>
-
-              <div class="button-box">
-                <button class="reduce" :disabled="item['quantity'] <= 1" @click="reduceCount(index)">-</button>
-                <span class="quantity">{{item['quantity']}}</span>
-                <button class="add" @click="addCount(index)">+</button>
-              </div>
+              <count class="count-component" :count="item['quantity']" :index="index"></count>
             </div>
           </div>
         </div>
@@ -67,6 +62,7 @@
 
   import {getCommonRecommend,getUserRecommend,getUserCartData,updateChecked,
     updateProductCount,moveToCollection,remove} from "@/network/cart";
+  import Count from "../../components/content/count/Count";
 
   export  default {
     name:'Cart',
@@ -90,7 +86,8 @@
       CheckButton,
       SettleCart,
       Empty,
-      Recommend
+      Recommend,
+      Count
     },
     computed:{
       totalPrice () {
@@ -131,7 +128,7 @@
         this.cartList[index]['quantity'] --
 
         //提交减少该产品的数量的请求
-        updateProductCount(this.user_id,this.cartList[index].product_id,this.cartList[index]['quantity']).then()
+        updateProductCount(this.user_id,this.cartList[index].product_id,this.cartList[index]['quantity'],this.cartList[index]['size']).then()
         //console.log(index,this.cartList[index])
       },
       //增加用户所点击的商品数量函数
@@ -140,11 +137,11 @@
          this.cartList[index]['quantity'] ++
 
         //提交增加该产品的数量的请求
-        updateProductCount(this.user_id,this.cartList[index].product_id,this.cartList[index]['quantity']).then()
-        //console.log(index,this.cartList[index])
+        updateProductCount(this.user_id,this.cartList[index].product_id,this.cartList[index]['quantity'],this.cartList[index]['size']).then()
+
       },
       changeChecked(index){
-        //console.log(this.targets)
+
         //点击选中按钮，修改按钮状态，并将修改后的状态提交到后端
         this.cartList[index].isChecked = !this.cartList[index].isChecked
 
@@ -309,10 +306,28 @@
         //进入页面时刷新scroll
         setTimeout(()=>{
           this.$refs.scroll.scroll.refresh()
-        },300)
+        },0)
       }
       //判断用户是否登录,若已登录显示用户的购物车物品列表,未登录，显示登录提示
+      this.$bus.$on('addCount',(e)=>{
+        let index = e.index
+        console.log(index)
+        //增加对应商品的数量
+        this.cartList[index]['quantity'] ++
 
+        //提交增加该产品的数量的请求
+        updateProductCount(this.user_id,this.cartList[index].product_id,this.cartList[index]['quantity'],this.cartList[index]['size']).then()
+
+      })
+      this.$bus.$on('reduceCount',(e)=>{
+        let index = e.index
+        //减少对应商品的数量
+        this.cartList[index]['quantity'] --
+
+        //提交减少该产品的数量的请求
+        updateProductCount(this.user_id,this.cartList[index].product_id,this.cartList[index]['quantity'],this.cartList[index]['size']).then()
+        //console.log(index,this.cartList[index])
+      })
       if (this.$store.state.token){
         let userInfo = this.$store.state.userInfo
         this.isLogin = false
@@ -447,34 +462,7 @@
     font-size: 1.2rem;
     font-weight: bold;
   }
-  .button-box{
-    display: flex;
+  .count-component{
     margin-left: 50%;
-    width: 6rem;
-    height: 1.5rem;
-    min-width: 5rem;
-    text-align: center;
-    border: 1px solid #a9a9a9;
-    border-radius: .75rem;
-    line-height: 1.5rem;
   }
-  .button-box>button,.button-box>span{
-    flex: 1;
-  }
-  .button-box button{
-    font-size: 1.2rem;
-    line-height: 0;
-  }
-  .button-box button:first-child{
-
-  }
-  .button-box span{
-    height: 100%;
-    border: 1px solid #a9a9a9;
-    border-bottom: transparent;
-    border-top: transparent;
-    font-size: .9rem;
-
-  }
-
 </style>

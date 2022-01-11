@@ -63,7 +63,7 @@ module.exports = app => {
 
         //创建更新数据库语句
         const updateCount = mysql_query.update('mall_user_cart',`quantity = ${paramsObj.count}`,
-                                                `user_id = '${paramsObj.user_id}' AND product_id = '${paramsObj.product_id}'`)
+                                                `user_id = '${paramsObj.user_id}' AND product_id = '${paramsObj.product_id}' AND size = '${paramsObj.size}'`)
 
 
         //执行更新语句

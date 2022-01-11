@@ -29,7 +29,7 @@ module.exports = app => {
             //如果result不为空，说明当前用户已添加过该商品，只要增加该商品的数量即可
             if (Object.keys(result).length) {
                 //创建修改商品数据语句
-                const updateShop = mysql_query.update(tableName,`quantity = ${result[0]['quantity'] + product.product_count}`,`product_id = '${result[0]['product_id']}'`)
+                const updateShop = mysql_query.update(tableName,`quantity = ${result[0]['quantity'] + product.product_count}`,`product_id = '${result[0]['product_id']}' AND size = '${result[0]['size']}'`)
 
                 //执行修改商品数据语句
                 connection.query(updateShop, (err) => {

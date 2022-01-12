@@ -77,7 +77,8 @@
         emptyMessage: '',
         emptyRecommend:'',
         checkedNum:0,
-        targets:[]
+        targets:[],
+        updateCheckedTargets:[]
       }
     },
     components:{
@@ -154,10 +155,21 @@
           //删除该商品前，需要找到该商品在targets数组中的位置
           this.targets.splice(this.targets.indexOf(this.cartList[index].product_id),1)
         }
-
+        let obj = {
+          product_id:this.cartList[index].product_id,
+          isChecked:this.cartList[index].isChecked,
+          size:this.cartList[index].size
+        }
+        this.updateCheckedTargets.push(obj)
         //提交更新请求
-        updateChecked(this.user_id, this.cartList[index].product_id, this.cartList[index].isChecked).then()
+        this.updateCheckedFunc(this.user_id,this.updateCheckedTargets)
 
+      },
+      updateCheckedFunc(user_id,targets){
+        updateChecked(user_id,targets).then(res=>{
+          //成功后清空this.updateCheckedTargets
+          res.data.success?this.updateCheckedTargets = []:null
+        })
       },
       //全选与取消全选
       selectAll(){
@@ -167,9 +179,16 @@
             //修改状态
             item.isChecked = false
 
-            //将修改后的状态提交给后端，让后端修改数据库中该用户的状态
-            updateChecked(this.user_id,item.product_id,item.isChecked).then()
+            let obj = {
+              product_id:item.product_id,
+              isChecked:item.isChecked,
+              size:item.size
+            }
+            this.updateCheckedTargets.push(obj)
+
           })
+          //将修改后的状态提交给后端，让后端修改数据库中该用户的状态
+          this.updateCheckedFunc(this.user_id,this.updateCheckedTargets)
           //取消全选，清空targets数组
           this.targets = []
         }
@@ -181,9 +200,15 @@
 
             //将cartList数组中的product_id全部加入targets中
             this.targets.push(item.product_id)
-            //将修改后的状态提交给后端，让后端修改数据库中该用户的状态
-            updateChecked(this.user_id,item.product_id,item.isChecked).then()
+            let obj = {
+              product_id:item.product_id,
+              isChecked:item.isChecked,
+              size:item.size
+            }
+            this.updateCheckedTargets.push(obj)
           })
+          //将修改后的状态提交给后端，让后端修改数据库中该用户的状态
+          this.updateCheckedFunc(this.user_id,this.updateCheckedTargets)
         }
       },
       settle(){

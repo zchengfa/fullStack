@@ -40,17 +40,21 @@ module.exports = app => {
     router.post('/updateChecked', (req,res) => {
         //接收请求参数
         const paramsObj = JSON.parse(JSON.stringify(req.body))
-        console.log(paramsObj)
 
-        //创建数据库修改语句
-        const updateChecked = mysql_query.update('mall_user_cart',`isChecked = ${paramsObj.status}`,
-                        `user_id = '${paramsObj.user_id}' AND product_id = '${paramsObj.product_id}'`)
+        let targets = paramsObj.targets
+        let finishCount = 0
+        console.log(paramsObj.user_id)
+        targets.map((item)=>{
+            const updateChecked = mysql_query.update('mall_user_cart', `isChecked = ${item.isChecked}`,
+                `user_id = '${paramsObj.user_id}' AND product_id = '${item.product_id}' AND size = '${item.size}'`)
 
-        //执行修改数据库语句
-        connection.query(updateChecked, (err) => {
-            if (err) throw err
-            res.send({'message':'已改变该产品状态'})
-            console.log(`ID为：${paramsObj.user_id}的用户下的${paramsObj.product_id}产品状态修改成功`)
+            connection.query(updateChecked,(err,result)=>{
+                if (err) throw err
+                else{
+                  Object.keys(result).length? finishCount++:null
+                }
+                finishCount === targets.length?res.send({'success':1}):null
+            })
         })
     })
 

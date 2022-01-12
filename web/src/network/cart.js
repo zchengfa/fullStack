@@ -29,14 +29,13 @@ export function getUserRecommend (user_id) {
 }
 
 //导出更新用户对应商品状态函数
-export function updateChecked (user_id,product_id,status) {
+export function updateChecked (user_id,targets) {
     return requestPost({
         url:'home/api/updateChecked',
-        data:qs.stringify({
+        data:{
             user_id,
-            product_id,
-            status
-        })
+            targets
+        }
     })
 }
 

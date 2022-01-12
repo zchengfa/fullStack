@@ -53,3 +53,36 @@ connection.query(`${selectOne+';'+selectTwo}`,(err,results) =>{
     }
 })
 ```
+
+##### 二、组件强制重新渲染
+###### 场景：项目中多处使用了ProductSize组件，在某一ProductSize组件中进行了尺寸选择操作，想让ProductSize其他组件的选择也跟着变化
+###### 问题：其他组件选择项无变化
+###### 原因：组件没有重新渲染，无法显示最新操作
+###### 推荐做法：改变该组件所绑定的key值，vue会根据组件中key值是否变化来进行组件的渲染
+
+```vue
+
+<template>
+  <product-size :key="productSizeKey"></product-size>
+</template>
+<script>
+import ProductSize from "./ProductSize";
+
+export default {
+  data() {
+    return {
+      productSizeKey: 0
+    }
+  },
+  components:{
+    ProductSize
+  },
+  methods: {
+    closeAddCart() {
+      //触发该方法后改变productSizeKey的值，达到组件重新渲染的目的
+      this.productSizeKey += 1
+    }
+  }
+}
+</script>
+```

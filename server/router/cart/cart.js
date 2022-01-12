@@ -52,7 +52,6 @@ module.exports = app => {
             res.send({'message':'已改变该产品状态'})
             console.log(`ID为：${paramsObj.user_id}的用户下的${paramsObj.product_id}产品状态修改成功`)
         })
-
     })
 
     //接收前端更新购物车状态请求(需要前端参数：user_id,product_id,count)(用户ID，产品ID，需要更改的数量)

@@ -17,14 +17,12 @@
           <span class="comment-num">评论：{{baseData['comment_number']}}条</span>
           <span class="sell-num">销量：{{baseData['sales']}}件</span>
         </p>
-        <product-size size-name="clothes"></product-size>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import ProductSize from "@/views/detail/component/content/ProductSize";
 export default {
   name: "DetailBase",
   props:{
@@ -34,9 +32,6 @@ export default {
         return {}
       }
     }
-  },
-  components:{
-    ProductSize
   },
   computed:{
     originPrice(){

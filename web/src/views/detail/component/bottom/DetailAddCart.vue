@@ -3,7 +3,7 @@
     <div class="content">
       <div class="title"><h4>商品信息</h4></div>
       <div class="shop-info">
-        <div class="image-box"><img :src="productInfo.image" alt="image"></div>
+        <div class="image-box"><img :src="productInfo['image']" alt="image"></div>
         <div class="info">
           <p class="info-title">{{productInfo.title}}</p>
           <p class="price"><span class="discount-character">￥</span>{{productInfo.price}}</p>
@@ -46,7 +46,7 @@ export default {
   },
   data(){
     return {
-      count:1
+      count:1,
     }
   },
   methods:{
@@ -65,13 +65,7 @@ export default {
     this.$bus.$on('addCount',(e)=>{
       this.count = e.quantity
     })
-  },
-  beforeDestroy() {
-    this.$bus.$emit('sizeChoseOver',{quantity:this.count,index:this.index})
-    console.log('beforeD')
-  },
-  destroyed() {
-    console.log('destroyed')
+
   }
 }
 </script>

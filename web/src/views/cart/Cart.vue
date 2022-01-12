@@ -9,7 +9,7 @@
         <button v-show="isComplete" class="complete">完成</button>
       </div>
     </nav-bar>
-    <Scroll class="content" ref="scroll">
+    <Scroll class="content" :class="{'has-settle-component':cartList.length}" ref="scroll">
       <div class="cart" v-if="cartList.length">
         <div class="cart-item" v-for="(item,index) in cartList" :key="index">
           <div  class="check">
@@ -142,7 +142,7 @@
       },
       changeChecked(index){
 
-        //点击选中按钮，修改按钮状态，并将修改后的状态提交到后端
+        //点击选中按钮，修改按钮状态
         this.cartList[index].isChecked = !this.cartList[index].isChecked
 
         //点击选中按钮时判断是否已选中，若已选中则将该商品的id加入到targets数组中
@@ -274,7 +274,7 @@
             this.user_id = res.data.user_id
             //遍历数组
             this.cartList =  res.data.user_cart_data
-            console.log(this.cartList)
+
             this.checkProductIsCheck()
           }
           else {
@@ -306,12 +306,11 @@
         //进入页面时刷新scroll
         setTimeout(()=>{
           this.$refs.scroll.scroll.refresh()
-        },0)
+        },30)
       }
       //判断用户是否登录,若已登录显示用户的购物车物品列表,未登录，显示登录提示
       this.$bus.$on('addCount',(e)=>{
         let index = e.index
-        console.log(index)
         //增加对应商品的数量
         this.cartList[index]['quantity'] ++
 
@@ -365,6 +364,10 @@
     height: calc(100vh - 98px);
     overflow: hidden;
     background-color: rgba(205, 198, 198, 0.2);
+  }
+  /*用户购物车中有商品时会使计算组件出现，所以需要更少的可是滚动区域*/
+  .has-settle-component{
+    height: calc(100vh - 98px - 3rem);
   }
   .login-tip{
     margin-left: auto;

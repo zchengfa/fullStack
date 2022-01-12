@@ -4,6 +4,7 @@
     <Scroll class="content" @click.native="closeAddCart" ref="scroll" :probe-type="3" @scroll="contentScroll">
       <div class="shop-show" v-if="Object.keys(detailData).length" >
         <detail-base ref="base" class="detail-base" :base-data="detailData.baseData"></detail-base>
+        <product-size :index="choseSizeObj.index" :key="productSizeKey"></product-size>
         <detail-params  @refresh="refreshScroll" ref="params" :params="detailData.shop_detail_params"></detail-params>
         <detail-comment ref="comment" :comment-num="Number(comment_num)"></detail-comment>
         <detail-image ref="image" :images-data="detailData.images" @imageLoadOver="imageLoad"></detail-image>
@@ -36,7 +37,7 @@
   import {debounce} from "@/common/utils"
 
   import mixins from "@/common/mixins/mixins";
-
+  import ProductSize from "./component/content/ProductSize";
 
   export default {
     name: "detail",
@@ -57,8 +58,8 @@
         choseSizeObj:{
           item:null,
           index:null
-        }
-
+        },
+        productSizeKey:0
       }
     },
     components:{
@@ -71,7 +72,8 @@
       BackTop,
       DetailBottomBar,
       DetailAddCart,
-      Scroll
+      Scroll,
+      ProductSize
     },
     computed:{
       nav_list(){
@@ -125,6 +127,9 @@
       //点击addCart组件外部，隐藏addCart组件
       closeAddCart(){
         this.isShowAddCart = false
+
+        //当用户关闭添加商品到购物车组件时改变详情页中DetailBase组件绑定的key值，当key值改变，Vue就会重新渲染该组件，从而达到刷新组件值的目的
+        this.productSizeKey +=1
       },
       changeUserProductCollectionStatus(user_id,product_id,status) {
         changeUserProductCollectionStatus(user_id,product_id,status).then(res => {
@@ -170,7 +175,6 @@
         }
       },
       submitAdd(e) {
-        console.log(e)
         if (e.size !==null){
           this.productInfo.product_count = e.count
           this.productInfo.size = e.size
@@ -178,13 +182,16 @@
           if (this.token){
             let userInfo = this.$store.state.userInfo
             addShopToCart(userInfo.user_id,product).then(res => {
-              console.log(res)
-              //确认加入购物车，隐藏确认加入购物车组件，并将要加入购物车的商品数据提交给后端
-              this.isShowAddCart = !this.isShowAddCart
+
               if (res.data.message) {
+                //确认加入购物车，隐藏确认加入购物车组件，并将要加入购物车的商品数据提交给后端
+                this.isShowAddCart = !this.isShowAddCart
+
+                //点击确定按钮改变productSizeKey值，使detail组件中的ProductSize组件重新渲染，达到更新值的目的
+                this.productSizeKey +=1
                 this.$toast.showToast(res.data.message)
               }
-              //this.$toast.showToast(res.data.message)
+
             }).catch(err => {
               console.log(err)
             })
@@ -224,15 +231,14 @@
 
         //将id和type作为参数进行请求
         getGoodsDetail(this.type,this.id).then(res=> {
-          console.log(res.data)
           if (!res.data.err){
             //将请求到的数据赋给detailData
             this.productInfo.product_id = res.data.baseData.product_id
             this.detailData = res.data
             //获取detailData中的评论数据
-            this.comment_num = this.detailData.baseData.comment_number
+            this.comment_num = this.detailData.baseData['comment_number']
           }
-          //console.log(res)
+
         }).catch((err) => {
           console.log(err)
         })
@@ -263,12 +269,9 @@
         //当用户点击某一尺寸项后，将发出的值跟索引用choseSizeObj来接收
         this.choseSizeObj.item = e.item
         this.choseSizeObj.index = e.index
-        console.log(this.choseSizeObj)
         //将接收好的值传入detail-bottom-bar组件（在组件中进行传值操作）
       })
-      this.$bus.$on('sizeChoseOver',(e)=>{
-        console.log(e)
-      })
+
       //判断该组件是否创建
       if (this.$refs.detailBottomBar) {
         //创建完页面后检测用户是否登录，若已经登录，获取该用户是否已经收藏过该商品，从而改变收藏按钮的状态，若未登录，让收藏按钮处于默认状态
@@ -282,7 +285,6 @@
     watch:{
       $route(to,from){
         if (to.path !== from.path){
-          //console.log(to,from)
           this.initData()
         }
 

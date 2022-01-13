@@ -1,3 +1,4 @@
+const mysql_query = require("../../plugins/mysql_query");
 
 module.exports = app => {
     const express = require('express')
@@ -58,7 +59,7 @@ module.exports = app => {
         })
     })
 
-    //接收前端更新购物车状态请求(需要前端参数：user_id,product_id,count)(用户ID，产品ID，需要更改的数量)
+    //接收前端更新购物车状态请求(需要前端参数：user_id,product_id,count,size)(用户ID，产品ID，需要更改的数量,尺码)
     router.post('/updateProductCount', (req,res) => {
         //接收请求参数
         const paramsObj = JSON.parse(JSON.stringify(req.body))
@@ -74,6 +75,76 @@ module.exports = app => {
             if (err) throw err
             res.send({'empty':'商品推荐数据暂无'})
             console.log(`ID为：${paramsObj.user_id}的用户下的${paramsObj.product_id}产品数量为${paramsObj.count}`)
+        })
+    })
+
+    //接收前端更新购物车商品尺码请求，并将更改结果反馈给前端
+    router.post('/updateProductSize',(req,res)=>{
+        const paramsObj = JSON.parse(JSON.stringify(req.body))
+        console.log(paramsObj)
+        let tableName = 'mall_user_cart'
+
+        const updateProductSize = mysql_query.update(tableName,`size = '${paramsObj.size}'`,
+            `user_id = ${paramsObj.user_id} AND product_id = '${paramsObj.product_id}' AND size = '${paramsObj.origin_size}'`)
+
+        connection.query(updateProductSize,(err,result)=>{
+          if (err) throw err
+          else{
+              if (result){
+                  //更新完数据后，查询该用户下是否有两件及以上的商品数据的（ID,尺码）是一致的，若有则将相同数据的商品合并成一条数据
+                  const selectSameProduct = mysql_query.selectAll(tableName,`user_id = ${paramsObj.user_id} AND product_id = '${paramsObj.product_id}' AND size = '${paramsObj.size}'`)
+                  connection.query(selectSameProduct,(err,results)=>{
+                      if (err) throw err
+                      else{
+                          let mergeProduct = {
+                              user_id:paramsObj.user_id,
+                              product_id:paramsObj.product_id,
+                              product_title:results[0]['product_title'],
+                              product_image:results[0]['product_image'],
+                              product_price:results[0]['product_price'],
+                              isChecked:1,
+                              size:paramsObj.size
+                          }
+                          let mergeQuantity = 0
+
+                          //有两条及以上相同数据的商品
+                          if (results.length>=2){
+                              results.map((item)=>{
+                                  mergeQuantity +=item.quantity
+                              })
+
+                              mergeProduct.quantity = mergeQuantity
+                              //删除相同数据的商品
+                              const deleteSameProduct = mysql_query.deleteOperation(tableName,`user_id = ${paramsObj.user_id} AND product_id = '${paramsObj.product_id}' AND size = '${paramsObj.size}'`)
+                              connection.query(deleteSameProduct,(err)=>{
+                                  if (err) throw err
+                                  else{
+                                      //删完之后插入合并的商品数据
+                                      const insertMergePro = mysql_query.insert(tableName,'user_id,product_id,product_title,product_image,product_price,quantity,isChecked,size',
+                                          `${mergeProduct.user_id},'${mergeProduct.product_id}','${mergeProduct.product_title}','${mergeProduct.product_image}',${mergeProduct.product_price},
+                                      ${mergeProduct.quantity},${mergeProduct.isChecked},'${mergeProduct.size}'`)
+
+                                      connection.query(insertMergePro,(err,insertRes)=>{
+                                          if (err) throw err
+                                          else{
+
+                                              //插入成功后，反馈mergeSuccess给前端，表示有多条相同数据商品，已经进行了更新合并操作
+                                              insertRes?res.send({'mergeSuccess':1}):null
+                                          }
+                                      })
+                                  }
+                              })
+                          }
+                          //只有一条相同的，更新完后反馈updateSuccess给前端，表示没有多条相同数据的商品，只进行了尺码更新操作
+                          else{
+                              res.send({'updateSuccess':1})
+                          }
+                      }
+                  })
+              }
+
+
+          }
         })
     })
 

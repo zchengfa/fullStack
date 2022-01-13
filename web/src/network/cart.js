@@ -52,6 +52,19 @@ export function updateProductCount (user_id,product_id,count,size) {
     })
 }
 
+//导出更新用户商品尺码函数
+export function updateProductSize(user_id,product_id,origin_size,size){
+    return requestPost({
+        url:'home/api/updateProductSize',
+        data:{
+            user_id,
+            product_id,
+            origin_size,
+            size
+        }
+    })
+}
+
 //导出将商品移入对应用户收藏夹函数
 export function moveToCollection (user_id,targets) {
     return requestPost({

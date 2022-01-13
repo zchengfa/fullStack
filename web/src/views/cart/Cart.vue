@@ -21,9 +21,9 @@
               <p class="title">{{item['product_title']}}</p>
               <div class="price-size">
                 <div class="price"><span class="discount-character">￥</span><span>{{item['product_price']}}</span></div>
-                <div class="size"><span>尺码：</span><span>{{item['size']}}</span><span class="down-character">﹀</span></div>
+                <div class="size" @click="changeSize(item['size'],item['product_image'],index)"><span>尺码：</span><span>{{item['size']}}</span><span class="down-character">﹀</span></div>
               </div>
-              <count class="count-component" :count="item['quantity']" :index="index"></count>
+              <count class="count-component" :key="countComponentKey" :count="item['quantity']" :index="index"></count>
             </div>
           </div>
         </div>
@@ -46,6 +46,7 @@
                  @moveToCollection="moveToCollection"
                  @remove="remove"
     ></settle-cart>
+    <change-size class="change-size-component"  :product-image="changeSizeImage" :item="changeSizeItem" v-if="isShowChangeSize"></change-size>
   </div>
 </template>
 
@@ -61,8 +62,9 @@
   import SettleCart from "@/views/cart/components/SettleCart";
 
   import {getCommonRecommend,getUserRecommend,getUserCartData,updateChecked,
-    updateProductCount,moveToCollection,remove} from "@/network/cart";
-  import Count from "../../components/content/count/Count";
+    updateProductCount,moveToCollection,remove,updateProductSize} from "@/network/cart";
+  import Count from "@/components/content/count/Count";
+  import ChangeSize from "@/components/content/changeSize/ChangeSize";
 
   export  default {
     name:'Cart',
@@ -78,7 +80,12 @@
         emptyRecommend:'',
         checkedNum:0,
         targets:[],
-        updateCheckedTargets:[]
+        updateCheckedTargets:[],
+        isShowChangeSize:false,
+        changeSizeImage:'',
+        changeSizeItem:'',
+        changeSizeIndex:-1,
+        countComponentKey:0
       }
     },
     components:{
@@ -88,7 +95,8 @@
       SettleCart,
       Empty,
       Recommend,
-      Count
+      Count,
+      ChangeSize
     },
     computed:{
       totalPrice () {
@@ -315,10 +323,17 @@
             if (item.isChecked){
               this.targets.push(item.product_id)
             }
-          }) 
-         // console.log(this.cartList.length,this.targets)
+          })
         }
+      },
+      //点击尺码盒子更改尺码
+      changeSize(size,image,index){
+        this.isShowChangeSize = true
+        this.changeSizeItem = size
+        this.changeSizeImage = image
+        this.changeSizeIndex = index
       }
+
     },
     mounted() {
      
@@ -350,7 +365,57 @@
 
         //提交减少该产品的数量的请求
         updateProductCount(this.user_id,this.cartList[index].product_id,this.cartList[index]['quantity'],this.cartList[index]['size']).then()
-        //console.log(index,this.cartList[index])
+
+      })
+
+      this.$bus.$on('submitChangeSize',(size)=>{
+
+        //点击确认更改尺码按钮后先判断跟之前的尺码是否一样，若一样，则无需向后端发送更改尺码的请求，反之则发起更改尺码请求
+        if (this.changeSizeItem !== size){
+          updateProductSize(this.user_id,this.cartList[this.changeSizeIndex].product_id,this.changeSizeItem,size).then(res=>{
+            console.log(res)
+            //是更新尺码或合并商品成功的响应，将新尺码给该商品
+            if (res.data.updateSuccess || res.data.mergeSuccess){
+              this.cartList[this.changeSizeIndex].size = size
+            }
+
+            //若是合并商品成功响应，不仅需要更新尺码，还得更新数量，并且还需将购物车中相同数据且除点击外的商品进行删除，只保留点击的商品项
+            if (res.data.mergeSuccess){
+                //遍历购物车数据，查询当前操作商品的相同（尺码）数据项
+              //相同数据的索引
+              let sameProIndex = []
+
+              //合并后的数量
+              let mergeQuantity = 0
+
+              //需要删除的数据的索引
+              let needDeleteIndex = null
+              this.cartList.map((item,index)=>{
+                //如果是尺码相同并且不是用户点击的那一项商品，将其删除
+                if (item.size===size && item.product_id===this.cartList[this.changeSizeIndex].product_id){
+                  sameProIndex.push(index)
+                }
+               if(item.size===size && item.product_id===this.cartList[this.changeSizeIndex].product_id && index !==this.changeSizeIndex){
+                  needDeleteIndex = index
+                }
+              })
+
+              sameProIndex.map(item=>{
+                mergeQuantity +=this.cartList[item].quantity
+              })
+
+              this.cartList[this.changeSizeIndex].quantity = mergeQuantity
+
+              //改变count组件的key值，重新渲染组件,以更新数据
+              this.countComponentKey +=1
+
+              this.cartList.splice(needDeleteIndex,1)
+
+            }
+          })
+        }
+        //console.log(size,this.changeSizeItem===size)
+        this.isShowChangeSize = false
       })
       if (this.$store.state.token){
         let userInfo = this.$store.state.userInfo
@@ -484,7 +549,6 @@
   .discount-character{
     font-size: .9rem;
   }
-
   .price{
     color: #e02929;
     font-size: 1.2rem;
@@ -492,5 +556,13 @@
   }
   .count-component{
     margin-left: 50%;
+  }
+  .change-size-component{
+    position: fixed;
+    top:0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(138, 134, 134, 0.2);
+    z-index: 13;
   }
 </style>

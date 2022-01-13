@@ -9,7 +9,7 @@
           <p class="price"><span class="discount-character">￥</span>{{productInfo.price}}</p>
         </div>
       </div>
-      <product-size :index="choseSizeObj.index"></product-size>
+      <product-size :index="choseSizeObj.index" :item-size="choseSizeObj.item"></product-size>
       <div class="count">
         <span class="label">数量</span>
         <count :count="count" class="count-component"></count>

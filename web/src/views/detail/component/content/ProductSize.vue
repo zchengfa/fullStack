@@ -3,7 +3,7 @@
     <slot name="title"><h3 class="title">{{title}}</h3></slot>
 <!--当传过来的插槽名与尺寸名一致时才能使用该插槽-->
     <slot :name="sizeName">
-      <div v-for="(item,index) in size" :class="{'active':currentIndex===index}" @click="choseSize(item,index)" :key="item+index">
+      <div v-for="(item,index) in size" :class="{'active':currentIndex===index || item===sizeItem}" @click="choseSize(item,index)" :key="item+index">
         <span>{{item}}</span>
       </div>
     </slot>
@@ -49,18 +49,26 @@ export default {
       default(){
         return null
       }
+    },
+    itemSize:{
+      type:String,
+      default(){
+        return ''
+      }
     }
   },
   data(){
    return{
      size:[],
      isActive:false,
-     currentIndex:-1
+     currentIndex:-1,
+     sizeItem:''
    }
   },
   methods:{
     choseSize(item,index){
       this.currentIndex === index?this.currentIndex = -1:this.currentIndex = index
+      this.sizeItem === item?this.sizeItem = null:this.sizeItem = item
       // this.currentIndex = index
       this.currentIndex === index?this.$bus.$emit('choseSize',{item,index}):this.$bus.$emit('choseSize',{item:null,index:-1})
     }
@@ -68,7 +76,15 @@ export default {
   created() {
     if (this.sizeName ==='clothes' || this.sizeName ==='pants'){
       this.sizeName==='clothes'?this.size=this.clothesSize:this.size=this.pantsSize
+
+      //当父组件传入index时，直接将传过来的值赋给index
       this.currentIndex = this.index
+
+      //当父组件传入item时就需要获取到该item在尺码中的index以及将对应的item给sizeItem
+      if (this.itemSize){
+        this.currentIndex = this.size.indexOf(this.itemSize)
+        this.sizeItem = this.itemSize
+      }
     }
     else{
 

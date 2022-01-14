@@ -44,7 +44,6 @@ export default {
       else {
         this.$toast.showToast('请选择尺码')
       }
-
     }
   },
   created() {

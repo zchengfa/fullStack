@@ -3,17 +3,15 @@
     <div class="swiper-container">
       <ul class="swiper-list">
         <li v-for="(item, index) in banner" v-show="index===mark" :key="index">
-          <div class="item-container">
+          <router-link :to="{name:'bannerDetail',params:{brand_id:1,brand:2}}" class="item">
             <img :src="item.imagePath" alt="itemImage" @load="imageLoad">
-          </div>
+          </router-link>
         </li>
       </ul>
     </div>
     <swiper-item :banner="banner" :mark="mark"></swiper-item>
-    <div class="swiper-controller">
-      <button class="previous" @click="previousPage(mark)"><img src="~assets/image/swiper/previous.png" alt="previous"></button>
-      <button class="next" @click="nextPage(mark)"><img src="~assets/image/swiper/next.png" alt="previous"></button>
-    </div>
+    <button class="previous" @click="previousPage(mark)"><img src="~assets/image/swiper/previous.png" alt="previous"></button>
+    <button class="next" @click="nextPage(mark)"><img src="~assets/image/swiper/next.png" alt="previous"></button>
   </div>
 </template>
 
@@ -104,23 +102,27 @@
   ul li{
     flex:1;
   }
-  img{
+  .item{
+    display: block;
     width: 100%;
-    height: 26vh;
   }
-  .swiper-controller {
+  .item img{
+    width: 100%;
+  }
+   .previous,.next{
     position: absolute;
     top:50%;
-    width: 100%;
+  }
+  .previous {
     transform: translateY(-50%);
+    left: 0;
   }
-  .swiper-controller button:first-child {
-    float: left;
+  .next {
+
+    left: 100%;
+    transform: translateX(-100%) translateY(-50%);
   }
-  .swiper-controller button:last-child {
-    float: right;
-  }
-  .swiper-controller img {
+  button img {
     width: 2rem;
     height: 2rem;
   }

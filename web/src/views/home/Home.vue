@@ -8,7 +8,7 @@
       <menu-list v-if="hasMenuData" :menu-list="menuList"></menu-list>
       <tab-control :class="{fixed: isTabFixed}" ref="tabControlTwo" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
       <goods-data :goods="goods[currentType].list" :current-type="currentType"></goods-data>
-      <div class="no-more" v-if="noMore"><p>没有更多了哦!</p></div>
+      <div class="no-more" v-show="noMore"><p>没有更多了哦!</p></div>
     </Scroll>
     <back-top v-show="isShowBackTop" @click.native="backTop"></back-top>
 	</div>
@@ -35,7 +35,7 @@
     mixins:[backTopMixins],
     data(){
       return {
-        banner:null,
+        banner:[],
         menuList: [],
         currentType:'pop',
         goods:{
@@ -97,6 +97,7 @@
       getHomeMultiData(){
         getHomeMultiData().then(res =>{
           this.banner =res.data[0].multiData[0].banner
+          console.log(this.banner)
           let result = res.data[0].multiData[0]['iconList']
           result ? this.menuList = result : null
           result ? this.hasMenuData = true : this.hasMenuData = false
@@ -112,13 +113,11 @@
         //每获取一次数据就让当前类型商品的页数加一
         const page = this.goods[type].page +1
         getGoodsData(user_id,type, page).then(res => {
-          console.log(res.data)
           if(res.data.length===0){
             this.noMore = true
             setTimeout(() => {
               this.noMore = false
             },1000)
-            console.log('没有数据！')
           }
           else {
             //将获取到的数据数组通过...语法糖对数组进行解构加入到list数组中

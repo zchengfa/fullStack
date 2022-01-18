@@ -3,8 +3,8 @@
     <div class="swiper-container">
       <ul class="swiper-list">
         <li v-for="(item, index) in banner" v-show="index===mark" :key="index">
-          <router-link :to="{name:'bannerDetail',params:{brand_id:1,brand:2}}" class="item">
-            <img :src="item.imagePath" alt="itemImage" @load="imageLoad">
+          <router-link :to="{name:'bannerDetail',params:{brand_id:item.brand_id,brand:item.brand,banner_image:item.banner_image}}" class="item">
+            <img :src="item.banner_image" alt="itemImage" @load="imageLoad">
           </router-link>
         </li>
       </ul>

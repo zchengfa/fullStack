@@ -4,10 +4,13 @@ const http = require('http')
 const cors = require('cors')
 const {verifyToken} = require("./util/token");
 const mysql_query = require("./plugins/mysql_query");
+const bodyParser = require("body-parser");
 const app = express()
 const server = http.createServer(app)
 
-
+//用于解析post请求体中传递过来的参数
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended:false}))
 
 //允许跨域
 app.use(cors())
@@ -49,7 +52,8 @@ app.use((req,res,next)=>{
         `/home/api/userProductCollectionStatus??user_id=${user_id}&product_id=${product_id}`,
         '/register',
         '/termsService',
-        '/submitDataApi'
+        '/submitDataApi',
+        '/homeContent/brand_logo'
     ]
     if (urlWhiteList.indexOf(req.url) >= 0){
         next()
@@ -108,6 +112,9 @@ require('./router/admin/shopManage')(app)
 
 //导入用户管理模块
 require('./router/admin/memberManage')(app)
+
+//导入首页内容详情模块
+require('./router/homeContent/bannerDetail')(app)
 
 server.listen(3000, err =>{
     if(err){

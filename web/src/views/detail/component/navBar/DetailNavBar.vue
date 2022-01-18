@@ -15,8 +15,10 @@
 
 <script>
   import NavBar from "@/components/common/navbar/NavBar";
+  import {backPreviousPageMixins} from '@/common/mixins/mixins.js'
   export default {
     name: "DetailNavBar",
+    mixins:[backPreviousPageMixins],
     props:{
       navList:{
         type:Array,
@@ -34,10 +36,6 @@
       NavBar
     },
     methods:{
-      goBack(){
-        //点击返回图标返回之前的页面
-        this.$router.back()
-      },
       itemClick(index){
         this.currentIndex =index
         this.$emit('scrollThere',index)

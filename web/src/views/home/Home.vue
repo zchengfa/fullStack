@@ -5,7 +5,7 @@
     <Scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll"
             :pull-up-load="true" @pullingUp="loadMore">
       <swiper class="swiper" :banner="banner" @swiperImageLoad="swiperImageLoad"></swiper>
-      <menu-list v-if="hasMenuData" :menu-list="menuList"></menu-list>
+      <menu-list v-if="hasMenuData"></menu-list>
       <tab-control :class="{fixed: isTabFixed}" ref="tabControlTwo" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
       <goods-data :goods="goods[currentType].list" :current-type="currentType"></goods-data>
       <div class="no-more" v-show="noMore"><p>没有更多了哦!</p></div>
@@ -36,7 +36,6 @@
     data(){
       return {
         banner:[],
-        menuList: [],
         currentType:'pop',
         goods:{
           'pop':{page: 0,  list: []},
@@ -46,7 +45,7 @@
         tabOffsetTop:0,
         noMore:false,
         userCollections:[],
-        hasMenuData:true,
+        hasMenuData:false,
         collectedStateArray:{
           'pop':[],
           'sell':[],
@@ -96,11 +95,11 @@
        */
       getHomeMultiData(){
         getHomeMultiData().then(res =>{
-          this.banner =res.data[0].multiData[0].banner
+          this.banner =res.data
           console.log(this.banner)
-          let result = res.data[0].multiData[0]['iconList']
-          result ? this.menuList = result : null
-          result ? this.hasMenuData = true : this.hasMenuData = false
+          //let result = res.data[0].multiData[0]['iconList']
+          // result ? this.menuList = result : null
+          // result ? this.hasMenuData = true : this.hasMenuData = false
         }).catch(err => {
           console.log(err)
         })

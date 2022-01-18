@@ -62,7 +62,16 @@ const closeCurrentPageMixins = {
     }
 }
 
+const backPreviousPageMixins = {
+    methods:{
+        goBack(){
+            this.$router.back()
+        }
+    }
+}
+
 module.exports = {
     backTopMixins,
-    closeCurrentPageMixins
+    closeCurrentPageMixins,
+    backPreviousPageMixins
 }

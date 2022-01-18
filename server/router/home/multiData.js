@@ -3,18 +3,16 @@ module.exports = app =>{
 
     const router = express.Router()
 
-    const collectionModel = require('../../model/multiDataModel')
+    const {selectAll} = require('../../plugins/mysql_query')
+    const connection = require('../../plugins/connectMysql')()
 
     router.get('/multiData', (req, res)=>{
-        collectionModel.find({}, (err, doc)=>{
-            if(err){
-                console.log(err)
-            }
-            else {
-                //console.log(doc)
-                res.send(doc)
-            }
-        })
+        const selectQuery = selectAll('mall_banner')
+        connection.query(selectQuery, (err,result)=>{
+           if (err) throw err
+            result?res.send(result):null
+       })
+
     })
 
     app.use('/home/api', router)

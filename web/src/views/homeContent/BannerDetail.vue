@@ -17,6 +17,9 @@
           </div>
         </div>
       </div>
+      <div class="special-filter">
+        <filter-bar></filter-bar>
+      </div>
     </div>
   </Scroll>
 
@@ -27,13 +30,15 @@ import NavBar from "@/components/common/navbar/NavBar";
 import {backPreviousPageMixins} from '@/common/mixins/mixins'
 import Scroll from "@/components/common/scroll/Scroll"
 import {getBrandLogo} from "@/network/homeContent";
+import FilterBar from "@/components/content/filterBar/FilterBar";
 
 export default {
   name: "BannerDetail",
   mixins:[backPreviousPageMixins],
   components:{
     NavBar,
-    Scroll
+    Scroll,
+    FilterBar
   },
   data(){
     return {

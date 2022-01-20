@@ -3,7 +3,7 @@
  <div class="filter-bar-item" v-for="(item,index) in list" :key="item+index" @click="filterData(index)">
    <div :class="{'active':currentIndex===index}">{{item}}</div>
    <div class="item-icon-container">
-     <i class="filter-icon" :class="{'filter-icon-up':isUp&&currentIndex===index,'filter-icon-down':isDown&&currentIndex===index}" v-show="index ===0 || index === 1"></i>
+     <i class="filter-icon" :class="{'filter-icon-up':isUp&&(currentIndex===index)&&(index===0||index===1),'filter-icon-down':isDown&&(currentIndex===index)&&(index===0||index===1)}" v-show="index ===0 || index === 1"></i>
    </div>
  </div>
 </div>
@@ -17,17 +17,66 @@ export default {
       list:['价格','折扣','销量','筛选'],
       isUp:false,
       isDown:false,
-      clickCount:0,
+      clickPriceCount:0,
+      clickDiscountCount:0,
+      clickSalesCount:0,
+      clickFilterCount:0,
       currentIndex:-1
     }
   },
   methods:{
     filterData(index){
       this.currentIndex = index
-      this.clickCount++
-      this.clickCount%2===0?this.isUp=false:this.isDown=true
-      this.clickCount%2!==0?this.isUp=true:this.isDown=false
-      console.log(index,this.clickCount)
+
+      if (index === 0){
+        this.clickPriceCount++
+        this.clickDiscountCount=0
+        this.clickSalesCount=0
+        this.clickFilterCount=0
+
+        this.clickPriceCount===1?this.isDown=true:this.isDown=false
+        this.clickPriceCount===2?this.isUp=true:this.isUp=false
+        if (this.clickPriceCount===3){
+          this.isUp = false
+          this.isDown = false
+          this.currentIndex = -1
+          this.clickPriceCount = 0
+        }
+      }
+      else if(index === 1){
+        this.clickPriceCount=0
+        this.clickDiscountCount++
+        this.clickSalesCount=0
+        this.clickFilterCount=0
+        this.clickDiscountCount===1?this.isDown=true:this.isDown=false
+        this.clickDiscountCount===2?this.isUp=true:this.isUp=false
+        if (this.clickDiscountCount===3){
+          this.isUp = false
+          this.isDown = false
+          this.currentIndex = -1
+          this.clickDiscountCount = 0
+        }
+      }
+      else if (index===2){
+        this.clickPriceCount=0
+        this.clickDiscountCount=0
+        this.clickSalesCount++
+        this.clickFilterCount=0
+        this.clickSalesCount===1?this.currentIndex=index:null
+        this.clickSalesCount===2?this.currentIndex=-1:null
+        this.clickSalesCount===2?this.clickSalesCount=0:null
+      }
+      else {
+        this.clickPriceCount=0
+        this.clickDiscountCount=0
+        this.clickSalesCount=0
+        this.clickFilterCount++
+        this.clickFilterCount===1?this.currentIndex=index:null
+        this.clickFilterCount===2?this.currentIndex=-1:null
+        this.clickFilterCount===2?this.clickFilterCount=0:null
+      }
+
+      console.log(index,this.clickPriceCount,this.clickDiscountCount,this.clickSalesCount,this.clickFilterCount)
     }
   }
 }

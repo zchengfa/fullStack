@@ -81,7 +81,7 @@ const routes =[
 		component:ProductCollection
 	},
 	{
-		path: '/homeContent?brand_id=:brand_id&brand_name=:brand',
+		path: '/homeContent?brand_id=:brand_id&brand_name=:brand&banner_image=:banner_image',
 		name:'bannerDetail',
 		component:BannerDetail
 	}

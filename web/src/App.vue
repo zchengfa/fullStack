@@ -15,7 +15,7 @@
 		components: {
 			MainTabBar
 		}
-	}
+  }
 </script>
 <style scoped>
 	@import url("assets/css/normalize.css");

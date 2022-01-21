@@ -53,7 +53,8 @@ app.use((req,res,next)=>{
         '/register',
         '/termsService',
         '/submitDataApi',
-        '/homeContent/brand_logo'
+        '/homeContent/brand_logo',
+        '/homeContent/product'
     ]
     if (urlWhiteList.indexOf(req.url) >= 0){
         next()
@@ -171,12 +172,12 @@ app.post('/submitDataApi',(req, res) => {
                     })
                 }
 
-                connection.query(mysql_query.insert('mall_goods_size','product_id,size',`'${ID}','${paramsObj.size}'`),(err,doc)=>{
-                    if (err) throw err
-                    else{
-                        console.log(doc)
-                    }
-                })
+                // connection.query(mysql_query.insert('mall_goods_size','product_id,size',`'${ID}','${paramsObj.size}'`),(err,doc)=>{
+                //     if (err) throw err
+                //     else{
+                //         console.log(doc)
+                //     }
+                // })
 
                 isOver?res.send({'success':'添加成功'}):false
             }

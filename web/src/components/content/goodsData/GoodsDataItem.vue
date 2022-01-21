@@ -2,7 +2,7 @@
   <div class="goods-data-item">
     <div class="list-box">
       <trademark></trademark>
-      <div class="list-image" @click="itemClick"><img :src="list['imagePath']" alt="itemImage" @load="imageLoad"></div>
+      <div class="list-image" @click="itemClick"><img :src="list['imagePath'] || list['product_image']" alt="itemImage" @load="imageLoad"></div>
       <div class="list-content">
         <div class="title">{{list.title}}</div>
         <div class="list-others">
@@ -24,7 +24,7 @@
             <span class="favorite">{{list.favorite}}</span>
           </div>
           <div class="comments">
-            <span>近期{{list.comment_num}}条评价</span>
+            <span>近期{{list.comment_num || list['comment_number']}}条评价</span>
           </div>
         </div>
       </div>

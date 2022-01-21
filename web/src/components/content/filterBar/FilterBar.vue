@@ -75,8 +75,6 @@ export default {
         this.clickFilterCount===2?this.currentIndex=-1:null
         this.clickFilterCount===2?this.clickFilterCount=0:null
       }
-
-      console.log(index,this.clickPriceCount,this.clickDiscountCount,this.clickSalesCount,this.clickFilterCount)
     }
   }
 }
@@ -86,11 +84,11 @@ export default {
 .active{
   color: #fd0098;
 }
-.filter-icon-up{
-  background-image: url("~assets/image/filterBar/arrow_filter_up.png") !important;
+.item-icon-container .filter-icon-up{
+  background-image: url("~assets/image/filterBar/arrow_filter_up.png");
 }
-.filter-icon-down{
-  background-image: url("~assets/image/filterBar/arrow_filter_down.png") !important;
+.item-icon-container .filter-icon-down{
+  background-image: url("~assets/image/filterBar/arrow_filter_down.png");
 }
 .filter-bar-container{
   display: flex;
@@ -99,6 +97,7 @@ export default {
   align-items: center;
   justify-items: center;
   text-align: center;
+  border-top: 1px solid #e1dbdb;
 }
 .filter-bar-container .filter-bar-item{
   display: flex;
@@ -120,8 +119,8 @@ export default {
   position: relative;
   margin-top: .2rem;
   display: inline-block;
-  width: 1rem;
-  height: 1rem;
+  width: 12px;
+  height: 12px;
   background-image: url("~assets/image/filterBar/arrow_filter_normal.png");
   background-size: cover;
 }

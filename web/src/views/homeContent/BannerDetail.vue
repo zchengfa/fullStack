@@ -2,15 +2,15 @@
   <Scroll class="content" ref="scroll">
     <nav-bar class="nav-bar">
         <div class="back" slot="left" @click="goBack"><img src="~assets/image/detail/back.svg" alt="back_image"></div>
-        <div slot="center" class="center-nav">{{$route.params.brand}}专场</div>
+        <div slot="center" class="center-nav">{{$route.query.brand}}专场</div>
         <div slot="right" class="right-nav" @click="backToHome"><img src="~assets/image/home/icon_home.svg" alt="home_image"></div>
       </nav-bar>
     <div class="brand-special">
       <div class="special-base">
-        <img class="base-image" :src="$route.params.banner_image" alt="banner_image">
+        <img class="base-image" :src="$route.query.banner_image" alt="banner_image">
         <div class="base-info">
           <div class="brand-logo"><img :src="brand_logo" alt="brand_logo"></div>
-          <div class="brand-text"><span>{{$route.params.brand}}</span></div>
+          <div class="brand-text"><span>{{$route.query.brand}}</span></div>
           <div class="brand-operation">
             <button class="collect"></button>
             <button class="share"></button>
@@ -20,6 +20,7 @@
       <div class="special-filter">
         <filter-bar></filter-bar>
       </div>
+      <goods-data :goods="goods" :current-type="currentType"></goods-data>
     </div>
   </Scroll>
 
@@ -29,8 +30,10 @@
 import NavBar from "@/components/common/navbar/NavBar";
 import {backPreviousPageMixins} from '@/common/mixins/mixins'
 import Scroll from "@/components/common/scroll/Scroll"
-import {getBrandLogo} from "@/network/homeContent";
+import {getBrandLogo,getProductByID} from "@/network/homeContent";
 import FilterBar from "@/components/content/filterBar/FilterBar";
+import GoodsData from "@/components/content/goodsData/GoodsData";
+import {debounce} from "@/common/utils";
 
 export default {
   name: "BannerDetail",
@@ -38,11 +41,15 @@ export default {
   components:{
     NavBar,
     Scroll,
-    FilterBar
+    FilterBar,
+    GoodsData
   },
   data(){
     return {
-      brand_logo:''
+      brand_logo:'',
+      goods:[],
+      brand_id:this.$route.query.brand_id,
+      currentType:''
     }
   },
   methods:{
@@ -54,12 +61,26 @@ export default {
         res.data.brand_logo?this.brand_logo=res.data.brand_logo:''
       })
     },
+    getProductById(brand_id){
+      getProductByID(brand_id).then(res=>{
+        res.data.goods?this.goods=res.data.goods:null
+        res.data.goods?this.currentType=res.data.goods[0]['sell_type']:null
+        console.log(res)
+      })
+    },
     initData() {
-      this.getBrandLogo(this.$route.params.brand_id)
+      this.getBrandLogo(this.brand_id)
+      this.getProductById(this.brand_id)
     }
   },
   created() {
     this.initData()
+  },
+  mounted() {
+    this.$bus.$on('itemImageLoad',()=>{
+      //防抖函数处理scroll组件的刷新
+      this.$refs.scroll?debounce(this.$refs.scroll.refresh)():null
+    })
   }
 }
 </script>
@@ -140,5 +161,13 @@ export default {
 
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAm9JREFUWAntmL9rFEEUx+80gpAiNhYqEiSFjaSzEU4RRPz1N9jbSAohoqCN2IqC2Ka0VIOF2CixEdIFO20ENQEbxR8Y1PXz3bzZvb3Z2dvbG1eLG/hkZt57+77v3u7eZq/TaWkkSbIDnsBt2NmSbFiGInbBJ9BYhdlwdEseipiH16DxEU5WShPQg0fwHkYdLzlgW6UATmLUqWVL/ov5KnS948zx2wKbTLUKkrAKgGuggjQewkxWFJujoGJ+wCLsyZyRFuScgtNwE56BzoL0hMbTTIqNTpPGYmaMtCDnDFyGt1A23phxOZPE4K6ZqJ0h71l4Z4KaXsENOAN7YT98AY3D/QWllsww5oJkukbupEm3/qwwnRhMi+2WxTwo+MyYFIwNN+TaDkuW8xvzRfDuImz74Dvo2p0vyGFIR8HYcEMi96k/sz4WSoPvXiqaJPe9GHOM3SHynLNcunOOeEJmwHcANuEnHPTiMKbDc4xgIME0bGxlShaqDiXmusUtlcaZc6wOkeOS5XlRKtJnJO4Q3IXdfeZ8aYkaF8TxepKvW57q51MuG15FKOi45VgLq9TzDH0Y1kvTOWVxj2vGB8NiFeTuqPx5FJTMHXT1gsgttopwytz/OHNe8goDurr1N72QCAW559G0l7zCUKY7VRE/ius5wUm32/06ykHB2LJKg8ERHWW6sS7qaGVOChrWykmHJh0a1oFh/v/2GvqgyvmiivoaVNWNPq1U28W6Dq2a4bxztDA7LaedS1JtD/Se/ddepZ2aOgN6XZeWNHvOV5hx6FcIBbQ1pHWlUMTghoAeNP05pu4H0Wu7NMo7M1jUv97/AXM25V6LWeJqAAAAAElFTkSuQmCC);
   background-size: cover;
+}
+.special-filter{
+  position: relative;
+  padding-top: 1.5rem;
+  margin-top: -1.5rem;
+  background-color: #fff;
+  border-top-left-radius: 1.2rem;
+  border-top-right-radius: 1.2rem;
 }
 </style>

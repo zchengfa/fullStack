@@ -86,3 +86,19 @@ export default {
 }
 </script>
 ```
+
+##### 三、vue-router路由传参刷新页面后参数丢失
+###### 解决：使用query传参
+###### 缺点：url过长，会被用户看到参数
+```vue
+<tempalte>
+<ul class="swiper-list">
+  <li v-for="(item, index) in banner" v-show="index===mark" :key="index">
+    <router-link :to="{name:'bannerDetail',query:{brand_id:item.brand_id,brand:item.brand,banner_image:item.banner_image}}" class="item">
+      <img :src="item.banner_image" alt="itemImage" @load="imageLoad">
+    </router-link>
+  </li>
+</ul>
+</tempalte>
+
+```

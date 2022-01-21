@@ -8,3 +8,13 @@ export function getBrandLogo(brand_id){
         }
     })
 }
+
+export function getProductByID(brand_id){
+    return requestPost({
+        url:'/homeContent/product',
+        data:{
+            brand_id
+        }
+    })
+}
+

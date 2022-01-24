@@ -1,29 +1,31 @@
 <template>
-  <Scroll class="content" ref="scroll">
-    <nav-bar class="nav-bar">
+  <div>
+    <Scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll">
+      <nav-bar class="nav-bar">
         <div class="back" slot="left" @click="goBack"><img src="~assets/image/detail/back.svg" alt="back_image"></div>
         <div slot="center" class="center-nav">{{$route.query.brand}}专场</div>
         <div slot="right" class="right-nav" @click="backToHome"><img src="~assets/image/home/icon_home.svg" alt="home_image"></div>
       </nav-bar>
-    <div class="brand-special">
-      <div class="special-base">
-        <img class="base-image" :src="$route.query.banner_image" alt="banner_image">
-        <div class="base-info">
-          <div class="brand-logo"><img :src="brand_logo" alt="brand_logo"></div>
-          <div class="brand-text"><span>{{$route.query.brand}}</span></div>
-          <div class="brand-operation">
-            <button class="collect"></button>
-            <button class="share"></button>
+      <div class="brand-special">
+        <div class="special-base">
+          <img class="base-image" :src="$route.query.banner_image" alt="banner_image">
+          <div class="base-info">
+            <div class="brand-logo"><img :src="brand_logo" alt="brand_logo"></div>
+            <div class="brand-text"><span>{{$route.query.brand}}</span></div>
+            <div class="brand-operation">
+              <button class="collect"></button>
+              <button class="share"></button>
+            </div>
           </div>
         </div>
+        <div class="special-filter">
+          <filter-bar></filter-bar>
+        </div>
+        <goods-data :goods="goods" :current-type="currentType"></goods-data>
       </div>
-      <div class="special-filter">
-        <filter-bar></filter-bar>
-      </div>
-      <goods-data :goods="goods" :current-type="currentType"></goods-data>
-    </div>
-  </Scroll>
-
+    </Scroll>
+    <back-top  v-show="isShowBackTop" @click.native="backTop"></back-top>
+  </div>
 </template>
 
 <script>
@@ -34,15 +36,18 @@ import {getBrandLogo,getProductByID} from "@/network/homeContent";
 import FilterBar from "@/components/content/filterBar/FilterBar";
 import GoodsData from "@/components/content/goodsData/GoodsData";
 import {debounce} from "@/common/utils";
+import {backTopMixins} from '@/common/mixins/mixins'
+import BackTop from "@/components/content/backTop/BackTop";
 
 export default {
   name: "BannerDetail",
-  mixins:[backPreviousPageMixins],
+  mixins:[backPreviousPageMixins,backTopMixins],
   components:{
     NavBar,
     Scroll,
     FilterBar,
-    GoodsData
+    GoodsData,
+    BackTop
   },
   data(){
     return {
@@ -53,14 +58,17 @@ export default {
     }
   },
   methods:{
+    //返回首页
     backToHome(){
       this.$router.push('/home')
     },
+    //获取品牌logo
     getBrandLogo(brand_id){
       getBrandLogo(brand_id).then(res=>{
         res.data.brand_logo?this.brand_logo=res.data.brand_logo:''
       })
     },
+    //根据品牌id，获取该品牌所有商品数据
     getProductById(brand_id){
       getProductByID(brand_id).then(res=>{
         res.data.goods?this.goods=res.data.goods:null

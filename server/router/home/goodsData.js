@@ -8,7 +8,7 @@ module.exports = app =>{
     router.get('/goodsData', (req, res)=>{
         //获取请求参数
         const query = req.query
-        //console.log(query)
+        console.log(query)
         let isCollected = 0
         let data = []
         //根据请求参数来查询数据库里的数据
@@ -24,13 +24,14 @@ module.exports = app =>{
                 price: item.price,
                 product_id: item.product_id,
                 title:item['product_title'],
-                type: item['sell_type'],
+                sell_type: item['sell_type'],
+                product_type:item['product_type'],
                 isCollected:isCollected,
                 isHot:item['isHot'],
                 isPreferential:item['isPreferential'],
                 preferential_type:item.preferential_type,
                 self_support:item.self_support,
-                comment_num:item['comment_number'],
+                comment_number:item['comment_number'],
                 discount:item.discount
             })
         }

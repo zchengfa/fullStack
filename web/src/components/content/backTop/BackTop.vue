@@ -22,7 +22,7 @@ name: "BackTop"
     border-radius: 50%;
     background-color: #e2dcdc;
     text-align: center;
-    z-index: 10;
+    z-index: 14;
   }
   img{
     position: relative;

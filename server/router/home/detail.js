@@ -16,23 +16,25 @@ module.exports = app =>{
          * 查询数据库中在详情页需要的数据
          * (基础数据表、商品图片列表、商品参数表)
          */
-        const selectBase = mysql_query.selectAll('mall_goods',`product_id = '${query.product_id}' AND sell_type = '${query.product_type}'`)
+        const selectBase = mysql_query.selectAll('mall_goods',`product_id = '${query.product_id}'`)
         const selectAttribute = mysql_query.selectFields('mall_goods_attribute','attribute_title,attribute',`product_id = '${query.product_id}'`)
         const selectGallery = mysql_query.selectFields('mall_goods_gallery','product_image',`product_id = '${query.product_id}'`)
+        const selectRecommend = mysql_query.selectAll('mall_goods',`product_type = '${query.product_type}'`)
 
+        let detail = {
+            baseData:{},
+            images:[],
+            shop_detail_params:[],
+            recommend_data:[]
+        }
 
         //查询基础数据
         connection.query(selectBase,(err,result) =>{
             if (err) throw err
             else{
                 if (result){
-                    let detail = {
-                        baseData:{},
-                        images:[],
-                        shop_detail_params:[]
-                    }
                     result.map(item => {
-                       detail.baseData = item
+                        detail.baseData = item
                     })
                     //查询商品参数
                     connection.query(selectAttribute,(err,results)=>{
@@ -48,28 +50,23 @@ module.exports = app =>{
                                     resultsGallery.map(item =>{
                                         detail.images.push(item)
                                     })
-                                    res.send(detail)
+                                    //根据用户点击的商品类型，从该类型中随机选取一部分商品数据返回前端
+                                    connection.query(selectRecommend,(err,recommend)=>{
+                                        if (err) throw err
+                                        else{
+                                            recommend.map(item=>{
+                                                item.product_id!==query.product_id?detail.recommend_data.push(item):null
+                                            })
+                                            res.send(detail)
+                                        }
+                                    })
                                 }
                             })
                         }
-
                     })
-
-
                 }
             }
         })
-
-        //根据请求参数来查询数据库里的数据
-        // collectionModel.find(query, (err, doc)=>{
-        //     if(err){
-        //         console.log(err)
-        //     }
-        //     else {
-        //         res.send(doc)
-        //
-        //     }
-        // })
     })
 
     //获取对应用户里对应商品的收藏状态，若该用户已收藏该商品，给前端返回true，反之返回false表示为收藏该商品

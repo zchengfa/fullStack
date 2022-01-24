@@ -12,7 +12,7 @@
           <label class="discount-label" for="discountTitle">折扣：</label>
           <span class="discount" id="discountTitle">{{baseData.discount}}折</span>
         </p>
-        <p class="title">{{baseData.title}}</p>
+        <p class="title">{{baseData.title || baseData['product_title']}}</p>
         <p class="other">
           <span class="comment-num">评论：{{baseData['comment_number']}}条</span>
           <span class="sell-num">销量：{{baseData['sales']}}件</span>

@@ -8,7 +8,7 @@
         <detail-params  @refresh="refreshScroll" ref="params" :params="detailData.shop_detail_params"></detail-params>
         <detail-comment ref="comment" :comment-num="Number(comment_num)"></detail-comment>
         <detail-image ref="image" :images-data="detailData.images" @imageLoadOver="imageLoad"></detail-image>
-        <Recommend ref="recommend" :recommend-data="detailData.shop_recommend" :current-type="type" recommend-title="商品推荐"></Recommend>
+        <Recommend ref="recommend" :recommend-data="detailData['recommend_data']" :current-type="sellType" recommend-title="商品推荐"></Recommend>
       </div>
     </Scroll>
     <back-top v-show="isShowBackTop" @click.native="backTop"></back-top>
@@ -46,6 +46,7 @@
       return {
         id:null,
         type:null,
+        sellType:null,
         detailData: {},
         comment_num:0,
         contentTopYs:null,
@@ -80,6 +81,18 @@
         //当评论数量大于99的时候让评论数量为99+，反之则为原评论数
         if (this.comment_num>99) return ["商品","参数",`评论(99+)`,"推荐"]
         return ["商品","参数",`评论(${this.comment_num})`,"推荐"]
+      }
+    },
+    watch:{
+      $route(to,from){
+        if (to.path !== from.path){
+          this.initData()
+        }
+      }
+    },
+    beforeRouteUpdate(to,from){
+      if (to.path !== from.path){
+        this.$refs.scroll?this.$refs.scroll.scrollTo(0,0,300):null
       }
     },
     methods:{
@@ -228,9 +241,9 @@
         //将路由传过来的参数赋值给id和type
         this.id = this.$route.params.product_id
         this.type = this.$route.params.product_type
-
+        this.sellType = this.$route.params.sell_type
         //将id和type作为参数进行请求
-        getGoodsDetail(this.type,this.id).then(res=> {
+        getGoodsDetail(this.type,this.sellType,this.id).then(res=> {
           if (!res.data.err){
             //将请求到的数据赋给detailData
             this.productInfo.product_id = res.data.baseData.product_id
@@ -280,14 +293,6 @@
           //若用户已经登录
           this.getProductCollectionStatus(userInfo.user_id,this.id)
         }
-      }
-    },
-    watch:{
-      $route(to,from){
-        if (to.path !== from.path){
-          this.initData()
-        }
-
       }
     }
   }

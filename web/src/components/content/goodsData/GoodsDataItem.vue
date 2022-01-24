@@ -4,11 +4,11 @@
       <trademark></trademark>
       <div class="list-image" @click="itemClick"><img :src="list['imagePath'] || list['product_image']" alt="itemImage" @load="imageLoad"></div>
       <div class="list-content">
-        <div class="title">{{list.title}}</div>
+        <div class="title">{{list.title || list['product_title']}}</div>
         <div class="list-others">
           <div v-if="list.self_support" class="self-support">
             <span>自营</span>
-            <span>mall商城自营</span>
+            <span>mall自营</span>
           </div>
           <div class="preferential" v-if="list.isPreferential || list.isHot">
             <span class="preferential">优惠：</span>
@@ -24,7 +24,7 @@
             <span class="favorite">{{list.favorite}}</span>
           </div>
           <div class="comments">
-            <span>近期{{list.comment_num || list['comment_number']}}条评价</span>
+            <span>近期{{list['comment_number']}}条评价</span>
           </div>
         </div>
       </div>
@@ -104,7 +104,7 @@
       },
       itemClick(){
         //动态路由传参(先要从父组件传入id和type给子组件)
-        this.$router.push('/detail/'+this.$props.type +'/'+(this.list.product_id))
+        this.$router.push('/detail/'+this.$props.type+'/'+this.list.product_type +'/'+(this.list.product_id))
       }
     }
   }

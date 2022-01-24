@@ -17,11 +17,13 @@ app.use(cors())
 
 //除了/admin/loginAdministrator请求，其他请求都必须先进行token验证，验证通过后才能进行当次请求
 app.use((req,res,next)=>{
+    console.log(req.url)
     let requestQuery = ''
     let category_type = ''
     let product_type = ''
     let product_id = ''
     let user_id =''
+    let sell_type = ''
     if (req.url.indexOf('/home/api/goodsData?') >=0){
         requestQuery = req.query
     }
@@ -31,7 +33,8 @@ app.use((req,res,next)=>{
     else if(req.url.indexOf('/home/api/detail?') >=0){
         product_type = req.query.product_type
         product_id = req.query.product_id
-       // console.log(encodeURI(product_id))
+        sell_type = req.query.sell_type
+
     }
     else if(req.url.indexOf('/home/api/userProductCollectionStatus?')>=0){
         user_id = req.query.user_id
@@ -48,7 +51,7 @@ app.use((req,res,next)=>{
         '/home/api/commonRecommend',
         '/home/api/category_list',
         `/home/api/category_detail?type=${encodeURI(category_type)}`,
-        `/home/api/detail?product_type=${product_type}&product_id=${product_id}`,
+        `/home/api/detail?product_type=${encodeURI(product_type)}&sell_type=${sell_type}&product_id=${product_id}`,
         `/home/api/userProductCollectionStatus??user_id=${user_id}&product_id=${product_id}`,
         '/register',
         '/termsService',
@@ -130,58 +133,79 @@ server.listen(3000, err =>{
 app.post('/submitDataApi',(req, res) => {
     let paramsObj = JSON.parse(JSON.stringify(req.body)).data
     console.log(paramsObj)
+    let shop_num=42
     //连接数据库
     const connection = require('./plugins/connectMysql')()
     const ID = require('./util/createProductID')()
     const mysql_query = require('./plugins/mysql_query')
-
-    //将前端提交的商品数据存储到数据库
-    connection.query(mysql_query.insert('mall_goods','product_id,product_title,product_image,' +
-            'product_type,product_brand,preferential_type,price,sales,favorite,sell_type,stocks,unit,isHot,isPreferential,comment_number',
-        `'${ID}','${paramsObj.description}','${paramsObj.imagePath}','${paramsObj.type}',
-        '${paramsObj.brand}','${paramsObj['preferential_type']}',${paramsObj.price},${paramsObj['sales']},${paramsObj.favorite},'${paramsObj['sell_type']}',
-        ${paramsObj['stocks']},'${paramsObj.unit}',${paramsObj['isHot']},${paramsObj['isPreferential']},${paramsObj['comments']}`),
-        (err,result)=>{
+    getBrandIdByBrandName(paramsObj.brand,(err,result)=>{
         if (err) throw err
         else{
+            let brand_id = null
+            result?brand_id=result[0]['brand_id']:null
             if (result){
+                getDataTotalNumber((err,total_num)=>{
+                    if (err) throw err
+                    else{
+                        let totalNum =null
+                        total_num?totalNum = total_num[0]['COUNT(1)']:null
+                        let pageNum = getPageNum(shop_num,totalNum)
+                        if (totalNum){
+                            //将前端提交的商品数据存储到数据库
+                            connection.query(mysql_query.insert('mall_goods','product_id,product_title,product_image,' +
+                                    'product_type,product_brand,preferential_type,price,sales,favorite,sell_type,stocks,unit,isHot,isPreferential,comment_number,brand_id,page,discount',
+                                    `'${ID}','${paramsObj.description}','${paramsObj.imagePath}','${paramsObj.type}',
+                                        '${paramsObj.brand}','${paramsObj['preferential_type']}',${paramsObj.price},${paramsObj['sales']},${paramsObj.favorite},'${paramsObj['sell_type']}',
+                                        ${paramsObj['stocks']},'${paramsObj.unit}',${paramsObj['isHot']},${paramsObj['isPreferential']},${paramsObj['comments']},${brand_id},${pageNum},${paramsObj.discount}`),
+                                (err,result)=>{
+                                    if (err) throw err
+                                    else{
+                                        if (result){
 
-                let isOver = false
-                paramsObj.params.map(item =>{
-                    //将商品参数插入到mall_goods_attribute表中
-                    connection.query(mysql_query.insert('mall_goods_attribute','product_id,attribute_title,attribute',`'${ID}','${item.title+'：'}','${item.text}'`),
-                        (err)=>{
-                            if (err) throw err
-                        })
-                    return isOver=true
+                                            let isOver = false
+                                            paramsObj.params.map(item =>{
+                                                //将商品参数插入到mall_goods_attribute表中
+                                                connection.query(mysql_query.insert('mall_goods_attribute','product_id,attribute_title,attribute',`'${ID}','${item.title+'：'}','${item.text}'`),
+                                                    (err)=>{
+                                                        if (err) throw err
+                                                    })
+                                                return isOver=true
+                                            })
+
+                                            //将商品详情页的图列数据插入到mall_goods_gallery表中
+                                            //1.查看图列字符串中是否含有分号，若有判断有几个，若没有，当成一张图片地址进行插入
+
+                                            //没有分号
+                                            if (paramsObj['gallery'].indexOf(';')===-1){
+                                                insertImageGallery(ID,paramsObj['gallery'])
+                                            }
+                                            //有分号
+                                            else{
+                                                //1.先判断有几个分号
+                                                let gallery_arr = paramsObj['gallery'].split(';')
+                                                gallery_arr.map(item =>{
+                                                    item?insertImageGallery(ID,item):null
+                                                })
+                                            }
+
+                                            // connection.query(mysql_query.insert('mall_goods_size','product_id,size',`'${ID}','${paramsObj.size}'`),(err,doc)=>{
+                                            //     if (err) throw err
+                                            //     else{
+                                            //         console.log(doc)
+                                            //     }
+                                            // })
+
+                                            isOver?res.send({'success':'添加成功'}):false
+                                        }
+                                    }
+                                })
+                        }
+                    }
                 })
-
-                //将商品详情页的图列数据插入到mall_goods_gallery表中
-                //1.查看图列字符串中是否含有分号，若有判断有几个，若没有，当成一张图片地址进行插入
-
-                //没有分号
-                if (paramsObj['gallery'].indexOf(';')===-1){
-                    insertImageGallery(ID,paramsObj['gallery'])
-                }
-                //有分号
-                else{
-                    //1.先判断有几个分号
-                    let gallery_arr = paramsObj['gallery'].split(';')
-                    gallery_arr.map(item =>{
-                        item?insertImageGallery(ID,item):null
-                    })
-                }
-
-                // connection.query(mysql_query.insert('mall_goods_size','product_id,size',`'${ID}','${paramsObj.size}'`),(err,doc)=>{
-                //     if (err) throw err
-                //     else{
-                //         console.log(doc)
-                //     }
-                // })
-
-                isOver?res.send({'success':'添加成功'}):false
             }
+
         }
+
     })
 
 
@@ -190,4 +214,21 @@ app.post('/submitDataApi',(req, res) => {
             if (err) throw err
         })
     }
+
+    function getBrandIdByBrandName(brand,callback){
+        const selectBrandId =  mysql_query.selectFields('mall_brand','brand_id',`brand = '${brand}'`)
+        connection.query(selectBrandId,callback)
+    }
+
+    function getDataTotalNumber(callback){
+        const selectCount=mysql_query.selectCount('mall_goods',`sell_type = '${paramsObj['sell_type']}'`)
+        connection.query(selectCount,callback)
+    }
+
+    function getPageNum(shopNum,total_num){
+        let stringIndex = (total_num/shopNum).toFixed(2).toString().indexOf('.')
+        let pageNumString = (total_num/shopNum).toFixed(2).toString()
+        return Number(pageNumString.substring(0,stringIndex))+1
+    }
+
 })

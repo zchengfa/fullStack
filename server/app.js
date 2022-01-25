@@ -48,6 +48,7 @@ app.use((req,res,next)=>{
         '/home/api/multiData',
         `/home/api/goodsData?user_id=${requestQuery.user_id}&type=${requestQuery.type}&page=${requestQuery.page}`,
         '/login' ,
+        '/verifyMailCode',
         '/home/api/commonRecommend',
         '/home/api/category_list',
         `/home/api/category_detail?type=${encodeURI(category_type)}`,

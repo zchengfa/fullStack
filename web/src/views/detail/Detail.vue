@@ -90,11 +90,13 @@
         }
       }
     },
-    beforeRouteUpdate(to,from){
-      if (to.path !== from.path){
-        this.$refs.scroll?this.$refs.scroll.scrollTo(0,0,300):null
-      }
-    },
+    // beforeRouteUpdate(to,from){
+    //   if (to.path !== from.path){
+    //
+    //       this.$refs.scroll?this.$refs.scroll.scrollTo(0,0,300):null
+    //
+    //   }
+    // },
     methods:{
       imageLoad(){
         //防抖函数处理scroll组件的刷新
@@ -250,6 +252,11 @@
             this.detailData = res.data
             //获取detailData中的评论数据
             this.comment_num = this.detailData.baseData['comment_number']
+
+            //dom更新后自动滚动到顶部
+            this.$nextTick(()=>{
+              this.$refs.scroll?this.$refs.scroll.scrollTo(0,0,300):null
+            })
           }
 
         }).catch((err) => {

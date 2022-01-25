@@ -3,11 +3,15 @@
     <Close @close="closeCurrentPage"></Close>
     <form class="register-form">
       <div class="input-box">
-        <input type="text" placeholder="手机号/QQ邮箱" @input="onChange" v-model="account" />
-        <input type="password" placeholder="密码:" @input="onChange" v-model="password" />
-        <input type="password" placeholder="确认密码:" @input="onChange" v-model="confirmPwd" />
+        <input type="text" placeholder="手机号/QQ邮箱" @input="onChange" @blur="checkAccountIsEmpty" v-model="account" />
+        <span class="error-msg" v-if="accountIsEmpty">您未输入账号</span>
+        <input type="password" placeholder="密码:" @input="onChange" @blur="checkPassIsEmpty" v-model="password" />
+        <span class="error-msg" v-if="passIsEmpty">您未输入密码</span>
+        <input type="password" placeholder="确认密码:" @input="onChange" @blur="checkConPassIsEmpty" v-model="confirmPwd" />
+        <span class="error-msg" v-if="conPassIsEmpty">请再一次输入密码</span>
         <div class="mail-verify" v-show="isMail">
-          <div><input type="text" class="mail-code" @input="onChange" v-model="mailVerifyCode"></div>
+          <div><input type="text" class="mail-code" @input="onChange" @blur="checkCodeIsEmpty" v-model="mailVerifyCode">
+            <span class="error-msg" v-if="codeIsEmpty">您未输入验证码</span></div>
           <div>
             <button type="button" :class="{active: !isSendAgain}" @click="sendVerifyCode">
               <span v-if="!isSendAgain">发送验证码</span>
@@ -17,7 +21,7 @@
         </div>
       </div>
       <div class="button-box">
-        <button :class="{active:!isAble}" type="button" :disabled="isAble" @click="submitRegister">注册</button>
+        <button :class="{active:!isAble}" type="button" @click="submitRegister">注册</button>
       </div>
       <div class="to-login">
         <span>已有账号?</span>
@@ -52,13 +56,41 @@ export default {
       mailVerifyCode:'',
       encryptPwd:'',
       encryptConfirmPwd:'',
-      verifyCodeExpired: 0
+      verifyCodeExpired: 0,
+      accountIsEmpty:false,
+      passIsEmpty:false,
+      conPassIsEmpty:false,
+      codeIsEmpty:false
     }
   },
   components:{
     RegistrationAgreement
   },
   methods:{
+    checkAccountIsEmpty(){
+      this.accountIsEmpty = !this.account
+
+    },
+    checkPassIsEmpty(){
+      this.passIsEmpty = !this.password
+
+    },
+    checkConPassIsEmpty(){
+      this.conPassIsEmpty = !this.confirmPwd
+
+    },
+    checkCodeIsEmpty(){
+      this.codeIsEmpty = !this.mailVerifyCode
+
+    },
+    checkAllIsEmpty(){
+      if (this.checkAccountIsEmpty()&&this.checkPassIsEmpty()&&this.checkConPassIsEmpty()&&this.checkCodeIsEmpty()){
+        return true
+      }
+      else {
+        return false
+      }
+    },
     onChange(){
       this.encryptPwd = encrypt(this.password)
       this.encryptConfirmPwd = encrypt(this.confirmPwd)
@@ -73,12 +105,7 @@ export default {
     },
     //检测参数真假，改变按钮的点击状态
     changeDisabledStatus(confident){
-      if (confident) {
-        this.isAble = false
-      }
-      else {
-        this.isAble=true
-      }
+      this.isAble = !confident;
     },
     adjustAccountType() {
       //判断账号是否为QQ邮箱类型，若是则显示发送邮箱验证元素
@@ -106,11 +133,12 @@ export default {
       }
     },
     submitRegister() {
+
       //先判断用户注册所用的账号是否为手机号或者qq邮箱
       if (this.RegExpPhone.test(this.account) || this.adjustAccountType()) {
         //若是手机号
         if (this.RegExpPhone.test(this.account)) {
-          if (this.verifyPass()) {
+          if (this.verifyPass()&& this.checkAllIsEmpty()) {
             register(this.account,this.encryptPwd).then((res)=> {
               if (res.data.success) {
                 //注册成功跳转页面
@@ -125,7 +153,7 @@ export default {
         }
         //若是QQ邮箱
         else {
-          if (this.verifyPass()) {
+          if (this.verifyPass()&& this.checkAllIsEmpty()) {
             register(this.account,this.encryptPwd,this.mailVerifyCode).then(res => {
               console.log(res)
               if (res.data.success) {
@@ -221,6 +249,15 @@ input::-ms-input-placeholder{
 }
 input::-webkit-input-placeholder{
   color: #fff;
+}
+.error-msg{
+  display: block;
+  margin-top: -1rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+  color: #ee3e17;
+  text-align: left;
 }
 button{
   margin-top: 1rem;

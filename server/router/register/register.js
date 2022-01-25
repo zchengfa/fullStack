@@ -119,7 +119,6 @@ module.exports = app => {
             registerUser()
         }
 
-
     })
 
     router.post('/termsService',(req,res)=>{

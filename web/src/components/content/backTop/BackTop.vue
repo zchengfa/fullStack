@@ -1,7 +1,7 @@
 <template>
  <div class="back-top">
    <div class="content">
-     <img src="~assets/image/home/backTop/back_top.png" alt="back_image">
+     <img src="~assets/image/home/backTop/back_to_top.png" alt="back_image">
    </div>
  </div>
 </template>

@@ -20,7 +20,7 @@ module.exports = app => {
         const selectQuery = mysql_query.selectFields('mall_user','avatar',`user_id = '${paramsObj.user_id}'`)
         const selectQuery2 = mysql_query.selectCount('mall_user_collection', `user_id = '${paramsObj.user_id}'`)
         const selectQuery3 = mysql_query.selectCount('mall_user_brand_collection', `user_id = '${paramsObj.user_id}'`)
-        const selectQuery4 = mysql_query.selectCount('mall_user_recommend_goods', `user_id = '${paramsObj.user_id}'`)
+        const selectQuery4 = mysql_query.selectCount('mall_user_history', `user_id = '${paramsObj.user_id}'`)
 
         connection.query(`${selectQuery +';' +selectQuery2 + ';' +selectQuery3 + ';' +selectQuery4}`, (err, results) => {
             if (err) throw err

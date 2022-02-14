@@ -78,6 +78,7 @@ export default {
   methods:{
     getUserCollectionInfo(user_id){
       getUserInfo(user_id).then(res => {
+        console.log(res.data)
         this.userInfoList = res.data.content
       })
           .catch(err => {

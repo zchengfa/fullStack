@@ -24,6 +24,14 @@ const mysql_query = {
             return `SELECT ${fields} FROM ${table_name} WHERE ${confident}`
         }
     },
+    selectAllWithLimit(table_name,number,confident){
+        if (!confident){
+            return `SELECT * FROM ${table_name} LIMIT ${number}`
+        }
+        else {
+            return `SELECT * FROM ${table_name} WHERE ${confident} LIMIT ${number}`
+        }
+    },
     insert(table_name,fields,values){
         return `INSERT INTO ${table_name} (${fields}) VALUES (${values})`
     },

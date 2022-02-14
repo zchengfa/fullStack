@@ -1,7 +1,7 @@
 <template>
   <div class="recommend">
     <div :class="{alignCenter:alignCenter}" class="title"><h4>{{ recommendTitle }}</h4></div>
-    <goods-data :goods="recommendData" :current-type="currentType"></goods-data>
+    <goods-data :goods="recommendData"></goods-data>
   </div>
 </template>
 

@@ -244,8 +244,11 @@
         this.id = this.$route.params.product_id
         this.type = this.$route.params.product_type
         this.sellType = this.$route.params.sell_type
+        let user_id = null
+        let userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
+        userInfo?user_id = userInfo.user_id:null
         //将id和type作为参数进行请求
-        getGoodsDetail(this.type,this.sellType,this.id).then(res=> {
+        getGoodsDetail(this.type,this.sellType,this.id,user_id).then(res=> {
           if (!res.data.err){
             //将请求到的数据赋给detailData
             this.productInfo.product_id = res.data.baseData.product_id

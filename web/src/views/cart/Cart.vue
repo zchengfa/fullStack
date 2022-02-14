@@ -290,8 +290,9 @@
       },
       getUserRecommend(token){
         getUserRecommend(token).then(res => {
-          //console.log(res)
-          this.recommendData = res.data.result
+          console.log(res.data)
+          this.recommendData = res.data
+
         }).catch(err => {
           console.log(err)
         })

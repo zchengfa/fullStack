@@ -22,13 +22,14 @@ export function getGoodsData(user_id,type, page){
 }
 
 //导出获取商品详情数据函数
-export function getGoodsDetail(product_type,sell_type,product_id){
+export function getGoodsDetail(product_type,sell_type,product_id,user_id){
   return request({
     url:'/detail',
     params:{
       product_type,
       sell_type,
-      product_id
+      product_id,
+      user_id
     }
   })
 }

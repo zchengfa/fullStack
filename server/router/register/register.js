@@ -15,7 +15,7 @@ module.exports = app => {
     let verifyCode = ''
 
     //验证码过期时间（秒）
-    let verifyCodeExpired = 180
+    let verifyCodeExpired = 60
 
     //用于存储邮箱的接受者
     let userEmail = ''
@@ -27,7 +27,7 @@ module.exports = app => {
         //生成验证码
         verifyCode = generateVerifyCode()
 
-        verifyCodeExpired = 180
+        verifyCodeExpired = 60
         //存储验证码接收者
         userEmail = paramsObj.email
         const html = `<p>这是一条来自mall项目组发送给您的验证邮件，您的验证码为<a href="javascript:(0)" style="color: #f00">${verifyCode}</a>，请在${verifyCodeExpired/60}分钟内使用此验证码，过期无效哦！</p>`

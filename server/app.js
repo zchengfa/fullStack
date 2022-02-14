@@ -17,12 +17,10 @@ app.use(cors())
 
 //除了/admin/loginAdministrator请求，其他请求都必须先进行token验证，验证通过后才能进行当次请求
 app.use((req,res,next)=>{
-    console.log(req.url)
     let requestQuery = ''
     let category_type = ''
     let product_type = ''
     let product_id = ''
-    let user_id =''
     let sell_type = ''
     if (req.url.indexOf('/home/api/goodsData?') >=0){
         requestQuery = req.query
@@ -36,12 +34,6 @@ app.use((req,res,next)=>{
         sell_type = req.query.sell_type
 
     }
-    else if(req.url.indexOf('/home/api/userProductCollectionStatus?')>=0){
-        user_id = req.query.user_id
-        product_id = req.query.product_id
-    }
-
-    //console.log(req.url,'app.js')
     //设置请求地址白名单，只要请求地址是白名单内的都不需要进行token验证
     const urlWhiteList = [
         '/admin/loginAdministrator',
@@ -53,12 +45,12 @@ app.use((req,res,next)=>{
         '/home/api/category_list',
         `/home/api/category_detail?type=${encodeURI(category_type)}`,
         `/home/api/detail?product_type=${encodeURI(product_type)}&sell_type=${sell_type}&product_id=${product_id}`,
-        `/home/api/userProductCollectionStatus??user_id=${user_id}&product_id=${product_id}`,
         '/register',
         '/termsService',
         '/submitDataApi',
         '/homeContent/brand_logo',
-        '/homeContent/product'
+        '/homeContent/product',
+        '/home/api/cart'
     ]
     if (urlWhiteList.indexOf(req.url) >= 0){
         next()

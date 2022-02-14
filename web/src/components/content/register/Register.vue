@@ -15,7 +15,7 @@
           <div>
             <button type="button" :class="{active: !isSendAgain}" @click="sendVerifyCode">
               <span v-if="!isSendAgain">发送验证码</span>
-              <span v-else>重新发送({{verifyCodeExpired}})秒</span>
+              <span v-else>重新发送<span v-show="verifyCodeExpired">({{verifyCodeExpired}})秒</span></span>
             </button>
           </div>
         </div>
@@ -68,28 +68,23 @@ export default {
   },
   methods:{
     checkAccountIsEmpty(){
-      this.accountIsEmpty = !this.account
+      return this.accountIsEmpty = !this.account
 
     },
     checkPassIsEmpty(){
-      this.passIsEmpty = !this.password
+      return this.passIsEmpty = !this.password
 
     },
     checkConPassIsEmpty(){
-      this.conPassIsEmpty = !this.confirmPwd
+      return this.conPassIsEmpty = !this.confirmPwd
 
     },
     checkCodeIsEmpty(){
-      this.codeIsEmpty = !this.mailVerifyCode
+      return this.codeIsEmpty = !this.mailVerifyCode
 
     },
     checkAllIsEmpty(){
-      if (this.checkAccountIsEmpty()&&this.checkPassIsEmpty()&&this.checkConPassIsEmpty()&&this.checkCodeIsEmpty()){
-        return true
-      }
-      else {
-        return false
-      }
+      return !!(this.checkAccountIsEmpty() && this.checkPassIsEmpty() && this.checkConPassIsEmpty());
     },
     onChange(){
       this.encryptPwd = encrypt(this.password)
@@ -136,11 +131,15 @@ export default {
 
       //先判断用户注册所用的账号是否为手机号或者qq邮箱
       if (this.RegExpPhone.test(this.account) || this.adjustAccountType()) {
+
         //若是手机号
         if (this.RegExpPhone.test(this.account)) {
-          if (this.verifyPass()&& this.checkAllIsEmpty()) {
+          console.log(this.RegExpPhone.test(this.account),this.verifyPass(), this.checkAllIsEmpty())
+          if (this.verifyPass()&& !this.checkAllIsEmpty()) {
+            console.log(this.RegExpPhone.test(this.account))
             register(this.account,this.encryptPwd).then((res)=> {
               if (res.data.success) {
+                console.log(this.RegExpPhone.test(this.account))
                 //注册成功跳转页面
                 this.$toast.showToast(res.data.success)
                 this.$router.go(-1)
@@ -153,7 +152,7 @@ export default {
         }
         //若是QQ邮箱
         else {
-          if (this.verifyPass()&& this.checkAllIsEmpty()) {
+          if (this.verifyPass()&& !this.checkAllIsEmpty() && !this.checkCodeIsEmpty()) {
             register(this.account,this.encryptPwd,this.mailVerifyCode).then(res => {
               console.log(res)
               if (res.data.success) {
@@ -184,9 +183,10 @@ export default {
     },
     //给邮箱发送验证码,并将验证码赋值给mailVerifyCode，以便注册按钮可以接收到验证码后提交给后端进行校验
     sendVerifyCode() {
-      this.isSendAgain = true
+
       sendMailVerifyCode(this.account).then(res => {
         console.log(res)
+        this.isSendAgain = true
         if (res.data.email_non_exist) {
           this.$toast.showToast(res.data.email_non_exist,1000)
         }
@@ -298,6 +298,8 @@ button{
 .mail-verify input {
   background-color: #ece6e6;
   border: 1px solid #a5a2a2;
+  color: #d31313;
+  font-weight: bolder;
 }
 .mail-verify div {
   flex: 1;

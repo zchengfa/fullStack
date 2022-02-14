@@ -1,4 +1,5 @@
 const mysql_query = require("../../plugins/mysql_query");
+const {deDuplication} = require('../../util/arrayOperation')
 
 module.exports = app => {
     const express = require('express')
@@ -11,7 +12,6 @@ module.exports = app => {
 
     //导入数据库连接模块
     const connection = require('../../plugins/connectMysql')()
-    const mysql_query = require('../../plugins/mysql_query')
 
     //接收前端cart请求，前端需要将用户id传入后端，查询数据库中对应用户的购物车数据，最后返回给前端
     router.post('/cart',(req, res) => {
@@ -149,7 +149,7 @@ module.exports = app => {
     })
 
     //接收前端获取商品推荐数据的请求，将数据返回给前端
-    const selectDefault = mysql_query.selectAll('mall_common_recommend_goods')
+    const selectDefault = mysql_query.selectAllWithLimit('mall_goods',10)
     router.get('/commonRecommend', (req, res) => {
 
         connection.query(selectDefault, (err,result) => {
@@ -165,28 +165,93 @@ module.exports = app => {
         //接收前端请求参数
         const paramsObj = JSON.parse(JSON.stringify(req.body))
         const user_id= paramsObj.user_id
+        //console.log(paramsObj)
 
-        const selectUser = mysql_query.selectAll('mall_user_recommend_goods',`user_id = '${user_id}'`)
+        //先查询用户的浏览数据，根据浏览的商品数据来推荐商品
+        const selectHistory = mysql_query.selectFields('mall_user_history','product_id',`user_id = ${user_id}`)
+        const selectUser = mysql_query.selectAll('mall_goods',`user_id = '${user_id}'`)
 
-        connection.query(selectUser,(err,result) => {
+        //存储查询到的商品类型以及品牌
+        let typeAndBrandArr = []
+
+        connection.query(selectHistory,(err,his)=>{
             if (err) throw err
-            else {
-                if (Object.keys(result).length) {
-                    res.send({'result':result})
-                }
-                //该用户没有推荐数据，返回默认的推荐数据
-                else {
+            else{
 
-                    connection.query(selectDefault,(err,result) => {
-                        if (err) throw err
-                        else {
-                            res.send({'result':result,'empty':'该用户暂时还没有推荐数据，返回的是默认推荐数据'})
-                        }
-                    })
-                }
+               let hisCount = Object.keys(his).length
+               let finishCount = 0
+               his?his.map(item=>{
+                   //根据查询到的商品id去查询该商品所属的类型和品牌
+                   const selectTypeAndBrand = mysql_query.selectFields('mall_goods','product_type,product_brand',`product_id = '${item.product_id}'`)
+                   connection.query(selectTypeAndBrand,(err,TBRes)=>{
+                       if (err) throw err
+                       else{
+                           typeAndBrandArr.push(TBRes[0]['product_type'])
+                           typeAndBrandArr.push(TBRes[0]['product_brand'])
+                           finishCount ++
+
+                           if (finishCount===hisCount){
+                               let deDupArr = deDuplication(typeAndBrandArr)
+                               let deDupArrCount = deDupArr.length
+                               let finishDeDupCount = 0
+                               let deDupResArr = []
+                               deDupArr.map(deItem=>{
+
+                                   //根据去重后得到的商品类型和品牌来查询商品id
+                                   const selectDeDuplication = mysql_query.selectFields('mall_goods','product_id',`product_type = '${deItem}' OR product_brand = '${deItem}'`)
+                                   connection.query(selectDeDuplication,(err,deDupRes)=>{
+                                       if (err) throw err
+                                       else{
+                                           deDupResArr.push(...deDupRes)
+                                           finishDeDupCount++
+                                       }
+                                       if (finishDeDupCount===deDupArrCount){
+                                           let idArr = []
+                                           deDupResArr.map(item=>{
+                                               idArr.push(item.product_id)
+                                           })
+
+                                           //去除重复的商品id
+                                           let idDeDupArr = deDuplication(idArr)
+
+                                           //根据去重后的商品id来获取商品数据并返回给前端
+                                           let data = []
+                                           let finishCollectedCount = 0
+                                           let finishPreResCount = 0
+                                           idDeDupArr.map(item=>{
+                                               const selectProduct =mysql_query.selectAll('mall_goods',`product_id = '${item}'`)
+                                               connection.query(selectProduct,(err,proRes)=>{
+                                                   if (err) throw err
+                                                   else{
+                                                       data.push(...proRes)
+                                                       finishPreResCount++
+                                                   }
+                                                   if (finishPreResCount===idDeDupArr.length){
+                                                       data.map(dataItem=>{
+                                                           //获取该商品在该用户下是否收藏过，将收藏信息加入到数据中
+                                                           const selectCollectionStatus = mysql_query.selectCount('mall_user_collection',`user_id = ${user_id} AND product_id = '${dataItem.product_id}'`)
+                                                           connection.query(selectCollectionStatus,(err,collectionRes)=>{
+                                                               collectionRes[0]['COUNT(1)']?dataItem.isCollected=1:dataItem.isCollected=0
+                                                               finishCollectedCount++
+
+                                                               //data数组中的collected属性获取完后返回给前端
+                                                               finishCollectedCount===data.length?res.send(data.splice(0,10)):null
+                                                           })
+                                                       })
+                                                   }
+                                               })
+                                           })
+                                       }
+                                   })
+                               })
+                           }
+
+                       }
+                   })
+               }):null
+
             }
         })
-
     })
 
     router.post('/remove', (req,res) => {

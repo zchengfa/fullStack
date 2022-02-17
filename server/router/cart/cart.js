@@ -15,21 +15,31 @@ module.exports = app => {
 
     //接收前端cart请求，前端需要将用户id传入后端，查询数据库中对应用户的购物车数据，最后返回给前端
     router.post('/cart',(req, res) => {
-        const paramsObj = JSON.parse(JSON.stringify(req.body))
-        const user_id = paramsObj.user_id
-    
+        const user_id = JSON.parse(JSON.stringify(req.body)).user_id
+        console.log(user_id)
         //创建查询语句，查询该用户在USER_SHOP表中是否存在商品数据
-        const  selectQuery = mysql_query.selectFields('mall_user_cart','product_id,product_title,product_image,product_price,quantity,isChecked,size',
-            `user_id = '${user_id}'`)
-
+        const  selectQuery = mysql_query.selectAll('mall_user_cart', `user_id = '${user_id}'`)
         //查询数据
         connection.query(selectQuery,(err,result) => {
             if (err) throw err
-
             if (Object.keys(result).length) {
                 //该用户已有商品数据，先进行数据处理再返回给前端
-                res.send({'user_cart_data':result,'user_id':user_id})
+                let finishSelectCount = 0
+                result.map(item=>{
+                    const selectPro = mysql_query.selectFields('mall_goods','product_type,sell_type',`product_id = '${item.product_id}'`)
+                    connection.query(selectPro,(err,proRes)=>{
+                        if (err) throw err
+                        else{
+                            proRes?function (){
+                                item.product_type=proRes[0].product_type
+                                item.sell_type=proRes[0].sell_type
+                            }():null
 
+                            finishSelectCount++
+                            finishSelectCount===result.length?res.send({'user_cart_data':result}):null
+                        }
+                    })
+                })
             }
             else {
                 res.send({'empty':'您的购物车空空如也...'})
@@ -127,9 +137,17 @@ module.exports = app => {
                                       connection.query(insertMergePro,(err,insertRes)=>{
                                           if (err) throw err
                                           else{
-
-                                              //插入成功后，反馈mergeSuccess给前端，表示有多条相同数据商品，已经进行了更新合并操作
-                                              insertRes?res.send({'mergeSuccess':1}):null
+                                              //插入成功后将该用户下的该商品新id返回给前端，让前端更新
+                                              insertRes?(()=>{
+                                                  const selectProId = mysql_query.selectFields(tableName,'id',`user_id = ${paramsObj.user_id} AND product_id = '${paramsObj.product_id}'`)
+                                                  connection.query(selectProId,(err,idRes)=>{
+                                                      if (err) throw err
+                                                      else{
+                                                          //插入成功后，反馈mergeSuccess给前端，表示有多条相同数据商品，已经进行了更新合并操作
+                                                          idRes?res.send({'mergeSuccess':1,'id':idRes[0]['id']}):null
+                                                      }
+                                                  })
+                                              })():null
                                           }
                                       })
                                   }

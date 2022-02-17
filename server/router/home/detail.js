@@ -89,6 +89,19 @@ module.exports = app =>{
         }
     })
 
+    //获取用户购物车的商品选择的尺码，并返回给前端
+    router.get('/userChoseSize',(req, res) => {
+        console.log(req.query,94)
+        const selectSize = mysql_query.selectFields('mall_user_cart','size',`user_id = ${req.query.user_id} AND product_id = '${req.query.product_id}' AND id = ${req.query.id}`)
+        connection.query(selectSize,(err,sizeRes)=>{
+            if (err) throw err
+            else{
+                sizeRes[0]?res.send(sizeRes[0]):res.send({size:null})
+            }
+            console.log(sizeRes)
+        })
+    })
+
     //获取对应用户里对应商品的收藏状态，若该用户已收藏该商品，给前端返回true，反之返回false表示为收藏该商品
     router.get('/userProductCollectionStatus',(req,res) => {
         //console.log(req.query)

@@ -3,7 +3,7 @@
     <slot name="title"><h3 class="title">{{title}}</h3></slot>
 <!--当传过来的插槽名与尺寸名一致时才能使用该插槽-->
     <slot :name="sizeName">
-      <div v-for="(item,index) in size" :class="{'active':currentIndex===index || item===sizeItem}" @click="choseSize(item,index)" :key="item+index">
+      <div v-for="(item,index) in size" :class="{'active':currentIndex===index && item===sizeItem}" @click="choseSize(item,index)" :key="item+index">
         <span>{{item}}</span>
       </div>
     </slot>
@@ -87,7 +87,6 @@ export default {
       }
     }
     else{
-
       throw new Error('your sizeName is not clothes or pants')
     }
 

@@ -15,10 +15,10 @@
           </div>
         </div>
         <div class="box">
-          <div class="favorite">
+          <div class="favorite" @click="collectProduct">
             <div class="image-box" v-if="!isCollected"><img src="~assets/image/detail/favorite.png" alt="image"></div>
             <div class="image-box" v-else><img src="~assets/image/detail/sweetHeart.png" alt="image"></div>
-            <div class="button-box" @click="collectProduct"><button >收藏</button></div>
+            <div class="button-box"><button >收藏</button></div>
           </div>
         </div>
       </div>

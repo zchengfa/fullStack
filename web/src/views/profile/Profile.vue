@@ -78,7 +78,6 @@ export default {
   methods:{
     getUserCollectionInfo(user_id){
       getUserInfo(user_id).then(res => {
-        console.log(res.data)
         this.userInfoList = res.data.content
       })
           .catch(err => {
@@ -98,9 +97,7 @@ export default {
     this.orderList = orderMenuImage
 
     if (this.$store.state.token) {
-      //console.log(this.$store.state.token)
       const userInfo = this.$store.state.userInfo
-      console.log(userInfo)
       this.isLogin = true
       this.username = userInfo.username
       this.account = userInfo.account

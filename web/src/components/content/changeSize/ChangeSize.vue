@@ -3,7 +3,7 @@
   <div class="product-box" >
     <div class="product-image"><img :src="productImage" alt="productImage"></div>
     <product-size class="product-size-component" :item-size="item"></product-size>
-    <div class="submit-change-size"><button @click="submitChangeSize">确定</button></div>
+    <div class="submit-change-size"><button @click.once="submitChangeSize">确定</button></div>
   </div>
 </div>
 </template>
@@ -24,6 +24,12 @@ export default {
       default() {
         return "";
       }
+    },
+    proId:{
+      type:String,
+      default(){
+        return ''
+      }
     }
   },
   data(){
@@ -37,17 +43,17 @@ export default {
   },
   methods:{
     submitChangeSize(){
-      if (this.size || this.sizeIndex >=0){
-        let size = this.size
-        this.$bus.$emit('submitChangeSize',size)
-      }
-      else {
+      if (!this.size && this.sizeIndex ===-1){
         this.$toast.showToast('请选择尺码')
       }
+      else {
+        this.$bus.$emit('submitChangeSize',{'size':this.size,'proId':this.$props.proId})
+      }
+
     }
   },
   created() {
-    this.size = this.item
+    this.size = this.$props.item
   },
   mounted() {
     this.$bus.$on('choseSize',(e)=>{

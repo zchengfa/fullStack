@@ -16,12 +16,12 @@
             <check-button :is-checked="Boolean(item.isChecked)" @click.native="changeChecked(index)"></check-button>
           </div>
           <div class="shop-info">
-            <div class="image-box"><img :src="item['product_image']" alt="cart_image"></div>
+            <div class="image-box"><img :src="item['product_image']" alt="cart_image" @click="productDetail(item.product_type,item.sell_type,item.product_id,item.id)"></div>
             <div class="info">
               <p class="title">{{item['product_title']}}</p>
               <div class="price-size">
                 <div class="price"><span class="discount-character">￥</span><span>{{item['product_price']}}</span></div>
-                <div class="size" @click="changeSize(item['size'],item['product_image'],index)"><span>尺码：</span><span>{{item['size']}}</span><span class="down-character">﹀</span></div>
+                <div class="size" @click="changeSize(item['size'],item['product_image'],index,item.product_id)"><span>尺码：</span><span>{{item['size']}}</span><span class="down-character">﹀</span></div>
               </div>
               <count class="count-component" :key="countComponentKey" :count="item['quantity']" :index="index"></count>
             </div>
@@ -46,7 +46,7 @@
                  @moveToCollection="moveToCollection"
                  @remove="remove"
     ></settle-cart>
-    <change-size class="change-size-component"  :product-image="changeSizeImage" :item="changeSizeItem" v-if="isShowChangeSize"></change-size>
+    <change-size class="change-size-component"  :pro-id="changeSizeProId" :product-image="changeSizeImage" :item="changeSizeItem" v-if="isShowChangeSize"></change-size>
   </div>
 </template>
 
@@ -73,7 +73,7 @@
         isComplete:false,
         showTotalAndSettle:true,
         cartList: [],
-        user_id:'',
+        user_id:this.$store.state.userInfo.user_id,
         isLogin:false,
         recommendData:[],
         emptyMessage: '',
@@ -85,6 +85,7 @@
         changeSizeImage:'',
         changeSizeItem:'',
         changeSizeIndex:-1,
+        changeSizeProId:'',
         countComponentKey:0
       }
     },
@@ -125,6 +126,10 @@
       }
     },
     methods:{
+      //点击列表中的图片，跳转到详情页面查看商品详细数据
+      productDetail(product_type,sell_type,product_id,id){
+        this.$router.push('/detail/'+sell_type+'/'+product_type +'/'+product_id+'/'+id)
+      },
       //点击导航栏右边按钮控制按钮的显示与隐藏，并控制结算组件中删除等按钮的显示与隐藏
       manageOrComplete(){
         this.isComplete = !this.isComplete
@@ -138,7 +143,6 @@
 
         //提交减少该产品的数量的请求
         updateProductCount(this.user_id,this.cartList[index].product_id,this.cartList[index]['quantity'],this.cartList[index]['size']).then()
-        //console.log(index,this.cartList[index])
       },
       //增加用户所点击的商品数量函数
       addCount(index){
@@ -147,7 +151,6 @@
 
         //提交增加该产品的数量的请求
         updateProductCount(this.user_id,this.cartList[index].product_id,this.cartList[index]['quantity'],this.cartList[index]['size']).then()
-
       },
       changeChecked(index){
 
@@ -215,6 +218,7 @@
             }
             this.updateCheckedTargets.push(obj)
           })
+          console.log(this.user_id)
           //将修改后的状态提交给后端，让后端修改数据库中该用户的状态
           this.updateCheckedFunc(this.user_id,this.updateCheckedTargets)
         }
@@ -246,9 +250,7 @@
                   this.getUserCartData(this.user_id)
                   this.$toast.showToast(res.data.success)
                 }
-
               })
-
             }
           }).catch(err=>{
             console.log(err)
@@ -290,9 +292,7 @@
       },
       getUserRecommend(token){
         getUserRecommend(token).then(res => {
-          console.log(res.data)
           this.recommendData = res.data
-
         }).catch(err => {
           console.log(err)
         })
@@ -305,7 +305,7 @@
           //判断是否存在用户购物车数据
           if(res.data.user_cart_data) {
             //获取user_id
-            this.user_id = res.data.user_id
+            //this.user_id = res.data.user_id
             //遍历数组
             this.cartList =  res.data.user_cart_data
 
@@ -318,7 +318,6 @@
       },
       checkProductIsCheck(){
         //元素挂载完成后，遍历cartList数组，若是已选中状态则将该商品id加入targets数组中
-        
         if (this.cartList.length){
           this.cartList.map(item => {
             if (item.isChecked){
@@ -328,17 +327,36 @@
         }
       },
       //点击尺码盒子更改尺码
-      changeSize(size,image,index){
+      changeSize(size,image,index,proId){
         this.isShowChangeSize = true
         this.changeSizeItem = size
         this.changeSizeImage = image
         this.changeSizeIndex = index
+        this.changeSizeProId = proId
       }
+    },
+    created() {
+      if (this.$store.state.token){
+        let userInfo = this.$store.state.userInfo
+        this.user_id = userInfo.user_id
 
+        this.isLogin = false
+
+        //存在token值，用户已登录，执行获取用户购物车数据函数
+        //进入购物车页面，获取用户token，执行获取用户购物车数据函数
+        this.getUserCartData(this.user_id)
+
+        //获取用户对应的推荐数据
+        this.getUserRecommend(this.user_id)
+
+      }
+      else {
+        //token值不存在，用户未登录，获取默认的推荐数据
+        this.getCommonRecommend()
+        this.isLogin = true
+      }
     },
     mounted() {
-     
-      //console.log(this.cartList)
       const refresh = debounce(this.$refs.scroll.refresh, 200)
       this.$bus.$on('itemImageLoad',() => {
         refresh()
@@ -369,11 +387,12 @@
 
       })
 
-      this.$bus.$on('submitChangeSize',(size)=>{
-
+      this.$bus.$on('submitChangeSize',(e)=>{
+        let size = e.size
+        let product_id = e.proId
         //点击确认更改尺码按钮后先判断跟之前的尺码是否一样，若一样，则无需向后端发送更改尺码的请求，反之则发起更改尺码请求
-        if (this.changeSizeItem !== size){
-          updateProductSize(this.user_id,this.cartList[this.changeSizeIndex].product_id,this.changeSizeItem,size).then(res=>{
+        if (this.changeSizeItem !== size &&size){
+          updateProductSize(this.user_id,product_id,this.changeSizeItem,size).then(res=>{
             console.log(res)
             //是更新尺码或合并商品成功的响应，将新尺码给该商品
             if (res.data.updateSuccess || res.data.mergeSuccess){
@@ -406,6 +425,7 @@
               })
 
               this.cartList[this.changeSizeIndex].quantity = mergeQuantity
+              this.cartList[this.changeSizeIndex].id = res.data.id
 
               //改变count组件的key值，重新渲染组件,以更新数据
               this.countComponentKey +=1
@@ -415,26 +435,14 @@
             }
           })
         }
-        //console.log(size,this.changeSizeItem===size)
         this.isShowChangeSize = false
       })
-      if (this.$store.state.token){
-        let userInfo = this.$store.state.userInfo
-        this.isLogin = false
-
-        //存在token值，用户已登录，执行获取用户购物车数据函数
-        //进入购物车页面，获取用户token，执行获取用户购物车数据函数
-        this.getUserCartData(userInfo.user_id)
-
-        //获取用户对应的推荐数据
-        this.getUserRecommend(userInfo.user_id)
-
-      }
-      else {
-        //token值不存在，用户未登录，获取默认的推荐数据
-        this.getCommonRecommend()
-        this.isLogin = true
-      }
+    },
+    beforeDestroy() {
+      //在组件销毁前手动注销事件，事件总线在路由往返时不会自动注销事件，没往返一次就会增加一次事件，所以需要手动注销
+      this.$bus.$off('submitChangeSize')
+      this.$bus.$off('addCount')
+      this.$bus.$off('reduceCount')
     }
   }
 </script>

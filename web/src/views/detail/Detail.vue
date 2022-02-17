@@ -4,7 +4,7 @@
     <Scroll class="content" @click.native="closeAddCart" ref="scroll" :probe-type="3" @scroll="contentScroll">
       <div class="shop-show" v-if="Object.keys(detailData).length" >
         <detail-base ref="base" class="detail-base" :base-data="detailData.baseData"></detail-base>
-        <product-size :index="choseSizeObj.index" :key="productSizeKey"></product-size>
+        <product-size :index="choseSizeObj.index" :item-size="choseSizeObj.item" :key="productSizeKey"></product-size>
         <detail-params  @refresh="refreshScroll" ref="params" :params="detailData.shop_detail_params"></detail-params>
         <detail-comment ref="comment" :comment-num="Number(comment_num)"></detail-comment>
         <detail-image ref="image" :images-data="detailData.images" @imageLoadOver="imageLoad"></detail-image>
@@ -38,6 +38,7 @@
 
   import mixins from "@/common/mixins/mixins";
   import ProductSize from "./component/content/ProductSize";
+  import {getUserChoseSize} from "../../network/home";
 
   export default {
     name: "detail",
@@ -60,7 +61,8 @@
           item:null,
           index:null
         },
-        productSizeKey:0
+        productSizeKey:0,
+        productDetailIndex:null
       }
     },
     components:{
@@ -87,16 +89,13 @@
       $route(to,from){
         if (to.path !== from.path){
           this.initData()
+          if (this.token){
+            let userInfo = this.$store.state.userInfo
+            this.getProductCollectionStatus(userInfo.user_id,this.id)
+          }
         }
       }
     },
-    // beforeRouteUpdate(to,from){
-    //   if (to.path !== from.path){
-    //
-    //       this.$refs.scroll?this.$refs.scroll.scrollTo(0,0,300):null
-    //
-    //   }
-    // },
     methods:{
       imageLoad(){
         //防抖函数处理scroll组件的刷新
@@ -229,14 +228,15 @@
       },
       getProductCollectionStatus(user_id,product_id) {
         getProductCollectionStatus(user_id,product_id).then(res => {
-          //收藏状态为true时
-          if (res.data.collection_status) {
-            this.isCollected = res.data.collection_status
-          }
-          //收藏状态为false时
-          else {
-            this.isCollected = res.data.collection_status
-          }
+          res.data?this.isCollected = res.data.collection_status:null
+        })
+      },
+      getUserChoseSize(user_id,product_id,index){
+        getUserChoseSize(user_id,product_id,index).then(res=>{
+          res.data?this.choseSizeObj.item=res.data.size:null
+          this.productSizeKey+=1
+        }).catch(err=> {
+          console.log(err)
         })
       },
       initData(){
@@ -244,6 +244,7 @@
         this.id = this.$route.params.product_id
         this.type = this.$route.params.product_type
         this.sellType = this.$route.params.sell_type
+        let pro_id = this.$route.params.id
         let user_id = null
         let userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
         userInfo?user_id = userInfo.user_id:null
@@ -255,6 +256,9 @@
             this.detailData = res.data
             //获取detailData中的评论数据
             this.comment_num = this.detailData.baseData['comment_number']
+
+            //获取完商品数据后，若用户已登录则获取用户选择该商品的尺寸
+            userInfo?this.getUserChoseSize(user_id,this.id,pro_id):null
 
             //dom更新后自动滚动到顶部
             this.$nextTick(()=>{
@@ -284,7 +288,6 @@
     },
     created() {
       this.initData()
-
     },
     mounted() {
      //接收深层组件发出的choseSize事件(来自DetailBase组件中的ProductSize组件)

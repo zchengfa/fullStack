@@ -102,3 +102,16 @@ export default {
 </tempalte>
 
 ```
+
+##### 四、事件总线中的事件被多次触发($bus)
+###### 解决：在组件销毁前手动注销该事件(beforeDestroy)
+###### 原因：事件总线时全局的，它不会随着组件的销毁而注销，每次切换路由时，事件的执行次数就会加一，需要手动注销
+```vue
+<script >
+  export default ({
+    beforeDestroy() {
+      this.$bus.$off('需要注销的事件名')
+    }
+  })
+</script>
+```

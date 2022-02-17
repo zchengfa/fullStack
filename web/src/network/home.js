@@ -45,6 +45,18 @@ export function getProductCollectionStatus(user_id,product_id){
   })
 }
 
+//导出获取用户选择商品的尺码函数
+export function getUserChoseSize(user_id,product_id,id){
+  return request({
+    url:'/userChoseSize',
+    params:{
+      user_id,
+      product_id,
+      id
+    }
+  })
+}
+
 //导出获取用户所有收藏商品的商品ID函数
 export function getUserCollectionProductId(user_id){
   return request({

@@ -96,7 +96,6 @@
       getHomeMultiData(){
         getHomeMultiData().then(res =>{
           this.banner =res.data
-          console.log(this.banner)
           //let result = res.data[0].multiData[0]['iconList']
           // result ? this.menuList = result : null
           // result ? this.hasMenuData = true : this.hasMenuData = false

@@ -128,3 +128,10 @@ export function addShopToCart (user_id,product) {
     }
   })
 }
+
+//导出获取客服信息函数
+export function getCusInfo(){
+  return requestPost({
+    url:'/customerInfo',
+  })
+}

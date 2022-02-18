@@ -2,16 +2,18 @@
   <div class="customer">
     <nav-bar class="nav">
       <div slot="left" @click="back"><img src="~assets/image/detail/back.svg" alt="backImage"></div>
-      <div slot="center">客服</div>
+      <div v-show="sessionStorage.getItem('userInfo').identity===0" slot="center">客服</div>
+      <div v-show="sessionStorage.getItem('userInfo').identity===1000" slot="center">客户</div>
     </nav-bar>
     <div class="message-box">
       <Scroll class="content" ref="message" :padding="true">
+
         <div class="content-box" :class="{'content-user':item.sender===user,'content-customer':item.sender==='customer'}" v-for="(item,index) in messageList" :key="index">
           <div class="message" :class="{'message-user':item.sender===user,'message-customer':item.sender==='customer'}">
-            <span>{{item.message}}{{item.sendTime}}</span>
+            <span>{{item.message}}</span>
           </div>
-          <img v-if="item.sender===user" :class="{'user-image':item.sender===user}" :src="avatar"  alt="image">
-          <img v-else :class="{'customer-image':item.sender==='customer'}" src="~assets/image/profile/header.png"  alt="image">
+          <img v-if="item.sender===user" :class="{'user-image':item.sender===user}" :src="avatar"  alt="user_image">
+          <img v-else :class="{'customer-image':item.sender==='customer'}" :src="base64Json['customer_avatar_default']"  alt="cus_image">
         </div>
       </Scroll>
     </div>
@@ -25,6 +27,8 @@
 import NavBar from "@/components/common/navbar/NavBar";
 import ChatBar from "@/components/content/customer/ChatBar";
 import Scroll from "@/components/common/scroll/Scroll";
+import base64Json from '@/assets/image/base64/base64.json'
+import {getCusInfo} from "@/network/home";
 
 import io from 'socket.io-client'
 export default {
@@ -35,9 +39,11 @@ export default {
       url:this.$link,
       token:this.$store.state.token,
       user:'',
-      socket:'',
-      sender:'18270014304',
-      avatar: ''
+      socket:null,
+      sender:null,
+      avatar: '',
+      base64Json:{},
+      receiver:null
     }
   },
   components:{
@@ -59,11 +65,20 @@ export default {
         this.$refs.message.scroll.refresh()
       }
     },
+    //获取客服信息
+    getCustomerInfo(){
+      getCusInfo().then(res=>{
+        res.data['customer_info']?this.receiver=res.data['customer_info'].account:null
+        console.log(res)
+      }).catch(err=>{
+        console.log(err)
+      })
+    },
     //发送消息
     sendMessage(message) {
       let sendTime = new Date().getTime()
       try {
-        this.socket.emit('sendMsg',message,this.user,this.sender,sendTime);
+        this.socket.emit('sendMsg',message,this.sender,this.receiver,sendTime);
       }
       catch (err) {
         console.log(err)
@@ -71,7 +86,7 @@ export default {
       finally {
         this.messageList.push({
           message,
-          'sender':this.user,
+          'sender':this.sender,
           'sendTime':sendTime
         })
         this.scrollToBottom()
@@ -103,17 +118,21 @@ export default {
     }
   },
   created() {
+    this.getCustomerInfo()
+    this.base64Json = base64Json
     if (this.token){
       let userInfo = this.$store.state.userInfo
-      this.user = userInfo.username
+      userInfo.username?this.user=userInfo.username:this.user=userInfo.account
+      this.sender = this.user
 
       if (userInfo.avatar !== null){
         this.avatar = userInfo.avatar
       }
       else {
-        this.avatar = '~assets/image/profile/header.png'
+        userInfo.gender===0?this.avatar=this.base64Json['man_avatar_default']:this.avatar=this.base64Json['woman_avatar_default']
       }
       this.socket = io(this.url)
+
     }
   },
   mounted() {

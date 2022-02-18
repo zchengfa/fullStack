@@ -17,6 +17,7 @@ app.use(cors())
 
 //除了/admin/loginAdministrator请求，其他请求都必须先进行token验证，验证通过后才能进行当次请求
 app.use((req,res,next)=>{
+  console.log(req.url)
   let requestQuery = ''
   let category_type = ''
   let product_type = ''
@@ -107,6 +108,9 @@ require('./router/admin/memberManage')(app)
 
 //导入首页内容详情模块
 require('./router/homeContent/bannerDetail')(app)
+
+//导入客服模块
+require('./router/home/customer')(app)
 
 server.listen(3000, err =>{
   if(err){

@@ -22,6 +22,7 @@ const Customer = ()=> import('@/components/content/customer/Customer')
 const TermsService = ()=> import('@/components/content/register/TermsService')
 const ProductCollection = ()=> import('@/views/profile/components/ProductCollection')
 const BannerDetail = ()=> import('@/views/homeContent/BannerDetail')
+const ChatForCustomer = () => import('@/views/chatForCustomer/chatForCustomer')
 
 //创建路由映射表对象
 const routes =[
@@ -68,6 +69,13 @@ const routes =[
 	{
 		path: '/customer',
 		component:Customer,
+		meta: {
+			keepAlive: true
+		}
+	},
+	{
+		path: '/chatForCustomer',
+		component:ChatForCustomer,
 		meta: {
 			keepAlive: true
 		}

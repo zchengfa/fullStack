@@ -16,7 +16,7 @@ module.exports = server => {
         })
         socket.on('sendMsg',(message,sender,receiver,sendTime) => {
             console.log(message,sender,receiver,sendTime)
-            socket.to(users[receiver]).emit('sendMsgToReceiver',message,sender)
+            socket.to(users[receiver]).emit('receiveMessage',message,sender,sendTime)
         })
         socket.on('disconnecting',() => {
             if (users.hasOwnProperty(socket.name)) {

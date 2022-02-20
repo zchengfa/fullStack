@@ -181,7 +181,8 @@
         //点击联系客服按钮进入用户与客服的聊天界面
         //通过token判断用户是否登录，若已登录进入customer页面
         if (this.token) {
-          this.$router.push({path:'/customer'})
+          //已经登录，再判断登录者是否是客服，若是客服登录的，就不允许进入与客服聊天界面，引导登录者去专门的客服专用页面
+          this.$store.state.userInfo.identity!==1000?this.$router.push({path:'/customer'}):this.$router.push({path:'/chatForCustomer'})
         }
         //未登录，进入登录页面
         else {

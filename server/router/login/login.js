@@ -19,7 +19,7 @@ module.exports = app => {
         //创建查询用户名语句
         const selectUser_id = mysql_query.selectFields('mall_user','account',`account = '${paramsObj.account}'`)
 
-        const select_query = mysql_query.selectFields('mall_user','account,username,user_id,avatar,gender',`account = '${paramsObj.account}' AND password = '${paramsObj.pwd}'`)
+        const select_query = mysql_query.selectFields('mall_user','account,username,user_id,avatar,gender,identity',`account = '${paramsObj.account}' AND password = '${paramsObj.pwd}'`)
 
         connection.query(selectUser_id, (err, result) => {
             if (err) throw err
@@ -38,7 +38,8 @@ module.exports = app => {
                                 account:results[0]['account'],
                                 user_id:results[0]['user_id'],
                                 avatar:results[0]['avatar'],
-                                gender:results[0]['gender']
+                                gender:results[0]['gender'],
+                                identity:results[0]['identity']
                             }
                             //生成token,当过期时间number类型时以秒计算
                             const token = createToken(user,'1d')

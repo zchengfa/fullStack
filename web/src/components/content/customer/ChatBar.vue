@@ -75,6 +75,7 @@ export default {
       this.message = ''
       //点击发送按钮后隐藏发送按钮
       this.isSend = false
+      this.showEmoji = false
     },
     keyUp(){
       //将enter键盘事件以及内容发送给父组件

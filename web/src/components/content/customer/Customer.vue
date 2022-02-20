@@ -2,18 +2,16 @@
   <div class="customer">
     <nav-bar class="nav">
       <div slot="left" @click="back"><img src="~assets/image/detail/back.svg" alt="backImage"></div>
-      <div v-show="sessionStorage.getItem('userInfo').identity===0" slot="center">客服</div>
-      <div v-show="sessionStorage.getItem('userInfo').identity===1000" slot="center">客户</div>
+      <div slot="center">客服</div>
     </nav-bar>
     <div class="message-box">
       <Scroll class="content" ref="message" :padding="true">
-
-        <div class="content-box" :class="{'content-user':item.sender===user,'content-customer':item.sender==='customer'}" v-for="(item,index) in messageList" :key="index">
-          <div class="message" :class="{'message-user':item.sender===user,'message-customer':item.sender==='customer'}">
+        <div class="content-box" :class="{'content-sender':item.sender===user,'content-receiver':item.sender==='customer'}" v-for="(item,index) in messageList" :key="index">
+          <div class="message" :class="{'message-sender':item.sender===user,'message-receiver':item.sender==='customer'}">
             <span>{{item.message}}</span>
           </div>
-          <img v-if="item.sender===user" :class="{'user-image':item.sender===user}" :src="avatar"  alt="user_image">
-          <img v-else :class="{'customer-image':item.sender==='customer'}" :src="base64Json['customer_avatar_default']"  alt="cus_image">
+          <img v-if="item.sender===user" :class="{'sender-image':item.sender===user}" :src="avatar"  alt="sender_image">
+          <img v-else :class="{'rec-image':item.sender==='customer'}" :src="base64Json['customer_avatar_default']"  alt="rec_image">
         </div>
       </Scroll>
     </div>
@@ -69,7 +67,6 @@ export default {
     getCustomerInfo(){
       getCusInfo().then(res=>{
         res.data['customer_info']?this.receiver=res.data['customer_info'].account:null
-        console.log(res)
       }).catch(err=>{
         console.log(err)
       })
@@ -89,6 +86,7 @@ export default {
           'sender':this.sender,
           'sendTime':sendTime
         })
+
         this.scrollToBottom()
         console.log('message send success')
       }
@@ -96,7 +94,7 @@ export default {
     //接收消息
     receiveMsg() {
       try {
-        this.socket.on('sendMsgToReceiver',(message,sender) => {
+        this.socket.on('receiveMessage',(message,sender) => {
           console.log(message,sender)
           this.sender = sender
           this.messageList.push({
@@ -131,6 +129,7 @@ export default {
       else {
         userInfo.gender===0?this.avatar=this.base64Json['man_avatar_default']:this.avatar=this.base64Json['woman_avatar_default']
       }
+
       this.socket = io(this.url)
 
     }
@@ -196,18 +195,18 @@ export default {
   word-break: break-all;
   text-align: left;
 }
-.content-user{
+.content-sender{
   text-align: right;
   margin-right: 2vw;
 }
-.message-user span{
+.message-sender span{
   background-color: red;
 }
-.message-customer {
+.message-receiver {
   margin-left: 10%;
 }
-.message-user::after,
-.message-customer::before{
+.message-sender::after,
+.message-receiver::before{
   position: relative;
   top:50%;
   display: inline-block;
@@ -215,10 +214,10 @@ export default {
   border-width: .8rem;
   border-style: solid;
 }
-.message-user::after {
+.message-sender::after {
   border-color: transparent transparent transparent red;
 }
-.content-customer{
+.content-receiver{
   text-align: left;
 }
 .content-customer img {
@@ -230,7 +229,7 @@ export default {
 .message-customer span {
   background-color: #1e8efc;
 }
-.message-customer::before{
+.message-receiver::before{
   border-color: transparent #1e8efc transparent transparent;
 }
 .bottom {

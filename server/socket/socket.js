@@ -14,9 +14,9 @@ module.exports = server => {
             console.log(user + '上线了',socket.id,13)
             console.log(users,14)
         })
-        socket.on('sendMsg',(message,sender,receiver,sendTime) => {
+        socket.on('sendMsg',(message,sender,receiver,sendTime,avatar) => {
             console.log(message,sender,receiver,sendTime)
-            socket.to(users[receiver]).emit('receiveMessage',message,sender,sendTime)
+            socket.to(users[receiver]).emit('receiveMessage',message,sender,sendTime,avatar)
         })
         socket.on('disconnecting',() => {
             if (users.hasOwnProperty(socket.name)) {

@@ -75,7 +75,7 @@ export default {
     sendMessage(message) {
       let sendTime = new Date().getTime()
       try {
-        this.socket.emit('sendMsg',message,this.sender,this.receiver,sendTime);
+        this.socket.emit('sendMsg',message,this.sender,this.receiver,sendTime,this.avatar);
       }
       catch (err) {
         console.log(err)
@@ -94,8 +94,8 @@ export default {
     //接收消息
     receiveMsg() {
       try {
-        this.socket.on('receiveMessage',(message,sender) => {
-          console.log(message,sender)
+        this.socket.on('receiveMessage',(message,sender,senderTime,avatar) => {
+          console.log(message,sender,senderTime,avatar)
           this.sender = sender
           this.messageList.push({
             message,

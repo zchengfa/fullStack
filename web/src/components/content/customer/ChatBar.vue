@@ -41,7 +41,8 @@ export default {
   },
   methods:{
     onfocus(){
-      //点击输入框时，隐藏表情组件
+      //点击输入框时，隐藏表情组件和其他功能组件
+      this.showEmoji = false
       this.showChatOther = false
     },
     emoji(){

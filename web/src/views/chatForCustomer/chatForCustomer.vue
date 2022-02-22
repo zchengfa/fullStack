@@ -8,8 +8,8 @@
   </div>
   <div class="sender-info-list">
     <ul>
-      <li>
-        <div class="info-box" v-for="(item,index) in messageArr" :key="index">
+      <li v-for="(item,index) in messageArr" :key="index" >
+        <div class="info-box" @click="toSendMessage(item.sender)">
           <div class="avatar-box">
             <img v-show="item.avatar" class="avatar" :src="item.avatar" alt="avatar">
             <img v-show="!item.avatar" class="avatar" src="~assets/image/profile/header.png" alt="avatar">
@@ -40,6 +40,10 @@ export default {
     }
   },
   methods:{
+    //点击对应客户项，进入到跟客户聊天界面
+    toSendMessage(sender){
+      this.$router.push('/customer'+'/'+sender)
+    },
     //接收消息
     receiveMsg(){
       this.socket.on('receiveMessage',(message,sender,sendTime,avatar)=>{
@@ -91,6 +95,10 @@ export default {
 </script>
 
 <style scoped>
+.chat-for-customer{
+  width: 100vw;
+  background-color: #b7a1a1;
+}
 .avatar{
   margin: .5rem;
   width: 32px;
@@ -100,6 +108,7 @@ export default {
   display: flex;
   justify-items: center;
   align-items: center;
+  background-color: #fff;
 }
 .info-box .avatar-box{
   flex: 1;

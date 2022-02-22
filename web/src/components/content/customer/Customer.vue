@@ -2,16 +2,17 @@
   <div class="customer">
     <nav-bar class="nav">
       <div slot="left" @click="back"><img src="~assets/image/detail/back.svg" alt="backImage"></div>
-      <div slot="center">客服</div>
+      <div v-if="$store.state.userInfo.identity!==1000" slot="center">客服</div>
+      <div v-else slot="center">{{$route.params.receiver}}</div>
     </nav-bar>
     <div class="message-box">
       <Scroll class="content" ref="message" :padding="true">
-        <div class="content-box" :class="{'content-sender':item.sender===user,'content-receiver':item.sender==='customer'}" v-for="(item,index) in messageList" :key="index">
-          <div class="message" :class="{'message-sender':item.sender===user,'message-receiver':item.sender==='customer'}">
+        <div class="content-box" :class="{'content-sender':item.sender===sender,'content-receiver':item.sender!==sender}" v-for="(item,index) in messageList" :key="index">
+          <div class="message" :class="{'message-sender':item.sender===sender,'message-receiver':item.sender!==sender}">
             <span>{{item.message}}</span>
           </div>
-          <img v-if="item.sender===user" :class="{'sender-image':item.sender===user}" :src="avatar"  alt="sender_image">
-          <img v-else :class="{'rec-image':item.sender==='customer'}" :src="base64Json['customer_avatar_default']"  alt="rec_image">
+          <img v-if="item.sender===user" :class="{'sender-image':item.sender===sender}" :src="item.avatar"  alt="sender_image">
+          <img v-else :class="{'rec-image':item.sender!==sender}" :src="item.avatar"  alt="rec_image">
         </div>
       </Scroll>
     </div>
@@ -41,7 +42,8 @@ export default {
       sender:null,
       avatar: '',
       base64Json:{},
-      receiver:null
+      receiver:null,
+      userInfo:this.$store.state.userInfo
     }
   },
   components:{
@@ -52,6 +54,32 @@ export default {
   methods:{
     back(){
       this.$router.go(-1)
+    },
+    initData(){
+      this.base64Json = base64Json
+      if (this.token){
+        let userInfo = this.userInfo
+        userInfo.username?this.user=userInfo.username:this.user=userInfo.account
+        this.sender = this.user
+        this.receiver = this.$route.params.receiver
+
+        if (userInfo.identity!==1000){
+          if (userInfo.avatar !== null){
+            this.avatar = userInfo.avatar
+          }
+          else {
+            userInfo.gender===0?this.avatar=this.base64Json['man_avatar_default']:this.avatar=this.base64Json['woman_avatar_default']
+          }
+        }
+        else {
+          if (userInfo.avatar !==null){
+            this.avatar = userInfo.avatar
+          }
+          else {
+            userInfo.gender===0?this.avatar=this.base64Json['customer_avatar_man']:this.avatar=this.base64Json['customer_avatar_default']
+          }
+        }
+      }
     },
     scrollToBottom(){
       const scrollHeight = this.$refs.message.scroll.content.clientHeight
@@ -66,7 +94,7 @@ export default {
     //获取客服信息
     getCustomerInfo(){
       getCusInfo().then(res=>{
-        res.data['customer_info']?this.receiver=res.data['customer_info'].account:null
+        //res.data['customer_info']?this.receiver=res.data['customer_info'].account:null
       }).catch(err=>{
         console.log(err)
       })
@@ -76,6 +104,7 @@ export default {
       let sendTime = new Date().getTime()
       try {
         this.socket.emit('sendMsg',message,this.sender,this.receiver,sendTime,this.avatar);
+
       }
       catch (err) {
         console.log(err)
@@ -84,7 +113,8 @@ export default {
         this.messageList.push({
           message,
           'sender':this.sender,
-          'sendTime':sendTime
+          'sendTime':sendTime,
+          'avatar':this.avatar
         })
 
         this.scrollToBottom()
@@ -95,11 +125,13 @@ export default {
     receiveMsg() {
       try {
         this.socket.on('receiveMessage',(message,sender,senderTime,avatar) => {
-          console.log(message,sender,senderTime,avatar)
-          this.sender = sender
+          console.log(message,sender,senderTime,avatar,130)
+          // this.sender = sender
           this.messageList.push({
             message,
-            sender:'customer'
+            sender,
+            avatar,
+            senderTime
           })
           this.scrollToBottom()
         })
@@ -115,24 +147,18 @@ export default {
       this.sendMessage(message)
     }
   },
+  watch:{
+    $route(to,from){
+      if (to.path !== from.path){
+        this.initData()
+      }
+    }
+  },
   created() {
     this.getCustomerInfo()
-    this.base64Json = base64Json
-    if (this.token){
-      let userInfo = this.$store.state.userInfo
-      userInfo.username?this.user=userInfo.username:this.user=userInfo.account
-      this.sender = this.user
+    this.initData()
 
-      if (userInfo.avatar !== null){
-        this.avatar = userInfo.avatar
-      }
-      else {
-        userInfo.gender===0?this.avatar=this.base64Json['man_avatar_default']:this.avatar=this.base64Json['woman_avatar_default']
-      }
-
-      this.socket = io(this.url)
-
-    }
+    this.socket = io(this.url)
   },
   mounted() {
     //通知服务器用户上线了
@@ -154,6 +180,7 @@ export default {
   position: fixed;
   top:0;
   border-bottom: 1px solid #cdc9c9;
+  background-color: #fff;
 }
 .nav div {
   font-weight: bolder;
@@ -163,75 +190,82 @@ export default {
   position: relative;
   top:5px;
 }
-.content {
-  width: 100vw;
-  height: 100%;
-  overflow: hidden;
-}
 .message-box {
   position: relative;
   top:44px;
   height: calc(100vh - 44px - 4rem);
 }
+.content {
+  width: 100vw;
+  height: 100%;
+  overflow: hidden;
+}
 .content-box{
-  position: relative;
-}
-.content-box img{
-  width: 10vw;
-  height: 10vw;
-}
-.message {
-  display: inline-block;
-  max-width: 80%;
   margin-top: .5rem;
-  margin-bottom: .5rem;
-  padding: .5rem 0;
+  width: 100%;
+  background-color: #8a8686;
 }
-.message span {
-  display: inline-block;
-  padding: 1rem;
-  max-width: 80%;
-  border-radius: .4rem;
-  word-break: break-all;
-  text-align: left;
-}
-.content-sender{
-  text-align: right;
-  margin-right: 2vw;
-}
-.message-sender span{
-  background-color: red;
-}
-.message-receiver {
-  margin-left: 10%;
-}
-.message-sender::after,
-.message-receiver::before{
-  position: relative;
-  top:50%;
-  display: inline-block;
-  content: '';
-  border-width: .8rem;
-  border-style: solid;
-}
-.message-sender::after {
-  border-color: transparent transparent transparent red;
-}
-.content-receiver{
-  text-align: left;
-}
-.content-customer img {
-  position: absolute;
-  left: 2vw;
-  top:50%;
-  transform: translateY(-50%);
-}
-.message-customer span {
-  background-color: #1e8efc;
-}
-.message-receiver::before{
-  border-color: transparent #1e8efc transparent transparent;
-}
+/*.content-box{*/
+/*  position: relative;*/
+/*}*/
+/*.content-box img{*/
+/*  width: 10vw;*/
+/*  height: 10vw;*/
+/*}*/
+/*.message {*/
+/*  display: inline-block;*/
+/*  max-width: 80%;*/
+/*  margin-top: .5rem;*/
+/*  margin-bottom: .5rem;*/
+/*  padding: .5rem 0;*/
+/*}*/
+/*.message span {*/
+/*  display: inline-block;*/
+/*  padding: 1rem;*/
+/*  max-width: 80%;*/
+/*  border-radius: .4rem;*/
+/*  word-break: break-all;*/
+/*  text-align: left;*/
+/*}*/
+/*.content-sender{*/
+/*  text-align: right;*/
+/*  margin-right: 2vw;*/
+/*}*/
+/*.message-sender span{*/
+/*  background-color: red;*/
+/*}*/
+/*.message-receiver {*/
+/*  position: relative;*/
+/*  margin-left: 10%;*/
+/*}*/
+/*.message-sender::after,*/
+/*.message-receiver::before{*/
+/*  position: relative;*/
+/*  top:0;*/
+/*  display: inline-block;*/
+/*  content: '';*/
+/*  border-width: .8rem;*/
+/*  border-style: solid;*/
+/*}*/
+/*.message-sender::after {*/
+/*  border-color: transparent transparent transparent red;*/
+/*}*/
+/*.content-receiver{*/
+/*  position: relative;*/
+/*  text-align: left;*/
+/*}*/
+/*.content-receiver img {*/
+/*  position: absolute;*/
+/*  left: 2vw;*/
+/*  top:.5rem;*/
+/*  !*transform: translateY(-50%);*!*/
+/*}*/
+/*.message-receiver span {*/
+/*  background-color: #1e8efc;*/
+/*}*/
+/*.message-receiver::before{*/
+/*  border-color: transparent #1e8efc transparent transparent;*/
+/*}*/
 .bottom {
   position: fixed;
   bottom: 0;

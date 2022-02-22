@@ -38,7 +38,7 @@
 
   import mixins from "@/common/mixins/mixins";
   import ProductSize from "./component/content/ProductSize";
-  import {getUserChoseSize} from "../../network/home";
+  import {getCusInfo, getUserChoseSize} from "@/network/home";
 
   export default {
     name: "detail",
@@ -62,7 +62,8 @@
           index:null
         },
         productSizeKey:0,
-        productDetailIndex:null
+        productDetailIndex:null,
+        customer:null
       }
     },
     components:{
@@ -177,12 +178,31 @@
           this.$router.push({path:'/login'})
         }
       },
+      //获取客服信息
+      getCustomerInfo(){
+        getCusInfo().then(res=>{
+          res.data['customer_info']?this.customer=res.data['customer_info']:null
+        }).catch(err=>{
+          console.log(err)
+        })
+      },
       contactCustomer() {
         //点击联系客服按钮进入用户与客服的聊天界面
         //通过token判断用户是否登录，若已登录进入customer页面
         if (this.token) {
           //已经登录，再判断登录者是否是客服，若是客服登录的，就不允许进入与客服聊天界面，引导登录者去专门的客服专用页面
-          this.$store.state.userInfo.identity!==1000?this.$router.push({path:'/customer'}):this.$router.push({path:'/chatForCustomer'})
+          //this.$store.state.userInfo.identity!==1000?this.$router.push({path:'/customer'+'/'+this.customer.account}):this.$router.push({path:'/chatForCustomer'})
+          if (this.$store.state.userInfo.identity!==1000){
+            if (this.customer.username){
+              this.$router.push({path:'/customer'+'/'+this.customer.username})
+            }
+            else {
+              this.$router.push({path:'/customer'+'/'+this.customer.account})
+            }
+          }
+          else {
+            this.$router.push({path:'/chatForCustomer'})
+          }
         }
         //未登录，进入登录页面
         else {
@@ -260,6 +280,9 @@
 
             //获取完商品数据后，若用户已登录则获取用户选择该商品的尺寸
             userInfo?this.getUserChoseSize(user_id,this.id,pro_id):null
+
+            //执行获取客服信息函数
+            userInfo?this.getCustomerInfo():null
 
             //dom更新后自动滚动到顶部
             this.$nextTick(()=>{

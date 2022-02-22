@@ -43,7 +43,7 @@ export default {
     onfocus(){
       //点击输入框时，隐藏表情组件和其他功能组件
       this.showEmoji = false
-      this.showChatOther = false
+      this.showOtherController = false
     },
     emoji(){
       //点击输入框中表情按钮，控制表情组件的显示和隐藏

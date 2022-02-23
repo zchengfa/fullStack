@@ -81,7 +81,7 @@ export default {
   },
   created() {
     let userInfo = this.$store.state.userInfo
-    this.customer = userInfo.account
+    userInfo.username?this.customer=userInfo.username:this.customer=userInfo.account
     this.customerInfo = userInfo
     this.socket = io(this.$link)
 

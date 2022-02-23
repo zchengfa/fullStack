@@ -86,25 +86,17 @@ export default {
       const clientHeight = this.$refs.message.$el.clientHeight
 
       if (clientHeight<=scrollHeight){
-        this.$refs.message.scroll.scrollTo(0,- (scrollHeight + 300),300)
+        this.$refs.message.scroll.refresh()
+        this.$refs.message.scroll.scrollTo(0,- (scrollHeight + 600),300)
         //自动上滑后刷新scroll组件
         this.$refs.message.scroll.refresh()
       }
-    },
-    //获取客服信息
-    getCustomerInfo(){
-      getCusInfo().then(res=>{
-        //res.data['customer_info']?this.receiver=res.data['customer_info'].account:null
-      }).catch(err=>{
-        console.log(err)
-      })
     },
     //发送消息
     sendMessage(message) {
       let sendTime = new Date().getTime()
       try {
         this.socket.emit('sendMsg',message,this.sender,this.receiver,sendTime,this.avatar);
-
       }
       catch (err) {
         console.log(err)
@@ -116,17 +108,13 @@ export default {
           'sendTime':sendTime,
           'avatar':this.avatar
         })
-
         this.scrollToBottom()
-        console.log('message send success')
       }
     },
     //接收消息
     receiveMsg() {
       try {
         this.socket.on('receiveMessage',(message,sender,senderTime,avatar) => {
-          console.log(message,sender,senderTime,avatar,130)
-          // this.sender = sender
           this.messageList.push({
             message,
             sender,
@@ -135,12 +123,10 @@ export default {
           })
           this.scrollToBottom()
         })
+
       }
       catch (err) {
         console.log(err)
-      }
-      finally {
-        this.scrollToBottom()
       }
     },
     keyUpEnter(message){
@@ -152,10 +138,12 @@ export default {
       if (to.path !== from.path){
         this.initData()
       }
+    },
+    messageCount(n,o){
+      console.log(n,o)
     }
   },
   created() {
-    this.getCustomerInfo()
     this.initData()
 
     this.socket = io(this.url)
@@ -201,71 +189,57 @@ export default {
   overflow: hidden;
 }
 .content-box{
+  position: relative;
+  display: flex;
+  justify-items: center;
+  align-items: center;
   margin-top: .5rem;
-  width: 100%;
-  background-color: #8a8686;
+  max-width: 80%;
 }
-/*.content-box{*/
-/*  position: relative;*/
-/*}*/
-/*.content-box img{*/
-/*  width: 10vw;*/
-/*  height: 10vw;*/
-/*}*/
-/*.message {*/
-/*  display: inline-block;*/
-/*  max-width: 80%;*/
-/*  margin-top: .5rem;*/
-/*  margin-bottom: .5rem;*/
-/*  padding: .5rem 0;*/
-/*}*/
-/*.message span {*/
-/*  display: inline-block;*/
-/*  padding: 1rem;*/
-/*  max-width: 80%;*/
-/*  border-radius: .4rem;*/
-/*  word-break: break-all;*/
-/*  text-align: left;*/
-/*}*/
-/*.content-sender{*/
-/*  text-align: right;*/
-/*  margin-right: 2vw;*/
-/*}*/
-/*.message-sender span{*/
-/*  background-color: red;*/
-/*}*/
-/*.message-receiver {*/
-/*  position: relative;*/
-/*  margin-left: 10%;*/
-/*}*/
-/*.message-sender::after,*/
-/*.message-receiver::before{*/
-/*  position: relative;*/
-/*  top:0;*/
-/*  display: inline-block;*/
-/*  content: '';*/
-/*  border-width: .8rem;*/
-/*  border-style: solid;*/
-/*}*/
-/*.message-sender::after {*/
-/*  border-color: transparent transparent transparent red;*/
-/*}*/
-/*.content-receiver{*/
-/*  position: relative;*/
-/*  text-align: left;*/
-/*}*/
-/*.content-receiver img {*/
-/*  position: absolute;*/
-/*  left: 2vw;*/
-/*  top:.5rem;*/
-/*  !*transform: translateY(-50%);*!*/
-/*}*/
-/*.message-receiver span {*/
-/*  background-color: #1e8efc;*/
-/*}*/
-/*.message-receiver::before{*/
-/*  border-color: transparent #1e8efc transparent transparent;*/
-/*}*/
+.content-sender{
+  left: 20%;
+}
+.content-receiver{
+  flex-direction: row-reverse;
+}
+.message{
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  flex: 9;
+}
+.message span{
+  padding: 1rem;
+  max-width: 80%;
+  border-radius: .3rem;
+}
+.content-box img{
+  flex: 1;
+}
+.message-receiver span{
+  background-color: #1e8efc;
+}
+.message-sender span{
+  background-color: #fd001e;
+}
+.message-sender{
+  flex-direction: row-reverse;
+}
+.message-receiver::before,
+.message-sender::before{
+  position: relative;
+  top:50%;
+  display: block;
+  content: '';
+  border-width: .8rem;
+  border-style: solid;
+}
+.message-sender::before{
+  border-color: transparent transparent transparent #fd001e;
+}
+.message-receiver::before{
+  border-color: transparent #1e8efc transparent transparent;
+}
 .bottom {
   position: fixed;
   bottom: 0;

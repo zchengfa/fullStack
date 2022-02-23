@@ -104,6 +104,8 @@ export default {
 }
 .chat-bar div.chat-controller{
   display: flex;
+  justify-items: center;
+  align-items: center;
   line-height: 4rem;
 }
 .chat-bar div.chat-controller div {
@@ -111,7 +113,13 @@ export default {
   text-align: center;
 }
 .chat-bar div.chat-controller .chat {
+  display: flex;
+  justify-items: center;
+  align-items: center;
   flex: 4;
+  height: 3rem;
+  border-radius: 2rem;
+  background-color: #fff;
 }
 .chat-with-voice img{
   position: relative;
@@ -122,21 +130,18 @@ export default {
   background-color: #fff;
 }
 input{
-  padding: 0;
-  width: 100%;
-  height: 60%;
+  padding-right: .2rem;
+  flex: 9;
+  height: 80%;
   border-radius: 2rem;
   text-indent: 1rem;
 }
 button {
-  position: absolute;
-  top: 1rem;
-  right: 18%;
+  flex: 1;
   width: 2rem;
   height: 2rem;
   background-image: url("~assets/image/customer/emoji.png");
   background-repeat: no-repeat;
-  z-index: 11;
 }
 .other{
   font-size: 2rem;

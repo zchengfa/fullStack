@@ -47,25 +47,24 @@ export default {
     //接收消息
     receiveMsg(){
       this.socket.on('receiveMessage',(message,sender,sendTime,avatar)=>{
-        if (this.messageArr.length){
-          if (this.sender===sender){
-            this.messageArr.map(item=>{
-              if (item.sender===sender){
-                item.message=message
-                item.sendTime = sendTime
-              }
-            })
+        // if (this.messageArr.length){
+        //   this.messageArr.map(item=>{
+        //     if (item.sender===sender){
+        //       item.message = message
+        //       item.senderTime = sendTime
+        //     }
+        //   })
+        // }
+        // else{
+        //   this.pushMessage(this.messageArr,message,sender,sendTime,avatar)
+        // }
+        this.pushMessage(this.messageArr,message,sender,sendTime,avatar)
+        this.messageArr.map(item=>{
+          if (item.sender===sender){
+            item.message=message
+            item.sendTime=sendTime
           }
-          else{
-            this.pushMessage(this.messageArr,message,sender,sendTime,avatar)
-            this.sender = sender
-          }
-
-        }
-        else {
-          this.pushMessage(this.messageArr,message,sender,sendTime,avatar)
-          this.sender = sender
-        }
+        })
       })
     },
     //获取发送者信息
@@ -76,7 +75,16 @@ export default {
         'sendTime':sendTime,
         'avatar':avatar
       })
-      return arr
+    },
+    //将接受到的消息存储到localstorage中
+    saveMsgToLocalstorage(){
+      let msgArr = []
+      this.messageArr.map(item=>{
+        msgArr.push({
+          ...item
+        })
+      })
+      localStorage.setItem(this.customer,JSON.stringify(msgArr))
     }
   },
   created() {
@@ -85,12 +93,23 @@ export default {
     this.customerInfo = userInfo
     this.socket = io(this.$link)
 
+    //获取localstorage中对应的消息数据
+    let msgLocal = JSON.parse(localStorage.getItem(this.customer))
+    msgLocal?this.messageArr=msgLocal:null
   },
   mounted() {
     this.socket.emit('online',this.customer)
     //执行接收消息方法，若有消息发送给当前客服
     this.receiveMsg()
-  }
+  },
+  // activated() {
+  //   //获取localstorage中对应的消息数据
+  //   let msgLocal = JSON.parse(localStorage.getItem(this.customer))
+  //   msgLocal?this.messageArr=msgLocal:null
+  // },
+  // deactivated() {
+  //   this.saveMsgToLocalstorage()
+  // }
 }
 </script>
 

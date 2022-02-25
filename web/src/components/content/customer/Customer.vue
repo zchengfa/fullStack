@@ -27,7 +27,6 @@ import NavBar from "@/components/common/navbar/NavBar";
 import ChatBar from "@/components/content/customer/ChatBar";
 import Scroll from "@/components/common/scroll/Scroll";
 import base64Json from '@/assets/image/base64/base64.json'
-import {getCusInfo} from "@/network/home";
 
 import io from 'socket.io-client'
 export default {
@@ -138,14 +137,10 @@ export default {
       if (to.path !== from.path){
         this.initData()
       }
-    },
-    messageCount(n,o){
-      console.log(n,o)
     }
   },
   created() {
     this.initData()
-
     this.socket = io(this.url)
   },
   mounted() {

@@ -37,7 +37,7 @@ export default {
       messageArr:[],
       customerInfo:null,
       sender:null,
-      messageHistory:[]
+      messageHistory:[],
     }
   },
   methods:{
@@ -147,12 +147,6 @@ export default {
     //执行接收消息方法，若有消息发送给当前客服
     this.receiveMsg()
   },
-  // activated() {
-  //   this.messageHistory = JSON.parse(localStorage.getItem(this.customer+'history'))
-  // },
-  // deactivated() {
-  //   this.saveMsgToLocalstorage(this.messageHistory,this.customer+'history')
-  // }
 }
 </script>
 

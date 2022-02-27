@@ -42,7 +42,8 @@ export default {
       avatar: '',
       base64Json:{},
       receiver:null,
-      userInfo:this.$store.state.userInfo
+      userInfo:this.$store.state.userInfo,
+      allMsgHistory:[]
     }
   },
   components:{
@@ -79,6 +80,21 @@ export default {
           }
         }
       }
+
+      //获取localstorage中存储的消息记录
+      this.userInfo.identity!==1000?this.allMsgHistory=JSON.parse(localStorage.getItem(this.receiver+'history')):this.allMsgHistory=JSON.parse(localStorage.getItem(this.sender+'history'))
+      this.allMsgHistory?this.allMsgHistory.map(item=>{
+        if (this.userInfo.identity!==1000){
+          if (item.sender===this.sender){
+            this.messageList = item.messageList
+          }
+        }
+        else {
+          if (item.sender===this.receiver){
+            this.messageList = item.messageList
+          }
+        }
+      }):null
     },
     scrollToBottom(){
       const scrollHeight = this.$refs.message.scroll.content.clientHeight
@@ -101,31 +117,98 @@ export default {
         console.log(err)
       }
       finally {
-        this.messageList.push({
-          message,
-          'sender':this.sender,
-          'sendTime':sendTime,
-          'avatar':this.avatar
-        })
+        this.pushMessageAndSave(this.messageList,message,this.sender,sendTime,this.avatar)
         this.scrollToBottom()
+        this.saveMsgHisToLocal()
       }
     },
     //接收消息
     receiveMsg() {
       try {
-        this.socket.on('receiveMessage',(message,sender,senderTime,avatar) => {
-          this.messageList.push({
-            message,
-            sender,
-            avatar,
-            senderTime
+        this.socket.on('receiveMessage',(message,sender,sendTime,avatar) => {
+          if (sender!==this.receiver){
+            //处理本地存储中历史消息数据
+            let msgHisLocal = JSON.parse(localStorage.getItem(this.sender+'history'))
+            let allHisCount=0
+            msgHisLocal.map(his=>{
+              if (his.sender===sender){
+                his.messageList.push({
+                  'message':message,
+                  'sender':sender,
+                  'sendTime':sendTime,
+                  'avatar':avatar
+                })
+                localStorage.setItem(this.sender+'history',JSON.stringify(msgHisLocal))
+              }
+              else {
+                allHisCount++
+              }
+              allHisCount===msgHisLocal.length?localStorage.setItem(this.sender+'history',JSON.stringify(msgHisLocal)):null
+            })
+          }
+          else{
+            this.pushMessageAndSave(this.messageList,message,sender,sendTime,avatar)
+            this.scrollToBottom()
+            this.saveMsgHisToLocal()
+          }
+          //处理本地中消息人列表数据
+          let msgLocal = JSON.parse(localStorage.getItem(this.sender))
+          let allCount=0
+          msgLocal.map(item=>{
+            console.log(item.sender===sender)
+            if (item.sender===sender){
+              item.message=message
+              item.sendTime=sendTime
+              localStorage.setItem(this.sender,JSON.stringify(msgLocal))
+            }
+            else {
+              allCount++
+            }
+            allCount===msgLocal.length?localStorage.setItem(this.sender,JSON.stringify(msgLocal)):null
           })
-          this.scrollToBottom()
         })
 
       }
       catch (err) {
         console.log(err)
+      }
+    },
+    //将接收到的消息push到数组中
+    pushMessageAndSave(arr,message,sender,sendTime,avatar,key_name){
+      arr.push({
+        'message':message,
+        'sender':sender,
+        'sendTime':sendTime,
+        'avatar':avatar
+      });
+      (arr&&key_name)?this.saveMsgToLocalstorage(arr,key_name):null
+    },
+    saveMsgHisToLocal(){
+      if (this.allMsgHistory){
+        this.userInfo.identity!==1000?localStorage.setItem(this.receiver+'history',JSON.stringify(this.allMsgHistory)):localStorage.setItem(this.sender+'history',JSON.stringify(this.allMsgHistory))
+      }
+      else{
+        this.allMsgHistory = []
+        let msgObj = {}
+
+        if (this.userInfo.identity!==1000){
+         msgObj = {
+           sender:this.sender,
+           receiver:this.receiver,
+           messageList:this.messageList
+         }
+         this.allMsgHistory.push(msgObj)
+          localStorage.setItem(this.receiver+'history',JSON.stringify(this.allMsgHistory))
+        }
+        else {
+          msgObj = {
+            sender:this.sender,
+            receiver:this.receiver,
+            messageList:this.messageList
+          }
+          this.allMsgHistory.push(msgObj)
+          localStorage.setItem(this.sender+'history',JSON.stringify(this.allMsgHistory))
+        }
       }
     },
     keyUpEnter(message){
@@ -147,6 +230,7 @@ export default {
     //通知服务器用户上线了
     this.socket.emit('online',this.user)
     this.receiveMsg()
+    this.scrollToBottom()
   }
 }
 </script>

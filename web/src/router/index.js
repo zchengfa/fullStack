@@ -69,16 +69,10 @@ const routes =[
 	{
 		path: '/customer/:receiver',
 		component:Customer,
-		meta: {
-			keepAlive: true
-		}
 	},
 	{
 		path: '/chatForCustomer',
 		component:ChatForCustomer,
-		meta: {
-			keepAlive: true
-		}
 	},
 	{
 		path: '/termsService',

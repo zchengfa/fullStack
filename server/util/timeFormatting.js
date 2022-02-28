@@ -27,10 +27,8 @@ function timeFormatting (fm){
         }
         return fmt;
     }
-    let now = new Date();
-    let nowStr = now.format(fm);
+    return new Date().format(fm)
 
-    return nowStr
 }
 
 module.exports = {

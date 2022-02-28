@@ -27,6 +27,7 @@ import NavBar from "@/components/common/navbar/NavBar";
 import ChatBar from "@/components/content/customer/ChatBar";
 import Scroll from "@/components/common/scroll/Scroll";
 import base64Json from '@/assets/image/base64/base64.json'
+import {formatTime} from "@/common/utils";
 
 import io from 'socket.io-client'
 export default {
@@ -109,7 +110,7 @@ export default {
     },
     //发送消息
     sendMessage(message) {
-      let sendTime = new Date().getTime()
+      let sendTime = formatTime('YY-MM-DD hh:mm:ss')
       try {
         this.socket.emit('sendMsg',message,this.sender,this.receiver,sendTime,this.avatar);
       }
@@ -120,6 +121,18 @@ export default {
         this.pushMessageAndSave(this.messageList,message,this.sender,sendTime,this.avatar)
         this.scrollToBottom()
         this.saveMsgHisToLocal()
+
+        //获取最新一条消息，将最新一条消息和发送时间赋给联系人列表，以达到显示最新消息效果
+        let up_to_dateMsg = this.messageList.slice(this.messageList.length-1,this.messageList.length)[0].message
+        let up_to_sendTime = this.messageList.slice(this.messageList.length-1,this.messageList.length)[0].sendTime
+        let msgLocal = JSON.parse(localStorage.getItem(this.sender))
+        msgLocal?msgLocal.map(item=>{
+          if (item.sender===this.receiver){
+            item.message = up_to_dateMsg
+            item.sendTime = up_to_sendTime
+            localStorage.setItem(this.sender,JSON.stringify(msgLocal))
+          }
+        }):null
       }
     },
     //接收消息
@@ -155,7 +168,6 @@ export default {
           let msgLocal = JSON.parse(localStorage.getItem(this.sender))
           let allCount=0
           msgLocal.map(item=>{
-            console.log(item.sender===sender)
             if (item.sender===sender){
               item.message=message
               item.sendTime=sendTime
@@ -164,7 +176,16 @@ export default {
             else {
               allCount++
             }
-            allCount===msgLocal.length?localStorage.setItem(this.sender,JSON.stringify(msgLocal)):null
+            //msgLocal中没有该发送者的数据，重新设定数据并加入到msgLocal中
+            allCount===msgLocal.length?(
+                function (this_sender){
+                  let msgObj = {
+                    message,sender,sendTime,avatar
+                  }
+                  msgLocal.push(msgObj)
+                  localStorage.setItem(this_sender,JSON.stringify(msgLocal))
+                }
+            )(this.sender):null
           })
         })
 
@@ -231,6 +252,7 @@ export default {
     this.socket.emit('online',this.user)
     this.receiveMsg()
     this.scrollToBottom()
+    //alert(localStorage.getItem('嗯history'))
   }
 }
 </script>
@@ -276,9 +298,10 @@ export default {
   max-width: 80%;
 }
 .content-sender{
-  left: 20%;
+  left: 18%;
 }
 .content-receiver{
+  left: 2%;
   flex-direction: row-reverse;
 }
 .message{
@@ -294,6 +317,8 @@ export default {
 }
 .content-box img{
   flex: 1;
+  width: 2.5rem;
+  border-radius: 50%;
 }
 .message-receiver span{
   background-color: #1e8efc;
@@ -310,7 +335,7 @@ export default {
   top:50%;
   display: block;
   content: '';
-  border-width: .8rem;
+  border-width: .5rem;
   border-style: solid;
 }
 .message-sender::before{

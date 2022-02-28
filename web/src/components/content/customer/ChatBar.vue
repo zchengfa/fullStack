@@ -53,7 +53,6 @@ export default {
       this.showOtherController = false
     },
     otherController(){
-      console.log('other')
       //点击加号，显示其他控件
       this.showOtherController = !this.showOtherController
 
@@ -100,13 +99,14 @@ export default {
 <style scoped>
 .chat-bar {
   width: 100vw;
-  background-color: #e0d9d9;
+  background-color: #f8f5f5;
 }
 .chat-bar div.chat-controller{
   display: flex;
   justify-items: center;
   align-items: center;
   line-height: 4rem;
+  border-bottom: 1px solid #ece0e0;
 }
 .chat-bar div.chat-controller div {
   flex: 1;
@@ -158,7 +158,7 @@ button {
   border-radius: 8px;
   color: #fff;
 }
-.chat-other .other-controller{
-  height: 20vh;
-}
+/*.chat-other .other-controller{*/
+/*  !*height: 20vh;*!*/
+/*}*/
 </style>

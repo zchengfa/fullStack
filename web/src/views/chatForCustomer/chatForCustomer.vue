@@ -18,6 +18,7 @@
             <p class="sender-name">{{item.sender}}</p>
             <p class="message">{{item.message}}</p>
           </div>
+          <div class="message-time"><span>{{item.sendTime}}</span></div>
         </div>
       </li>
     </ul>
@@ -27,7 +28,6 @@
 
 <script>
 import io from 'socket.io-client'
-
 export default {
   name: "chatForCustomer",
   data(){
@@ -37,7 +37,7 @@ export default {
       messageArr:[],
       customerInfo:null,
       sender:null,
-      messageHistory:[],
+      messageHistory:[]
     }
   },
   methods:{
@@ -170,11 +170,14 @@ export default {
   flex: 1;
 }
 .info-box .message-box{
-  flex: 9;
+  flex: 7;
+}
+.info-box .message-time{
+  flex: 2;
 }
 .info-box .message-box p{
   margin:0;
-  width: 20rem;
+  /*width: 20rem;*/
   white-space: nowrap;
   text-overflow:ellipsis;
   overflow: hidden;

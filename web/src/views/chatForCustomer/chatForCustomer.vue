@@ -37,7 +37,7 @@ export default {
       messageArr:[],
       customerInfo:null,
       sender:null,
-      messageHistory:[]
+      allMsgHistory:[]
     }
   },
   methods:{
@@ -49,23 +49,23 @@ export default {
     receiveMsg(){
       this.socket.on('receiveMessage',(message,sender,sendTime,avatar)=>{
         //处理所有发送者发送给客服的所有消息
-        if (this.messageHistory.length){
+        if (this.allMsgHistory.length){
           let allCount = 0
-          this.messageHistory.map(item=>{
+          this.allMsgHistory.map(item=>{
             if (item.sender===sender&&item.receiver===this.customer){
               this.pushMessageAndSave(item.messageList,message,sender,sendTime,avatar)
             }
             else{
               allCount++
             }
-            if (allCount===this.messageHistory.length){
-              this.pushHistory(message,sender,sendTime,avatar)
+            if (allCount===this.allMsgHistory.length){
+              this.pushHistory(this.allMsgHistory,message,sender,sendTime,avatar,this.customer)
             }
           })
         }else {
-          this.pushHistory(message,sender,sendTime,avatar)
+          this.pushHistory(this.allMsgHistory,message,sender,sendTime,avatar,this.customer)
         }
-        this.saveMsgToLocalstorage(this.messageHistory,this.customer+'history')
+        this.saveMsgToLocalstorage(this.allMsgHistory,this.customer+'history')
 
         //处理所有发送者发送给客服的最新消息
         if (this.messageArr.length){
@@ -74,7 +74,7 @@ export default {
             //查看消息列表中是否有该用户的数据，若有则说明之前发送过消息给客服，只需将用户发送的消息以及发送时间进行更新即可
             if (item.sender===sender){
               item.message = message
-              item.senderTime = sendTime
+              item.sendTime = sendTime
               this.saveMsgToLocalstorage(this.messageArr,this.customer)
             }
             else {
@@ -103,10 +103,10 @@ export default {
       (arr&&key_name)?this.saveMsgToLocalstorage(arr,key_name):null
     },
     //将所有消息push到数组中
-    pushHistory(message,sender,sendTime,avatar){
-      this.messageHistory.push({
+    pushHistory(arr,message,sender,sendTime,avatar,receiver){
+      arr.push({
         sender,
-        receiver: this.customer,
+        receiver,
         messageList: [
           {
             message,
@@ -140,7 +140,7 @@ export default {
 
     //获取localstorage中对应的历史消息数据
     let msgHistory = JSON.parse(localStorage.getItem(this.customer+'history'))
-    msgHistory?this.messageHistory = JSON.parse(localStorage.getItem(this.customer+'history')):null
+    msgHistory?this.allMsgHistory = JSON.parse(localStorage.getItem(this.customer+'history')):null
   },
   mounted() {
     this.socket.emit('online',this.customer)

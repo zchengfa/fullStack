@@ -122,6 +122,13 @@ export default {
         this.scrollToBottom()
         this.saveMsgHisToLocal()
 
+        this.allMsgHistory.map(item=>{
+          if (item.sender===this.receiver){
+            item.messageList = this.messageList
+            this.saveMsgHisToLocal()
+          }
+        })
+
         //获取最新一条消息，将最新一条消息和发送时间赋给联系人列表，以达到显示最新消息效果
         let up_to_dateMsg = this.messageList.slice(this.messageList.length-1,this.messageList.length)[0].message
         let up_to_sendTime = this.messageList.slice(this.messageList.length-1,this.messageList.length)[0].sendTime
@@ -139,54 +146,67 @@ export default {
     receiveMsg() {
       try {
         this.socket.on('receiveMessage',(message,sender,sendTime,avatar) => {
+          let msgHisLocal = JSON.parse(localStorage.getItem(this.sender+'history'))
           if (sender!==this.receiver){
             //处理本地存储中历史消息数据
-            let msgHisLocal = JSON.parse(localStorage.getItem(this.sender+'history'))
+            //let msgHisLocal = JSON.parse(localStorage.getItem(this.sender+'history'))
             let allHisCount=0
             msgHisLocal.map(his=>{
               if (his.sender===sender){
-                his.messageList.push({
-                  'message':message,
-                  'sender':sender,
-                  'sendTime':sendTime,
-                  'avatar':avatar
-                })
+                this.pushMessageAndSave(his.messageList,message,sender,sendTime,avatar)
                 localStorage.setItem(this.sender+'history',JSON.stringify(msgHisLocal))
+                this.allMsgHistory = msgHisLocal
               }
               else {
                 allHisCount++
               }
-              allHisCount===msgHisLocal.length?localStorage.setItem(this.sender+'history',JSON.stringify(msgHisLocal)):null
+
+              if (allHisCount===msgHisLocal.length){
+                msgHisLocal.push({
+                  sender,
+                  'receiver':this.sender,
+                  messageList:[{
+                    message,sender,sendTime,avatar
+                  }]
+                })
+                localStorage.setItem(this.sender+'history',JSON.stringify(msgHisLocal))
+
+              }
+              this.allMsgHistory = msgHisLocal
             })
           }
           else{
             this.pushMessageAndSave(this.messageList,message,sender,sendTime,avatar)
             this.scrollToBottom()
             this.saveMsgHisToLocal()
+            this.allMsgHistory = msgHisLocal
           }
+
           //处理本地中消息人列表数据
-          let msgLocal = JSON.parse(localStorage.getItem(this.sender))
-          let allCount=0
-          msgLocal.map(item=>{
-            if (item.sender===sender){
-              item.message=message
-              item.sendTime=sendTime
-              localStorage.setItem(this.sender,JSON.stringify(msgLocal))
-            }
-            else {
-              allCount++
-            }
-            //msgLocal中没有该发送者的数据，重新设定数据并加入到msgLocal中
-            allCount===msgLocal.length?(
-                function (this_sender){
-                  let msgObj = {
-                    message,sender,sendTime,avatar
+          if (this.userInfo.identity===1000){
+            let msgLocal = JSON.parse(localStorage.getItem(this.sender))
+            let allCount=0
+            msgLocal.map(item=>{
+              if (item.sender===sender){
+                item.message=message
+                item.sendTime=sendTime
+                localStorage.setItem(this.sender,JSON.stringify(msgLocal))
+              }
+              else {
+                allCount++
+              }
+              //msgLocal中没有该发送者的数据，重新设定数据并加入到msgLocal中
+              allCount===msgLocal.length?(
+                  function (this_sender){
+                    let msgObj = {
+                      message,sender,sendTime,avatar
+                    }
+                    msgLocal.push(msgObj)
+                    localStorage.setItem(this_sender,JSON.stringify(msgLocal))
                   }
-                  msgLocal.push(msgObj)
-                  localStorage.setItem(this_sender,JSON.stringify(msgLocal))
-                }
-            )(this.sender):null
-          })
+              )(this.sender):null
+            })
+          }
         })
 
       }
@@ -203,6 +223,16 @@ export default {
         'avatar':avatar
       });
       (arr&&key_name)?this.saveMsgToLocalstorage(arr,key_name):null
+    },
+    //将接受到的消息存储到localstorage中
+    saveMsgToLocalstorage(arr,key_name){
+      let msgArr = []
+      arr.map(item=>{
+        msgArr.push({
+          ...item
+        })
+      })
+      localStorage.setItem(key_name,JSON.stringify(msgArr))
     },
     saveMsgHisToLocal(){
       if (this.allMsgHistory){
@@ -252,7 +282,6 @@ export default {
     this.socket.emit('online',this.user)
     this.receiveMsg()
     this.scrollToBottom()
-    //alert(localStorage.getItem('嗯history'))
   }
 }
 </script>

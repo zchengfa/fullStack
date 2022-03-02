@@ -18,7 +18,7 @@
             <p class="sender-name">{{item.sender}}</p>
             <p class="message">{{item.message}}</p>
           </div>
-          <div class="message-time"><span>{{item.sendTime}}</span></div>
+          <div class="message-time"><span v-if="!item.showTime">{{item.sendTime}}</span><span v-else>{{item.showTime}}</span></div>
         </div>
       </li>
     </ul>
@@ -28,6 +28,8 @@
 
 <script>
 import io from 'socket.io-client'
+import {formatTime} from "@/common/utils";
+
 export default {
   name: "chatForCustomer",
   data(){
@@ -90,6 +92,8 @@ export default {
         else{
           this.pushMessageAndSave(this.messageArr,message,sender,sendTime,avatar,this.customer)
         }
+
+        this.dealTheShowTime()
       })
     },
     //将接收到的消息push到数组中
@@ -126,6 +130,63 @@ export default {
         })
       })
       localStorage.setItem(key_name,JSON.stringify(msgArr))
+    },
+    //处理消息中的时间
+    dealTheShowTime(){
+      let now = new Date().getTime()
+      this.messageArr.map(item=>{
+        //获取当前消息时间与现在时间的毫秒差
+        let time_difference = now-Number(item.sendTime)
+
+        //毫秒差小于一天，直接让他显示几点几分
+        if(time_difference<24*60*60*1000){
+          item.showTime = formatTime( 'mm-dd hh:mm',new Date(item.sendTime)).toString().substr(6,5)
+        }
+
+        //大于等于一天且小于两天，显示昨天
+        else if (time_difference>=24*60*60*1000&&time_difference<24*60*60*1000*2){
+          item.showTime = '昨天'
+        }
+
+        //大于等于两天且小于三天，显示前天
+        else if (time_difference>=24*60*60*1000*2&&time_difference<24*60*60*1000*3){
+          item.showTime = '前天'
+        }
+
+        //大于等于三天且小于七天，显示星期几
+        else if(time_difference>=24*60*60*1000*3&&time_difference<24*60*60*1000*7){
+          let week = new Date(item.sendTime).getDay()
+          switch (week) {
+            case 0:
+              item.showTime = '星期天';
+              break;
+            case 1:
+              item.showTime = '星期一';
+              break;
+            case 2:
+              item.showTime = '星期二';
+              break;
+            case 3:
+              item.showTime = '星期三';
+              break;
+            case 4:
+              item.showTime = '星期四';
+              break;
+            case 5:
+              item.showTime = '星期五';
+              break;
+            case 6:
+              item.showTime = '星期六';
+              break;
+          }
+        }
+
+        //超过七天，显示年月日
+        else {
+          item.showTime = formatTime('YY-MM-DD',new Date(item.sendTime))
+        }
+        localStorage.setItem(this.customer,JSON.stringify(this.messageArr))
+      })
     }
   },
   created() {
@@ -146,6 +207,7 @@ export default {
     this.socket.emit('online',this.customer)
     //执行接收消息方法，若有消息发送给当前客服
     this.receiveMsg()
+    this.dealTheShowTime()
   },
 }
 </script>
@@ -174,6 +236,8 @@ export default {
 }
 .info-box .message-time{
   flex: 2;
+  color: #8a8686;
+  font-size: .8rem;
 }
 .info-box .message-box p{
   margin:0;

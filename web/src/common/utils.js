@@ -16,6 +16,6 @@ export const URL = 'http:'+ '//' + window.location.host.toString().split(':')[0]
 //获取server文件夹中的时间格式化函数
 const {timeFormatting} = require('../../../server/util/timeFormatting')
 
-export function formatTime(fm){
-    return timeFormatting(fm)
+export function formatTime(fm,time){
+    return timeFormatting(fm,time)
 }

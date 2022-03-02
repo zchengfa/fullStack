@@ -29,7 +29,7 @@
     <order-menu :order-list="orderList"></order-menu>
     <order-menu :order-list="meansList"></order-menu>
     <menu-list class="other-menu" :menu-list="otherList" :padding="true"></menu-list>
-    <router-view></router-view>
+    <!-- <router-view></router-view> -->
   </div>
 </template>
 

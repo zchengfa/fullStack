@@ -110,7 +110,8 @@ export default {
     },
     //发送消息
     sendMessage(message) {
-      let sendTime = formatTime('YY-MM-DD hh:mm:ss')
+      // let sendTime = formatTime('YY-MM-DD hh:mm:ss')
+      let sendTime = new Date().getTime()
       try {
         this.socket.emit('sendMsg',message,this.sender,this.receiver,sendTime,this.avatar);
       }

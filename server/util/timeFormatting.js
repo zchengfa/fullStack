@@ -1,5 +1,5 @@
 
-function timeFormatting (fm){
+function timeFormatting (fm,time){
     //拓展Date的时间格式化函数
     Date.prototype.format = function (fmt){
         let formatObject = {
@@ -27,7 +27,12 @@ function timeFormatting (fm){
         }
         return fmt;
     }
-    return new Date().format(fm)
+    if (time){
+        return time.format(fm)
+    }
+    else {
+        return new Date().format(fm)
+    }
 
 }
 

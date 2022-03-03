@@ -7,12 +7,15 @@
     </nav-bar>
     <div class="message-box">
       <Scroll class="content" ref="message" :padding="true">
-        <div class="content-box" :class="{'content-sender':item.sender===sender,'content-receiver':item.sender!==sender}" v-for="(item,index) in messageList" :key="index">
-          <div class="message" :class="{'message-sender':item.sender===sender,'message-receiver':item.sender!==sender}">
-            <span>{{item.message}}</span>
+        <div class="content-box-total"  v-for="(item,index) in messageList" :key="index">
+          <span class="message-time" v-if="item.isShowTime">{{item.showTime}}</span>
+          <div class="content-box" :class="{'content-sender':item.sender===sender,'content-receiver':item.sender!==sender}">
+            <div class="message" :class="{'message-sender':item.sender===sender,'message-receiver':item.sender!==sender}">
+              <span>{{item.message}}</span>
+            </div>
+            <img v-if="item.sender===user" :class="{'sender-image':item.sender===sender}" :src="item.avatar"  alt="sender_image">
+            <img v-else :class="{'rec-image':item.sender!==sender}" :src="item.avatar"  alt="rec_image">
           </div>
-          <img v-if="item.sender===user" :class="{'sender-image':item.sender===sender}" :src="item.avatar"  alt="sender_image">
-          <img v-else :class="{'rec-image':item.sender!==sender}" :src="item.avatar"  alt="rec_image">
         </div>
       </Scroll>
     </div>
@@ -27,7 +30,6 @@ import NavBar from "@/components/common/navbar/NavBar";
 import ChatBar from "@/components/content/customer/ChatBar";
 import Scroll from "@/components/common/scroll/Scroll";
 import base64Json from '@/assets/image/base64/base64.json'
-import {formatTime} from "@/common/utils";
 
 import io from 'socket.io-client'
 export default {
@@ -110,7 +112,6 @@ export default {
     },
     //发送消息
     sendMessage(message) {
-      // let sendTime = formatTime('YY-MM-DD hh:mm:ss')
       let sendTime = new Date().getTime()
       try {
         this.socket.emit('sendMsg',message,this.sender,this.receiver,sendTime,this.avatar);
@@ -214,6 +215,10 @@ export default {
       catch (err) {
         console.log(err)
       }
+    },
+    //处理消息出接收时需要显示的时间戳
+    dealTheShowTime() {
+
     },
     //将接收到的消息push到数组中
     pushMessageAndSave(arr,message,sender,sendTime,avatar,key_name){
@@ -339,6 +344,18 @@ export default {
   align-items: center;
   justify-items: center;
   flex: 9;
+}
+.message-time{
+  display: inline-block;
+  padding: .1rem .5rem;
+  margin-left: 50%;
+  margin-top: .5rem;
+  min-width: 2rem;
+  text-align: center;
+  transform: translateX(-50%);
+  background-color: #dcd3d3;
+  border-radius: .2rem;
+  color: #918585;
 }
 .message span{
   padding: 1rem;

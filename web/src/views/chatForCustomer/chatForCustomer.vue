@@ -93,6 +93,7 @@ export default {
           this.pushMessageAndSave(this.messageArr,message,sender,sendTime,avatar,this.customer)
         }
 
+        //接收到消息后对消息的显示时间进行处理
         this.dealTheShowTime()
       })
     },
@@ -133,56 +134,69 @@ export default {
     },
     //处理消息中的时间
     dealTheShowTime(){
-      let now = new Date().getTime()
+      //获取当前时间是属于哪一月，哪一天
+      let now_year = new Date().getFullYear()
+      let now_month = new Date().getMonth()
+      let now_day = new Date().getDate()
+
       this.messageArr.map(item=>{
-        //获取当前消息时间与现在时间的毫秒差
-        let time_difference = now-Number(item.sendTime)
+        //获取最新消息是在哪一月哪一天
+        let time_year = new Date(item.sendTime).getFullYear()
+        let time_month = new Date(item.sendTime).getMonth()
+        let time_day = new Date(item.sendTime).getDate()
 
-        //毫秒差小于一天，直接让他显示几点几分
-        if(time_difference<24*60*60*1000){
-          item.showTime = formatTime( 'mm-dd hh:mm',new Date(item.sendTime)).toString().substr(6,5)
-        }
+        //如果是在同一年同一个月份，则判断消息距离现在过了几天
+        if (now_year===time_year && time_month===now_month){
 
-        //大于等于一天且小于两天，显示昨天
-        else if (time_difference>=24*60*60*1000&&time_difference<24*60*60*1000*2){
-          item.showTime = '昨天'
-        }
+          //当天的消息显示几点几分
+          if (time_day===now_day){
+            item.showTime = formatTime( 'mm-dd hh:mm',new Date(item.sendTime)).toString().substr(6,5)
+          }
 
-        //大于等于两天且小于三天，显示前天
-        else if (time_difference>=24*60*60*1000*2&&time_difference<24*60*60*1000*3){
-          item.showTime = '前天'
-        }
+          //过了一天显示昨天
+          else if(now_day - time_day === 1){
+            item.showTime = '昨天'
+          }
 
-        //大于等于三天且小于七天，显示星期几
-        else if(time_difference>=24*60*60*1000*3&&time_difference<24*60*60*1000*7){
-          let week = new Date(item.sendTime).getDay()
-          switch (week) {
-            case 0:
-              item.showTime = '星期天';
-              break;
-            case 1:
-              item.showTime = '星期一';
-              break;
-            case 2:
-              item.showTime = '星期二';
-              break;
-            case 3:
-              item.showTime = '星期三';
-              break;
-            case 4:
-              item.showTime = '星期四';
-              break;
-            case 5:
-              item.showTime = '星期五';
-              break;
-            case 6:
-              item.showTime = '星期六';
-              break;
+          //过了两天显示前天
+          else if(now_day - time_day === 2){
+            item.showTime = '前天'
+          }
+
+          //大于等于三天小于等于七天显示星期几
+          else if(now_day - time_day >= 3 && now_day - time_day <= 7){
+              let week = new Date(item.sendTime).getDay()
+              switch (week) {
+                case 0:
+                  item.showTime = '星期天';
+                  break;
+                case 1:
+                  item.showTime = '星期一';
+                  break;
+                case 2:
+                  item.showTime = '星期二';
+                  break;
+                case 3:
+                  item.showTime = '星期三';
+                  break;
+                case 4:
+                  item.showTime = '星期四';
+                  break;
+                case 5:
+                  item.showTime = '星期五';
+                  break;
+                case 6:
+                  item.showTime = '星期六';
+                  break;
+              }
+          }
+          else{
+            item.showTime = formatTime('YY-MM-DD',new Date(item.sendTime))
           }
         }
 
-        //超过七天，显示年月日
-        else {
+        //不属于同一年同一个月份显示年月日
+        else{
           item.showTime = formatTime('YY-MM-DD',new Date(item.sendTime))
         }
         localStorage.setItem(this.customer,JSON.stringify(this.messageArr))

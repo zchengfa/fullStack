@@ -255,7 +255,7 @@ export default {
 }
 .info-box .message-box p{
   margin:0;
-  /*width: 20rem;*/
+  max-width: 60vw;
   white-space: nowrap;
   text-overflow:ellipsis;
   overflow: hidden;

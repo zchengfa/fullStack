@@ -32,6 +32,7 @@ import Scroll from "@/components/common/scroll/Scroll";
 import base64Json from '@/assets/image/base64/base64.json'
 
 import io from 'socket.io-client'
+import {formatTime} from "@/common/utils";
 export default {
   name: "Customer",
   data(){
@@ -97,18 +98,24 @@ export default {
             this.messageList = item.messageList
           }
         }
+
       }):null
+
+      this.dealTheShowTime()
     },
     scrollToBottom(){
-      const scrollHeight = this.$refs.message.scroll.content.clientHeight
-      const clientHeight = this.$refs.message.$el.clientHeight
+      //dom更新后重新获取滚动区域并滚动到最底部
+      this.$nextTick(()=>{
+        const scrollHeight = this.$refs.message.scroll.content.clientHeight
+        const clientHeight = this.$refs.message.$el.clientHeight
 
-      if (clientHeight<=scrollHeight){
-        this.$refs.message.scroll.refresh()
-        this.$refs.message.scroll.scrollTo(0,- (scrollHeight + 600),300)
-        //自动上滑后刷新scroll组件
-        this.$refs.message.scroll.refresh()
-      }
+        if (clientHeight<=scrollHeight){
+          this.$refs.message.scroll.refresh()
+          this.$refs.message.scroll.scrollTo(0,- (scrollHeight + 600),300)
+          //自动上滑后刷新scroll组件
+          this.$refs.message.scroll.refresh()
+        }
+      })
     },
     //发送消息
     sendMessage(message) {
@@ -218,17 +225,108 @@ export default {
     },
     //处理消息出接收时需要显示的时间戳
     dealTheShowTime() {
+      let now_year = new Date().getFullYear()
+      let now_month = new Date().getMonth()
+      let now_day = new Date().getDate()
+      this.messageList.map(item=>{
+        if (item.isShowTime){
+          //获取最新消息是在哪一月哪一天
+          let time_year = new Date(item.sendTime).getFullYear()
+          let time_month = new Date(item.sendTime).getMonth()
+          let time_day = new Date(item.sendTime).getDate()
 
+          let time = formatTime( 'mm-dd hh:mm',new Date(item.sendTime)).toString().substr(6,5)
+          //如果是在同一年同一个月份，则判断消息距离现在过了几天
+          if (now_year===time_year && time_month===now_month){
+
+            //当天的消息显示几点几分
+            if (time_day===now_day){
+              item.showTime = time
+            }
+
+            //过了一天显示昨天 几点几分
+            else if(now_day - time_day === 1){
+              item.showTime = '昨天'+ time
+            }
+
+            //过了两天显示前天 几点几分
+            else if(now_day - time_day === 2){
+              item.showTime = '前天' + time
+            }
+
+            //大于等于三天小于等于七天显示星期几 几时几分
+            else if(now_day - time_day >= 3 && now_day - time_day <= 7){
+              let week = new Date(item.sendTime).getDay()
+              switch (week) {
+                case 0:
+                  item.showTime = '星期天' + time;
+                  break;
+                case 1:
+                  item.showTime = '星期一' + time;
+                  break;
+                case 2:
+                  item.showTime = '星期二' + time;
+                  break;
+                case 3:
+                  item.showTime = '星期三' + time;
+                  break;
+                case 4:
+                  item.showTime = '星期四' + time;
+                  break;
+                case 5:
+                  item.showTime = '星期五' + time;
+                  break;
+                case 6:
+                  item.showTime = '星期六' + time;
+                  break;
+              }
+            }
+            else{
+              item.showTime = formatTime('YY-MM-DD',new Date(item.sendTime)) + time
+            }
+          }
+
+          //不属于同一年同一个月份显示年月日时分
+          else{
+            item.showTime = formatTime('YY-MM-DD',new Date(item.sendTime)) + time
+          }
+        }
+      })
     },
     //将接收到的消息push到数组中
     pushMessageAndSave(arr,message,sender,sendTime,avatar,key_name){
-      arr.push({
+      let obj = {
         'message':message,
         'sender':sender,
         'sendTime':sendTime,
-        'avatar':avatar
-      });
+        'avatar':avatar,
+      }
+      if(arr.length){
+        //获取消息中最新一条消息，查看该条消息时间与即将发送的消息时间间隔有没有超过五分钟
+        let lastMessage = arr.slice(arr.length-1,arr.length)
+        lastMessage.map(item=>{
+
+          //若即将发送的消息时间与数组中最后一条消息时间间隔大于等于五分钟
+          if ((sendTime-item.sendTime)>= 5*60*1000){
+            addShowTime()
+          }
+          //没有超过五分钟直接加入到数组中，不需要显示时间戳
+          else{
+            arr.push(obj)
+          }
+        })
+      }
+      else{
+        addShowTime()
+      }
       (arr&&key_name)?this.saveMsgToLocalstorage(arr,key_name):null
+
+      function addShowTime(){
+        obj.isShowTime = true
+        obj.showTime = formatTime( 'mm-dd hh:mm',new Date(sendTime)).toString().substr(6,5)
+        arr.push(obj)
+      }
+      console.log(arr)
     },
     //将接受到的消息存储到localstorage中
     saveMsgToLocalstorage(arr,key_name){
@@ -344,10 +442,11 @@ export default {
   align-items: center;
   justify-items: center;
   flex: 9;
+  overflow: hidden;
 }
 .message-time{
   display: inline-block;
-  padding: .1rem .5rem;
+  padding: .2rem .5rem;
   margin-left: 50%;
   margin-top: .5rem;
   min-width: 2rem;
@@ -356,11 +455,15 @@ export default {
   background-color: #dcd3d3;
   border-radius: .2rem;
   color: #918585;
+  font-size: .8rem;
+  letter-spacing: .1rem;
 }
 .message span{
   padding: 1rem;
   max-width: 80%;
   border-radius: .3rem;
+  word-break: break-all;
+  overflow-x: hidden;
 }
 .content-box img{
   flex: 1;

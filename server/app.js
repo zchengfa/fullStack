@@ -112,6 +112,9 @@ require('./router/homeContent/bannerDetail')(app)
 //导入客服模块
 require('./router/home/customer')(app)
 
+//导入支付宝支付模块
+require('./router/alipay/pay')(app)
+
 server.listen(3000, err =>{
   if(err){
     console.log(err)

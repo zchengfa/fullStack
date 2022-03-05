@@ -4,11 +4,6 @@ const {deDuplication} = require('../../util/arrayOperation')
 module.exports = app => {
     const express = require('express')
     const router = express.Router()
-    const bodyParser = require('body-parser')
-
-    //用于解析post请求体中传递过来的参数
-    app.use(bodyParser.json())
-    app.use(bodyParser.urlencoded({extended:false}))
 
     //导入数据库连接模块
     const connection = require('../../plugins/connectMysql')()

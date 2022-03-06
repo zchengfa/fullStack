@@ -23,6 +23,7 @@ const TermsService = ()=> import('@/components/content/register/TermsService')
 const ProductCollection = ()=> import('@/views/profile/components/ProductCollection')
 const BannerDetail = ()=> import('@/views/homeContent/BannerDetail')
 const ChatForCustomer = () => import('@/views/chatForCustomer/chatForCustomer')
+const Order = () => import('@/views/order/Order')
 
 //创建路由映射表对象
 const routes =[
@@ -86,6 +87,11 @@ const routes =[
 		path: '/homeContent',
 		name:'bannerDetail',
 		component:BannerDetail
+	},
+	{
+		path:'/order',
+		name:'order',
+		component:Order
 	}
 
 ]

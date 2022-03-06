@@ -5,7 +5,8 @@ import {
     UPDATE_CART_COUNT,
     SAVE_POSITION,
     USER_INFO,
-    SET_TOKEN
+    SET_TOKEN,
+    SAVE_ORDER_ID
 } from "@/store/mutations-types";
 
 
@@ -15,6 +16,7 @@ const store = new Vuex.Store({
     state:{
         cartList:[],
         position:[],
+        order_id:'',
         token:sessionStorage.getItem('token'),
         //将sessionStorage存储的字符串化对象，转换成对象
         userInfo:JSON.parse(sessionStorage.getItem('userInfo')),
@@ -32,6 +34,9 @@ const store = new Vuex.Store({
         [SET_TOKEN](state,token){
             sessionStorage.setItem('token',token)
             state.token = token
+        },
+        [SAVE_ORDER_ID](state,order_id){
+            state.order_id = order_id
         },
         //已有商品，更新购物车中当前商品的数量
         [UPDATE_CART_COUNT](state,payload){
@@ -53,6 +58,9 @@ const store = new Vuex.Store({
         },
         setToken(context,payload){
             context.commit('setToken',payload)
+        },
+        saveOrderID(context,payload){
+            context.commit('saveOrderID',payload)
         },
         addCart(context,payload){
             return new Promise((resolve, reject) => {

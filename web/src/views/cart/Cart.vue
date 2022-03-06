@@ -62,7 +62,7 @@
   import SettleCart from "@/views/cart/components/SettleCart";
 
   import {getCommonRecommend,getUserRecommend,getUserCartData,updateChecked,
-    updateProductCount,moveToCollection,remove,updateProductSize} from "@/network/cart";
+    updateProductCount,moveToCollection,remove,updateProductSize,submitOrder} from "@/network/cart";
   import Count from "@/components/content/count/Count";
   import ChangeSize from "@/components/content/changeSize/ChangeSize";
 
@@ -226,7 +226,33 @@
       settle(){
         //点击结算按钮时先判断是否选择了商品
         if (this.checkedNum) {
-          this.$toast.showToast('支付系统暂未开发')
+          //将选中的商品信息提交给后端
+          let orderArr = []
+          let total_num= 0
+          let total_price = 0
+          this.cartList.map(item=>{
+            if (item.isChecked){
+              orderArr.push({
+                'product_id':item.product_id,
+                'product_num':item.quantity,
+                'product_size':item.size
+              })
+
+              total_num += item.quantity
+              total_price += item.quantity * item.product_price
+            }
+          })
+          submitOrder(this.user_id,orderArr,total_num,total_price).then(res=>{
+            if (res.data.order_id){
+              //将订单编号分发给vuex状态管理
+              this.$store.dispatch('saveOrderID',res.data.order_id)
+
+              //进入订单页面
+              this.$router.push('/order')
+            }
+          }).catch(err=>{
+            console.log(err)
+          })
         }
         else {
           this.$toast.showToast('您未选中任何要结算的商品')

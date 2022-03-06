@@ -1,5 +1,6 @@
 const mysql_query = require("../../plugins/mysql_query");
 const {deDuplication} = require('../../util/arrayOperation')
+const {timeFormatting} = require("../../util/timeFormatting");
 
 module.exports = app => {
     const express = require('express')
@@ -343,6 +344,37 @@ module.exports = app => {
         if (isOver){
             res.send({'success':"收藏成功"})
         }
+    })
+
+    //接收前端发起的提交订单请求,将订单信息存入对应的用户下，并返回订单编号给前端
+    router.post('/submitOrder',(req,res)=>{
+        const paramsObj = JSON.parse(JSON.stringify(req.body))
+        let user_id = paramsObj.user_id
+        let total_num = paramsObj.total_num
+        let total_price = paramsObj.total_price
+        let product_id_arr = []
+        let product_num_arr = []
+        let product_size_arr = []
+        paramsObj.order.map(item=>{
+            product_id_arr.push(item.product_id)
+            product_num_arr.push(item.product_num)
+            product_size_arr.push(item.product_size)
+
+        })
+
+        //生成订单ID（时间戳+随机数）
+        let order_id = timeFormatting('YYYYMMDDhhmmss')+ Math.round(Math.random()*100000)
+
+        console.log(product_id_arr,product_num_arr,product_size_arr,user_id,total_num,total_price)
+
+        const insertQuery = mysql_query.insert('mall_store_order','user_id,order_id,product_ids,product_num,product_size,total_num,total_price',
+          `${user_id},${order_id},'${JSON.stringify(product_id_arr)}','${JSON.stringify(product_num_arr)}','${JSON.stringify(product_size_arr)}',${total_num},${total_price}`)
+        connection.query(insertQuery,(err,result)=>{
+            if (err) throw err
+            else{
+                Object.keys(result).length?res.send({'order_id':order_id}):null
+            }
+        })
     })
 
     app.use('/home/api',router)

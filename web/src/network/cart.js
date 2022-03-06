@@ -86,3 +86,16 @@ export function remove (user_id,targets) {
         })
     })
 }
+
+//导出提交订单函数
+export function submitOrder (user_id,order,total_num,total_price) {
+    return requestPost({
+        url:'home/api/submitOrder',
+        data:({
+            user_id,
+            order,
+            total_num,
+            total_price
+        })
+    })
+}

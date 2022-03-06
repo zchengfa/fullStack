@@ -326,7 +326,6 @@ export default {
         obj.showTime = formatTime( 'mm-dd hh:mm',new Date(sendTime)).toString().substr(6,5)
         arr.push(obj)
       }
-      console.log(arr)
     },
     //将接受到的消息存储到localstorage中
     saveMsgToLocalstorage(arr,key_name){

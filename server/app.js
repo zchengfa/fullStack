@@ -115,6 +115,9 @@ require('./router/home/customer')(app)
 //导入支付宝支付模块
 require('./router/alipay/pay')(app)
 
+//导入订单模块
+require('./router/order/order')(app)
+
 server.listen(3000, err =>{
   if(err){
     console.log(err)

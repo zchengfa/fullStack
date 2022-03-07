@@ -73,7 +73,7 @@
         isComplete:false,
         showTotalAndSettle:true,
         cartList: [],
-        user_id:this.$store.state.userInfo.user_id,
+        user_id:'',
         isLogin:false,
         recommendData:[],
         emptyMessage: '',
@@ -490,7 +490,7 @@
     overflow: hidden;
     background-color: rgba(205, 198, 198, 0.2);
   }
-  /*用户购物车中有商品时会使计算组件出现，所以需要更少的可是滚动区域*/
+  /*用户购物车中有商品时会使计算组件出现，所以需要更少的可视滚动区域*/
   .has-settle-component{
     height: calc(100vh - 98px - 3rem);
   }

@@ -99,3 +99,35 @@ export function submitOrder (user_id,order,total_num,total_price) {
         })
     })
 }
+
+//导出或用户订单信息函数
+export function getUserOrderInfo( user_id,order_id){
+    return requestPost({
+        url:'home/api/orderInfo',
+        data:{
+            user_id,
+            order_id
+        }
+    })
+}
+
+//导出发起支付宝支付请求函数
+export function alipayRequest(order){
+    return requestPost({
+        url:'/alipay',
+        data:{
+            order
+        }
+    })
+}
+
+//导出获取支付宝支付状态函数
+export function getAlipayPaymentStatus(out_trade_no,trade_no){
+    return requestPost({
+        url:'/paymentStatus',
+        data:qs.stringify({
+            out_trade_no,
+            trade_no
+        })
+    })
+}

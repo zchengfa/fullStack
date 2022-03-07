@@ -24,6 +24,7 @@ const ProductCollection = ()=> import('@/views/profile/components/ProductCollect
 const BannerDetail = ()=> import('@/views/homeContent/BannerDetail')
 const ChatForCustomer = () => import('@/views/chatForCustomer/chatForCustomer')
 const Order = () => import('@/views/order/Order')
+const PaymentStatus = ()=> import('@/views/order/PaymentStatus')
 
 //创建路由映射表对象
 const routes =[
@@ -92,6 +93,11 @@ const routes =[
 		path:'/order',
 		name:'order',
 		component:Order
+	},
+	{
+		path: '/paymentStatus',
+		name:'paymentStatus',
+		component:PaymentStatus
 	}
 
 ]

@@ -1,9 +1,13 @@
+const mysql_query = require("../../plugins/mysql_query");
 module.exports = app =>{
   const express = require('express')
   const router = express.Router()
 
   const alipaySdk = require('../../plugins/alipay')
   const AlipayFormData = require('alipay-sdk/lib/form').default
+
+  const mysql_query = require('../../plugins/mysql_query')
+  const connection = require('../../plugins/connectMysql')()
 
   //接收前端发起的支付宝支付请求
   router.post('/alipay',(req,res)=>{
@@ -73,17 +77,33 @@ module.exports = app =>{
         let data = response.data['alipay_trade_query_response']
         if (data.code === '10000'){
           if (data['trade_status'] === 'TRADE_SUCCESS'){
-            res.send({
-              code:1,
-              msg:'交易成功'
-            })
+            dealOrder(1,'交易成功')
+          }
+          else if(data['trade_status'] === 'WAIT_BUYER_PAY'){
+            dealOrder(2,'等待买家付款')
+          }
+          else if(data['trade_status'] === 'TRADE_FINISHED'){
+            dealOrder(3,'交易完成')
+          }
+          else if(data['trade_status'] === 'TRADE_CLOSED'){
+            dealOrder(4,'交易关闭')
           }
         }
         console.log(response.data['alipay_trade_query_response'])
       })
-
     })
-    //res.send(paramsObj)
+    function dealOrder(code,msg){
+      const updateOrderStatus = mysql_query.update('mall_store_order',`payment_status = ${code}`,`order_id = '${out_trade_no}'`)
+      connection.query(updateOrderStatus,(err,result)=>{
+        if (err) throw err
+        else{
+          result?res.send({
+            code,
+            msg
+          }):null
+        }
+      })
+    }
   })
 
   app.use('/',router)

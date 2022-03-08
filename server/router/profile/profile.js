@@ -1,3 +1,4 @@
+const mysql_query = require("../../plugins/mysql_query");
 module.exports = app => {
     const express = require('express')
     const router = express.Router()
@@ -7,15 +8,11 @@ module.exports = app => {
     app.use(bodyParser.json())
     app.use(bodyParser.urlencoded({extended:false}))
 
-    const connect = require('../../plugins/connectMysql')
+    const connection = require('../../plugins/connectMysql')()
     const mysql_query = require('../../plugins/mysql_query')
 
     router.post('/userInfo', (req, res) => {
-        console.log(JSON.parse(JSON.stringify(req.body)))
         const paramsObj = JSON.parse(JSON.stringify(req.body))
-        console.log(paramsObj.user_id,1)
-
-        const connection = connect()
 
         const selectQuery = mysql_query.selectFields('mall_user','avatar',`user_id = '${paramsObj.user_id}'`)
         const selectQuery2 = mysql_query.selectCount('mall_user_collection', `user_id = '${paramsObj.user_id}'`)
@@ -52,6 +49,59 @@ module.exports = app => {
                 })
             }
         })
+    })
+
+    router.post('/addAddress',(req,res)=>{
+        let paramsObj = JSON.parse(JSON.stringify(req.body)).info
+
+        const selectAddress = mysql_query.selectCount('mall_user_address',`user_id = ${paramsObj.user_id}`)
+        connection.query(selectAddress,(err,address)=>{
+            console.log(address)
+            if (address[0]['COUNT(1)']){
+                addAddress(0)
+            }
+            else{
+                addAddress(1)
+            }
+        })
+
+        function addAddress(isDefault){
+            const insertAddress = mysql_query.insert('mall_user_address','user_id,region,username,phone,complete_address,isDefault',
+              `${paramsObj.user_id},'${paramsObj.region}','${paramsObj.username}','${paramsObj.phone}','${paramsObj['completeAddress']}',${isDefault}`)
+
+            connection.query(insertAddress,(err,result)=>{
+                if (err) throw err
+                else{
+                    result?res.send({
+                        code:200,
+                        msg:'success'
+                    }):null
+                }
+            })
+        }
+    })
+
+    router.post('/getUserAddress',(req,res)=>{
+        const paramsObj = JSON.parse(JSON.stringify(req.body))
+
+        paramsObj.isDefault?selectAddress(paramsObj.isDefault):selectAddress()
+
+        function selectAddress(isDefault){
+            let selectAddress = ''
+            isDefault?(()=>{
+                selectAddress = mysql_query.selectAll('mall_user_address',`user_id = ${paramsObj.user_id} AND isDefault = ${isDefault}`)
+            })():(()=>{
+                selectAddress = mysql_query.selectAll('mall_user_address',`user_id = ${paramsObj.user_id}`)
+            })()
+
+            connection.query(selectAddress,(err,address)=>{
+                if (err) throw err
+                else{
+                    address?res.send(address):null
+                }
+            })
+        }
+
     })
 
     app.use('/', router)

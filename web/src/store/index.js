@@ -16,7 +16,7 @@ const store = new Vuex.Store({
     state:{
         cartList:[],
         position:[],
-        order_id:'',
+        order_id:sessionStorage.getItem('trade_no'),
         token:sessionStorage.getItem('token'),
         //将sessionStorage存储的字符串化对象，转换成对象
         userInfo:JSON.parse(sessionStorage.getItem('userInfo')),
@@ -36,6 +36,7 @@ const store = new Vuex.Store({
             state.token = token
         },
         [SAVE_ORDER_ID](state,order_id){
+            sessionStorage.setItem('trade_no',order_id)
             state.order_id = order_id
         },
         //已有商品，更新购物车中当前商品的数量

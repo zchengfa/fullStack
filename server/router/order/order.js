@@ -55,6 +55,7 @@ module.exports = app =>{
           let product_id_arr = JSON.parse(result[0]['product_ids'])
           let product_num_arr = JSON.parse(result[0]['product_num'])
           let product_size_arr = JSON.parse(result[0]['product_size'])
+          let payment_status = result[0]['payment_status']
           let info_arr = []
           let finishCount = 0
 
@@ -71,7 +72,10 @@ module.exports = app =>{
                   'price':info[0]['price']
                 })
                 finishCount++
-                finishCount===product_id_arr.length?res.send(info_arr):null
+                finishCount===product_id_arr.length?res.send({
+                  info_arr,
+                  payment_status
+                }):null
               }
             })
           })

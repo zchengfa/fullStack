@@ -9,12 +9,13 @@
     <Scroll class="content" ref="scroll">
       <div class="scroll-content">
         <div class="user-address">
-          <div class="location-image"><img src="~assets/image/order/location.png" alt="location"></div>
-          <div class="address-info">
-            <p class="location">广东省某某市某某区几巷几号</p>
-            <span clss="user-name user-info">zcf</span>
-            <span class="user-phone user-info">11111111111</span>
+          <div class="location-image" v-show="address.length"><img src="~assets/image/order/location.png" alt="location"></div>
+          <div class="address-info" v-show="address.length" v-for="(item,index) in address" :key="index">
+            <p class="location">{{item.region+item['complete_address']}}</p>
+            <span clss="user-name user-info">{{item.username}}</span>
+            <span class="user-phone user-info">{{item.phone}}</span>
           </div>
+          <div class="none-address" v-show="!address.length"><button @click="addAddress" >+添加收货地址</button></div>
         </div>
         <div class="product-info">
           <div class="info" v-for="(item,index) in goodsList" :key="index">
@@ -48,11 +49,12 @@
             <span><span class="price-character">￥</span>{{total_price}}</span>
           </div>
         </div>
-        <div class="payment-way">
+        <div class="payment-way" v-show="payment_status===0">
           <h4>选择支付方式</h4>
           <div><img src="~assets/image/order/alipay.png" alt="alipay"><span>支付宝支付</span><input type="radio" name="payment" value="1" v-model="payment"></div>
           <div><img src="~assets/image/order/wechat.png" alt="wechat"><span>微信支付</span><input type="radio" name="payment" value="2" v-model="payment"></div>
         </div>
+
       </div>
     </Scroll>
     <div class="confirm-submit">
@@ -62,7 +64,8 @@
         <span class="price"><span class="price-character">￥</span>{{total_price}}</span>
       </div>
       <div>
-        <button @click="confirmSubmitOrder">提交订单</button>
+        <button v-show="payment_status===0" @click="confirmSubmitOrder">提交订单</button>
+        <button v-show="payment_status===1">已付款</button>
       </div>
     </div>
   </div>
@@ -72,6 +75,7 @@
 import NavBar from "@/components/common/navbar/NavBar";
 import Scroll from "@/components/common/scroll/Scroll";
 import {getUserOrderInfo,alipayRequest} from "@/network/cart";
+import {getUserAddress} from "../../network/profile";
 export default {
   name: "order",
   components:{
@@ -83,7 +87,9 @@ export default {
       order_id:'',
       goodsList:[],
       user_id:'',
-      payment:'1'
+      payment:'1',
+      payment_status:0,
+      address:[]
     }
   },
   computed:{
@@ -103,7 +109,8 @@ export default {
     //使用后端返回的订单编号来获取当前用户的订单信息
     getOrderInfoByOrderId(user_id,order_id){
       getUserOrderInfo(user_id,order_id).then(res =>{
-        this.goodsList = res.data
+        this.goodsList = res.data.info_arr
+        this.payment_status = res.data.payment_status
         console.log(res.data)
       }).catch(err=>{
         console.log(err)
@@ -114,22 +121,27 @@ export default {
     },
     //点击提交订单按钮，进行订单处理
     confirmSubmitOrder(){
-      //判断payment的值，若等于1则是支付宝支付，若是2则是微信支付
-      if (this.payment==='1'){
-        let nameArr = []
-        this.goodsList.map(item=>{
-          nameArr.push(item.product_title)
-        })
+      if (this.address.length){
+        //判断payment的值，若等于1则是支付宝支付，若是2则是微信支付
+        if (this.payment==='1'){
+          let nameArr = []
+          this.goodsList.map(item=>{
+            nameArr.push(item.product_title)
+          })
 
-        let orderObj = {
-          order_id:this.order_id,
-          total_price:this.total_price,
-          name:nameArr
+          let orderObj = {
+            order_id:this.order_id,
+            total_price:this.total_price,
+            name:nameArr
+          }
+          this.alipayRequestFun(orderObj)
         }
-        this.alipayRequestFun(orderObj)
+        else if(this.payment==='2'){
+          this.$toast.showToast('暂未提供微信支付功能，请期待后续完善')
+        }
       }
-      else if(this.payment==='2'){
-        this.$toast.showToast('暂未提供微信支付功能，请期待后续完善')
+      else{
+        this.$router.push('/addAddress')
       }
     },
     alipayRequestFun(order){
@@ -139,12 +151,21 @@ export default {
       }).catch(err=>{
         console.log(err)
       })
+    },
+    getDefaultAddress(){
+      getUserAddress(this.user_id,1).then(res=>{
+        res.data?this.address=res.data:null
+      })
+    },
+    addAddress() {
+      this.$router.push('/addAddress')
     }
   },
   created() {
     this.order_id = this.$store.state.order_id
     this.user_id = this.$store.state.userInfo.user_id;
     (this.order_id && this.user_id)?this.getOrderInfoByOrderId(this.user_id,this.order_id):null
+    this.user_id?this.getDefaultAddress():null
   },
   mounted() {
 
@@ -199,6 +220,16 @@ export default {
 }
 .address-info .location{
   font-weight: bolder;
+}
+.none-address{
+  padding: 1.5rem;
+  text-align: center;
+}
+.none-address button{
+  border-radius: .5rem;
+  border: 1px solid #e71919;
+  height: 2rem;
+  color: #e71919;
 }
 .user-address .address-info span{
   display: inline-block;
@@ -348,6 +379,9 @@ h4{
   background-color: #fd4c00;
   color: #fff;
   border-radius: 1.5rem;
+}
+.confirm-submit div button:last-child{
+  background-color: #8a8686;
 }
 .confirm-submit .price{
   font-weight: bolder;

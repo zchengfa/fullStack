@@ -5,10 +5,10 @@
     </nav-bar>
     <div class="user-info">
       <div class="info" v-if="isLogin">
-        <div class="user-header-default user-header" v-if="!hasHeader">
+        <div @click="lookInformation" class="user-header-default user-header" v-if="!hasHeader">
           <img src="~assets/image/profile/header.png" alt="header_default">
         </div>
-        <div class="user-header-custom user-header" v-else>
+        <div @click="lookInformation" class="user-header-custom user-header" v-else>
           <img :src="headerCustom" alt="header-image" title="header-image">
         </div>
         <div class="username" v-if="username"><span>{{username}}</span></div>
@@ -89,6 +89,9 @@ export default {
     },
     register(){
       this.$router.push('/register')
+    },
+    lookInformation(){
+      this.$router.push('/userInformation')
     }
   },
   created() {

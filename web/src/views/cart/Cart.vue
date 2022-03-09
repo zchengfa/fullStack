@@ -474,6 +474,7 @@
 </script>
 
 <style scoped>
+
   .nav-cart{
     width: 100vw;
     height: 100vh;
@@ -503,6 +504,7 @@
   }
   .login-tip span{
     display: inline-block;
+    padding: .5rem 0;
     width: 100%;
     text-align: center;
     color: #a5a2a2;

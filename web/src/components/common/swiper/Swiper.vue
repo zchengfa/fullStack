@@ -10,8 +10,8 @@
       </ul>
     </div>
     <swiper-item :banner="banner" :mark="mark"></swiper-item>
-    <button class="previous" @click="previousPage(mark)"><img src="~assets/image/swiper/previous.png" alt="previous"></button>
-    <button class="next" @click="nextPage(mark)"><img src="~assets/image/swiper/next.png" alt="previous"></button>
+    <button class="previous" @click="previousPage"><img src="~assets/image/swiper/previous.png" alt="previous"></button>
+    <button class="next" @click="nextPage"><img src="~assets/image/swiper/next.png" alt="previous"></button>
   </div>
 </template>
 
@@ -41,8 +41,8 @@
       play(){
         this.timer = setInterval(()=>{
           if (this.banner) {
-            this.mark = this.mark +1
-            if(this.mark === this.banner.length){
+            this.mark++
+            if(this.mark >= this.banner.length){
               this.mark = 0
             }
           }
@@ -52,7 +52,7 @@
         this.$emit('swiperImageLoad')
       },
       //点击按钮显示上一张图片
-      previousPage(mark) {
+      previousPage() {
         //点击按钮时暂停自动轮播
         clearInterval(this.timer)
 
@@ -60,33 +60,29 @@
           this.mark = this.banner.length
         }
         //点击按钮让mark减一，实现显示上一张图片功能
-        this.mark = this.mark -1
-        //设置定时器，设定过一段时间没有点击按钮则再次开启自动轮播
-        setTimeout(() => {
-          this.play()
-        },1000)
-        console.log('previous',mark)
+        this.mark --
+
+        //执行自动轮播，play函数中有定时器，只要执行就会在设定的时间内轮播，点击按钮时会清除定时器
+        this.play()
       },
       //点击按钮显示下一张图片
-      nextPage(mark) {
+      nextPage() {
         //点击按钮时暂停自动轮播
         clearInterval(this.timer)
 
-        this.mark = this.mark +1
+        this.mark ++
 
         if (this.mark >= this.banner.length) {
           this.mark =0
         }
 
-        setTimeout(() => {
-          this.play()
-        },1000)
-        console.log('next',mark)
-      }
+        //执行自动轮播，play函数中有定时器，只要执行就会在设定的时间内轮播，点击按钮时会清除定时器
+        this.play()
+      },
+
     },
     mounted() {
       this.play()
-
     }
   }
 </script>
@@ -101,6 +97,7 @@
   }
   ul li{
     flex:1;
+    min-height: 191px;
   }
   .item{
     display: block;
@@ -108,6 +105,7 @@
   }
   .item img{
     width: 100%;
+    background-size: contain;
   }
    .previous,.next{
     position: absolute;

@@ -1,4 +1,4 @@
-  import Vue from 'vue'
+import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from "@/store";
@@ -6,6 +6,7 @@ import store from "@/store";
 import toast from "@/components/common/toast";
 
 import {URL} from "@/common/utils";
+
 
 //将用户token值加入到vue原型中成为全局变量
 // const token = sessionStorage.getItem('token')

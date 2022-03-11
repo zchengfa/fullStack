@@ -232,6 +232,8 @@ export default {
 .register-form{
   margin: 0 auto;
   width: 80%;
+  max-width: 400px;
+  min-width: 360px;
   background-color: rgba(26, 25, 25, 0.5);
 }
 input{

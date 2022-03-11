@@ -74,6 +74,8 @@ h3{
 }
 .content-box{
   width: 75%;
+  max-width: 400px;
+  min-width: 360px;
   background-color: #fff;
   border-radius: .8rem;
 }

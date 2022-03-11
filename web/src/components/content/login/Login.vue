@@ -126,6 +126,8 @@ export default {
 }
 .login .form{
   width: 90%;
+  max-width: 400px;
+  min-width: 360px;
   height: 40%;
   min-height: 18rem;
   text-align: center;

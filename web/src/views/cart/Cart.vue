@@ -275,6 +275,9 @@
                   this.targets = []
                   this.getUserCartData(this.user_id)
                   this.$toast.showToast(res.data.success)
+
+                  //刷新组件
+                  this.refreshScrollComponent()
                 }
               })
             }
@@ -285,6 +288,12 @@
         else{
           this.$toast.showToast('您未选择任何商品！')
         }
+      },
+      refreshScrollComponent(){
+        //DOM更新后再次刷新scroll组件（用户购物车商品多时一次性收藏后后会出现大片空白区域，所以需要刷新scroll组件解决）
+        this.$nextTick(()=>{
+          this.$refs.scroll.scroll.refresh()
+        })
       },
       //将商品从用户购物车中移除
       remove() {
@@ -300,6 +309,9 @@
             this.targets = []
             this.getUserCartData(this.user_id)
             this.$toast.showToast(res.data.success)
+
+            //刷新组件
+            this.refreshScrollComponent()
             }
           })
         }

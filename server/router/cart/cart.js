@@ -331,10 +331,16 @@ module.exports = app => {
                 else{
                     //判断result中是否有值，有值则表示当前用户已经收藏过当前商品，不需要再进行收藏了,反之则进行收藏操作
                     if(!Object.keys(result).length){
-
-                        const insertQuery = mysql_query.insert('mall_user_collection','user_id,product_id',`'${user_id}','${item}'`)
-                        connection.query(insertQuery,err=>{
-                            if(err)throw err
+                        const selectGoods = mysql_query.selectFields('mall_goods','product_title,product_image,product_type,price',`product_id = '${item}'`)
+                        connection.query(selectGoods,(err,goods)=>{
+                            if (err) throw err
+                            else{
+                                const insertQuery = mysql_query.insert('mall_user_collection','user_id,product_id,product_title,product_image,product_type,price',
+                                  `'${user_id}','${item}','${goods[0]['product_title']}','${goods[0]['product_image']}','${goods[0]['product_type']}',${goods[0]['price']}`)
+                                connection.query(insertQuery,err=>{
+                                    if(err)throw err
+                                })
+                            }
                         })
                     }
                 }

@@ -447,7 +447,8 @@ export default {
   display: inline-block;
   padding: .2rem .5rem;
   margin-left: 50%;
-  margin-top: .5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
   min-width: 2rem;
   text-align: center;
   transform: translateX(-50%);

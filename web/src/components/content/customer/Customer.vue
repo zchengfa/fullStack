@@ -33,6 +33,7 @@ import base64Json from '@/assets/image/base64/base64.json'
 
 import io from 'socket.io-client'
 import {formatTime} from "@/common/utils";
+import {deleteOfflineMessage, getOfflineMessage} from "@/network/customer";
 export default {
   name: "Customer",
   data(){
@@ -293,6 +294,21 @@ export default {
         }
       })
     },
+    receiveUserOfflineMsg(){
+      if (this.userInfo.identity!==1000){
+        getOfflineMessage(this.user).then(res=>{
+          res.data.length?(()=>{
+            res.data.map(item=>{
+              this.pushMessageAndSave(this.messageList,item.message,item.sender,item.sendTime,item.avatar,this.receiver+'history')
+            })
+
+            this.$nextTick(()=>{
+              deleteOfflineMessage(this.user).then()
+            })
+          })():null
+        })
+      }
+    },
     //将接收到的消息push到数组中
     pushMessageAndSave(arr,message,sender,sendTime,avatar,key_name){
       let obj = {
@@ -384,6 +400,7 @@ export default {
     //通知服务器用户上线了
     this.socket.emit('online',this.user)
     this.receiveMsg()
+    this.receiveUserOfflineMsg()
     this.scrollToBottom()
   }
 }

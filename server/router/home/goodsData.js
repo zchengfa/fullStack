@@ -8,7 +8,7 @@ module.exports = app =>{
     router.get('/goodsData', (req, res)=>{
         //获取请求参数
         const query = req.query
-        console.log(query)
+        // console.log(query)
         let isCollected = 0
         let data = []
         //根据请求参数来查询数据库里的数据

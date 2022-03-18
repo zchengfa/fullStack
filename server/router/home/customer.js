@@ -1,3 +1,4 @@
+const {messageModel} = require("../../model/model");
 
 module.exports = app =>{
   const express = require('express')
@@ -5,6 +6,7 @@ module.exports = app =>{
 
   const connection = require('../../plugins/connectMysql')()
   const {selectFields} = require('../../plugins/mysql_query')
+  const {messageModel} = require('../../model/model')
 
   let user_table = 'mall_user'
 
@@ -29,6 +31,26 @@ module.exports = app =>{
         res.send(result)
         console.log(result)
       }
+    })
+  })
+
+  router.post('/offlineMessage',(req,res)=>{
+    const paramObj = JSON.parse(JSON.stringify(req.body))
+    messageModel.find({'receiver':paramObj.user},(err,result)=>{
+      if (err) throw err
+      result?(()=>{
+        res.send(result)
+      })():null
+    })
+  })
+
+  router.post('/deleteOfflineMessage',(req,res)=>{
+    const paramObj = JSON.parse(JSON.stringify(req.body))
+    messageModel.remove({'receiver':paramObj.user},(err,result)=>{
+      if (err) throw err
+      result?(()=>{
+        res.send(result)
+      })():null
     })
   })
 

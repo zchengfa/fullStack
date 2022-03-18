@@ -29,6 +29,8 @@
 <script>
 import io from 'socket.io-client'
 import {formatTime} from "@/common/utils";
+import {getOfflineMessage,deleteOfflineMessage} from "@/network/customer";
+
 
 export default {
   name: "chatForCustomer",
@@ -50,52 +52,70 @@ export default {
     //接收消息
     receiveMsg(){
       this.socket.on('receiveMessage',(message,sender,sendTime,avatar)=>{
-        //处理所有发送者发送给客服的所有消息
-        if (this.allMsgHistory.length){
-          let allCount = 0
-          this.allMsgHistory.map(item=>{
-            if (item.sender===sender&&item.receiver===this.customer){
-              this.pushMessageAndSave(item.messageList,message,sender,sendTime,avatar)
-            }
-            else{
-              allCount++
-            }
-            if (allCount===this.allMsgHistory.length){
-              this.pushHistory(this.allMsgHistory,message,sender,sendTime,avatar,this.customer)
-            }
-          })
-        }else {
-          this.pushHistory(this.allMsgHistory,message,sender,sendTime,avatar,this.customer)
-        }
-        this.saveMsgToLocalstorage(this.allMsgHistory,this.customer+'history')
 
-        //处理所有发送者发送给客服的最新消息
-        if (this.messageArr.length){
-          let allCount = 0
-          this.messageArr.map(item=>{
-            //查看消息列表中是否有该用户的数据，若有则说明之前发送过消息给客服，只需将用户发送的消息以及发送时间进行更新即可
-            if (item.sender===sender){
-              item.message = message
-              item.sendTime = sendTime
-              this.saveMsgToLocalstorage(this.messageArr,this.customer)
-            }
-            else {
-              allCount++
-            }
-            //当allCount的数量等于消息列表的数据时，说明该用户没有发送过消息给客服，可以将该用户的消息加入到列表中
-            if (allCount===this.messageArr.length){
-              this.pushMessageAndSave(this.messageArr,message,sender,sendTime,avatar,this.customer)
-            }
-          })
-        }
-        //列表项中没有任何数据，直接将客户发送的信息push到列表项中
-        else{
-          this.pushMessageAndSave(this.messageArr,message,sender,sendTime,avatar,this.customer)
-        }
+        this.dealMessage(message,sender,sendTime,avatar)
 
-        //接收到消息后对消息的显示时间进行处理
-        this.dealTheShowTime()
       })
+    },
+    receiveOfflineMsg(){
+      getOfflineMessage(this.customer).then(res=>{
+        res.data.length?(()=>{
+          res.data.map(item=>{
+            this.dealMessage(item.message,item.sender,item.sendTime,item.avatar)
+          })
+          this.$nextTick(()=>{
+            //离线消息接收完成，给后端发出请求，将存储的离线消息删除
+            deleteOfflineMessage(this.customer).then()
+          })
+        })():null
+      })
+    },
+    dealMessage(message,sender,sendTime,avatar){
+      //处理所有发送者发送给客服的所有消息
+      if (this.allMsgHistory.length){
+        let allCount = 0
+        this.allMsgHistory.map(item=>{
+          if (item.sender===sender&&item.receiver===this.customer){
+            this.pushMessageAndSave(item.messageList,message,sender,sendTime,avatar)
+          }
+          else{
+            allCount++
+          }
+          if (allCount===this.allMsgHistory.length){
+            this.pushHistory(this.allMsgHistory,message,sender,sendTime,avatar,this.customer)
+          }
+        })
+      }else {
+        this.pushHistory(this.allMsgHistory,message,sender,sendTime,avatar,this.customer)
+      }
+      this.saveMsgToLocalstorage(this.allMsgHistory,this.customer+'history')
+
+      //处理所有发送者发送给客服的最新消息
+      if (this.messageArr.length){
+        let allCount = 0
+        this.messageArr.map(item=>{
+          //查看消息列表中是否有该用户的数据，若有则说明之前发送过消息给客服，只需将用户发送的消息以及发送时间进行更新即可
+          if (item.sender===sender){
+            item.message = message
+            item.sendTime = sendTime
+            this.saveMsgToLocalstorage(this.messageArr,this.customer)
+          }
+          else {
+            allCount++
+          }
+          //当allCount的数量等于消息列表的数据时，说明该用户没有发送过消息给客服，可以将该用户的消息加入到列表中
+          if (allCount===this.messageArr.length){
+            this.pushMessageAndSave(this.messageArr,message,sender,sendTime,avatar,this.customer)
+          }
+        })
+      }
+      //列表项中没有任何数据，直接将客户发送的信息push到列表项中
+      else{
+        this.pushMessageAndSave(this.messageArr,message,sender,sendTime,avatar,this.customer)
+      }
+
+      //接收到消息后对消息的显示时间进行处理
+      this.dealTheShowTime()
     },
     //将接收到的消息push到数组中
     pushMessageAndSave(arr,message,sender,sendTime,avatar,key_name){
@@ -222,7 +242,9 @@ export default {
     //执行接收消息方法，若有消息发送给当前客服
     this.receiveMsg()
     this.dealTheShowTime()
+    this.receiveOfflineMsg()
   },
+
 }
 </script>
 

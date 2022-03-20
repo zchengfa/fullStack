@@ -6,7 +6,7 @@ mongoose.connect('mongodb://localhost:27017/mall', {useUnifiedTopology:true,useN
         console.log(err)
     }
     else {
-        console.log('database connect success')
+        console.log('database connect success（ 数据库连接成功）')
     }
 })
 

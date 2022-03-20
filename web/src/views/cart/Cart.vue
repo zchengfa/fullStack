@@ -21,7 +21,7 @@
               <p class="title">{{item['product_title']}}</p>
               <div class="price-size">
                 <div class="price"><span class="discount-character">￥</span><span>{{item['product_price']}}</span></div>
-                <div class="size" @click="changeSize(item['size'],item['product_image'],index,item.product_id)"><span>尺码：</span><span>{{item['size']}}</span><span class="down-character">﹀</span></div>
+                <div class="size" @click="changeSize(item['size'],item['product_image'],index,item.product_id)"><span>尺码:</span><span>{{item['size']}}</span><span class="down-character">﹀</span></div>
               </div>
               <count class="count-component" :key="countComponentKey" :count="item['quantity']" :index="index"></count>
             </div>
@@ -582,8 +582,9 @@
     display: flex;
     margin-left: 1rem;
     height: 1.5rem;
+    min-width: 6rem;
     color: #8a8686;
-    font-size: .8rem;
+    font-size: 12px;
     background-color: #f1eeee;
     text-align: center;
   }

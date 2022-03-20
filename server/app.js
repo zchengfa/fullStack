@@ -123,7 +123,7 @@ server.listen(3000, err =>{
     console.log(err)
   }
   else {
-    console.log('localhost:3000 server running')
+    console.log('server running 服务器运行中（端口：3000）')
   }
 })
 

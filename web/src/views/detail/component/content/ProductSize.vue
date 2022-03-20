@@ -29,7 +29,7 @@ export default {
     title:{
       type:String,
       default(){
-        return '尺码'
+        return '尺码/规格'
       }
     },
     clothesSize:{
@@ -42,6 +42,24 @@ export default {
       type:Array,
       default(){
         return ['28','29','30','31','32','33','34','36','38','40','42','44']
+      }
+    },
+    shoesSize:{
+      type:Array,
+      default(){
+        return ['35','36','37','38','39','40','41','42','43','44','45','46']
+      }
+    },
+    fluidSize:{
+      type:Array,
+      default(){
+        return ['50ml','100ml','150ml','200ml','250ml','300ml','500ml']
+      }
+    },
+    littleSize:{
+      type:Array,
+      default(){
+        return ['50g','100g','150g','200g','250g','300g']
       }
     },
     index:{
@@ -74,8 +92,12 @@ export default {
     }
   },
   created() {
-    if (this.sizeName ==='clothes' || this.sizeName ==='pants'){
-      this.sizeName==='clothes'?this.size=this.clothesSize:this.size=this.pantsSize
+    if (this.sizeName ==='clothes' || this.sizeName ==='pants' || this.sizeName ==='shoes' || this.sizeName ==='fluid' || this.sizeName ==='little'){
+      this.sizeName==='clothes'?this.size=this.clothesSize:null
+      this.sizeName==='pants'?this.size=this.pantsSize:null
+      this.sizeName==='shoes'?this.size=this.shoesSize:null
+      this.sizeName==='fluid'?this.size=this.fluidSize:null
+      this.sizeName==='little'?this.size=this.littleSize:null
 
       //当父组件传入index时，直接将传过来的值赋给index
       this.currentIndex = this.index
@@ -87,10 +109,8 @@ export default {
       }
     }
     else{
-      throw new Error('your sizeName is not clothes or pants')
+      throw new Error('your sizeName is not clothes or pants or shoes or fluid or little')
     }
-
-
   }
 }
 </script>

@@ -9,7 +9,7 @@
           <p class="price"><span class="discount-character">￥</span>{{productInfo.price}}</p>
         </div>
       </div>
-      <product-size :index="choseSizeObj.index" :item-size="choseSizeObj.item"></product-size>
+      <product-size :size-name="sizeName" :index="choseSizeObj.index" :item-size="choseSizeObj.item"></product-size>
       <div class="count">
         <span class="label">数量</span>
         <count :count="count" class="count-component"></count>
@@ -37,6 +37,12 @@ export default {
       type:Object,
       default() {
         return {};
+      }
+    },
+    sizeName:{
+      type:String,
+      default(){
+        return undefined
       }
     }
   },

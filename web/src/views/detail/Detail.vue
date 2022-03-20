@@ -4,7 +4,7 @@
     <Scroll class="content" @click.native="closeAddCart" ref="scroll" :probe-type="3" @scroll="contentScroll">
       <div class="shop-show" v-if="Object.keys(detailData).length" >
         <detail-base ref="base" class="detail-base" :base-data="detailData.baseData"></detail-base>
-        <product-size :index="choseSizeObj.index" :item-size="choseSizeObj.item" :key="productSizeKey"></product-size>
+        <product-size :size-name="sizeName" :index="choseSizeObj.index" :item-size="choseSizeObj.item" :key="productSizeKey"></product-size>
         <detail-params  @refresh="refreshScroll" ref="params" :params="detailData.shop_detail_params"></detail-params>
         <detail-comment ref="comment" :comment-num="Number(comment_num)"></detail-comment>
         <detail-image ref="image" :images-data="detailData.images" @imageLoadOver="imageLoad"></detail-image>
@@ -12,7 +12,7 @@
       </div>
     </Scroll>
     <back-top v-show="isShowBackTop" @click.native="backTop"></back-top>
-    <detail-add-cart :product-info="productInfo" v-if="isShowAddCart" @submitAdd="submitAdd" :chose-size-obj="choseSizeObj"></detail-add-cart>
+    <detail-add-cart :product-info="productInfo" v-if="isShowAddCart" @submitAdd="submitAdd" :chose-size-obj="choseSizeObj" :size-name="sizeName"></detail-add-cart>
     <detail-bottom-bar ref="detailBottomBar" @addCart="addCart" :is-collected="isCollected"
                        @collectProduct="collectProduct"
                         @contactCustomer="contactCustomer">
@@ -63,7 +63,8 @@
         },
         productSizeKey:0,
         productDetailIndex:null,
-        customer:null
+        customer:null,
+        size_type:null
       }
     },
     components:{
@@ -84,6 +85,27 @@
         //当评论数量大于99的时候让评论数量为99+，反之则为原评论数
         if (this.comment_num>99) return ["商品","参数",`评论(99+)`,"推荐"]
         return ["商品","参数",`评论(${this.comment_num})`,"推荐"]
+      },
+      sizeName(){
+
+        if (this.size_type===0){
+          return 'clothes'
+        }
+        else if(this.size_type===1){
+          return 'pants'
+        }
+        else if(this.size_type===2){
+          return 'shoes'
+        }
+        else if(this.size_type===3){
+          return 'fluid'
+        }
+        else if(this.size_type===4){
+          return 'little'
+        }
+        else {
+          return undefined
+        }
       }
     },
     watch:{
@@ -277,6 +299,9 @@
             this.detailData = res.data
             //获取detailData中的评论数据
             this.comment_num = this.detailData.baseData['comment_number']
+
+            //获取商品的尺码规格类型
+            this.size_type = this.detailData.baseData['size_type']
 
             //获取完商品数据后，若用户已登录则获取用户选择该商品的尺寸
             userInfo?this.getUserChoseSize(user_id,this.id,pro_id):null

@@ -53,9 +53,24 @@ module.exports = app =>{
                                     connection.query(selectRecommend,(err,recommend)=>{
                                         if (err) throw err
                                         else{
-                                            recommend.map(item=>{
+
+                                            let indexArr = []
+                                            for (let i = 0; i < 10; i++) {
+                                                let randomIndex = Math.round(Math.random()*recommend.length)
+                                                indexArr.push(randomIndex)
+                                            }
+
+                                            //去重
+                                            let uniqueIndex = Array.from(new Set(indexArr))
+                                            let recommendData = []
+                                            uniqueIndex.map(item=>{
+                                                recommendData.push(...recommend.slice(item,item+1))
+                                            })
+
+                                            recommendData.map(item=>{
                                                 item.product_id!==query.product_id?detail.recommend_data.push(item):null
                                             })
+
                                             res.send(detail)
                                         }
                                     })

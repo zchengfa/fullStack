@@ -33,6 +33,7 @@ module.exports = function connect(){
         database:'mall',
         multipleStatements: true
     })
+
     return pool
 }
 

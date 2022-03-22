@@ -1,12 +1,29 @@
 <template>
   <div class="menu">
-    <div class="menu-item" v-for="(item, index) in orderList" :key="index">
-      <a :href="item.location" class="item-link">
-        <div class="item-content">
-          <img :src="item.image" alt="item_image">
-          <p>{{item.title}}</p>
-        </div>
-      </a>
+    <div class="menu-title">
+      <h3>我的订单</h3>
+    </div>
+    <div class="menu-content">
+      <div>
+        <img :src="orderList['wait_pay']" alt="wait_pay">
+        <p>待付款</p>
+      </div>
+      <div>
+        <img :src="orderList['wait_receive_goods']" alt="wait_receive_goods">
+        <p>待收货</p>
+      </div>
+      <div>
+        <img :src="orderList['wait_comment']" alt="wait_comment">
+        <p>待评价</p>
+      </div>
+      <div>
+        <img :src="orderList['exchange_return']" alt="exchange_return">
+        <p>退货/售后</p>
+      </div>
+      <div>
+        <img :src="orderList['all_order']" alt="all_order">
+        <p>全部订单</p>
+      </div>
     </div>
   </div>
 </template>
@@ -16,9 +33,9 @@ export default {
   name: "OrderMenu",
   props:{
     orderList:{
-      type:Array,
+      type:Object,
       default(){
-        return []
+        return {}
       }
     }
   }
@@ -27,7 +44,6 @@ export default {
 
 <style scoped>
  .menu {
-   display: flex;
    padding: 1rem 0;
    margin-top: 1rem;
    margin-left: auto;
@@ -37,20 +53,24 @@ export default {
    text-align: center;
    border-radius: .5rem;
  }
- .menu .menu-item {
+ .menu h3{
+   margin: 1rem auto;
+   text-align: left;
+   text-indent: 1rem;
+ }
+ .menu-content{
+   display: flex;
+   justify-items: center;
+   align-items: center;
+ }
+ .menu-content div{
    flex: 1;
  }
- .menu .item-link{
-   display: block;
+ .menu-content div img{
+   width: 2rem;
  }
- .menu-item img {
-   position: relative;
-   top:.5rem;
-   min-width: 16px;
-   min-height: 16px;
-   width: 1.5rem;
-   height: 1.5rem;
-   background-size: contain;
+ .menu-content div p{
+   margin: .5rem auto;
  }
 
 </style>

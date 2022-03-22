@@ -23,7 +23,7 @@
         </div>
       </div>
       <div class="right">
-        <div class="box">
+        <div class="box" @click="buyNow">
           <div class="buy"><button>立即购买</button></div>
         </div>
         <div class="box">
@@ -46,12 +46,19 @@ export default {
     }
   },
   methods:{
+    //立即购买
+    buyNow(){
+      this.$toast.showToast('该功能尚未开发，请等待后续完善')
+    },
+    //加入购物车
     addCart(){
       this.$emit('addCart')
     },
+    //收藏商品
     collectProduct() {
       this.$emit('collectProduct')
     },
+    //联系客服
     contactCustomer() {
       this.$emit('contactCustomer')
     }

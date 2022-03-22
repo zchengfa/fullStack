@@ -60,9 +60,8 @@ export default {
       getUserAddress(user_id).then(res=>{
         this.address = res.data
         this.address.map(item =>{
-          let phone = item.phone
-          phone = phone.substring(3,8)
-          item.phone = item.phone.replace(phone,'*****')
+          //手机号码带*处理
+          item.phone = item.phone.replace(/(\d{3})\d*(\d{4})/,'$1*****$2')
         })
       })
     }

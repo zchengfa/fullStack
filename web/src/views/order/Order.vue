@@ -13,7 +13,7 @@
           <div class="address-info" v-show="address.length" v-for="(item,index) in address" :key="index">
             <p class="location">{{item.region+item['complete_address']}}</p>
             <span clss="user-name user-info">{{item.username}}</span>
-            <span class="user-phone user-info">{{item.phone}}</span>
+            <span class="user-phone user-info">{{item.phone.replace(/(\d{3})\d*(\d{4})/,'$1****$2')}}</span>
           </div>
           <div class="none-address" v-show="!address.length"><button @click="addAddress" >+添加收货地址</button></div>
         </div>
@@ -217,6 +217,14 @@ export default {
   flex: 9;
   text-align: left;
   text-indent: .5rem;
+}
+.user-address{
+  padding:1rem;
+  border-bottom: .2rem solid transparent;
+  border-top: #fff;
+  border-left: #fff;
+  border-right: #fff;
+  background: linear-gradient(white,white) padding-box,repeating-linear-gradient(-45deg, red 0, red 12.5%, transparent 0, transparent 25%, #58a 0, #58a 37.5%, transparent 0, transparent 50%) 0/5rem 5rem;
 }
 .address-info .location{
   font-weight: bolder;

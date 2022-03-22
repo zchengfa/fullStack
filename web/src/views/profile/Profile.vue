@@ -26,10 +26,9 @@
         </a>
       </div>
     </div>
-    <order-menu :order-list="orderList"></order-menu>
-    <order-menu :order-list="meansList"></order-menu>
-    <menu-list class="other-menu" :menu-list="otherList" :padding="true"></menu-list>
-    <!-- <router-view></router-view> -->
+    <order-menu :order-list="order_list"></order-menu>
+    <means-menu :means-list="means_list"></means-menu>
+    <menu-list @contactCustomer="contactCustomer" class="other-menu" :menu-list="other_list"></menu-list>
   </div>
 </template>
 
@@ -38,10 +37,13 @@ import NavBar from "@/components/common/navbar/NavBar";
 import Bubble from "@/components/common/bubble/Bubble";
 import OrderMenu from "@/components/content/orderMenu/OrderMenu";
 import MenuList from "@/components/content/menuList/MenuList";
+import MeansMenu from "@/components/content/meansMenu/MeansMenu";
 
 import {getUserInfo} from "@/network/profile";
 
-import {orderMenuImage,meansMenuImage,otherMenuImage} from '@/assets/image/profile/orderMenu/orderMenuImage'
+import base64 from '@/assets/image/base64/base64.json'
+
+
 
 export default {
   name: "Login",
@@ -59,9 +61,9 @@ export default {
         }
       ],
       RouterList:['/productCollection'],
-      orderList: [],
-      meansList:[],
-      otherList:[],
+      order_list:{},
+      means_list:{},
+      other_list:{},
       isLogin:false,
       username:'',
       account:'',
@@ -73,6 +75,7 @@ export default {
     NavBar,
     OrderMenu,
     MenuList,
+    MeansMenu,
     Bubble
   },
   methods:{
@@ -92,12 +95,18 @@ export default {
     },
     lookInformation(){
       this.$router.push('/userInformation')
+    },
+    //接收子组件发出的联系客服事件
+    contactCustomer(){
+      console.log('contactCustomer')
     }
   },
   created() {
-    this.otherList = otherMenuImage
-    this.meansList = meansMenuImage
-    this.orderList = orderMenuImage
+    if ( Object.keys(base64).length){
+      this.order_list = base64.order_list
+      this.means_list = base64.means_list
+      this.other_list = base64.other_list
+    }
 
     if (this.$store.state.token) {
       const userInfo = this.$store.state.userInfo

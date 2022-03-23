@@ -34,8 +34,11 @@
 </template>
 
 <script>
+  // import {adjustIsLoginMixins} from "@/common/mixins/mixins";
+
   export default {
     name: "MenuList",
+    //mixins:[adjustIsLoginMixins],
     props:{
       menuList:{
         type:Object,

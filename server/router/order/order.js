@@ -60,7 +60,7 @@ module.exports = app =>{
           let finishCount = 0
 
           product_id_arr.map((item,index)=>{
-            const selectProductInfo = mysql_query.selectFields('mall_goods','product_title,product_image,price',`product_id = '${item}'`)
+            const selectProductInfo = mysql_query.selectFields('mall_goods','product_title,product_image,price,sell_type,product_type',`product_id = '${item}'`)
             connection.query(selectProductInfo,(err,info)=>{
               if (info){
                 info_arr.push({
@@ -69,7 +69,9 @@ module.exports = app =>{
                   'product_image':info[0]['product_image'],
                   'quantity':product_num_arr[index],
                   'size':product_size_arr[index],
-                  'price':info[0]['price']
+                  'price':info[0]['price'],
+                  'sell_type':info[0]['sell_type'],
+                  'product_type':info[0]['product_type']
                 })
                 finishCount++
                 finishCount===product_id_arr.length?res.send({

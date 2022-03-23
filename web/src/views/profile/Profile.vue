@@ -28,7 +28,7 @@
     </div>
     <order-menu :order-list="order_list"></order-menu>
     <means-menu :means-list="means_list"></means-menu>
-    <menu-list @contactCustomer="contactCustomer" class="other-menu" :menu-list="other_list"></menu-list>
+    <menu-list @contactCustomer="contactCustomer"  class="other-menu" :menu-list="other_list"></menu-list>
   </div>
 </template>
 
@@ -42,11 +42,12 @@ import MeansMenu from "@/components/content/meansMenu/MeansMenu";
 import {getUserInfo} from "@/network/profile";
 
 import base64 from '@/assets/image/base64/base64.json'
-
+import {contactCustomerMixins} from "@/common/mixins/mixins";
 
 
 export default {
   name: "Login",
+  mixins:[contactCustomerMixins],
   data(){
     return {
       userInfoList:[
@@ -96,10 +97,10 @@ export default {
     lookInformation(){
       this.$router.push('/userInformation')
     },
-    //接收子组件发出的联系客服事件
-    contactCustomer(){
-      console.log('contactCustomer')
-    }
+    // //接收子组件发出的联系客服事件
+    // contactCustomer(){
+    //   console.log('contactCustomer')
+    // }
   },
   created() {
     if ( Object.keys(base64).length){

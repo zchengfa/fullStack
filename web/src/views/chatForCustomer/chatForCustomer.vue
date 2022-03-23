@@ -223,9 +223,6 @@ export default {
       })
     }
   },
-  beforeRouteEnter(){
-    console.log(this.$store.state.userInfo.indentity)
-  },
   created() {
     let userInfo = this.$store.state.userInfo
     userInfo.username?this.customer=userInfo.username:this.customer=userInfo.account

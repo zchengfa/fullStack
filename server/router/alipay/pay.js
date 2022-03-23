@@ -1,4 +1,4 @@
-const mysql_query = require("../../plugins/mysql_query");
+
 module.exports = app =>{
   const express = require('express')
   const router = express.Router()

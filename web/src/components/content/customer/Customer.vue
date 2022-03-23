@@ -106,17 +106,19 @@ export default {
     },
     scrollToBottom(){
       //dom更新后重新获取滚动区域并滚动到最底部
-      this.$nextTick(()=>{
-        const scrollHeight = this.$refs.message.scroll.content.clientHeight
-        const clientHeight = this.$refs.message.$el.clientHeight
+      if (this.$refs.message){
+        this.$nextTick(()=>{
+          const scrollHeight = this.$refs.message.scroll.content.clientHeight
+          const clientHeight = this.$refs.message.$el.clientHeight
 
-        if (clientHeight<=scrollHeight){
-          this.$refs.message.scroll.refresh()
-          this.$refs.message.scroll.scrollTo(0,- (scrollHeight + 600),300)
-          //自动上滑后刷新scroll组件
-          this.$refs.message.scroll.refresh()
-        }
-      })
+          if (clientHeight<=scrollHeight){
+            this.$refs.message.scroll.refresh()
+            this.$refs.message.scroll.scrollTo(0,- (scrollHeight + 600),300)
+            //自动上滑后刷新scroll组件
+            this.$refs.message.scroll.refresh()
+          }
+        })
+      }
     },
     //发送消息
     sendMessage(message) {

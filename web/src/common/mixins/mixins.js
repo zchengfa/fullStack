@@ -13,6 +13,7 @@
 */
 
 //创建回到顶部的混入对象
+
 const backTopMixins = {
     data(){
         return {
@@ -70,9 +71,55 @@ const backPreviousPageMixins = {
     }
 }
 
+const {getCusInfo} = require("@/network/home") ;
+const contactCustomerMixins ={
+    data(){
+        return{
+            token:this.$store.state.token,
+            customer:null
+        }
+    },
+    methods:{
+        //获取客服信息
+        getCustomerInfo(){
+            getCusInfo().then(res=>{
+                res.data['customer_info']?this.customer=res.data['customer_info']:null
+            }).catch(err=>{
+                console.log(err)
+            })
+        },
+        contactCustomer() {
+            //点击联系客服按钮进入用户与客服的聊天界面
+            //通过token判断用户是否登录，若已登录进入customer页面
+            if (this.token) {
+                //已经登录，再判断登录者是否是客服，若是客服登录的，就不允许进入与客服聊天界面，引导登录者去专门的客服专用页面
+                //this.$store.state.userInfo.identity!==1000?this.$router.push({path:'/customer'+'/'+this.customer.account}):this.$router.push({path:'/chatForCustomer'})
+                if (this.$store.state.userInfo.identity!==1000){
+                    if (this.customer.username){
+                        this.$router.push({path:'/customer'+'/'+this.customer.username}).then()
+                    }
+                    else {
+                        this.$router.push({path:'/customer'+'/'+this.customer.account}).then()
+                    }
+                }
+                else {
+                    this.$router.push({path:'/chatForCustomer'}).then()
+                }
+            }
+            //未登录，进入登录页面
+            else {
+                this.$router.push('/login').then()
+            }
+        }
+    },
+    created() {
+        this.token?this.getCustomerInfo():null
+    }
+}
 
 module.exports = {
     backTopMixins,
     closeCurrentPageMixins,
-    backPreviousPageMixins
+    backPreviousPageMixins,
+    contactCustomerMixins
 }

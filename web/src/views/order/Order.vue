@@ -19,7 +19,7 @@
         </div>
         <div class="product-info">
           <div class="info" v-for="(item,index) in goodsList" :key="index">
-            <div class="base">
+            <div class="base" @click="viewProductDetail(item.sell_type,item.product_id,item.product_type,index+1)">
               <div class="image-box"><img @load="imageLoadOver" :src="item['product_image']" alt="product_image"></div>
               <div class="product-message">
                 <div class="title-price">
@@ -111,7 +111,7 @@ export default {
       getUserOrderInfo(user_id,order_id).then(res =>{
         this.goodsList = res.data.info_arr
         this.payment_status = res.data.payment_status
-        console.log(res.data)
+        //console.log(res.data)
       }).catch(err=>{
         console.log(err)
       })
@@ -159,6 +159,10 @@ export default {
     },
     addAddress() {
       this.$router.push('/addAddress')
+    },
+    //点击商品查看商品详情
+    viewProductDetail(sell_type,product_id,product_type,id){
+      this.$router.push('/detail/'+sell_type+'/'+product_type +'/'+(product_id)+'/'+id)
     }
   },
   created() {

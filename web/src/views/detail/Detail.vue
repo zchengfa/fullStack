@@ -122,7 +122,7 @@
     methods:{
       imageLoad(){
         //防抖函数处理scroll组件的刷新
-        const refresh = debounce(this.$refs.scroll.refresh, 300)
+        const refresh = debounce(this.$refs.scroll.refresh, 200)
         //每次加载完图片都让scroll组件进行刷新
         refresh()
         //每次图片加载完就获取各元素位置

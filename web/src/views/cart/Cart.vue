@@ -56,7 +56,7 @@
   import Empty from "@/components/common/empty/Empty";
   import Recommend from "@/components/content/recommend/Recommend";
 
-  import {debounce} from "@/common/utils";
+  import {refreshScrollMixins} from '@/common/mixins/mixins'
 
   import CheckButton from "@/views/cart/components/CheckButton"
   import SettleCart from "@/views/cart/components/SettleCart";
@@ -68,6 +68,7 @@
 
   export  default {
     name:'Cart',
+		mixins:[refreshScrollMixins],
     data(){
       return {
         isComplete:false,
@@ -395,16 +396,6 @@
       }
     },
     mounted() {
-      const refresh = debounce(this.$refs.scroll.refresh, 200)
-      this.$bus.$on('itemImageLoad',() => {
-        refresh()
-      })
-      if (this.$refs.scroll){
-        //进入页面时刷新scroll
-        setTimeout(()=>{
-          this.$refs.scroll.scroll.refresh()
-        },30)
-      }
       //判断用户是否登录,若已登录显示用户的购物车物品列表,未登录，显示登录提示
       this.$bus.$on('addCount',(e)=>{
         let index = e.index

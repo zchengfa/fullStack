@@ -111,7 +111,7 @@ export default {
       getUserOrderInfo(user_id,order_id).then(res =>{
         this.goodsList = res.data.info_arr
         this.payment_status = res.data.payment_status
-        //console.log(res.data)
+        console.log(res.data)
       }).catch(err=>{
         console.log(err)
       })

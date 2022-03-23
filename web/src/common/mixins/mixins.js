@@ -117,9 +117,20 @@ const contactCustomerMixins ={
     }
 }
 
+const {debounce} = require('@/common/utils')
+const refreshScrollMixins = {
+	mounted() {
+		const refresh = debounce(this.$refs.scroll.refresh, 200)
+		this.$bus.$on('itemImageLoad',() => {
+		  refresh()
+		})
+	}
+}
+
 module.exports = {
     backTopMixins,
     closeCurrentPageMixins,
     backPreviousPageMixins,
-    contactCustomerMixins
+    contactCustomerMixins,
+		refreshScrollMixins
 }

@@ -12,7 +12,14 @@ module.exports = app =>{
   //接收前端发起的支付宝支付请求
   router.post('/alipay',(req,res)=>{
     const paramsObj = JSON.parse(JSON.stringify(req.body)).order
-
+		
+		//获取客户端的ip地址
+		function getClientIPAddress(req){
+			const referer = req.headers.referer
+			
+			return referer
+		}
+		
     let order_id = paramsObj.order_id
     let total_price = paramsObj.total_price
     let name = ''
@@ -38,7 +45,11 @@ module.exports = app =>{
       subject:name
     })
 
-    formData.addField('returnUrl','http://192.168.31.130:8080/paymentStatus')
+		//支付完成后需要跳转的地址
+		const redirectPay = getClientIPAddress(req) +'paymentStatus'
+		console.log(redirectPay)
+
+    formData.addField('returnUrl',redirectPay)
 
     const result = alipaySdk.exec('alipay.trade.page.pay',{},{formData:formData})
 

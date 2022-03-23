@@ -26,13 +26,13 @@
 
   import MenuList from "@/components/content/menuList/MenuList"
 
-  import {backTopMixins} from "@/common/mixins/mixins";
+  import {backTopMixins,refreshScrollMixins} from "@/common/mixins/mixins";
   //引入获取首页数据方法
   import {getHomeMultiData, getGoodsData} from "@/network/home"
-  import {debounce} from "@/common/utils";
+  
   export default {
     name:'Home',
-    mixins:[backTopMixins],
+    mixins:[backTopMixins,refreshScrollMixins],
     data(){
       return {
         banner:[],
@@ -85,6 +85,7 @@
       loadMore(){
         //上拉加载更多数据
         this.getGoodsData(this.currentType)
+	
       },
       swiperImageLoad(){
         //当轮播图的图片加载完成时就获取轮播组件距离顶部的高度
@@ -144,14 +145,6 @@
     },
     created() {
       this.getHomeMultiData()
-    },
-    mounted() {
-      const refresh = debounce(this.$refs.scroll.refresh, 200)
-      //监听图片加载完成
-      this.$bus.$on('itemImageLoad', ()=>{
-        //使用scroll中的refresh
-        refresh()
-      })
     },
     activated() {
       this.refreshGoodsData()

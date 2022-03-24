@@ -1,12 +1,17 @@
 <template>
 	<div class="home">
-		<nav-bar><div class="nav-title" slot="center">mall首页</div></nav-bar>
+		<nav-bar>
+      <div class="nav-title" slot="center"></div>
+      <div slot="bottom">
+        <Search class="search" ref="search"></Search>
+      </div>
+    </nav-bar>
     <tab-control v-show="isTabFixed" ref="tabControlOne" class="tab-control" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
     <Scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll"
             :pull-up-load="true" @pullingUp="loadMore">
       <swiper class="swiper" :banner="banner" @swiperImageLoad="swiperImageLoad"></swiper>
       <menu-list v-if="hasMenuData"></menu-list>
-      <tab-control :class="{fixed: isTabFixed}" ref="tabControlTwo" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
+      <tab-control class="tab-control" :class="{fixed: isTabFixed}" ref="tabControlTwo" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
       <goods-data :goods="goods[currentType].list"></goods-data>
       <div class="no-more" v-show="noMore"><p>没有更多了哦!</p></div>
     </Scroll>
@@ -23,6 +28,7 @@
 
   import TabControl from '@/components/content/tabControl/TabControl'
   import GoodsData from "@/components/content/goodsData/GoodsData"
+  import Search from '@/components/content/search/Search'
 
   import MenuList from "@/components/content/menuList/MenuList"
 
@@ -35,23 +41,24 @@
     mixins:[backTopMixins,refreshScrollMixins],
     data(){
       return {
-        banner:[],
-        currentType:'pop',
-        goods:{
-          'pop':{page: 0,  list: []},
-          'sell':{page: 0, list: []},
-          'new':{page: 0, list: []}
+        banner: [],
+        currentType: 'pop',
+        goods: {
+          'pop': {page: 0, list: []},
+          'sell': {page: 0, list: []},
+          'new': {page: 0, list: []}
         },
-        tabOffsetTop:0,
-        noMore:false,
-        userCollections:[],
-        hasMenuData:false,
-        collectedStateArray:{
-          'pop':[],
-          'sell':[],
-          'new':[]
+        tabOffsetTop: 0,
+        noMore: false,
+        userCollections: [],
+        hasMenuData: false,
+        collectedStateArray: {
+          'pop': [],
+          'sell': [],
+          'new': []
         },
-        getDataCount:0
+        getDataCount: 0,
+        scrollHeight: 0
       }
     },
     components:{
@@ -61,7 +68,8 @@
       BackTop,
       TabControl,
       GoodsData,
-      MenuList
+      MenuList,
+      Search
     },
     methods:{
       /*
@@ -141,7 +149,23 @@
         this.getGoodsData("pop")
         this.getGoodsData("new")
         this.getGoodsData("sell")
-      }
+      },
+      contentScroll(position){
+        //根据position位置来控制backTop组件的显示或隐藏(position时负数，需先转成正数再做比较)
+        this.isShowBackTop = (- position.y)>1000
+
+        //根据position的位置控制tabControl是否吸顶
+        this.isTabFixed = (- position.y) > (this.tabOffsetTop - 48)
+
+        this.$store.dispatch('savePosition',JSON.parse(JSON.stringify(position))).then()
+
+        this.scrollHeight = -(this.$store.state.position.y)
+
+        let tag = document.getElementsByClassName('search').item(0)
+        tag.style.minWidth = 10+'rem'
+        tag.style.width = (this.$refs.search.$el.clientWidth - this.scrollHeight/5) + 'px'
+        console.log(this.$refs.search.$el.clientWidth)
+      },
     },
     created() {
       this.getHomeMultiData()
@@ -158,7 +182,7 @@
     height: 100vh;
   }
   .nav-bar{
-    background-color: #db7093;
+    background-color: #e92e2e;
   }
 	.nav-title{
     color: #fff;

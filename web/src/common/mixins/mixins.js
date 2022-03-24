@@ -18,7 +18,7 @@ const backTopMixins = {
     data(){
         return {
             isShowBackTop:false,
-            isTabFixed:false
+            isTabFixed:false,
         }
     },
     methods:{
@@ -29,6 +29,7 @@ const backTopMixins = {
             //根据position的位置控制tabControl是否吸顶
             this.isTabFixed = (- position.y) > (this.tabOffsetTop - 48)
 
+            this.$store.dispatch('savePosition',JSON.parse(JSON.stringify(position))).then()
         },
         backTop(){
             //回到顶部

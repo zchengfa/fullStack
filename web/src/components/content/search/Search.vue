@@ -1,0 +1,98 @@
+<template>
+  <div class="search-component">
+    <div class="search-box">
+      <slot name="search_icon">
+        <div class="search-icon">
+          <img :src="search_icon" alt="search_icon">
+        </div>
+      </slot>
+      <slot name="search">
+        <div class="search-content">
+          <div class="swiper-word" v-for="(item,index) in search_word" :key="index">
+<!--            放入几个搜索词定时切换显示-->
+            <span v-show="currentWordIndex===index">{{item}}</span>
+          </div>
+        </div>
+      </slot>
+      <slot name="take_photo">
+        <div class="take-photo">
+          <img :src="take_photo_icon" alt="take_photo_icon">
+        </div>
+      </slot>
+      <slot name="qrcode">
+        <div class="qr-code">
+          <img :src="qrcode_icon" alt="qrcode_icon">
+        </div>
+      </slot>
+    </div>
+  </div>
+</template>
+
+<script>
+import base64 from '@/assets/image/base64/base64'
+export default {
+  name: "search",
+  data(){
+    return {
+      search_icon:null,
+      take_photo_icon:null,
+      qrcode_icon:null,
+      search_word:['魅可','被子','鞋子','女装'],
+      currentWordIndex:0
+    }
+  },
+  created() {
+    this.search_icon = base64['search']['search_icon']
+    this.take_photo_icon = base64['take_photo']['take_photo_icon']
+    this.qrcode_icon = base64['qrcode']
+  }
+}
+</script>
+
+<style scoped>
+.search-component{
+  margin: 0 auto;
+  width: 94%;
+  height: 2.4rem;
+  background-color: #f3ecec;
+  border-radius: 1.2rem;
+  overflow: hidden;
+}
+.search-box{
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  width: 100%;
+  height: 100%;
+}
+.search-box div{
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  text-align: center;
+}
+.search-box div.search-content{
+  margin-left: -1rem;
+  flex: 6;
+  color: #756c6c;
+}
+.search-box div:first-child{
+  margin-left: .5rem;
+}
+.search-content .swiper-word{
+  text-align: left;
+}
+.search-content{
+  width: 70%;
+}
+img{
+  width: 1.6rem;
+}.qr-code::before{
+  display: block;
+  margin-right: .5rem;
+  content: "";
+  height: 1rem;
+  border-left: 1px solid #fd001e;
+ }
+</style>

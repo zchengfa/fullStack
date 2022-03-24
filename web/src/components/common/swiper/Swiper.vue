@@ -97,6 +97,7 @@
   }
   ul li{
     flex:1;
+    height: 192px;
     min-height: 191px;
   }
   .item{

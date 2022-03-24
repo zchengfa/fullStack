@@ -15,7 +15,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
     state:{
         cartList:[],
-        position:[],
+        position:{},
         order_id:sessionStorage.getItem('trade_no'),
         token:sessionStorage.getItem('token'),
         //将sessionStorage存储的字符串化对象，转换成对象
@@ -49,7 +49,7 @@ const store = new Vuex.Store({
             state.cartList.push(payload)
         },
         [SAVE_POSITION](state,payload) {
-            state.position.push(payload)
+            state.position=payload
         }
 
     },

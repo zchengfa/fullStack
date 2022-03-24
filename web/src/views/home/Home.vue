@@ -1,6 +1,6 @@
 <template>
 	<div class="home">
-		<nav-bar>
+		<nav-bar ref="nav" class="nav">
       <div class="nav-title" slot="center"></div>
       <div slot="bottom">
         <Search class="search" ref="search"></Search>
@@ -161,10 +161,33 @@
 
         this.scrollHeight = -(this.$store.state.position.y)
 
-        let tag = document.getElementsByClassName('search').item(0)
-        tag.style.minWidth = 10+'rem'
-        tag.style.width = (this.$refs.search.$el.clientWidth - this.scrollHeight/5) + 'px'
-        console.log(this.$refs.search.$el.clientWidth)
+				//获取搜索组件元素
+        let searchElement = document.getElementsByClassName('search').item(0)
+				//获取导航栏元素
+				let navElement = document.getElementsByClassName('nav').item(0)
+				
+        searchElement.style.width = (this.$refs.search.$el.clientWidth - this.scrollHeight/5) + 'px'
+				
+				if(this.$refs.search.$el.clientWidth===240){
+					searchElement.style.position = 'relative'
+					searchElement.style.top = (this.$refs.search.$el.clientHeight - this.scrollHeight)+'px'
+					
+					if(this.$refs.nav.$el.clientHeight===48){
+						navElement.style.height = 48 +'px'
+						searchElement.style.position = 'absolute'
+						searchElement.style.top = '50%'
+						searchElement.style.left = '50%'
+						
+					
+						searchElement.style.transform= "translateX("+ '-50%' +")"+ "translateY("+ '-50%' +")" 
+						//searchElement.style.transform= "translateY("+ '-50%' +")"
+						console.log(this.$refs.nav.$el.offsetTop)
+					}
+					else{
+						navElement.style.height = ( this.$refs.nav.$el.clientHeight-this.$refs.nav.$el.clientHeight/this.$refs.nav.$el.clientHeight)+'px'
+					}
+				}
+        
       },
     },
     created() {

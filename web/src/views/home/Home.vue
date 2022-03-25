@@ -58,7 +58,8 @@
           'new': []
         },
         getDataCount: 0,
-        scrollHeight: 0
+        scrollHeight: 0,
+        navHeight:0
       }
     },
     components:{
@@ -160,33 +161,58 @@
         this.$store.dispatch('savePosition',JSON.parse(JSON.stringify(position))).then()
 
         this.scrollHeight = -(this.$store.state.position.y)
+        this.navHeight = this.$refs.nav.$el.clientHeight
 
 				//获取搜索组件元素
         let searchElement = document.getElementsByClassName('search').item(0)
 				//获取导航栏元素
 				let navElement = document.getElementsByClassName('nav').item(0)
 				
-        searchElement.style.width = (this.$refs.search.$el.clientWidth - this.scrollHeight/5) + 'px'
-				
-				if(this.$refs.search.$el.clientWidth===240){
-					searchElement.style.position = 'relative'
-					searchElement.style.top = (this.$refs.search.$el.clientHeight - this.scrollHeight)+'px'
-					
-					if(this.$refs.nav.$el.clientHeight===48){
-						navElement.style.height = 48 +'px'
-						searchElement.style.position = 'absolute'
-						searchElement.style.top = '50%'
-						searchElement.style.left = '50%'
-						
-					
-						searchElement.style.transform= "translateX("+ '-50%' +")"+ "translateY("+ '-50%' +")" 
-						//searchElement.style.transform= "translateY("+ '-50%' +")"
-						console.log(this.$refs.nav.$el.offsetTop)
-					}
-					else{
-						navElement.style.height = ( this.$refs.nav.$el.clientHeight-this.$refs.nav.$el.clientHeight/this.$refs.nav.$el.clientHeight)+'px'
-					}
-				}
+        if (this.scrollHeight>0&&this.scrollHeight<=82){
+          searchElement.style.width = (this.$refs.search.$el.clientWidth - this.scrollHeight/5) + 'px'
+
+          if(this.$refs.search.$el.clientWidth===240){
+            searchElement.style.position = 'relative'
+            searchElement.style.top = (this.$refs.search.$el.clientHeight - this.scrollHeight)+'px'
+
+            if(this.$refs.nav.$el.clientHeight===48){
+              navElement.style.height = 48 +'px'
+              searchElement.style.position = 'absolute'
+              searchElement.style.top = '50%'
+              searchElement.style.left = '50%'
+              searchElement.style.transform= "translateX("+ '-50%' +")"+ "translateY("+ '-50%' +")"
+            }
+            else{
+              navElement.style.height = ( this.$refs.nav.$el.clientHeight - this.$refs.nav.$el.clientHeight/this.$refs.nav.$el.clientHeight)+'px'
+            }
+          }
+        }
+        else{
+          navElement.style.height = 48 +'px'
+          searchElement.style.position = 'absolute'
+          searchElement.style.top = '50%'
+          searchElement.style.left = '50%'
+          searchElement.style.transform= "translateX("+ '-50%' +")"+ "translateY("+ '-50%' +")"
+        }
+				// if (this.$refs.search.$el.clientWidth===240&&this.$refs.nav.$el.clientHeight===48){
+        //
+				//   if (this.scrollHeight>0&&this.scrollHeight<=82){
+				//     this.navHeight++
+				//     navElement.style.height = this.navHeight+'px'
+				//     // navElement.style.height = (this.$refs.nav.$el.clientHeight +10) + 'px'
+        //     // searchElement.style.position = 'relative'
+        //     // searchElement.style.marginTop = '48px'
+        //     // searchElement.style.marginLeft = '50%'
+        //     // searchElement.style.transform= "translateX("+ '-50%' +")"+ "translateY("+ '-50%' +")"
+        //     console.log(navElement.style.height,this.navHeight)
+        //   }
+        // }
+				// else{
+        //
+        // }
+
+        //console.log(this.$refs.search.$el.clientWidth,this.$refs.nav.$el.clientHeight)
+				//console.log(this.$refs.scroll.$el.clientHeight)
         
       },
     },

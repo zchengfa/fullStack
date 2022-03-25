@@ -54,7 +54,7 @@ export default {
   margin: 0 auto;
   width: 94%;
   height: 2.4rem;
-	min-width: 240px;
+	min-width: 260px;
 	max-width: 390px;
   background-color: #f3ecec;
   border-radius: 1.2rem;
@@ -73,6 +73,7 @@ export default {
   align-items: center;
   justify-items: center;
   text-align: center;
+	padding:0 .2rem;
 }
 .search-box div.search-content{
   margin-left: -1rem;
@@ -84,6 +85,7 @@ export default {
 }
 .search-content .swiper-word{
   text-align: left;
+	font-size: .8rem;
 }
 .search-content{
   width: 70%;

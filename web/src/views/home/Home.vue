@@ -1,13 +1,18 @@
 <template>
 	<div class="home">
 		<nav-bar ref="nav" class="nav">
+			<div class="nav-left" slot="left"></div>
       <div class="nav-title" slot="center"></div>
+			<div class="nav-right" slot="right">
+				<div class="message"><img :src="message_icon" alt="message_icon"></div>
+				<div class="calendar"><img :src="calendar_icon" alt="calendar_icon"></div>
+			</div>
       <div slot="bottom">
         <Search class="search" ref="search"></Search>
       </div>
     </nav-bar>
     <tab-control v-show="isTabFixed" ref="tabControlOne" class="tab-control" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
-    <Scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll"
+    <Scroll class="content" ref="scroll"  :probe-type="3" @scroll="contentScroll"
             :pull-up-load="true" @pullingUp="loadMore">
       <swiper class="swiper" :banner="banner" @swiperImageLoad="swiperImageLoad"></swiper>
       <menu-list v-if="hasMenuData"></menu-list>
@@ -35,6 +40,8 @@
   import {backTopMixins,refreshScrollMixins} from "@/common/mixins/mixins";
   //引入获取首页数据方法
   import {getHomeMultiData, getGoodsData} from "@/network/home"
+	import base64 from '@/assets/image/base64/base64'
+	import {formatTime} from "@/common/utils";
   
   export default {
     name:'Home',
@@ -59,7 +66,12 @@
         },
         getDataCount: 0,
         scrollHeight: 0,
-        navHeight:0
+				isUp:true,
+				navHeightDefault:0,
+				searchWidthDefault:0,
+				searchOffsetTop:0,
+				message_icon:null,
+				calendar_icon:null
       }
     },
     components:{
@@ -72,6 +84,19 @@
       MenuList,
       Search
     },
+		watch:{
+			scrollHeight(new_height,old_height){
+				//监听滚动的高度，判断前一次与这一次的滚动高度差是否为正数，若为正，则页面是向下滚动，反之则是向上滚动
+				//高度差为正，页面向下滚动
+				if(new_height-old_height > 0){
+					this.isUp = true
+				}
+				//高度差为负，页面向上滚动
+				else{
+					this.isUp = false
+				}
+			}
+		},
     methods:{
       /*
        * 事件监听
@@ -160,65 +185,89 @@
 
         this.$store.dispatch('savePosition',JSON.parse(JSON.stringify(position))).then()
 
-        this.scrollHeight = -(this.$store.state.position.y)
-        this.navHeight = this.$refs.nav.$el.clientHeight
-
-				//获取搜索组件元素
-        let searchElement = document.getElementsByClassName('search').item(0)
-				//获取导航栏元素
-				let navElement = document.getElementsByClassName('nav').item(0)
+        this.scrollHeight = this.$store.state.position.y
 				
-        if (this.scrollHeight>0&&this.scrollHeight<=82){
-          searchElement.style.width = (this.$refs.search.$el.clientWidth - this.scrollHeight/5) + 'px'
-
-          if(this.$refs.search.$el.clientWidth===240){
-            searchElement.style.position = 'relative'
-            searchElement.style.top = (this.$refs.search.$el.clientHeight - this.scrollHeight)+'px'
-
-            if(this.$refs.nav.$el.clientHeight===48){
-              navElement.style.height = 48 +'px'
-              searchElement.style.position = 'absolute'
-              searchElement.style.top = '50%'
-              searchElement.style.left = '50%'
-              searchElement.style.transform= "translateX("+ '-50%' +")"+ "translateY("+ '-50%' +")"
-            }
-            else{
-              navElement.style.height = ( this.$refs.nav.$el.clientHeight - this.$refs.nav.$el.clientHeight/this.$refs.nav.$el.clientHeight)+'px'
-            }
-          }
-        }
-        else{
-          navElement.style.height = 48 +'px'
-          searchElement.style.position = 'absolute'
-          searchElement.style.top = '50%'
-          searchElement.style.left = '50%'
-          searchElement.style.transform= "translateX("+ '-50%' +")"+ "translateY("+ '-50%' +")"
-        }
-				// if (this.$refs.search.$el.clientWidth===240&&this.$refs.nav.$el.clientHeight===48){
-        //
-				//   if (this.scrollHeight>0&&this.scrollHeight<=82){
-				//     this.navHeight++
-				//     navElement.style.height = this.navHeight+'px'
-				//     // navElement.style.height = (this.$refs.nav.$el.clientHeight +10) + 'px'
-        //     // searchElement.style.position = 'relative'
-        //     // searchElement.style.marginTop = '48px'
-        //     // searchElement.style.marginLeft = '50%'
-        //     // searchElement.style.transform= "translateX("+ '-50%' +")"+ "translateY("+ '-50%' +")"
-        //     console.log(navElement.style.height,this.navHeight)
-        //   }
-        // }
-				// else{
-        //
-        // }
-
-        //console.log(this.$refs.search.$el.clientWidth,this.$refs.nav.$el.clientHeight)
-				//console.log(this.$refs.scroll.$el.clientHeight)
-        
+				let searchEl = document.getElementsByClassName('search').item(0)
+				let navEl = document.getElementsByClassName('nav').item(0)
+				let searchClWidth = this.$refs.search.$el.clientWidth
+				let searchClHeight = this.$refs.search.$el.clientHeight
+				let navClHeight = this.$refs.nav.$el.clientHeight
+				
+				//滚动的Y值小于0，页面一直页面初始位置的上方滚动
+				if(this.scrollHeight < 0) {
+					
+					//通过监听this,scrollHeight的值得到当前用户在做向下滚动
+					if(this.isUp){
+						
+						//且滚动距离小于导航栏高度
+						if(this.scrollHeight > - this.navHeightDefault){
+							
+							//导航栏当前高度小于初始状态下的高度时，将导航栏高度变大，输入框部分宽度保持最小值状态
+							if(navClHeight < this.navHeightDefault){
+								navEl.style.height = (navClHeight + 1) + 'px'
+								searchEl.style.position = 'absolute'
+								searchEl.style.top = (navClHeight - (searchClHeight+6))+'px'
+								searchEl.style.left = '50%'
+								searchEl.style.transform = "translateX(-50%)"
+							}
+							
+							//导航栏当前高度等于初始状态下的高度时，保持高度为初始状态高度，输入框部分宽度变大
+							else{
+								navEl.style.height = this.navHeightDefault +'px'
+								searchEl.style.width = (searchClWidth + searchClWidth/10) + 'px'
+							}
+							
+						}
+						//滚动距离大于导航栏高度时，将导航栏高度保持为特定高度，并且输入框部分距离顶部3px，position:absolute ，水平垂直居中
+						else{
+							navEl.style.height = this.searchOffsetTop + 'px'
+							searchEl.style.position = 'absolute'
+							searchEl.style.top = 3+'px'
+							searchEl.style.left = '50%'
+							searchEl.style.width = 260 + 'px'
+							searchEl.style.transform = "translateX(-50%)"
+						}
+					}
+					//通过监听this,scrollHeight的值得到当前用户在做向上滚动
+					else{
+						//用户向上滚动，缩短输入框部分的宽度
+						searchEl.style.width = (searchClWidth - searchClWidth/20) +'px'
+						
+						//当输入框部分缩短到最小值时，保持宽度不变，缩小导航栏高度，输入框部分水平垂直居中
+						if(searchClWidth ===260){
+							if(navClHeight > 48){
+								navEl.style.height = (navClHeight - 1) + 'px'
+								searchEl.style.width = 260 + 'px'
+								searchEl.style.position = 'absolute'
+								searchEl.style.top = (navClHeight - (searchClHeight+6))+'px'
+								searchEl.style.left = '50%'
+								searchEl.style.transform = "translateX(-50%)"
+							
+							}
+						}
+					}
+				}
+				//滚动的Y值大于0，用户在做下拉操作，需将导航栏上的元素保持与初始状态一致
+				else{
+					navEl.style.height = this.navHeightDefault + 'px'
+					searchEl.style.position = 'absolute'
+					searchEl.style.top = this.searchOffsetTop+'px'
+					searchEl.style.left = '50%'
+					searchEl.style.width = this.searchWidthDefault + 'px'
+					searchEl.style.transform = "translateX(-50%)"
+				}	
       },
     },
     created() {
       this.getHomeMultiData()
+			this.message_icon = base64['message']
+			this.calendar_icon = base64['calendar']
     },
+		mounted() {
+			this.navHeightDefault = this.$refs.nav.$el.clientHeight
+			this.searchWidthDefault = this.$refs.search.$el.clientWidth
+			this.searchOffsetTop = this.$refs.search.$el.offsetTop
+		},
     activated() {
       this.refreshGoodsData()
     }
@@ -233,9 +282,29 @@
   .nav-bar{
     background-color: #e92e2e;
   }
+	.nav-left{
+		width: 60px;
+	}
+	.nav-title{
+		width:240px;
+	}
 	.nav-title{
     color: #fff;
   }
+	.nav-right{
+		position: relative;
+		right: 1rem;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 44px;
+	}
+	.nav-right div{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 44px;
+	}
   .tab-control{
     position: relative;
     z-index: 9;

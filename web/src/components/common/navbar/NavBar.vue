@@ -36,7 +36,7 @@
     text-align: center;
   }
 	.left,.right{
-		width: 60px;
+		min-width: 60px;
 		height: 44px;
 	}
 	.center{

@@ -33,7 +33,13 @@ export default {
       default() {
         return false
       }
-    }
+    },
+		bounce:{
+			type:Boolean,
+			default(){
+				return true
+			}
+		}
   },
   mounted() {
     //创建better-scroll
@@ -41,7 +47,8 @@ export default {
       click:true,
       probeType:this.probeType,
       pullUpLoad:this.pullUpLoad,
-      mouseWheel:true
+      mouseWheel:true,
+			bounce:this.bounce
     })
 
     //判断是否需要开启滚动监听

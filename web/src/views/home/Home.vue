@@ -1,8 +1,15 @@
 <template>
 	<div class="home">
 		<nav-bar ref="nav" class="nav">
-			<div class="nav-left" slot="left"></div>
-      <div class="nav-title" slot="center"></div>
+			<div class="nav-left" slot="left">
+        <span class="lightning-word">mall</span>
+      </div>
+      <div class="nav-title" slot="center">
+        <div class="title-box">
+          <button :class="{'active':isActive}">首页</button>
+          <button>附近</button>
+        </div>
+      </div>
 			<div class="nav-right" slot="right">
 				<div class="message"><img :src="message_icon" alt="message_icon"></div>
 				<div class="calendar"><img :src="calendar_icon" alt="calendar_icon"></div>
@@ -71,7 +78,10 @@
 				searchWidthDefault:0,
 				searchOffsetTop:0,
 				message_icon:null,
-				calendar_icon:null
+				calendar_icon:null,
+        lightning_icon:null,
+        time:formatTime('HH:mm:ss'),
+        isActive:true
       }
     },
     components:{
@@ -189,9 +199,17 @@
 				
 				let searchEl = document.getElementsByClassName('search').item(0)
 				let navEl = document.getElementsByClassName('nav').item(0)
+        //当前搜索部分的宽度
 				let searchClWidth = this.$refs.search.$el.clientWidth
+
+        //当前搜索部分的高度
 				let searchClHeight = this.$refs.search.$el.clientHeight
+
+        //当前导航栏的高度
 				let navClHeight = this.$refs.nav.$el.clientHeight
+
+        //搜索部分的最小宽度
+        let searchMinWidth = 240
 				
 				//滚动的Y值小于0，页面一直页面初始位置的上方滚动
 				if(this.scrollHeight < 0) {
@@ -204,11 +222,7 @@
 							
 							//导航栏当前高度小于初始状态下的高度时，将导航栏高度变大，输入框部分宽度保持最小值状态
 							if(navClHeight < this.navHeightDefault){
-								navEl.style.height = (navClHeight + 1) + 'px'
-								searchEl.style.position = 'absolute'
-								searchEl.style.top = (navClHeight - (searchClHeight+6))+'px'
-								searchEl.style.left = '50%'
-								searchEl.style.transform = "translateX(-50%)"
+                this.changeElStyle(navEl,searchEl,navClHeight + 1,navClHeight - (searchClHeight+6),searchMinWidth)
 							}
 							
 							//导航栏当前高度等于初始状态下的高度时，保持高度为初始状态高度，输入框部分宽度变大
@@ -220,12 +234,7 @@
 						}
 						//滚动距离大于导航栏高度时，将导航栏高度保持为特定高度，并且输入框部分距离顶部3px，position:absolute ，水平垂直居中
 						else{
-							navEl.style.height = this.searchOffsetTop + 'px'
-							searchEl.style.position = 'absolute'
-							searchEl.style.top = 3+'px'
-							searchEl.style.left = '50%'
-							searchEl.style.width = 260 + 'px'
-							searchEl.style.transform = "translateX(-50%)"
+              this.changeElStyle(navEl,searchEl,this.searchOffsetTop,3,searchMinWidth)
 						}
 					}
 					//通过监听this,scrollHeight的值得到当前用户在做向上滚动
@@ -236,37 +245,40 @@
 						//当输入框部分缩短到最小值时，保持宽度不变，缩小导航栏高度，输入框部分水平垂直居中
 						if(searchClWidth ===260){
 							if(navClHeight > 48){
-								navEl.style.height = (navClHeight - 1) + 'px'
-								searchEl.style.width = 260 + 'px'
-								searchEl.style.position = 'absolute'
-								searchEl.style.top = (navClHeight - (searchClHeight+6))+'px'
-								searchEl.style.left = '50%'
-								searchEl.style.transform = "translateX(-50%)"
-							
+                this.changeElStyle(navEl,searchEl,navClHeight -1,navClHeight - (searchClHeight+6),searchMinWidth)
 							}
 						}
 					}
 				}
 				//滚动的Y值大于0，用户在做下拉操作，需将导航栏上的元素保持与初始状态一致
 				else{
-					navEl.style.height = this.navHeightDefault + 'px'
-					searchEl.style.position = 'absolute'
-					searchEl.style.top = this.searchOffsetTop+'px'
-					searchEl.style.left = '50%'
-					searchEl.style.width = this.searchWidthDefault + 'px'
-					searchEl.style.transform = "translateX(-50%)"
+          this.changeElStyle(navEl,searchEl,this.navHeightDefault,this.searchOffsetTop,this.searchWidthDefault)
 				}	
       },
+      //改变导航栏与搜索部分元素的样式
+      changeElStyle(navEl,searchEl,navHeight,searchTop,searchWidth){
+        navEl.style.height = navHeight + 'px'
+        searchEl.style.position = 'absolute'
+        searchEl.style.top = searchTop+'px'
+        searchEl.style.left = '50%'
+        searchEl.style.width = searchWidth + 'px'
+        searchEl.style.transform = "translateX(-50%)"
+      }
     },
     created() {
       this.getHomeMultiData()
 			this.message_icon = base64['message']
 			this.calendar_icon = base64['calendar']
+      this.lightning_icon = base64['lightning']
     },
 		mounted() {
 			this.navHeightDefault = this.$refs.nav.$el.clientHeight
 			this.searchWidthDefault = this.$refs.search.$el.clientWidth
 			this.searchOffsetTop = this.$refs.search.$el.offsetTop
+
+      setInterval(()=>{
+        this.time = formatTime('HH:mm:ss')
+      },1000)
 		},
     activated() {
       this.refreshGoodsData()
@@ -275,6 +287,10 @@
 </script>
 
 <style scoped>
+  .nav-title .active{
+    background-color: #fff;
+    color: #fd001e;
+  }
   .home{
     position: relative;
     height: 100vh;
@@ -285,11 +301,19 @@
 	.nav-left{
 		width: 60px;
 	}
-	.nav-title{
-		width:240px;
-	}
-	.nav-title{
+	.nav-title button{
+    width: 4.6rem;
+    height: 1.6rem;
     color: #fff;
+    border-radius: 1rem;
+  }
+  .nav-title .title-box{
+    margin: 10px auto;
+    width: 9.2rem;
+    border-radius: 2rem;
+    height: 1.6rem;
+    line-height: 1.6rem;
+    background-color: rgba(42, 41, 41, 0.21);
   }
 	.nav-right{
 		position: relative;
@@ -305,6 +329,16 @@
 		align-items: center;
 		height: 44px;
 	}
+  .lightning-word{
+    display: inline-block;
+    color: #fff;
+    font-family: "Rage Italic",serif;
+    animation: lightning 1s alternate infinite;
+    transform: skew(-20deg);
+  }
+  .lightning-box img{
+    width: 1.4rem;
+  }
   .tab-control{
     position: relative;
     z-index: 9;
@@ -325,5 +359,15 @@
     color: #a5a2a2;
     font-size: 12px;
   }
+@-webkit-keyframes lightning {
+  from {
+    text-shadow: 0 0 10px lightblue, 0 0 20px lightblue, 0 0 30px lightblue, 0 0 40px skyblue, 0 0 50px skyblue, 0 0 60px skyblue;
+    color: #2294dc;
+  }
 
+  to {
+    text-shadow: 0 0 5px lightblue, 0 0 10px lightblue, 0 0 15px lightblue, 0 0 20px skyblue, 0 0 25px skyblue, 0 0 30px skyblue;
+    color: #fff;
+  }
+}
 </style>

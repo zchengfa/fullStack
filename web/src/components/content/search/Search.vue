@@ -45,6 +45,14 @@ export default {
     this.search_icon = base64['search']['search_icon']
     this.take_photo_icon = base64['take_photo']['take_photo_icon']
     this.qrcode_icon = base64['qrcode']
+  },
+  mounted() {
+    setInterval(()=>{
+      this.currentWordIndex ++
+      if (this.currentWordIndex===this.search_word.length){
+        this.currentWordIndex = 0
+      }
+    },5000)
   }
 }
 </script>
@@ -73,9 +81,10 @@ export default {
   align-items: center;
   justify-items: center;
   text-align: center;
-	padding:0 .2rem;
+	padding:0 .4rem;
 }
 .search-box div.search-content{
+  position: relative;
   margin-left: -1rem;
   flex: 6;
   color: #756c6c;
@@ -84,15 +93,23 @@ export default {
   margin-left: .5rem;
 }
 .search-content .swiper-word{
-  text-align: left;
+  position: absolute;
+  display: block;
 	font-size: .8rem;
+}
+.search-content .swiper-word span{
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  line-height: 2rem;
 }
 .search-content{
   width: 70%;
 }
 img{
   width: 1.6rem;
-}.qr-code::before{
+}
+.qr-code::before{
   display: block;
   margin-right: .5rem;
   content: "";

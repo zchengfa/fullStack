@@ -6,8 +6,8 @@
       </div>
       <div class="nav-title" slot="center">
         <div class="title-box">
-          <button :class="{'active':isActive}">首页</button>
-          <button>附近</button>
+          <button @click="toIndexPage" :class="{'active':isIndex}">首页</button>
+          <button @click="toNearbyPage" :class="{'active':!isIndex}">附近</button>
         </div>
       </div>
 			<div class="nav-right" slot="right">
@@ -18,15 +18,31 @@
         <Search class="search" ref="search"></Search>
       </div>
     </nav-bar>
-    <tab-control v-show="isTabFixed" ref="tabControlOne" class="tab-control" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
-    <Scroll class="content" ref="scroll"  :probe-type="3" @scroll="contentScroll"
-            :pull-up-load="true" @pullingUp="loadMore">
-      <swiper class="swiper" :banner="banner" @swiperImageLoad="swiperImageLoad"></swiper>
-      <menu-list v-if="hasMenuData"></menu-list>
-      <tab-control class="tab-control" :class="{fixed: isTabFixed}" ref="tabControlTwo" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
-      <goods-data :goods="goods[currentType].list"></goods-data>
-      <div class="no-more" v-show="noMore"><p>没有更多了哦!</p></div>
-    </Scroll>
+    <div v-show="isIndex" class="index-content">
+      <tab-control v-show="isTabFixed" ref="tabControlOne" class="tab-control" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
+      <Scroll class="content" ref="scroll"  :probe-type="3" @scroll="contentScroll"
+              :pull-up-load="true" @pullingUp="loadMore">
+        <swiper class="swiper" :banner="banner" @swiperImageLoad="swiperImageLoad"></swiper>
+        <menu-list v-if="hasMenuData"></menu-list>
+        <div class="flash-sale">
+          <div class="sale-top">
+            <div class="title">
+              <span class="sale-title">mall秒杀</span>
+              <span class="begin-sale-hour">{{flashSaleHour}}点场</span>
+            </div>
+            <div class="rest-sale-time">
+              <span class="sale-time-item" v-for="(item,index) in time" :key="index">{{item}}</span>
+            </div>
+            <div class="more-sale"><router-link :to="{path:'flashSale'}">更多秒杀></router-link></div>
+          </div>
+          <div class="sale-list"></div>
+        </div>
+        <tab-control class="tab-control" :class="{fixed: isTabFixed}" ref="tabControlTwo" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
+        <goods-data :goods="goods[currentType].list"></goods-data>
+        <div class="no-more" v-show="noMore"><p>没有更多了哦!</p></div>
+      </Scroll>
+    </div>
+    <div v-show="!isIndex" class="nearby-content">附近相关的</div>
     <back-top v-show="isShowBackTop" @click.native="backTop"></back-top>
 	</div>
 </template>
@@ -48,7 +64,6 @@
   //引入获取首页数据方法
   import {getHomeMultiData, getGoodsData} from "@/network/home"
 	import base64 from '@/assets/image/base64/base64'
-	import {formatTime} from "@/common/utils";
   
   export default {
     name:'Home',
@@ -80,8 +95,11 @@
 				message_icon:null,
 				calendar_icon:null,
         lightning_icon:null,
-        time:formatTime('HH:mm:ss'),
-        isActive:true
+        time:[],
+        isIndex:true,
+        isBeginFlashSale:false,
+        isFinishFlashSale:false,
+        flashSaleHour:11
       }
     },
     components:{
@@ -111,6 +129,14 @@
       /*
        * 事件监听
        */
+      //点击导航栏中间的按钮切换对应的内容进行显示
+      toIndexPage(){
+        this.isIndex = true
+      },
+      //点击导航栏中间的按钮切换对应的内容进行显示
+      toNearbyPage(){
+        this.isIndex = false
+      },
       tabClick(index){
         switch (index){
           case(0):
@@ -199,6 +225,7 @@
 				
 				let searchEl = document.getElementsByClassName('search').item(0)
 				let navEl = document.getElementsByClassName('nav').item(0)
+        let titleBoxEl = document.getElementsByClassName('title-box').item(0)
         //当前搜索部分的宽度
 				let searchClWidth = this.$refs.search.$el.clientWidth
 
@@ -220,9 +247,10 @@
 						//且滚动距离小于导航栏高度
 						if(this.scrollHeight > - this.navHeightDefault){
 							
-							//导航栏当前高度小于初始状态下的高度时，将导航栏高度变大，输入框部分宽度保持最小值状态
+							//导航栏当前高度小于初始状态下的高度时，将导航栏高度变大，输入框部分宽度保持最小值状态,导航栏按钮透明度变大
 							if(navClHeight < this.navHeightDefault){
                 this.changeElStyle(navEl,searchEl,navClHeight + 1,navClHeight - (searchClHeight+6),searchMinWidth)
+                titleBoxEl.style.opacity =  navClHeight/this.navHeightDefault
 							}
 							
 							//导航栏当前高度等于初始状态下的高度时，保持高度为初始状态高度，输入框部分宽度变大
@@ -235,6 +263,7 @@
 						//滚动距离大于导航栏高度时，将导航栏高度保持为特定高度，并且输入框部分距离顶部3px，position:absolute ，水平垂直居中
 						else{
               this.changeElStyle(navEl,searchEl,this.searchOffsetTop,3,searchMinWidth)
+              titleBoxEl.style.opacity = 1
 						}
 					}
 					//通过监听this,scrollHeight的值得到当前用户在做向上滚动
@@ -242,10 +271,11 @@
 						//用户向上滚动，缩短输入框部分的宽度
 						searchEl.style.width = (searchClWidth - searchClWidth/20) +'px'
 						
-						//当输入框部分缩短到最小值时，保持宽度不变，缩小导航栏高度，输入框部分水平垂直居中
-						if(searchClWidth ===260){
+						//当输入框部分缩短到最小值时，保持宽度不变，缩小导航栏高度，输入框部分水平垂直居中，,导航栏按钮透明度变小
+						if(searchClWidth ===searchMinWidth){
 							if(navClHeight > 48){
                 this.changeElStyle(navEl,searchEl,navClHeight -1,navClHeight - (searchClHeight+6),searchMinWidth)
+                titleBoxEl.style.opacity =  navClHeight/searchClWidth
 							}
 						}
 					}
@@ -253,6 +283,7 @@
 				//滚动的Y值大于0，用户在做下拉操作，需将导航栏上的元素保持与初始状态一致
 				else{
           this.changeElStyle(navEl,searchEl,this.navHeightDefault,this.searchOffsetTop,this.searchWidthDefault)
+          titleBoxEl.style.opacity = 1
 				}	
       },
       //改变导航栏与搜索部分元素的样式
@@ -263,6 +294,45 @@
         searchEl.style.left = '50%'
         searchEl.style.width = searchWidth + 'px'
         searchEl.style.transform = "translateX(-50%)"
+      },
+      restFlashSaleTime(flashSaleHour,wholeFlashSaleHours) {
+        this.isBeginFlashSale = false
+        let finishFlashSaleHour = flashSaleHour + wholeFlashSaleHours
+        let nowHour = new Date().getHours()
+        if ((nowHour - finishFlashSaleHour) >= - wholeFlashSaleHours && (nowHour - flashSaleHour) < wholeFlashSaleHours) {
+          this.isBeginFlashSale = true
+        }
+        if (nowHour>=finishFlashSaleHour){
+          this.isFinishFlashSale = true
+        }
+        if (this.isBeginFlashSale) {
+          setInterval(() => {
+            let nowHour = new Date().getHours()
+            let nowMinute = new Date().getMinutes()
+            let nowSeconds = new Date().getSeconds()
+            let hadHours = dealHadTime(finishFlashSaleHour - nowHour - 1)
+            let hadMinutes = dealHadTime(60 - nowMinute - 1)
+            let hadSeconds = dealHadTime(60 - nowSeconds - 1)
+
+            this.time = (hadHours + ':' + hadMinutes + ':' + hadSeconds).split('')
+          }, 1000)
+        }
+        else{
+          this.time = '00:00:00'
+        }
+        //时间小于10的添个0
+        function dealHadTime(time) {
+          if (time < 10) {
+            if (time >=0){
+              return '0' + time
+            }
+            else{
+              return '00'
+            }
+          } else {
+            return time
+          }
+        }
       }
     },
     created() {
@@ -276,9 +346,9 @@
 			this.searchWidthDefault = this.$refs.search.$el.clientWidth
 			this.searchOffsetTop = this.$refs.search.$el.offsetTop
 
-      setInterval(()=>{
-        this.time = formatTime('HH:mm:ss')
-      },1000)
+      //给定十点为秒杀开始的时间点,秒杀持续时间为两小时
+      this.restFlashSaleTime(this.flashSaleHour,2)
+
 		},
     activated() {
       this.refreshGoodsData()
@@ -338,6 +408,64 @@
   }
   .lightning-box img{
     width: 1.4rem;
+  }
+  /*秒杀样式*/
+  .flash-sale{
+    margin: 1rem auto;
+    padding: .5rem 0;
+    width: 94%;
+    height: 8rem;
+    border-radius: .5rem;
+    background-color: #e6e1e8;
+    overflow: hidden;
+  }
+  .sale-top{
+    overflow: hidden;
+  }
+  .sale-top div{
+    float: left;
+    margin-left: 1rem;
+  }
+  .sale-top .title .sale-title{
+    font-weight: bold;
+  }
+  .sale-top .title .begin-sale-hour{
+    margin-left: .5rem;
+    font-weight: bold;
+    font-size: .8rem;
+    color: #fd001e;
+  }
+  .sale-time-item{
+    display: inline-block;
+    padding: 2px 0;
+    background-color: #fd2e00;
+    color: #fff;
+    font-size: .9rem;
+  }
+  .sale-time-item:nth-child(3),
+  .sale-time-item:nth-child(6){
+    padding: 2px 2px;
+    background-color: #FFF;
+    color: #fd001e;
+    font-weight: bold;
+  }
+  .sale-time-item:first-child,
+  .sale-time-item:nth-child(4),
+  .sale-time-item:nth-child(7){
+    border-top-left-radius: .2rem;
+    border-bottom-left-radius: .2rem;
+  }
+  .sale-time-item:last-child,
+  .sale-time-item:nth-child(2),
+  .sale-time-item:nth-child(5){
+    border-top-right-radius: .2rem;
+    border-bottom-right-radius: .2rem;
+  }
+  .sale-top .more-sale{
+    float: right;
+  }
+  .sale-top .more-sale a{
+   color: #fd001e;
   }
   .tab-control{
     position: relative;

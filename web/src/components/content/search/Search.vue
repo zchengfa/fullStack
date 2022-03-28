@@ -62,7 +62,7 @@ export default {
   margin: 0 auto;
   width: 94%;
   height: 2.4rem;
-	min-width: 260px;
+	min-width: 240px;
 	max-width: 390px;
   background-color: #f3ecec;
   border-radius: 1.2rem;

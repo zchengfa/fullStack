@@ -295,60 +295,110 @@
         searchEl.style.width = searchWidth + 'px'
         searchEl.style.transform = "translateX(-50%)"
       },
-      restFlashSaleTime(flashSaleHour,wholeFlashSaleHours) {
-        this.isBeginFlashSale = false
-        let finishFlashSaleHour = flashSaleHour + wholeFlashSaleHours
-        let nowHour = new Date().getHours()
-        if ((nowHour - finishFlashSaleHour) >= - wholeFlashSaleHours && (nowHour - flashSaleHour) < wholeFlashSaleHours) {
-          this.isBeginFlashSale = true
-        }
-        if (nowHour>=finishFlashSaleHour){
-          this.isFinishFlashSale = true
-        }
-        if (this.isBeginFlashSale) {
-          setInterval(() => {
-            let nowHour = new Date().getHours()
-            let nowMinute = new Date().getMinutes()
-            let nowSeconds = new Date().getSeconds()
-            let hadHours = dealHadTime(finishFlashSaleHour - nowHour - 1)
-            let hadMinutes = dealHadTime(60 - nowMinute - 1)
-            let hadSeconds = dealHadTime(60 - nowSeconds - 1)
+			restFlashSale(){
+				//持续两小时
+				let wholeFlashSaleHours = 2
+				
+				//获取当前时间的小时
+				let nowHour = new Date().getHours()
+				
+				//当小时为0时，将他赋值为24点
+				nowHour===0?nowHour = 24 :null
+				
+				//当小时为偶数时，将其作为秒杀开场点
+				nowHour%2===0?this.flashSaleHour = nowHour:this.flashSaleHour = nowHour - 1
+				
+				let finishSaleHour = this.flashSaleHour + wholeFlashSaleHours
+				
+				if(nowHour - this.flashSaleHour <= wholeFlashSaleHours){
+					setInterval(() => {
+					  let nowHour = new Date().getHours()
+					  let nowMinute = new Date().getMinutes()
+					  let nowSeconds = new Date().getSeconds()
+					  let hadHours = dealHadTime(finishSaleHour - nowHour - 1)
+					  let hadMinutes = dealHadTime(60 - nowMinute - 1)
+					  let hadSeconds = dealHadTime(60 - nowSeconds - 1)
+						
+						if(hadHours==='00' && hadMinutes==='00' && hadSeconds==='00'){
+							this.restFlashSale()
+						}
+					
+					  this.time = (hadHours + ':' + hadMinutes + ':' + hadSeconds).split('')
+					
+					}, 1000)
+				}
+				
+				//时间小于10的添个0
+				function dealHadTime(time) {
+				  if (time < 10) {
+				    if (time >=0){
+				      return '0' + time
+				    }
+				    else{
+				      return '00'.toString()
+				    }
+				  } else {
+				    return time.toString()
+				  }
+				}
+			}	
+      // restFlashSaleTime(flashSaleHour,wholeFlashSaleHours) {
+      //   this.isBeginFlashSale = false
+      //   let finishFlashSaleHour = flashSaleHour + wholeFlashSaleHours
+      //   let nowHour = new Date().getHours()
+      //   if ((nowHour - finishFlashSaleHour) >= - wholeFlashSaleHours && (nowHour - flashSaleHour) < wholeFlashSaleHours) {
+      //     this.isBeginFlashSale = true
+      //   }
+      //   if (nowHour>=finishFlashSaleHour){
+      //     this.isFinishFlashSale = true
+      //   }
+      //   if (this.isBeginFlashSale) {
+      //     setInterval(() => {
+      //       let nowHour = new Date().getHours()
+      //       let nowMinute = new Date().getMinutes()
+      //       let nowSeconds = new Date().getSeconds()
+      //       let hadHours = dealHadTime(finishFlashSaleHour - nowHour - 1)
+      //       let hadMinutes = dealHadTime(60 - nowMinute - 1)
+      //       let hadSeconds = dealHadTime(60 - nowSeconds - 1)
 
-            this.time = (hadHours + ':' + hadMinutes + ':' + hadSeconds).split('')
-          }, 1000)
-        }
-        else{
-          this.time = '00:00:00'
-        }
-        //时间小于10的添个0
-        function dealHadTime(time) {
-          if (time < 10) {
-            if (time >=0){
-              return '0' + time
-            }
-            else{
-              return '00'
-            }
-          } else {
-            return time
-          }
-        }
-      }
+      //       this.time = (hadHours + ':' + hadMinutes + ':' + hadSeconds).split('')
+      //     }, 1000)
+      //   }
+      //   else{
+      //     this.time = '00:00:00'
+      //   }
+      //   //时间小于10的添个0
+      //   function dealHadTime(time) {
+      //     if (time < 10) {
+      //       if (time >=0){
+      //         return '0' + time
+      //       }
+      //       else{
+      //         return '00'
+      //       }
+      //     } else {
+      //       return time
+      //     }
+      //   }
+      // }
     },
     created() {
       this.getHomeMultiData()
 			this.message_icon = base64['message']
 			this.calendar_icon = base64['calendar']
       this.lightning_icon = base64['lightning']
+			
+			// //给定偶数的时间点为秒杀开始的时间点,秒杀持续时间为两小时
+			// let hour = new Date().getHours()
+			// hour%2===0?this.flashSaleHour = hour:this.flashSaleHour = hour -1
+			// console.log(hour)
+			this.restFlashSale()
     },
 		mounted() {
 			this.navHeightDefault = this.$refs.nav.$el.clientHeight
 			this.searchWidthDefault = this.$refs.search.$el.clientWidth
 			this.searchOffsetTop = this.$refs.search.$el.offsetTop
-
-      //给定十点为秒杀开始的时间点,秒杀持续时间为两小时
-      this.restFlashSaleTime(this.flashSaleHour,2)
-
+			
 		},
     activated() {
       this.refreshGoodsData()
@@ -440,7 +490,7 @@
     padding: 2px 0;
     background-color: #fd2e00;
     color: #fff;
-    font-size: .9rem;
+    font-size: .8rem;
   }
   .sale-time-item:nth-child(3),
   .sale-time-item:nth-child(6){

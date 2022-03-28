@@ -8,9 +8,9 @@
       </slot>
       <slot name="search">
         <div class="search-content">
-          <div class="swiper-word" v-for="(item,index) in search_word" :key="index">
+          <div class="swiper-word" v-for="(item,index) in search_word" :key="index"  v-show="currentWordIndex===index">
 <!--            放入几个搜索词定时切换显示-->
-            <span v-show="currentWordIndex===index">{{item}}</span>
+            <button @click="toSearch(item)">{{item}}</button>
           </div>
         </div>
       </slot>
@@ -41,6 +41,11 @@ export default {
       currentWordIndex:0
     }
   },
+	methods:{
+		toSearch(word){
+			this.$router.push('/searchProduct/'+word)
+		}
+	},
   created() {
     this.search_icon = base64['search']['search_icon']
     this.take_photo_icon = base64['take_photo']['take_photo_icon']
@@ -87,6 +92,7 @@ export default {
   position: relative;
   margin-left: -1rem;
   flex: 6;
+	height: 2rem;
   color: #756c6c;
 }
 .search-box div:first-child{
@@ -94,14 +100,16 @@ export default {
 }
 .search-content .swiper-word{
   position: absolute;
-  display: block;
+  
+	width: 100%;
+	height: 2rem;
 	font-size: .8rem;
 }
-.search-content .swiper-word span{
-  display: block;
-  width: 2rem;
+.search-content .swiper-word button{
+  width:100%;
   height: 2rem;
   line-height: 2rem;
+	text-align: left;
 }
 .search-content{
   width: 70%;

@@ -115,3 +115,49 @@ export default {
   })
 </script>
 ```
+
+##### 五、在better-scroll组件中嵌套原生滚动组件后，只能触发better-scroll的滚动，无法触发原生滚动组件的滚动
+###### 解决：在使用了原生滚动组件内添阻止事件冒泡
+###### 原因：在better-scroll组件中嵌套其他组件，触发事件时，只能触发到better-scroll的事件，并没有触发原生组件事件
+
+```vue
+<template>
+  <div class="sale-list" ref="sale">
+    <ul ref="saleUl">
+      <li ref="saleLi" class="sale-list-item" v-for="(item,index) in flashSaleData" :key="index" @touchStart="toMoreSale">
+        <button @click="toMoreSale(item.product_id)" class="sale-image"></button>
+        <img  :src="item['product_image']" alt="sale_image">
+        <span class="sale-price">{{'￥'+ item['price']}}</span>
+      </li>
+    </ul>
+  </div>
+</template>
+<script >
+  export default ({
+    mounted() {
+      //解决better-scroll中嵌套原生滚动组件时，原生组件无法滚动的问题（办法：在原生组件中添加触摸事件，阻止触摸事件的冒泡）
+      this.$refs.saleUl.addEventListener('touchstart',(e)=>{
+        e.stopPropagation()
+      });
+    },
+  })
+</script>
+```
+
+##### 六、在better-scroll嵌套的原生滚动组件内添加了阻止事件冒泡方法后，原生组件可以横向滚动了，但原生组件内的click方法无法执行，
+###### 解决：1.只使用touch或者只使用click 2.将需要点击的元素换成button元素，并使用其click方式进行点击
+###### 原因：touch事件与click事件冲突
+
+```vue
+<template>
+  <div class="sale-list" ref="sale">
+    <ul ref="saleUl">
+      <li ref="saleLi" class="sale-list-item" v-for="(item,index) in flashSaleData" :key="index" @touchStart="toMoreSale">
+        <button @click="toMoreSale(item.product_id)" class="sale-image"></button>
+        <img  :src="item['product_image']" alt="sale_image">
+        <span class="sale-price">{{'￥'+ item['price']}}</span>
+      </li>
+    </ul>
+  </div>
+</template>
+```

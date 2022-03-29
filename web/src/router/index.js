@@ -28,7 +28,8 @@ const PaymentStatus = ()=> import('@/views/order/PaymentStatus')
 const UserInformation = ()=> import('@/views/profile/components/User')
 const ManageAddress = ()=> import('@/views/profile/components/ManageAddress')
 const AddAddress = ()=> import('@/views/profile/components/AddAddress')
-const SearchProduct = ()=> import('@/views/homeContent/SearchProduct')
+const FlashSale = ()=> import('@/components/content/flashSale/FlashSale')
+//const SearchProduct = ()=> import('@/views/homeContent/SearchProduct')
 
 //创建路由映射表对象
 const routes =[
@@ -118,10 +119,15 @@ const routes =[
 		name:'addAddress',
 		component:AddAddress
 	},
+	// {
+	// 	path: '/searchProduct/:word',
+	// 	name:'searchProduct',
+	// 	component:SearchProduct
+	// }
 	{
-		path: '/searchProduct/:word',
-		name:'searchProduct',
-		component:SearchProduct
+		path: '/flashSale/:product_id',
+		name:'flashSale',
+		component:FlashSale
 	}
 
 ]

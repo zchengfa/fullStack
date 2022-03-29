@@ -5,6 +5,14 @@ module.exports = app =>{
     const express = require('express')
     const router = express.Router()
 
+    router.get('/flashSale',(req, res) => {
+        const selectFlashSale = mysql_query.selectFields('mall_goods','product_id,product_image,price',`preferential_type = '秒杀' AND flash_sale_time = ${req.query.flashSaleTime}`)
+        connection.query(selectFlashSale,(err,result)=>{
+            if (err)  throw err
+            res.send(result.slice(0,7))
+        })
+    })
+
     router.get('/goodsData', (req, res)=>{
         //获取请求参数
         const query = req.query

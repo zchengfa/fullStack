@@ -419,6 +419,7 @@ export default {
 .nav {
   position: fixed;
   top:0;
+  width: 100vw;
   border-bottom: 1px solid #cdc9c9;
   background-color: #fff;
 }

@@ -11,7 +11,7 @@
         </div>
       </div>
 			<div class="nav-right" slot="right">
-				<div class="message"><img :src="message_icon" alt="message_icon"></div>
+				<div class="message" @click="contactCustomer"><img :src="message_icon" alt="message_icon"></div>
 				<div class="calendar"><img :src="calendar_icon" alt="calendar_icon"></div>
 			</div>
       <div slot="bottom">
@@ -24,18 +24,29 @@
               :pull-up-load="true" @pullingUp="loadMore">
         <swiper class="swiper" :banner="banner" @swiperImageLoad="swiperImageLoad"></swiper>
         <menu-list v-if="hasMenuData"></menu-list>
-        <div class="flash-sale">
+        <div class="flash-sale" :key="saleKey">
           <div class="sale-top">
             <div class="title">
               <span class="sale-title">mall秒杀</span>
               <span class="begin-sale-hour">{{flashSaleHour}}点场</span>
             </div>
-            <div class="rest-sale-time">
+            <div class="rest-sale-time" v-if="time.length">
               <span class="sale-time-item" v-for="(item,index) in time" :key="index">{{item}}</span>
             </div>
-            <div class="more-sale"><router-link :to="{path:'flashSale'}">更多秒杀></router-link></div>
+            <div class="zero-sale-time" v-else>
+              <span class="sale-time-item">00:00:00</span>
+            </div>
+            <div class="more-sale"><button @click="toMoreSale(flashSaleData[0]['product_id'])">更多秒杀></button></div>
           </div>
-          <div class="sale-list"></div>
+          <div class="sale-list" ref="sale">
+            <ul ref="saleUl">
+              <li ref="saleLi" class="sale-list-item" v-for="(item,index) in flashSaleData" :key="index" @touchStart="toMoreSale">
+                <button @click="toMoreSale(item.product_id)" class="sale-image"></button>
+                <img  :src="item['product_image']" alt="sale_image">
+                <span class="sale-price">{{'￥'+ item['price']}}</span>
+              </li>
+            </ul>
+          </div>
         </div>
         <tab-control class="tab-control" :class="{fixed: isTabFixed}" ref="tabControlTwo" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
         <goods-data :goods="goods[currentType].list"></goods-data>
@@ -60,14 +71,14 @@
 
   import MenuList from "@/components/content/menuList/MenuList"
 
-  import {backTopMixins,refreshScrollMixins} from "@/common/mixins/mixins";
+  import {backTopMixins,refreshScrollMixins,contactCustomerMixins} from "@/common/mixins/mixins";
   //引入获取首页数据方法
-  import {getHomeMultiData, getGoodsData} from "@/network/home"
+  import {getHomeMultiData, getGoodsData,getFlashSaleData} from "@/network/home"
 	import base64 from '@/assets/image/base64/base64'
   
   export default {
     name:'Home',
-    mixins:[backTopMixins,refreshScrollMixins],
+    mixins:[backTopMixins,refreshScrollMixins,contactCustomerMixins],
     data(){
       return {
         banner: [],
@@ -96,10 +107,13 @@
 				calendar_icon:null,
         lightning_icon:null,
         time:[],
+        timer:null,
         isIndex:true,
         isBeginFlashSale:false,
         isFinishFlashSale:false,
-        flashSaleHour:11
+        flashSaleHour:null,
+        flashSaleData:[],
+        saleKey:0
       }
     },
     components:{
@@ -198,6 +212,19 @@
           //上拉加载一次调用一次结束上拉
           this.$refs.scroll.finishPullUp()
         })
+      },
+      getFlSaleData(){
+        getFlashSaleData(this.flashSaleHour).then(res=>{
+          this.flashSaleData = res.data
+
+          //拿到数据后重新设置ul元素的宽度
+          //this.flashSaleData.length?this.$refs.saleUl.style.width = this.flashSaleData.length * 4 *19 +'px':null
+        })
+      },
+      toMoreSale(product_id){
+        console.log(product_id)
+        this.$router.push('/flashSale/'+product_id)
+        // this.$toast.showToast('更多秒杀数据暂无，请等待后续完善')
       },
       refreshGoodsData(){
         this.goods = {
@@ -311,76 +338,40 @@
 				let finishSaleHour = this.flashSaleHour + wholeFlashSaleHours
 				
 				if(nowHour - this.flashSaleHour <= wholeFlashSaleHours){
-					setInterval(() => {
-					  let nowHour = new Date().getHours()
-					  let nowMinute = new Date().getMinutes()
-					  let nowSeconds = new Date().getSeconds()
-					  let hadHours = dealHadTime(finishSaleHour - nowHour - 1)
-					  let hadMinutes = dealHadTime(60 - nowMinute - 1)
-					  let hadSeconds = dealHadTime(60 - nowSeconds - 1)
-						
-						if(hadHours==='00' && hadMinutes==='00' && hadSeconds==='00'){
-							this.restFlashSale()
-						}
-					
-					  this.time = (hadHours + ':' + hadMinutes + ':' + hadSeconds).split('')
-					
+					this.timer = setInterval(() => {
+            let nowHours = new Date().getHours()
+            let nowMinute = new Date().getMinutes()
+            let nowSeconds = new Date().getSeconds()
+            let hadHours = dealHadTime(finishSaleHour - nowHours - 1)
+            let hadMinutes = dealHadTime(60 - nowMinute - 1)
+            let hadSeconds = dealHadTime(60 - nowSeconds - 1)
+
+            if(hadHours==='00' && hadMinutes==='00' && hadSeconds==='00'){
+              clearInterval(this.timer)
+              nowHour +=2
+              this.flashSaleHour?this.getFlSaleData():null
+              this.saleKey ++
+              this.$nextTick(()=>{
+                this.restFlashSale()
+              })
+            }
+            this.time = (hadHours + ':' + hadMinutes + ':' + hadSeconds).split('')
 					}, 1000)
 				}
-				
 				//时间小于10的添个0
-				function dealHadTime(time) {
-				  if (time < 10) {
-				    if (time >=0){
-				      return '0' + time
-				    }
-				    else{
-				      return '00'.toString()
-				    }
-				  } else {
-				    return time.toString()
-				  }
-				}
-			}	
-      // restFlashSaleTime(flashSaleHour,wholeFlashSaleHours) {
-      //   this.isBeginFlashSale = false
-      //   let finishFlashSaleHour = flashSaleHour + wholeFlashSaleHours
-      //   let nowHour = new Date().getHours()
-      //   if ((nowHour - finishFlashSaleHour) >= - wholeFlashSaleHours && (nowHour - flashSaleHour) < wholeFlashSaleHours) {
-      //     this.isBeginFlashSale = true
-      //   }
-      //   if (nowHour>=finishFlashSaleHour){
-      //     this.isFinishFlashSale = true
-      //   }
-      //   if (this.isBeginFlashSale) {
-      //     setInterval(() => {
-      //       let nowHour = new Date().getHours()
-      //       let nowMinute = new Date().getMinutes()
-      //       let nowSeconds = new Date().getSeconds()
-      //       let hadHours = dealHadTime(finishFlashSaleHour - nowHour - 1)
-      //       let hadMinutes = dealHadTime(60 - nowMinute - 1)
-      //       let hadSeconds = dealHadTime(60 - nowSeconds - 1)
-
-      //       this.time = (hadHours + ':' + hadMinutes + ':' + hadSeconds).split('')
-      //     }, 1000)
-      //   }
-      //   else{
-      //     this.time = '00:00:00'
-      //   }
-      //   //时间小于10的添个0
-      //   function dealHadTime(time) {
-      //     if (time < 10) {
-      //       if (time >=0){
-      //         return '0' + time
-      //       }
-      //       else{
-      //         return '00'
-      //       }
-      //     } else {
-      //       return time
-      //     }
-      //   }
-      // }
+        function dealHadTime(time) {
+          if (time < 10) {
+            if (time >=0){
+              return '0' + time
+            }
+            else{
+              return '00'.toString()
+            }
+          } else {
+            return time.toString()
+          }
+        }
+			}
     },
     created() {
       this.getHomeMultiData()
@@ -388,17 +379,19 @@
 			this.calendar_icon = base64['calendar']
       this.lightning_icon = base64['lightning']
 			
-			// //给定偶数的时间点为秒杀开始的时间点,秒杀持续时间为两小时
-			// let hour = new Date().getHours()
-			// hour%2===0?this.flashSaleHour = hour:this.flashSaleHour = hour -1
-			// console.log(hour)
+			//给定偶数的时间点为秒杀开始的时间点,秒杀持续时间为两小时
 			this.restFlashSale()
+      this.flashSaleHour?this.getFlSaleData():null
     },
 		mounted() {
 			this.navHeightDefault = this.$refs.nav.$el.clientHeight
 			this.searchWidthDefault = this.$refs.search.$el.clientWidth
 			this.searchOffsetTop = this.$refs.search.$el.offsetTop
-			
+
+      //解决better-scroll中嵌套原生滚动组件时，原生组件无法滚动的问题（办法：在原生组件中添加触摸事件，阻止触摸事件的冒泡）
+      this.$refs.saleUl.addEventListener('touchstart',(e)=>{
+        e.stopPropagation()
+      });
 		},
     activated() {
       this.refreshGoodsData()
@@ -464,7 +457,6 @@
     margin: 1rem auto;
     padding: .5rem 0;
     width: 94%;
-    height: 8rem;
     border-radius: .5rem;
     background-color: #e6e1e8;
     overflow: hidden;
@@ -512,10 +504,48 @@
     border-bottom-right-radius: .2rem;
   }
   .sale-top .more-sale{
+    margin-right: .5rem;
     float: right;
   }
-  .sale-top .more-sale a{
-   color: #fd001e;
+  .sale-top .more-sale button{
+    color: #fd001e;
+    font-size: .9rem;
+  }
+  .sale-list{
+    position: relative;
+    width: 100%;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+  }
+  .sale-list ul{
+    margin: .5rem auto 0;
+    width: 100%;
+    float: left;
+  }
+  .sale-list ul li{
+    margin-left: .5rem;
+    margin-right: .5rem;
+    display: inline-block;
+  }
+  .sale-image{
+    position: absolute;
+    top: 0;
+    width: 4rem;
+    height: 6rem;
+    display: block;
+    background-color: transparent;
+  }
+  .sale-list-item img{
+    width: 4rem;
+  }
+  .sale-list::-webkit-scrollbar{
+    opacity: 0;
+  }
+  .sale-list-item span{
+    display: block;
+    color: #fd001e;
+    font-size: .9rem;
   }
   .tab-control{
     position: relative;

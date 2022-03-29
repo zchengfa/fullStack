@@ -76,7 +76,7 @@ const {getCusInfo} = require("@/network/home") ;
 const contactCustomerMixins ={
     data(){
         return{
-            token:this.$store.state.token,
+            token:null,
             customer:null
         }
     },
@@ -114,6 +114,11 @@ const contactCustomerMixins ={
         }
     },
     created() {
+        this.token = this.$store.state.token
+        this.token?this.getCustomerInfo():null
+    },
+    activated() {
+        this.token = this.$store.state.token
         this.token?this.getCustomerInfo():null
     }
 }

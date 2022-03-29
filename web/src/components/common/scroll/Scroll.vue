@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper" ref="slide">
-    <div class="content" :class="{padding:padding}">
+    <div class="content" ref="content" :class="{padding:padding}">
       <slot></slot>
     </div>
   </div>
@@ -48,9 +48,10 @@ export default {
       probeType:this.probeType,
       pullUpLoad:this.pullUpLoad,
       mouseWheel:true,
-			bounce:this.bounce
+			bounce:this.bounce,
+      scrollX:true,
+      scrollY:true
     })
-
     //判断是否需要开启滚动监听
     if(this.probeType ===2 || this.probeType ===3){
       //监听滚动位置,监听之前需开启probeType：3
@@ -59,7 +60,6 @@ export default {
         this.$emit('scroll', position)
       })
     }
-
     //判断是否需要开启上拉加载监听
     if(this.pullUpLoad){
       //监听上拉加载，需先开启监听

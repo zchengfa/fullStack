@@ -23,6 +23,7 @@ app.use((req,res,next)=>{
   let product_type = ''
   let product_id = ''
   let sell_type = ''
+  let flashSaleTime = ''
   if (req.url.indexOf('/home/api/goodsData?') >=0){
     requestQuery = req.query
   }
@@ -33,12 +34,15 @@ app.use((req,res,next)=>{
     product_type = req.query.product_type
     product_id = req.query.product_id
     sell_type = req.query.sell_type
-
+  }
+  else if(req.url.indexOf('/home/api/flashSale') >=0){
+    flashSaleTime = req.query.flashSaleTime
   }
   //设置请求地址白名单，只要请求地址是白名单内的都不需要进行token验证
   const urlWhiteList = [
     '/admin/loginAdministrator',
     '/home/api/multiData',
+    `/home/api/flashSale?flashSaleTime=${flashSaleTime}`,
     `/home/api/goodsData?user_id=${requestQuery.user_id}&type=${requestQuery.type}&page=${requestQuery.page}`,
     '/login' ,
     '/verifyMailCode',

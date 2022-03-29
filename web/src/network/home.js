@@ -9,6 +9,16 @@ export function getHomeMultiData(){
   })
 }
 
+//导出首页获取秒杀数据函数
+export function getFlashSaleData(flashSaleTime){
+  return request({
+    url:'/flashSale',
+    params:{
+      flashSaleTime
+    }
+  })
+}
+
 //导出获取商品数据函数
 export function getGoodsData(user_id,type, page){
   return request({

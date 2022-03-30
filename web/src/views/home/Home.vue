@@ -213,9 +213,9 @@
           this.$refs.scroll.finishPullUp()
         })
       },
-      getFlSaleData(){
-        getFlashSaleData(this.flashSaleHour).then(res=>{
-          this.flashSaleData = res.data
+      getFlSaleData(flashSaleHour){
+        getFlashSaleData(flashSaleHour).then(res=>{
+          this.flashSaleData.push(...res.data)
 
           //拿到数据后重新设置ul元素的宽度
           //this.flashSaleData.length?this.$refs.saleUl.style.width = this.flashSaleData.length * 4 *19 +'px':null
@@ -327,35 +327,35 @@
 				let wholeFlashSaleHours = 2
 				
 				//获取当前时间的小时
-				let nowHour = new Date().getHours()
+				let nowHours = new Date().getHours()
 				
 				//当小时为0时，将他赋值为24点
-				nowHour===0?nowHour = 24 :null
+				nowHours===0?nowHours = 24 :null
 				
 				//当小时为偶数时，将其作为秒杀开场点
-				nowHour%2===0?this.flashSaleHour = nowHour:this.flashSaleHour = nowHour - 1
+				nowHours%2===0?this.flashSaleHour = nowHours:this.flashSaleHour = nowHours - 1
 				
 				let finishSaleHour = this.flashSaleHour + wholeFlashSaleHours
 				
-				if(nowHour - this.flashSaleHour <= wholeFlashSaleHours){
+				if(nowHours - this.flashSaleHour <= wholeFlashSaleHours){
 					this.timer = setInterval(() => {
-            let nowHours = new Date().getHours()
+             nowHours = new Date().getHours()
             let nowMinute = new Date().getMinutes()
             let nowSeconds = new Date().getSeconds()
             let hadHours = dealHadTime(finishSaleHour - nowHours - 1)
             let hadMinutes = dealHadTime(60 - nowMinute - 1)
             let hadSeconds = dealHadTime(60 - nowSeconds - 1)
+            this.time = (hadHours + ':' + hadMinutes + ':' + hadSeconds).split('')
 
             if(hadHours==='00' && hadMinutes==='00' && hadSeconds==='00'){
               clearInterval(this.timer)
-              nowHour +=2
-              this.flashSaleHour?this.getFlSaleData():null
-              this.saleKey ++
-              this.$nextTick(()=>{
-                this.restFlashSale()
-              })
+              nowHours = new Date().getHours()
+              this.flashSaleHour = nowHours
+              this.flashSaleData = []
+              this.getFlSaleData(this.flashSaleHour)
+              this.restFlashSale(this.flashSaleHour)
             }
-            this.time = (hadHours + ':' + hadMinutes + ':' + hadSeconds).split('')
+
 					}, 1000)
 				}
 				//时间小于10的添个0
@@ -381,7 +381,7 @@
 			
 			//给定偶数的时间点为秒杀开始的时间点,秒杀持续时间为两小时
 			this.restFlashSale()
-      this.flashSaleHour?this.getFlSaleData():null
+      this.flashSaleHour?this.getFlSaleData(this.flashSaleHour):null
     },
 		mounted() {
 			this.navHeightDefault = this.$refs.nav.$el.clientHeight

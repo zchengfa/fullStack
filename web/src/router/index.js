@@ -26,10 +26,10 @@ const ChatForCustomer = () => import('@/views/chatForCustomer/chatForCustomer')
 const Order = () => import('@/views/order/Order')
 const PaymentStatus = ()=> import('@/views/order/PaymentStatus')
 const UserInformation = ()=> import('@/views/profile/components/User')
-const ManageAddress = ()=> import('@/views/profile/components/ManageAddress')
-const AddAddress = ()=> import('@/views/profile/components/AddAddress')
-const FlashSale = ()=> import('@/components/content/flashSale/FlashSale')
-//const SearchProduct = ()=> import('@/views/homeContent/SearchProduct')
+const ManageAddress = ()=> import('@/views/profile/components/ManageAddress.vue')
+const AddAddress = ()=> import('@/views/profile/components/AddAddress.vue')
+const FlashSale = ()=> import('@/components/content/flashSale/FlashSale.vue')
+const SearchProduct = ()=> import('@/views/homeContent/SearchProduct.vue')
 
 //创建路由映射表对象
 const routes =[
@@ -119,11 +119,11 @@ const routes =[
 		name:'addAddress',
 		component:AddAddress
 	},
-	// {
-	// 	path: '/searchProduct/:word',
-	// 	name:'searchProduct',
-	// 	component:SearchProduct
-	// }
+	{
+		path: '/searchProduct/:word',
+		name:'searchProduct',
+		component:SearchProduct
+	},
 	{
 		path: '/flashSale/:product_id',
 		name:'flashSale',

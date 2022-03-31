@@ -36,7 +36,7 @@
 		data(){
 			return {
 				word:'',
-        word_history:['碗','潘婷','洗发水'],
+        word_history:[],
         isShowDelete:true
 			}
 		},
@@ -44,11 +44,15 @@
 			back(){
 				this.$router.go(-1)
 			},
-      searchGoods(){//当输入框没有内容时，直接将输入框中placeholder的值作为搜索词
+      searchGoods(){
+			  //当输入框没有内容时，直接将输入框中placeholder的值作为搜索词
 			  if (!this.word.length){
           this.word  = this.$route.params.word
         }
-			  this.word_history.push(this.word)
+			  //如果数组中没有该搜索词就可以在书中首位放入搜索词
+			  if (this.word_history.indexOf(this.word) === -1){
+          this.word_history.unshift(this.word)
+        }
       },
       changeShow(){
 			  this.isShowDelete = !this.isShowDelete
@@ -120,7 +124,7 @@
     float: left;
     padding: 0;
     margin-top: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0;
     text-indent: .5rem;
   }
   .content .title .delete-history{
@@ -137,8 +141,10 @@
     display: flex;
     justify-items: center;
     align-items: center;
+    flex-wrap: wrap;
   }
   .search-history-box div{
+    margin-top: .8rem;
     margin-left: .5rem;
     padding: .1rem .6rem .3rem;
     border-radius: .4rem;
@@ -152,6 +158,21 @@
   }
   .search-history-box span:last-child{
     margin-left: .3rem;
+  }
+  .delete-history {
+    font-size: 12px;
+  }
+  .delete-all{
+    color: #8a8686;
+  }
+  .complete{
+    color: #fd001e;
+  }
+  .complete::before{
+    display: inline-block;
+    margin-right: .8rem;
+    content: '|';
+    height: 80%;
   }
 	
 </style>

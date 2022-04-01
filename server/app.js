@@ -17,13 +17,14 @@ app.use(cors())
 
 //除了/admin/loginAdministrator请求，其他请求都必须先进行token验证，验证通过后才能进行当次请求
 app.use((req,res,next)=>{
-  // console.log(req.url)
+  console.log(req.url)
   let requestQuery = ''
   let category_type = ''
   let product_type = ''
   let product_id = ''
   let sell_type = ''
   let flashSaleTime = ''
+  let keyword = ''
   if (req.url.indexOf('/home/api/goodsData?') >=0){
     requestQuery = req.query
   }
@@ -37,6 +38,9 @@ app.use((req,res,next)=>{
   }
   else if(req.url.indexOf('/home/api/flashSale') >=0){
     flashSaleTime = req.query.flashSaleTime
+  }
+  else if(req.url.indexOf('/home/api/search') >=0){
+    keyword = req.query.keyword
   }
   //设置请求地址白名单，只要请求地址是白名单内的都不需要进行token验证
   const urlWhiteList = [
@@ -55,7 +59,10 @@ app.use((req,res,next)=>{
     '/submitDataApi',
     '/homeContent/brand_logo',
     '/homeContent/product',
-    '/home/api/cart'
+    '/home/api/cart',
+    `/home/api/search?keyword=${encodeURI(keyword)}`,
+    '/home/api/hotSearch',
+    `/home/api/searchProduct?keyword=${encodeURI(keyword)}`
   ]
   if (urlWhiteList.indexOf(req.url) >= 0){
     next()
@@ -112,6 +119,9 @@ require('./router/admin/memberManage')(app)
 
 //导入首页内容详情模块
 require('./router/homeContent/bannerDetail')(app)
+
+//导入搜索模块
+require('./router/homeContent/search')(app)
 
 //导入客服模块
 require('./router/home/customer')(app)

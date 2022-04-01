@@ -8,7 +8,13 @@
     <div class="message-box">
       <Scroll class="content" ref="message" :padding="true">
         <div class="content-box-total"  v-for="(item,index) in messageList" :key="index">
-          <span class="message-time" v-if="item.isShowTime">{{item.showTime}}</span>
+          <div class="message-time" v-if="item.isShowTime">
+            <div class="long-message-time" v-if="item.showTime.length>=6">
+              <span>{{item.showTime.substr(0,item.showTime.length-5)}}</span>
+              <span>{{item.showTime.substr(item.showTime.length-5,5)}}</span>
+            </div>
+            <span v-else>{{item.showTime}}</span>
+          </div>
           <div class="content-box" :class="{'content-sender':item.sender===sender,'content-receiver':item.sender!==sender}">
             <div class="message" :class="{'message-sender':item.sender===sender,'message-receiver':item.sender!==sender}">
               <span>{{item.message}}</span>
@@ -465,7 +471,7 @@ export default {
 }
 .message-time{
   display: inline-block;
-  padding: .2rem .5rem;
+  padding: .3rem .5rem;
   margin-left: 50%;
   margin-top: 1rem;
   margin-bottom: 1rem;
@@ -477,6 +483,9 @@ export default {
   color: #918585;
   font-size: .8rem;
   letter-spacing: .1rem;
+}
+.message-time .long-message-time span:last-child{
+  margin-left: .3rem;
 }
 .message span{
   padding: 1rem;

@@ -350,12 +350,14 @@
             if(hadHours==='00' && hadMinutes==='00' && hadSeconds==='00'){
               clearInterval(this.timer)
               nowHours = new Date().getHours()
-              this.flashSaleHour = nowHours
+              this.flashSaleHour = new Date().getHours()
               this.flashSaleData = []
               this.getFlSaleData(this.flashSaleHour)
               this.restFlashSale(this.flashSaleHour)
+              this.$nextTick(()=>{
+                this.saleKey++
+              })
             }
-
 					}, 1000)
 				}
 				//时间小于10的添个0
@@ -365,7 +367,7 @@
               return '0' + time
             }
             else{
-              return '00'.toString()
+              return '01'.toString()
             }
           } else {
             return time.toString()

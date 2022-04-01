@@ -30,6 +30,7 @@
 
 <script>
 import base64 from '@/assets/image/base64/base64'
+import {getHotSearch} from "@/network/homeContent";
 export default {
   name: "search",
   data(){
@@ -37,19 +38,29 @@ export default {
       search_icon:null,
       take_photo_icon:null,
       qrcode_icon:null,
-      search_word:['魅可','被子','鞋子','女装'],
+      search_word:[],
       currentWordIndex:0
     }
   },
 	methods:{
 		toSearch(word){
 			this.$router.push('/searchProduct/'+word)
-		}
+		},
+    getHotSearch(){
+		  getHotSearch().then(res=>{
+        res.data.length?(function (word){
+          res.data.map(item =>{
+            word.push(item['word'])
+          })
+        })(this.search_word):this.search_word = ['核酸上门检测','儿童水杯','裙子','鞋子']
+      })
+    }
 	},
   created() {
     this.search_icon = base64['search']['search_icon']
     this.take_photo_icon = base64['take_photo']['take_photo_icon']
     this.qrcode_icon = base64['qrcode']
+    this.getHotSearch()
   },
   mounted() {
     setInterval(()=>{

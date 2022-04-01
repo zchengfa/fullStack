@@ -32,6 +32,25 @@ const mysql_query = {
             return `SELECT * FROM ${table_name} WHERE ${confident} LIMIT ${number}`
         }
     },
+    selectAllOrderByFields(table_name,confident,orderByFields,descOrAsc){
+        if (!confident){
+            return `SELECT * FROM ${table_name} ORDER BY ${orderByFields} ${descOrAsc}`
+        }
+        else{
+            return `SELECT * FROM ${table_name} WHERE ${confident}  ORDER BY ${orderByFields} ${descOrAsc}`
+        }
+    },
+    selectFieldsOrderByFields(table_name,fields,confident,orderByFields,descOrAsc){
+        if (!confident){
+            return `SELECT ${fields} FROM ${table_name} ORDER BY ${orderByFields} ${descOrAsc}`
+        }
+        else{
+            return `SELECT ${fields} FROM ${table_name} WHERE ${confident}  ORDER BY ${orderByFields} ${descOrAsc}`
+        }
+    },
+    selectAllByLike(table_name,fields,keyword){
+        return `SELECT * FROM ${table_name} WHERE CONCAT(${fields}) Like ${keyword}`
+    },
     insert(table_name,fields,values){
         return `INSERT INTO ${table_name} (${fields}) VALUES (${values})`
     },

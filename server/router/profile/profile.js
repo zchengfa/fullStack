@@ -14,15 +14,35 @@ module.exports = app => {
     router.post('/userInfo', (req, res) => {
         const paramsObj = JSON.parse(JSON.stringify(req.body))
 
+        //用户头像
         const selectQuery = mysql_query.selectFields('mall_user','avatar',`user_id = '${paramsObj.user_id}'`)
+
+        //商品收藏数量
         const selectQuery2 = mysql_query.selectCount('mall_user_collection', `user_id = '${paramsObj.user_id}'`)
+
+        //品牌收藏数量
         const selectQuery3 = mysql_query.selectCount('mall_user_brand_collection', `user_id = '${paramsObj.user_id}'`)
+
+        //浏览过的商品数量
         const selectQuery4 = mysql_query.selectCount('mall_user_history', `user_id = '${paramsObj.user_id}'`)
 
-        connection.query(`${selectQuery +';' +selectQuery2 + ';' +selectQuery3 + ';' +selectQuery4}`, (err, results) => {
+        //待付款数量
+        const selectWaitOrder = mysql_query.selectCount('mall_store_order',`user_id = '${paramsObj.user_id}' AND payment_status = 0 `)
+
+        //待收货数量
+        const selectWaitReceive = mysql_query.selectCount('mall_store_order',`user_id = '${paramsObj.user_id}' AND payment_status = 1 `)
+
+        //交易完成
+        const selectFinishOrder = mysql_query.selectCount('mall_store_order',`user_id = '${paramsObj.user_id}' AND payment_status = 2 `)
+
+        //待评价数量
+        const selectWaitComments = mysql_query.selectCount('mall_store_order',`user_id = '${paramsObj.user_id}' AND payment_status = 3 `)
+
+        connection.query(`${selectQuery +';' +selectQuery2 + ';' +selectQuery3 + ';' +selectQuery4+ ';' + selectWaitOrder +';'
+        +selectWaitReceive + ';' +selectFinishOrder + ';' + selectWaitComments }`, (err, results) => {
             if (err) throw err
             else {
-                console.log(results)
+                //console.log(results)
                 let header_image
                 if (results[0]){
                     header_image = results[0][0]['avatar']
@@ -32,7 +52,7 @@ module.exports = app => {
                 }
                 res.send({
                     'header_image':header_image,
-                    'content': {
+                    'collections': {
                         'shop_collection':{
                             'title':'商品收藏',
                             'count':results[1][0]['COUNT(1)']
@@ -45,6 +65,12 @@ module.exports = app => {
                             'title':'我的足迹',
                             'count':results[3][0]['COUNT(1)']
                         }
+                    },
+                    'order':{
+                        'wait_pay':results[4][0]['COUNT(1)'],
+                        'wait_receive':results[5][0]['COUNT(1)'],
+                        'finish_trade':results[6][0]['COUNT(1)'],
+                        'wait_comments':results[7][0]['COUNT(1)'],
                     }
                 })
             }

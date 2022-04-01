@@ -26,7 +26,7 @@
         </a>
       </div>
     </div>
-    <order-menu :order-list="order_list"></order-menu>
+    <order-menu :order-list="order_list" :order-count="orderCount"></order-menu>
     <means-menu :means-list="means_list"></means-menu>
     <menu-list @contactCustomer="contactCustomer"  class="other-menu" :menu-list="other_list"></menu-list>
   </div>
@@ -46,7 +46,7 @@ import {contactCustomerMixins} from "@/common/mixins/mixins";
 
 
 export default {
-  name: "Login",
+  name: "Profile",
   mixins:[contactCustomerMixins],
   data(){
     return {
@@ -69,7 +69,8 @@ export default {
       username:'',
       account:'',
       headerCustom:'',
-      hasHeader:true
+      hasHeader:true,
+      orderCount:{}
     }
   },
   components:{
@@ -82,7 +83,8 @@ export default {
   methods:{
     getUserCollectionInfo(user_id){
       getUserInfo(user_id).then(res => {
-        this.userInfoList = res.data.content
+        this.userInfoList = res.data.collections
+        this.orderCount = res.data.order
       })
           .catch(err => {
             console.log(err)
@@ -151,6 +153,7 @@ export default {
   width: 100%;
   height: 10rem;
   text-align: center;
+  overflow-y: scroll;
 }
 .user-info .login-register,
 .user-info .collection{

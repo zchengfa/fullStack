@@ -7,18 +7,22 @@
       <div>
         <img :src="orderList['wait_pay']" alt="wait_pay">
         <p>待付款</p>
+        <Bubble class="bubble" :count="orderCount['wait_pay']"></Bubble>
       </div>
       <div>
         <img :src="orderList['wait_receive_goods']" alt="wait_receive_goods">
         <p>待收货</p>
+        <Bubble class="bubble" :count="orderCount['wait_receive']"></Bubble>
       </div>
       <div>
         <img :src="orderList['wait_comment']" alt="wait_comment">
         <p>待评价</p>
+        <Bubble class="bubble" :count="orderCount['wait_comments']"></Bubble>
       </div>
       <div>
         <img :src="orderList['exchange_return']" alt="exchange_return">
         <p>退货/售后</p>
+        <Bubble class="bubble" :count="orderCount['finish_trade']"></Bubble>
       </div>
       <div>
         <img :src="orderList['all_order']" alt="all_order">
@@ -29,6 +33,7 @@
 </template>
 
 <script>
+import Bubble from "@/components/common/bubble/Bubble";
 export default {
   name: "OrderMenu",
   props:{
@@ -37,7 +42,16 @@ export default {
       default(){
         return {}
       }
+    },
+    orderCount:{
+      type:Object,
+      default(){
+        return {}
+      }
     }
+  },
+  components:{
+    Bubble
   }
 }
 </script>
@@ -64,9 +78,16 @@ export default {
    align-items: center;
  }
  .menu-content div{
+   position: relative;
    flex: 1;
  }
+ .menu-content div .bubble{
+   position: absolute;
+   top:0;
+   left: 55%;
+ }
  .menu-content div img{
+   margin-top: .32rem;
    width: 2rem;
  }
  .menu-content div p{

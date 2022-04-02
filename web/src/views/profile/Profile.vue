@@ -2,6 +2,7 @@
   <div class="profile">
     <nav-bar class="nav">
       <div slot="center">我的</div>
+      <div slot="bottom"></div>
     </nav-bar>
     <div class="user-info">
       <div class="info" v-if="isLogin">

@@ -86,5 +86,47 @@ module.exports = app =>{
     })
   })
 
+  router.post('/userAllOrder',(req, res) => {
+    const paramsObj = JSON.parse(JSON.stringify(req.body))
+    const selectAllOrder = mysql_query.selectAll('mall_store_order',`user_id = ${paramsObj.user_id}`)
+    connection.query(selectAllOrder,(err,result)=>{
+      if (err)throw err
+      let finishResultCount = 0
+      result.map(item =>{
+
+        //将字符串转换
+        let product_ids = JSON.parse(item['product_ids'])
+
+        //表示获取到的图片个数
+        let finishCount = 0
+        item['product_image'] = []
+        product_ids.map(id =>{
+          const selectImg = mysql_query.selectFields('mall_goods','product_image',`product_id = '${id}'`)
+          connection.query(selectImg,(error,img)=>{
+            if (err) throw err
+            let image = img[0]['product_image']
+            item['product_image'].push(image)
+
+            //每获取完一张图片就加一
+            finishCount++
+
+            //当获取到的图片数与产品id数一致时进行下一步操作
+            if (finishCount===product_ids.length){
+              item['product_ids'] = JSON.parse(item['product_ids'])
+              item['product_num'] = JSON.parse(item['product_num'])
+              item['product_size'] = JSON.parse(item['product_size'])
+              finishResultCount++
+
+              //当所有数据都获取完后才给前端发送反馈
+              if (finishResultCount===result.length){
+                res.send(result)
+              }
+            }
+          })
+        })
+      })
+    })
+  })
+
   app.use('/home/api',router)
 }

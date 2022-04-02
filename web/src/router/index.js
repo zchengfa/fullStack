@@ -11,21 +11,22 @@ VueRouter.prototype.push = function push (location) {
 }
 
 //路由懒加载
-const Home = ()=> import ('views/home/Home')
-const Category = ()=> import ('views/category/Category')
-const Cart = ()=> import ('views/cart/Cart')
-const Profile = ()=> import ('views/profile/Profile')
-const Detail = ()=> import ('views/detail/Detail')
-const Login = ()=> import('@/components/content/login/Login')
-const Register = ()=> import('@/components/content/register/Register')
-const Customer = ()=> import('@/components/content/customer/Customer')
-const TermsService = ()=> import('@/components/content/register/TermsService')
-const ProductCollection = ()=> import('@/views/profile/components/ProductCollection')
-const BannerDetail = ()=> import('@/views/homeContent/BannerDetail')
-const ChatForCustomer = () => import('@/views/chatForCustomer/chatForCustomer')
-const Order = () => import('@/views/order/Order')
-const PaymentStatus = ()=> import('@/views/order/PaymentStatus')
-const UserInformation = ()=> import('@/views/profile/components/User')
+const Home = ()=> import ('views/home/Home.vue')
+const Category = ()=> import ('views/category/Category.vue')
+const Cart = ()=> import ('views/cart/Cart.vue')
+const Profile = ()=> import ('views/profile/Profile.vue')
+const Detail = ()=> import ('views/detail/Detail.vue')
+const Login = ()=> import('@/components/content/login/Login.vue')
+const Register = ()=> import('@/components/content/register/Register.vue')
+const Customer = ()=> import('@/components/content/customer/Customer.vue')
+const TermsService = ()=> import('@/components/content/register/TermsService.vue')
+const ProductCollection = ()=> import('@/views/profile/components/ProductCollection.vue')
+const BannerDetail = ()=> import('@/views/homeContent/BannerDetail.vue')
+const ChatForCustomer = () => import('@/views/chatForCustomer/chatForCustomer.vue')
+const Order = () => import('@/views/order/Order.vue')
+const PaymentStatus = ()=> import('@/views/order/PaymentStatus.vue')
+const OrderStatus = ()=> import('@/views/order/OrderStatus.vue')
+const UserInformation = ()=> import('@/views/profile/components/User.vue')
 const ManageAddress = ()=> import('@/views/profile/components/ManageAddress.vue')
 const AddAddress = ()=> import('@/views/profile/components/AddAddress.vue')
 const FlashSale = ()=> import('@/components/content/flashSale/FlashSale.vue')
@@ -103,6 +104,11 @@ const routes =[
 		path: '/paymentStatus',
 		name:'paymentStatus',
 		component:PaymentStatus
+	},
+	{
+		path: '/orderStatus',
+		name: 'orderStatus',
+		component:OrderStatus
 	},
 	{
 		path: '/userInformation',

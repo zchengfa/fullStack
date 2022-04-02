@@ -310,17 +310,19 @@
 				//滚动的Y值大于0，用户在做下拉操作，需将导航栏上的元素保持与初始状态一致
 				else{
           this.changeElStyle(navEl,searchEl,this.navHeightDefault,this.searchOffsetTop,this.searchWidthDefault)
-          titleBoxEl.style.opacity = 1
+          titleBoxEl?titleBoxEl.style.opacity = 1:null
 				}	
       },
       //改变导航栏与搜索部分元素的样式
       changeElStyle(navEl,searchEl,navHeight,searchTop,searchWidth){
-        navEl.style.height = navHeight + 'px'
-        searchEl.style.position = 'absolute'
-        searchEl.style.top = searchTop+'px'
-        searchEl.style.left = '50%'
-        searchEl.style.width = searchWidth + 'px'
-        searchEl.style.transform = "translateX(-50%)"
+        if (navEl&&searchEl){
+          navEl.style.height = navHeight + 'px'
+          searchEl.style.position = 'absolute'
+          searchEl.style.top = searchTop+'px'
+          searchEl.style.left = '50%'
+          searchEl.style.width = searchWidth + 'px'
+          searchEl.style.transform = "translateX(-50%)"
+        }
       },
 			restFlashSale(){
 				//持续两小时

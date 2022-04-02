@@ -30,10 +30,13 @@
 	}
   .top{
     display: flex;
+    justify-items: center;
+    align-items: center;
     width: 100%;
     height: 44px;
     line-height: 44px;
     text-align: center;
+    overflow: hidden;
   }
 	.left,.right{
 		min-width: 60px;

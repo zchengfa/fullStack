@@ -51,31 +51,28 @@
 </template>
 
 <script>
-  import NavBar from "@/components/common/navbar/NavBar"
-  import Scroll from "@/components/common/scroll/Scroll"
-  import Empty from "@/components/common/empty/Empty";
-  import Recommend from "@/components/content/recommend/Recommend";
+  import NavBar from "@/components/common/navbar/NavBar.vue"
+  import Scroll from "@/components/common/scroll/Scroll.vue"
+  import Empty from "@/components/common/empty/Empty.vue";
+  import Recommend from "@/components/content/recommend/Recommend.vue";
 
-  import {refreshScrollMixins} from '@/common/mixins/mixins'
+  import {recommendMixins} from '@/common/mixins/mixins'
 
-  import CheckButton from "@/views/cart/components/CheckButton"
-  import SettleCart from "@/views/cart/components/SettleCart";
+  import CheckButton from "@/views/cart/components/CheckButton.vue"
+  import SettleCart from "@/views/cart/components/SettleCart.vue";
 
-  import {getCommonRecommend,getUserRecommend,getUserCartData,updateChecked,
-    updateProductCount,moveToCollection,remove,updateProductSize,submitOrder} from "@/network/cart";
-  import Count from "@/components/content/count/Count";
-  import ChangeSize from "@/components/content/changeSize/ChangeSize";
+  import {getUserCartData,updateChecked, updateProductCount,moveToCollection,remove,updateProductSize,submitOrder} from "@/network/cart";
+  import Count from "@/components/content/count/Count.vue";
+  import ChangeSize from "@/components/content/changeSize/ChangeSize.vue";
 
   export  default {
     name:'Cart',
-		mixins:[refreshScrollMixins],
+		mixins:[recommendMixins],
     data(){
       return {
         isComplete:false,
         showTotalAndSettle:true,
         cartList: [],
-        user_id:'',
-        isLogin:false,
         recommendData:[],
         emptyMessage: '',
         emptyRecommend:'',
@@ -320,21 +317,6 @@
           this.$toast.showToast('您还没有选择任何商品！')
         }
         
-      },
-      //获取商品推荐数据函数
-      getCommonRecommend(){
-        getCommonRecommend().then(res => {
-          this.recommendData = res.data.commonRecommend
-        }).catch(err => {
-          console.log(err)
-        })
-      },
-      getUserRecommend(token){
-        getUserRecommend(token).then(res => {
-          this.recommendData = res.data
-        }).catch(err => {
-          console.log(err)
-        })
       },
       //获取用户购物车数据函数
       getUserCartData (user_id) {

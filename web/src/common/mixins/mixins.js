@@ -13,7 +13,6 @@
 */
 
 //创建回到顶部的混入对象
-
 const backTopMixins = {
     data(){
         return {
@@ -64,6 +63,7 @@ const closeCurrentPageMixins = {
     }
 }
 
+//返回上一页
 const backPreviousPageMixins = {
     methods:{
         goBack(){
@@ -72,6 +72,7 @@ const backPreviousPageMixins = {
     }
 }
 
+//联系客服
 const {getCusInfo} = require("@/network/home") ;
 const contactCustomerMixins ={
     data(){
@@ -123,6 +124,7 @@ const contactCustomerMixins ={
     }
 }
 
+//防抖刷新
 const {debounce} = require('@/common/utils')
 const refreshScrollMixins = {
 	mounted() {
@@ -133,10 +135,41 @@ const refreshScrollMixins = {
 	}
 }
 
+//获取推荐数据
+const {getCommonRecommend,getUserRecommend} = require("@/network/cart")
+const recommendMixins = {
+    mixins:[refreshScrollMixins],
+    data(){
+      return {
+          recommendData:[],
+          user_id:null,
+          isLogin:null
+      }
+    },
+    methods:{
+        //获取商品推荐数据函数
+        getCommonRecommend(){
+            getCommonRecommend().then(res => {
+                this.recommendData = res.data.commonRecommend
+            }).catch(err => {
+                console.log(err)
+            })
+        },
+        getUserRecommend(token){
+            getUserRecommend(token).then(res => {
+                this.recommendData = res.data
+            }).catch(err => {
+                console.log(err)
+            })
+        },
+    }
+}
+
 module.exports = {
     backTopMixins,
     closeCurrentPageMixins,
     backPreviousPageMixins,
     contactCustomerMixins,
-		refreshScrollMixins
+		refreshScrollMixins,
+    recommendMixins
 }

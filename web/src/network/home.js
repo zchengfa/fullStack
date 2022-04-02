@@ -145,3 +145,13 @@ export function getCusInfo(){
     url:'/customerInfo',
   })
 }
+
+//导出获取用户所有订单信息函数
+export function getUserAllOrder(user_id){
+  return requestPost({
+    url:'home/api/userAllOrder',
+    data:{
+      user_id
+    }
+  })
+}

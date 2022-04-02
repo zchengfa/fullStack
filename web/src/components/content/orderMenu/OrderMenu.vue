@@ -4,12 +4,12 @@
       <h3>我的订单</h3>
     </div>
     <div class="menu-content">
-      <div>
+      <div @click="toOrderStatus('wait_pay')">
         <img :src="orderList['wait_pay']" alt="wait_pay">
         <p>待付款</p>
         <Bubble class="bubble" :count="orderCount['wait_pay']"></Bubble>
       </div>
-      <div>
+      <div @click="toOrderStatus('wait_receive')">
         <img :src="orderList['wait_receive_goods']" alt="wait_receive_goods">
         <p>待收货</p>
         <Bubble class="bubble" :count="orderCount['wait_receive']"></Bubble>
@@ -52,6 +52,11 @@ export default {
   },
   components:{
     Bubble
+  },
+  methods:{
+    toOrderStatus(status){
+      this.$router.push({path:'/orderStatus',query:{'orderStatus':status}})
+    }
   }
 }
 </script>

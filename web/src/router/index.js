@@ -31,6 +31,7 @@ const ManageAddress = ()=> import('@/views/profile/components/ManageAddress.vue'
 const AddAddress = ()=> import('@/views/profile/components/AddAddress.vue')
 const FlashSale = ()=> import('@/components/content/flashSale/FlashSale.vue')
 const SearchProduct = ()=> import('@/views/homeContent/SearchProduct.vue')
+const Comments = ()=> import('@/views/homeContent/Comments.vue')
 
 //创建路由映射表对象
 const routes =[
@@ -134,6 +135,11 @@ const routes =[
 		path: '/flashSale/:product_id',
 		name:'flashSale',
 		component:FlashSale
+	},
+	{
+		path: '/comments',
+		name:'comments',
+		component:Comments
 	}
 
 ]

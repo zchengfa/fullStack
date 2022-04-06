@@ -8,6 +8,13 @@
     </nav-bar>
     <Scroll class="content" ref="scroll">
       <div class="scroll-content">
+        <div class="had-received" v-if="payment_status===2">
+          <h4>
+            <img :src="received_icon" alt="received_icon">
+            <span>已签收</span>
+          </h4>
+          <p>您的订单已由快递驿站代收，点击快递员头像可进行评价、打赏或寄件,快递员：mall开发者,电话：<span class="phone">130******94</span></p>
+        </div>
         <div class="user-address">
           <div class="location-image" v-show="address.length"><img src="~assets/image/order/location.png" alt="location"></div>
           <div class="address-info" v-show="address.length" v-for="(item,index) in address" :key="index">
@@ -64,18 +71,20 @@
         <span class="price"><span class="price-character">￥</span>{{total_price}}</span>
       </div>
       <div>
-        <button v-show="payment_status===0" @click="confirmSubmitOrder">提交订单</button>
-        <button v-show="payment_status===1">已付款</button>
+        <button v-if="payment_status===0" @click="pay">立即支付</button>
+        <button v-if="payment_status===1" @click="confirmReceive">确认收货</button>
+        <button v-if="payment_status===2" @click="toComments">评价晒单</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import NavBar from "@/components/common/navbar/NavBar";
-import Scroll from "@/components/common/scroll/Scroll";
-import {getUserOrderInfo,alipayRequest} from "@/network/cart";
-import {getUserAddress} from "../../network/profile";
+import NavBar from "@/components/common/navbar/NavBar.vue";
+import Scroll from "@/components/common/scroll/Scroll.vue";
+import {getUserOrderInfo,alipayRequest,confirmReceiveOrder,updateOrderStatus} from "@/network/cart";
+import {getUserAddress} from "@/network/profile";
+import base64 from '@/assets/image/base64/base64'
 export default {
   name: "order",
   components:{
@@ -89,7 +98,8 @@ export default {
       user_id:'',
       payment:'1',
       payment_status:0,
-      address:[]
+      address:[],
+      received_icon:''
     }
   },
   computed:{
@@ -111,7 +121,6 @@ export default {
       getUserOrderInfo(user_id,order_id).then(res =>{
         this.goodsList = res.data.info_arr
         this.payment_status = res.data.payment_status
-        console.log(res.data)
       }).catch(err=>{
         console.log(err)
       })
@@ -119,8 +128,8 @@ export default {
     imageLoadOver(){
       this.$refs.scroll.refresh()
     },
-    //点击提交订单按钮，进行订单处理
-    confirmSubmitOrder(){
+    //点击立即支付按钮，进行订单处理
+    pay(){
       if (this.address.length){
         //判断payment的值，若等于1则是支付宝支付，若是2则是微信支付
         if (this.payment==='1'){
@@ -144,10 +153,27 @@ export default {
         this.$router.push('/addAddress')
       }
     },
+    //点击确认收货按钮，进行订单处理
+    confirmReceive() {
+      confirmReceiveOrder(this.user_id,this.order_id).then(res=>{
+        if (res){
+          this.$toast.showToast('确认收货成功')
+          this.$nextTick(()=>{
+            this.payment_status = 2
+            updateOrderStatus(this.user_id,this.order_id,3).then(result=>{
+              console.log(result)
+            })
+          })
+        }
+      })
+      console.log(this.order_id)
+    },
+    toComments(){
+      this.$toast.showToast('当前也免得评价功能还未完善，敬请期待')
+    },
     alipayRequestFun(order){
       alipayRequest(order).then(res=>{
         window.location.href = res.data.paymentUrl
-        console.log(res)
       }).catch(err=>{
         console.log(err)
       })
@@ -168,6 +194,7 @@ export default {
   created() {
     this.order_id = this.$store.state.order_id
     this.user_id = this.$store.state.userInfo.user_id;
+    this.received_icon = base64['had_received'];
     (this.order_id && this.user_id)?this.getOrderInfoByOrderId(this.user_id,this.order_id):null
     this.user_id?this.getDefaultAddress():null
   },
@@ -204,6 +231,32 @@ export default {
 }
 .scroll-content{
   padding-bottom: 2rem;
+}
+.had-received{
+  position: relative;
+  top:1rem;
+  margin: 0 auto;
+  width: 96%;
+  background-color: #fff;
+  border-radius: .5rem;
+}
+.had-received img{
+  position: relative;
+  top: .2rem;
+  margin-right: .2rem;
+  width: 1.4rem;
+}
+.had-received p{
+  margin: 0 auto;
+  padding-bottom: 1rem;
+  width: 94%;
+  color: #8a8686;
+  font-size: .9rem;
+  line-height: 200%;
+}
+.had-received .phone{
+  color: #1e8efc;
+  text-decoration-line: underline;
 }
 .user-address,.product-info,.price-detail, .payment-way{
   position: relative;
@@ -392,9 +445,7 @@ h4{
   color: #fff;
   border-radius: 1.5rem;
 }
-.confirm-submit div button:last-child{
-  background-color: #8a8686;
-}
+
 .confirm-submit .price{
   font-weight: bolder;
   font-size: 1.4rem;

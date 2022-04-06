@@ -6,7 +6,8 @@ import {
     SAVE_POSITION,
     USER_INFO,
     SET_TOKEN,
-    SAVE_ORDER_ID
+    SAVE_ORDER_ID,
+    CHANGE_ORDER_ID
 } from "@/store/mutations-types";
 
 
@@ -50,6 +51,10 @@ const store = new Vuex.Store({
         },
         [SAVE_POSITION](state,payload) {
             state.position=payload
+        },
+        [CHANGE_ORDER_ID](state,order_id) {
+            sessionStorage.setItem('trade_no',order_id)
+            state.order_id=order_id
         }
 
     },
@@ -92,6 +97,13 @@ const store = new Vuex.Store({
         },
         savePosition(context,payload) {
             context.commit('savePosition',payload)
+        },
+        changeOrderId(context,payload){
+            //给分发者返回一个Promise，告诉分发者事件已经接收到了
+            return new Promise((resolve)=>{
+                context.commit('changeOrderId',payload)
+                resolve({'operation_code':200})
+            })
         }
     }
 })

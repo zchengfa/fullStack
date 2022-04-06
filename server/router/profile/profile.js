@@ -32,14 +32,11 @@ module.exports = app => {
         //待收货数量
         const selectWaitReceive = mysql_query.selectCount('mall_store_order',`user_id = '${paramsObj.user_id}' AND payment_status = 1 `)
 
-        //交易完成
-        const selectFinishOrder = mysql_query.selectCount('mall_store_order',`user_id = '${paramsObj.user_id}' AND payment_status = 2 `)
-
         //待评价数量
         const selectWaitComments = mysql_query.selectCount('mall_store_order',`user_id = '${paramsObj.user_id}' AND payment_status = 3 `)
 
         connection.query(`${selectQuery +';' +selectQuery2 + ';' +selectQuery3 + ';' +selectQuery4+ ';' + selectWaitOrder +';'
-        +selectWaitReceive + ';' +selectFinishOrder + ';' + selectWaitComments }`, (err, results) => {
+        +selectWaitReceive + ';'+ selectWaitComments }`, (err, results) => {
             if (err) throw err
             else {
                 //console.log(results)
@@ -69,8 +66,7 @@ module.exports = app => {
                     'order':{
                         'wait_pay':results[4][0]['COUNT(1)'],
                         'wait_receive':results[5][0]['COUNT(1)'],
-                        'finish_trade':results[6][0]['COUNT(1)'],
-                        'wait_comments':results[7][0]['COUNT(1)'],
+                        'wait_comments':results[6][0]['COUNT(1)'],
                     }
                 })
             }

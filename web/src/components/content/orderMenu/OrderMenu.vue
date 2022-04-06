@@ -14,7 +14,7 @@
         <p>待收货</p>
         <Bubble class="bubble" :count="orderCount['wait_receive']"></Bubble>
       </div>
-      <div>
+      <div @click="toComments">
         <img :src="orderList['wait_comment']" alt="wait_comment">
         <p>待评价</p>
         <Bubble class="bubble" :count="orderCount['wait_comments']"></Bubble>
@@ -22,7 +22,6 @@
       <div>
         <img :src="orderList['exchange_return']" alt="exchange_return">
         <p>退货/售后</p>
-        <Bubble class="bubble" :count="orderCount['finish_trade']"></Bubble>
       </div>
       <div>
         <img :src="orderList['all_order']" alt="all_order">
@@ -55,7 +54,15 @@ export default {
   },
   methods:{
     toOrderStatus(status){
-      this.$router.push({path:'/orderStatus',query:{'orderStatus':status}})
+      if (this.$store.state.token){
+        this.$router.push({path:'/orderStatus',query:{'orderStatus':status}})
+      }
+      else{
+        this.$router.push('/login')
+      }
+    },
+    toComments(){
+      this.$router.push('/comments')
     }
   }
 }

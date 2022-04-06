@@ -120,6 +120,37 @@ export function alipayRequest(order){
         }
     })
 }
+export function confirmReceiveOrder(user_id,order_id){
+    return requestPost({
+        url:'home/api/confirmReceiveOrder',
+        data:{
+            user_id,
+            order_id
+        }
+    })
+}
+
+export function updateOrderStatus(user_id,order_id,status){
+    return requestPost({
+        url:'home/api/updateOrderStatus',
+        data:{
+            user_id,
+            order_id,
+            status
+        }
+    })
+}
+
+//导出获取用户待评价商品函数
+export function getUserWaitCommentsOrder(user_id){
+    return requestPost({
+        url:'home/api/waitComments',
+        data:{
+            user_id
+        }
+    })
+}
+
 
 //导出获取支付宝支付状态函数
 export function getAlipayPaymentStatus(out_trade_no,trade_no){

@@ -91,42 +91,88 @@ module.exports = app =>{
     const selectAllOrder = mysql_query.selectAll('mall_store_order',`user_id = ${paramsObj.user_id}`)
     connection.query(selectAllOrder,(err,result)=>{
       if (err)throw err
-      let finishResultCount = 0
-      result.map(item =>{
+      getUserAllOrderInfo(result,res)
+    })
+  })
 
-        //将字符串转换
-        let product_ids = JSON.parse(item['product_ids'])
+  //接收前端发起的确认收货请求
+  router.post('/confirmReceiveOrder',(req, res) => {
+    const paramsObj = JSON.parse(JSON.stringify(req.body))
+    const updateOrder = mysql_query.update('mall_store_order',`payment_status = 2`,`user_id = ${paramsObj.user_id} AND order_id = '${paramsObj.order_id}'`)
 
-        //表示获取到的图片个数
-        let finishCount = 0
-        item['product_image'] = []
-        product_ids.map(id =>{
-          const selectImg = mysql_query.selectFields('mall_goods','product_image',`product_id = '${id}'`)
-          connection.query(selectImg,(error,img)=>{
-            if (err) throw err
-            let image = img[0]['product_image']
-            item['product_image'].push(image)
+    connection.query(updateOrder,(err)=>{
+      if (err) throw err
+      res.status(200)
+      res.send()
+    })
+  })
 
-            //每获取完一张图片就加一
-            finishCount++
+  //接收前端发起的更改订单状态请求
+  router.post('/updateOrderStatus',(req, res) => {
+    const paramsObj = JSON.parse(JSON.stringify(req.body))
+    const updateOrder = mysql_query.update('mall_store_order',`payment_status = ${paramsObj.status}`,`user_id = ${paramsObj.user_id} AND order_id = '${paramsObj.order_id}'`)
 
-            //当获取到的图片数与产品id数一致时进行下一步操作
-            if (finishCount===product_ids.length){
-              item['product_ids'] = JSON.parse(item['product_ids'])
-              item['product_num'] = JSON.parse(item['product_num'])
-              item['product_size'] = JSON.parse(item['product_size'])
-              finishResultCount++
+    connection.query(updateOrder,(err)=>{
+      if (err) throw err
+      res.status(200)
+      res.send()
+    })
+  })
 
-              //当所有数据都获取完后才给前端发送反馈
-              if (finishResultCount===result.length){
-                res.send(result)
-              }
+  //接收前端发起的获取用户待评价商品请求
+  router.post('/waitComments',(req, res) => {
+    const paramsObj = JSON.parse(JSON.stringify(req.body))
+
+    const selectComments = mysql_query.selectAll('mall_store_order',`user_id = ${paramsObj.user_id} AND payment_status = 3`)
+    connection.query(selectComments,(err,result)=>{
+      if (err)throw err
+      getUserAllOrderInfo(result,res)
+    })
+    //res.send(paramsObj)
+  })
+
+  //获取用户所需订单信息
+  function getUserAllOrderInfo (result,res){
+    let finishResultCount = 0
+    result.map(item =>{
+
+      //将字符串转换
+      let product_ids = JSON.parse(item['product_ids'])
+
+      //表示获取到的图片个数
+      let finishCount = 0
+      item['product_image'] = []
+      item['product_title'] = []
+      product_ids.map(id =>{
+        const selectImg = mysql_query.selectFields('mall_goods','product_image,product_title',`product_id = '${id}'`)
+        connection.query(selectImg,(err,img)=>{
+          if (err) throw err
+          let image = img[0]['product_image']
+          let title = img[0]['product_title']
+          item['product_image'].push(image)
+          item['product_title'].push(title)
+
+
+          //每获取完一张图片就加一
+          finishCount++
+
+          //当获取到的图片数与产品id数一致时进行下一步操作
+          if (finishCount===product_ids.length){
+            item['product_ids'] = JSON.parse(item['product_ids'])
+            item['product_num'] = JSON.parse(item['product_num'])
+            item['product_size'] = JSON.parse(item['product_size'])
+            finishResultCount++
+
+            //当所有数据都获取完后才给前端发送反馈
+            if (finishResultCount===result.length){
+              res.send(result)
             }
-          })
+          }
         })
       })
     })
-  })
+  }
+
 
   app.use('/home/api',router)
 }

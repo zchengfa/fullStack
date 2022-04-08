@@ -73,7 +73,7 @@
       <div>
         <button v-if="payment_status===0" @click="pay">立即支付</button>
         <button v-if="payment_status===1" @click="confirmReceive">确认收货</button>
-        <button v-if="payment_status===2" @click="toComments">评价晒单</button>
+        <button v-if="payment_status===3" @click="toComments">评价晒单</button>
       </div>
     </div>
   </div>
@@ -157,19 +157,20 @@ export default {
     confirmReceive() {
       confirmReceiveOrder(this.user_id,this.order_id).then(res=>{
         if (res){
-          this.$toast.showToast('确认收货成功')
-          this.$nextTick(()=>{
-            this.payment_status = 2
-            updateOrderStatus(this.user_id,this.order_id,3).then(result=>{
-              console.log(result)
+          updateOrderStatus(this.user_id,this.order_id,3).then(result=>{
+            result.status?this.payment_status = 3:null
+            console.log(result)
+            this.$toast.showToast('确认收货成功')
+
+            this.$nextTick(()=>{
+              this.$refs.scroll.scroll.refresh()
             })
           })
         }
       })
-      console.log(this.order_id)
     },
     toComments(){
-      this.$toast.showToast('当前也免得评价功能还未完善，敬请期待')
+      this.$toast.showToast('当前页面得评价功能还未完善，敬请期待')
     },
     alipayRequestFun(order){
       alipayRequest(order).then(res=>{

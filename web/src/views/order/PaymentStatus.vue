@@ -5,6 +5,10 @@
 			  <div><span>您已付款成功，等待卖家发货</span></div>
 			  <router-link :to="{path:'/order'}" class="link">查看订单</router-link>
 			</div>
+      <div class="payment-result" v-show="payment_status===3">
+        <div><span>您已确认收货，欢迎再次购买</span></div>
+        <router-link :to="{path:'/order'}" class="link">查看订单</router-link>
+      </div>
 			<Recommend class="recommend" :align-center="true" :recommend-data="recommendData" recommend-title="精品推荐"></Recommend>
 		</Scroll>
   </div>
@@ -73,7 +77,9 @@ export default {
 	margin-top: 1rem;
   padding: .5rem 1rem;
   border-radius: .5rem;
-  background-color: #fd2f55;
+  background-color: #f3120a;
+  color: #fff;
+  font-size: .9rem;
 }
 .content{
 	height: calc(100vh - 44px);

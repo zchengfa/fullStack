@@ -15,9 +15,7 @@ module.exports = app =>{
 		
 		//获取客户端的ip地址
 		function getClientIPAddress(req){
-			const referer = req.headers.referer
-			
-			return referer
+      return req.headers.referer
 		}
 		
     let order_id = paramsObj.order_id
@@ -88,7 +86,19 @@ module.exports = app =>{
         let data = response.data['alipay_trade_query_response']
         if (data.code === '10000'){
           if (data['trade_status'] === 'TRADE_SUCCESS'){
-            dealOrder(1,'交易成功')
+            const selectStatus = mysql_query.selectFields('mall_store_order','payment_status',`order_id = '${out_trade_no}'`)
+            connection.query(selectStatus,(err,status)=>{
+              if (err) throw err
+              if (status[0]['payment_status'] !==3){
+                dealOrder(1,'交易成功')
+              }
+              else {
+                res.send({
+                  'code':status[0]['payment_status'],
+                  'msg':'您已确认收货'
+                })
+              }
+            })
           }
           else if(data['trade_status'] === 'WAIT_BUYER_PAY'){
             dealOrder(2,'等待买家付款')
@@ -99,8 +109,23 @@ module.exports = app =>{
           else if(data['trade_status'] === 'TRADE_CLOSED'){
             dealOrder(4,'交易关闭')
           }
+          //根据支付状态处理订单时，还得将用户购物车中对应的商品进行删除
+          const selectProId = mysql_query.selectFields('mall_store_order','product_ids,user_id,product_size',`order_id = '${out_trade_no}'`)
+          connection.query(selectProId,(err,ids)=>{
+            if (err) throw err
+            let idArr = JSON.parse(ids[0]['product_ids'])
+            let sizeArr = JSON.parse(ids[0]['product_size'])
+            let finishCount = 0
+            idArr.map((item,index)=>{
+              const deleteCart = mysql_query.deleteOperation('mall_user_cart',`user_id = ${ids[0]['user_id']} AND product_id = '${item}' AND size = '${sizeArr[index]}'`)
+              connection.query(deleteCart,(err,deResult)=>{
+                if (err) throw err
+                deResult?finishCount++:null
+                finishCount===idArr.length?console.log(`支付成功，您购物车对应的${finishCount}条商品记录也已清除`):null
+              })
+            })
+          })
         }
-        console.log(response.data['alipay_trade_query_response'])
       })
     })
     function dealOrder(code,msg){

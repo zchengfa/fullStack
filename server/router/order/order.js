@@ -15,19 +15,23 @@ module.exports = app =>{
     let product_id_arr = []
     let product_num_arr = []
     let product_size_arr = []
+    let product_type_arr = []
+    let sell_type_arr = []
     paramsObj.order.map(item=>{
       product_id_arr.push(item.product_id)
       product_num_arr.push(item.product_num)
       product_size_arr.push(item.product_size)
-
+      product_type_arr.push(item.product_type)
+      sell_type_arr.push(item.sell_type)
     })
 
     //生成订单ID（时间戳+随机数）
     let order_id = timeFormatting('YYYYMMDDhhmmss') + new Date().getMilliseconds()
 
 
-    const insertQuery = mysql_query.insert(table_name,'user_id,order_id,product_ids,product_num,product_size,total_num,total_price',
-      `${user_id},${order_id},'${JSON.stringify(product_id_arr)}','${JSON.stringify(product_num_arr)}','${JSON.stringify(product_size_arr)}',${total_num},${total_price}`)
+    const insertQuery = mysql_query.insert(table_name,'user_id,order_id,product_ids,product_num,product_size,total_num,total_price,product_types,sell_types',
+      `${user_id},${order_id},'${JSON.stringify(product_id_arr)}','${JSON.stringify(product_num_arr)}','${JSON.stringify(product_size_arr)}',${total_num},${total_price},
+      '${JSON.stringify(product_type_arr)}','${JSON.stringify(sell_type_arr)}'`)
     connection.query(insertQuery,(err,result)=>{
       if (err) throw err
       else{
@@ -161,6 +165,8 @@ module.exports = app =>{
             item['product_ids'] = JSON.parse(item['product_ids'])
             item['product_num'] = JSON.parse(item['product_num'])
             item['product_size'] = JSON.parse(item['product_size'])
+            item['product_types'] = JSON.parse(item['product_types'])
+            item['sell_types'] = JSON.parse(item['sell_types'])
             finishResultCount++
 
             //当所有数据都获取完后才给前端发送反馈
@@ -173,6 +179,10 @@ module.exports = app =>{
     })
   }
 
+  //接收前端发起的提交评价请求，将提交的数据写入到对应商品中
+  router.post('/submitComments',(req, res) => {
+    res.send(JSON.parse(JSON.stringify(req.body)))
+  })
 
   app.use('/home/api',router)
 }

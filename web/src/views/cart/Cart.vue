@@ -233,7 +233,9 @@
               orderArr.push({
                 'product_id':item.product_id,
                 'product_num':item.quantity,
-                'product_size':item.size
+                'product_size':item.size,
+                'sell_type':item.sell_type,
+                'product_type':item.product_type
               })
 
               total_num += item.quantity

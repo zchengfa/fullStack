@@ -31,6 +31,7 @@ const ManageAddress = ()=> import('@/views/profile/components/ManageAddress.vue'
 const AddAddress = ()=> import('@/views/profile/components/AddAddress.vue')
 const FlashSale = ()=> import('@/components/content/flashSale/FlashSale.vue')
 const SearchProduct = ()=> import('@/views/homeContent/SearchProduct.vue')
+const WaitComments = ()=> import('@/views/homeContent/WaitComments.vue')
 const Comments = ()=> import('@/views/homeContent/Comments.vue')
 
 //创建路由映射表对象
@@ -137,9 +138,17 @@ const routes =[
 		component:FlashSale
 	},
 	{
-		path: '/comments',
+		path: '/waitComments',
+		name:'waitComments',
+		component:WaitComments
+	},
+	{
+		path:'/comments',
 		name:'comments',
-		component:Comments
+		component:Comments,
+		meta: {
+			keepAlive: true
+		}
 	}
 
 ]

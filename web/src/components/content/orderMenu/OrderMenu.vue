@@ -62,7 +62,13 @@ export default {
       }
     },
     toComments(){
-      this.$router.push('/comments')
+      if (this.$store.state.token){
+        this.$router.push('/waitComments')
+      }
+      else{
+        this.$router.push('/login')
+      }
+
     }
   }
 }

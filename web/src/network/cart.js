@@ -151,6 +151,20 @@ export function getUserWaitCommentsOrder(user_id){
     })
 }
 
+//导出提交用户评价函数
+export function submitComments(userInfo,starsNum,reasons,comments,order_id){
+    return requestPost({
+        url:'home/api/submitComments',
+        data:{
+            userInfo,
+            starsNum,
+            reasons,
+            comments,
+            order_id
+        }
+    })
+}
+
 
 //导出获取支付宝支付状态函数
 export function getAlipayPaymentStatus(out_trade_no,trade_no){

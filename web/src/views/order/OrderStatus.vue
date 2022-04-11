@@ -19,7 +19,7 @@
         <span class="store-name"></span>
         <span class="payment-status pay-receive" v-if="item['payment_status']===0">待付款</span>
         <span class="payment-status pay-receive" v-if="item['payment_status']===1">等待收货</span>
-        <span class="payment-status" v-if="item['payment_status']===2">完成</span>
+        <span class="payment-status" v-if="item['payment_status']===2 || item['payment_status']===3 || item['payment_status']===5">完成</span>
         <span class="payment-status" v-if="item['payment_status']===4">已取消</span>
       </div>
       <div class="order-info clearfix">
@@ -27,6 +27,9 @@
           <div class="image-item" v-for="(image,imgIndex) in item['product_image']" :key="imgIndex">
             <img :src="image" alt="product_image" @load="imageLoadOver">
           </div>
+        </div>
+        <div class="title-box" v-for="(title,titleIndex) in item['product_title']" v-show="item['product_title'].length===1" :key="titleIndex">
+          <span>{{title}}</span>
         </div>
         <div  class="total-price-num">
           <span class="character">￥</span>
@@ -36,11 +39,12 @@
       </div>
       <div class="order-operation">
         <button v-if="item['payment_status']===0" @click="operate(item['order_id'])">去付款</button>
-        <button v-if="item['payment_status']===2">再次购买</button>
+        <button v-if="item['payment_status']===2 || item['payment_status']===3 || item['payment_status']===5">再次购买</button>
         <button v-if="item['payment_status']===1" @click="operate(item['order_id'])">确认收货</button>
         <button>删除订单</button>
         <button v-if="item['payment_status']===2">评价晒单</button>
-        <button v-if="item['payment_status']===2">退换/售后</button>
+        <button v-if="item['payment_status']===5">追评</button>
+        <button v-if="item['payment_status']===2 || item['payment_status']===3 || item['payment_status']===5">退换/售后</button>
       </div>
     </div>
     <div v-show="!showOrderData.length" class="empty">
@@ -261,7 +265,11 @@ input{
   color: #8a8686;
   font-size: .9rem;
 }
-.order-info .image-box{
+.order-info{
+  position: relative;
+}
+.order-info .image-box,
+.order-info .title-box{
   float: left;
 }
 .order-info .total-price-num{
@@ -280,6 +288,12 @@ input{
   margin: 0 auto;
   width: 5rem;
   border-radius: .5rem;
+}
+.title-box{
+  margin-top: 2.5rem;
+  margin-left: .5rem;
+  max-width: 240px;
+  transform: translateY(-50%);
 }
 .total-price-num{
   position: relative;

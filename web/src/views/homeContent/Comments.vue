@@ -77,9 +77,40 @@ export default {
   },
   methods:{
     submitComments(){
-      submitComments(this.$store.state.userInfo,this.starsNum,this.reasons,this.comments,this.$route.query.order_id).then(res=>{
-        console.log(res)
+      let stars_num = {
+        'product_stars':0,
+        'packing_stars':0,
+        'speed_stars':0,
+        'service_stars':0,
+      }
+      let finishStarN = 0
+      this.starsNum.map(item=>{
+        if (item.reasonTitle === 'product'){
+          stars_num['product_stars'] = item.stars
+        }
+        else if(item.reasonTitle === 'packing'){
+          stars_num['packing_stars'] = item.stars
+        }
+        else if(item.reasonTitle === 'speed'){
+          stars_num['speed_stars'] = item.stars
+        }
+        else if(item.reasonTitle === 'service'){
+          stars_num['service_stars'] = item.stars
+        }
+        finishStarN++
+        if (finishStarN===this.starsNum.length){
+          submitComments(this.$store.state.userInfo,stars_num,this.reasons,this.comments,this.$route.query.order_id).then(res=>{
+            if (res.data){
+              this.$toast.showToast('评价成功，感谢您！')
+              this.$nextTick(()=>{
+                this.$router.back()
+              })
+            }
+          })
+        }
+
       })
+
     },
     stars(stars){
 

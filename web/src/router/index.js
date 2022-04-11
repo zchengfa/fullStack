@@ -133,7 +133,7 @@ const routes =[
 		component:SearchProduct
 	},
 	{
-		path: '/flashSale/:product_id',
+		path: '/flashSale',
 		name:'flashSale',
 		component:FlashSale
 	},

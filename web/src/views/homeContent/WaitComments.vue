@@ -7,7 +7,7 @@
     <div slot="center">评价中心</div>
   </nav-bar>
   <Scroll class="content" ref="scroll">
-    <div v-for="(item,index) in productsData" class="product-items" :key="index">
+    <div v-show="productsData.length" v-for="(item,index) in productsData" class="product-items" :key="index">
       <div v-for="(id,idIndex) in item['product_ids']" class="info" :key="idIndex" @click="itemClick(id,item['product_types'][index],item['sell_types'][index],index)">
         <div class="image-box">
           <img :src="item['product_image'][idIndex]" @load="imageLoadOver" alt="product_image">
@@ -18,6 +18,10 @@
         </div>
       </div>
       <button @click="comments(item['order_id'])">评价</button>
+    </div>
+    <div v-show="!productsData.length" class="empty">
+      <p>您当前没有需要评价的商品</p>
+      <button @click="$router.push('/home')">首页</button>
     </div>
   </Scroll>
 </div>
@@ -121,5 +125,19 @@ export default {
   color: #fd001e;
   border: 1px solid #fd001e;
   border-radius: 1rem;
+}
+.empty{
+  position: relative;
+  margin-top: 50%;
+  width: 100%;
+  text-align: center;
+  color: #8a8686;
+}
+.empty button{
+  padding:.4rem 1rem;
+  background-color: #fd001e;
+  color: #fff;
+  border-radius: 1rem;
+  font-size: .9rem;
 }
 </style>

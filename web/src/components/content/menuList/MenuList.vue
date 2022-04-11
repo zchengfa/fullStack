@@ -3,7 +3,7 @@
     <div class="menu-content">
       <div>
         <img :src="menuList['member_club']" alt="member_club">
-        <p>待付款</p>
+        <p>会员俱乐部</p>
       </div>
       <div>
         <img :src="menuList['public_welfare']" alt="public_welfare">

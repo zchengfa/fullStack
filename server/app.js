@@ -17,13 +17,14 @@ app.use(cors())
 
 //除了/admin/loginAdministrator请求，其他请求都必须先进行token验证，验证通过后才能进行当次请求
 app.use((req,res,next)=>{
-  console.log(req.url,'app.js 20 row')
+  //console.log(req.url,'app.js 20 row')
   let requestQuery = ''
   let category_type = ''
   let product_type = ''
   let product_id = ''
   let sell_type = ''
   let flashSaleTime = ''
+  let num =0
   let keyword = ''
   if (req.url.indexOf('/home/api/goodsData?') >=0){
     requestQuery = req.query
@@ -38,6 +39,7 @@ app.use((req,res,next)=>{
   }
   else if(req.url.indexOf('/home/api/flashSale') >=0){
     flashSaleTime = req.query.flashSaleTime
+    num = req.query.num
   }
   else if(req.url.indexOf('/home/api/search') >=0){
     keyword = req.query.keyword
@@ -46,7 +48,7 @@ app.use((req,res,next)=>{
   const urlWhiteList = [
     '/admin/loginAdministrator',
     '/home/api/multiData',
-    `/home/api/flashSale?flashSaleTime=${flashSaleTime}`,
+    `/home/api/flashSale?flashSaleTime=${flashSaleTime}&num=${num}`,
     `/home/api/goodsData?user_id=${requestQuery.user_id}&type=${requestQuery.type}&page=${requestQuery.page}`,
     '/login' ,
     '/verifyMailCode',

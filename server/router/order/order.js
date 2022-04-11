@@ -130,9 +130,8 @@ module.exports = app =>{
     const selectComments = mysql_query.selectAll('mall_store_order',`user_id = ${paramsObj.user_id} AND payment_status = 3`)
     connection.query(selectComments,(err,result)=>{
       if (err)throw err
-      getUserAllOrderInfo(result,res)
+      result.length?getUserAllOrderInfo(result,res):res.send(result)
     })
-    //res.send(paramsObj)
   })
 
   //获取用户所需订单信息
@@ -181,7 +180,35 @@ module.exports = app =>{
 
   //接收前端发起的提交评价请求，将提交的数据写入到对应商品中
   router.post('/submitComments',(req, res) => {
-    res.send(JSON.parse(JSON.stringify(req.body)))
+    const paramsObj = JSON.parse(JSON.stringify(req.body))
+
+    //根据交易id查询评价的是哪几个商品
+    const selectPro_ids = mysql_query.selectFields('mall_store_order','product_ids,product_size',`user_id = ${paramsObj.userInfo.user_id} AND order_id = '${paramsObj.order_id}'`)
+    connection.query(selectPro_ids,(err,ids)=>{
+      if (err) throw err
+      let idArr = JSON.parse(ids[0]['product_ids'])
+      let sizeArr = JSON.parse(ids[0]['product_size'])
+
+      let finishN = 0
+      idArr.map((item,index)=>{
+        const insertComments = mysql_query.insert('mall_user_comments','account,username,avatar,product_id,comments_text,stars,comments_time,size',
+          `'${paramsObj.userInfo.account}','${paramsObj.userInfo.username}','${paramsObj.userInfo.avatar}','${item}','${paramsObj.comments}',
+          ${paramsObj.starsNum['product_stars']},'${timeFormatting('YYYY/MM/DD')}','${sizeArr[index]}'`)
+
+        connection.query(insertComments,(error,insertR)=>{
+          if (error) throw error
+          insertR?finishN++:null
+          if (finishN===idArr.length){
+            //评价完成，将订单表中订单状态进行修改（修改成5 待追评状态）
+            const updateOrderStatus = mysql_query.update('mall_store_order','payment_status = 5',`user_id = ${paramsObj.userInfo.user_id} AND order_id = '${paramsObj.order_id}'`)
+            connection.query(updateOrderStatus,(e,updateR)=>{
+              if (e)throw e
+              updateR?res.send('OK'):null
+            })
+          }
+        })
+      })
+    })
   })
 
   app.use('/home/api',router)

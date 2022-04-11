@@ -48,11 +48,11 @@ export default {
   methods:{
     //立即购买
     buyNow(){
-      this.$toast.showToast('该功能尚未开发，请等待后续完善')
+      this.$emit('buyNow','buy')
     },
     //加入购物车
     addCart(){
-      this.$emit('addCart')
+      this.$emit('addCart','add')
     },
     //收藏商品
     collectProduct() {

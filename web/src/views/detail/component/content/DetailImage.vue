@@ -28,10 +28,12 @@ export default {
 </script>
 
 <style scoped>
+.title h4{
+  text-indent: .2rem;
+}
 .image{
   margin: 1rem auto 4rem;
   width: 96%;
-  border-top: .1rem solid #e3dede;
   border-bottom: .1rem solid #e3dede;
   overflow: hidden;
 }

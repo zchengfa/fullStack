@@ -1,28 +1,36 @@
 <template>
 <div class="comment-stars">
-  <div class="stars-box">
-    <div><label>{{$props.labelTitle}}</label></div>
-    <div class="stars">
-      <div v-for="(item,index) in $props.commentsFeeling" :key="index" @click="stars(index)" class="image-box">
-        <img class="stars-image" alt="stars">
+  <div v-if="!$props.disabled">
+    <div class="stars-box">
+      <div><label>{{$props.labelTitle}}</label></div>
+      <div class="stars">
+        <div v-for="(item,index) in $props.commentsFeeling" :key="index" @click="stars(index)" class="image-box">
+          <img class="stars-image" alt="stars">
+        </div>
+      </div>
+      <div class="feeling-box"><span v-if="feeling.length" class="feeling">{{feeling}}</span></div>
+    </div>
+    <div class="reason-box">
+      <div v-if="$props.reasonTitle==='packing'">
+        <button class="reason" @click="choseReason($props.reasonTitle,$props.packingReasonList,packingIndex)" :class="{'active':packing['isSelected']}" v-show="isShowReason" v-for="(packing,packingIndex) in $props.packingReasonList" :key="packingIndex">{{packing['title']}}</button>
+      </div>
+      <div v-if="$props.reasonTitle==='speed'">
+        <button @click="choseReason($props.reasonTitle,$props.speedReasonList,speedIndex)" v-show="isShowReason" :class="{'active':speed['isSelected']}" v-for="(speed,speedIndex) in $props.speedReasonList" :key="speedIndex">{{speed['title']}}</button>
+      </div>
+      <div v-if="$props.reasonTitle==='service'">
+        <button @click="choseReason($props.reasonTitle,$props.serviceReasonList,serviceIndex)" v-show="isShowReason" :class="{'active':service['isSelected']}" v-for="(service,serviceIndex) in $props.serviceReasonList" :key="serviceIndex">{{service['title']}}</button>
       </div>
     </div>
-    <div class="feeling-box"><span v-if="feeling.length" class="feeling">{{feeling}}</span></div>
   </div>
-  <div class="reason-box">
-    <div v-if="$props.reasonTitle==='packing'">
-      <button class="reason" @click="choseReason($props.reasonTitle,$props.packingReasonList,packingIndex)" :class="{'active':packing['isSelected']}" v-show="isShowReason" v-for="(packing,packingIndex) in $props.packingReasonList" :key="packingIndex">{{packing['title']}}</button>
-    </div>
-    <div v-if="$props.reasonTitle==='speed'">
-      <button @click="choseReason($props.reasonTitle,$props.speedReasonList,speedIndex)" v-show="isShowReason" :class="{'active':speed['isSelected']}" v-for="(speed,speedIndex) in $props.speedReasonList" :key="speedIndex">{{speed['title']}}</button>
-    </div>
-    <div v-if="$props.reasonTitle==='service'">
-      <button @click="choseReason($props.reasonTitle,$props.serviceReasonList,serviceIndex)" v-show="isShowReason" :class="{'active':service['isSelected']}" v-for="(service,serviceIndex) in $props.serviceReasonList" :key="serviceIndex">{{service['title']}}</button>
+  <div v-else class="stars-box">
+    <div class="stars disabled-stars">
+      <div v-for="(item,index) in starsNums" :key="index" class="image-box">
+        <img :src="starsNums_icon" class="disabled-image" alt="stars">
+      </div>
     </div>
   </div>
 </div>
 </template>
-
 <script>
 import base64 from '@/assets/image/base64/base64'
 export default {
@@ -75,6 +83,18 @@ export default {
       default(){
         return [{'title':'未经允许私放自提','isSelected':false},{'title':'附近没有自提点/柜','isSelected':false},{'title':'不送货上门','isSelected':false},{'title':'私自退货','isSelected':false},{'title':'服务态度不好','isSelected':false},{'title':'未收货已签收','isSelected':false}]
       }
+    },
+    disabled:{
+      type:Boolean,
+      default(){
+        return false
+      }
+    },
+    starsNum:{
+      type:Number,
+      default(){
+        return 5
+      }
     }
   },
   data(){
@@ -82,6 +102,8 @@ export default {
       feeling:'',
       isShowReason:false,
       reason:[],
+      starsNums:[],
+      starsNums_icon:''
     }
   },
   methods:{
@@ -121,25 +143,33 @@ export default {
       this.$emit('choseReason',{'reasonTitle':reasonTitle,'reason':reason,'labelTitle':this.$props.labelTitle})
     }
   },
+  created() {
+    for (let i = 0; i < this.$props.starsNum; i++) {
+      this.starsNums.push(i)
+    }
+    this.starsNums_icon = base64['stars']['active']
+  },
   mounted() {
-    let imgElNum = document.getElementsByClassName('stars').item(this.$props.item).childElementCount
-    if (this.$props.isFullStars){
-      for (let i = 0; i < imgElNum; i++) {
-        let imgEl = document.getElementsByClassName('stars').item(this.$props.item).children.item(i).children.item(0)
-        imgEl.src = base64['stars']['active']
+    if (!this.$props.disabled){
+      let imgElNum = document.getElementsByClassName('stars').item(this.$props.item).childElementCount
+      if (this.$props.isFullStars){
+        for (let i = 0; i < imgElNum; i++) {
+          let imgEl = document.getElementsByClassName('stars').item(this.$props.item).children.item(i).children.item(0)
+          imgEl.src = base64['stars']['active']
+        }
+        this.feeling = this.$props.commentsFeeling[this.$props.commentsFeeling.length-1]
       }
-      this.feeling = this.$props.commentsFeeling[this.$props.commentsFeeling.length-1]
-    }
-    else {
-      for (let i = 0; i < imgElNum; i++) {
-        let imgEl = document.getElementsByClassName('stars').item(this.$props.item).children.item(i).children.item(0)
-        imgEl.src = base64['stars']['normal']
+      else {
+        for (let i = 0; i < imgElNum; i++) {
+          let imgEl = document.getElementsByClassName('stars').item(this.$props.item).children.item(i).children.item(0)
+          imgEl.src = base64['stars']['normal']
+        }
       }
-    }
 
-    //如果是商品评价，页面挂载完后发送事件给父组件，告诉父组件默认是五星
-    if (this.$props.reasonTitle === 'product'){
-      this.$emit('stars',{'stars':5,'labelTitle':this.$props.labelTitle,'reasonTitle':this.$props.reasonTitle})
+      //如果是商品评价，页面挂载完后发送事件给父组件，告诉父组件默认是五星
+      if (this.$props.reasonTitle === 'product'){
+        this.$emit('stars',{'stars':5,'labelTitle':this.$props.labelTitle,'reasonTitle':this.$props.reasonTitle})
+      }
     }
   }
 }
@@ -210,6 +240,16 @@ export default {
   font-size: 12px;
   border-radius: 1rem;
   background-color: #f8f3f3;
+}
+.comment-stars .stars-box .disabled-image{
+  top:0;
+  width: .8rem;
+}
+.comment-stars .stars-box .disabled-stars{
+  height: .8rem;
+}
+.stars-box .disabled-stars .image-box{
+  height: .8rem;
 }
 @keyframes stars {
   0%{

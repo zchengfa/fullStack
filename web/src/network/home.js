@@ -10,11 +10,12 @@ export function getHomeMultiData(){
 }
 
 //导出首页获取秒杀数据函数
-export function getFlashSaleData(flashSaleTime){
+export function getFlashSaleData(flashSaleTime,num){
   return request({
     url:'/flashSale',
     params:{
-      flashSaleTime
+      flashSaleTime,
+      num
     }
   })
 }

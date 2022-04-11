@@ -159,7 +159,6 @@ export default {
         if (res){
           updateOrderStatus(this.user_id,this.order_id,3).then(result=>{
             result.status?this.payment_status = 3:null
-            console.log(result)
             this.$toast.showToast('确认收货成功')
 
             this.$nextTick(()=>{

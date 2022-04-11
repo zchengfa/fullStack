@@ -6,10 +6,10 @@ module.exports = app =>{
     const router = express.Router()
 
     router.get('/flashSale',(req, res) => {
-        const selectFlashSale = mysql_query.selectFields('mall_goods','product_id,product_image,price',`preferential_type = '秒杀' AND flash_sale_time = ${req.query.flashSaleTime}`)
+        const selectFlashSale = mysql_query.selectFields('mall_goods','product_id,product_image,price,product_type,sell_type,product_title',`preferential_type = '秒杀' AND flash_sale_time = ${req.query.flashSaleTime}`)
         connection.query(selectFlashSale,(err,result)=>{
             if (err)  throw err
-            res.send(result.slice(0,7))
+            res.send(result.slice(0,req.query.num))
         })
     })
 

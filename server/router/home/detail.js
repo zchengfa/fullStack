@@ -19,12 +19,16 @@ module.exports = app =>{
         const selectAttribute = mysql_query.selectFields('mall_goods_attribute','attribute_title,attribute',`product_id = '${query.product_id}'`)
         const selectGallery = mysql_query.selectFields('mall_goods_gallery','product_image',`product_id = '${query.product_id}'`)
         const selectRecommend = mysql_query.selectAll('mall_goods',`product_type = '${query.product_type}'`)
+        const selectComments = mysql_query.selectAllWithLimit('mall_user_comments',2,`product_id = '${query.product_id}' AND comments_text != ''`)
+        const selectCommentsNum = mysql_query.selectCount('mall_user_comments',`product_id = '${query.product_id}'`)
+        const selectGoodCommentsNum = mysql_query.selectCount('mall_user_comments',`product_id = '${query.product_id}' AND stars >= 4`)
 
         let detail = {
             baseData:{},
             images:[],
             shop_detail_params:[],
-            recommend_data:[]
+            recommend_data:[],
+            comments:[]
         }
 
         //查询基础数据
@@ -71,7 +75,24 @@ module.exports = app =>{
                                                 item.product_id!==query.product_id?detail.recommend_data.push(item):null
                                             })
 
-                                            res.send(detail)
+                                            connection.query(selectComments,(commentErr,commentR)=>{
+                                                if (commentErr) throw  commentErr
+                                                else{
+                                                    detail.comments.push(...commentR)
+                                                    connection.query(selectCommentsNum,(err,num)=>{
+                                                        if (err) throw err
+                                                        detail.baseData.comment_number = num[0]['COUNT(1)']
+                                                        connection.query(selectGoodCommentsNum,(err,goodNum)=>{
+                                                            if (err) throw err
+                                                            let praiseDegree = ((goodNum[0]['COUNT(1)'])/(num[0]['COUNT(1)'])*100).toFixed(1) + '%'
+                                                            detail.baseData.praise_degree = praiseDegree
+                                                            res.send(detail)
+
+                                                        })
+                                                    })
+                                                }
+                                            })
+
                                         }
                                     })
                                 }
@@ -106,14 +127,14 @@ module.exports = app =>{
 
     //获取用户购物车的商品选择的尺码，并返回给前端
     router.get('/userChoseSize',(req, res) => {
-        console.log(req.query,94)
+        //console.log(req.query,94)
         const selectSize = mysql_query.selectFields('mall_user_cart','size',`user_id = ${req.query.user_id} AND product_id = '${req.query.product_id}' AND id = ${req.query.id}`)
         connection.query(selectSize,(err,sizeRes)=>{
             if (err) throw err
             else{
                 sizeRes[0]?res.send(sizeRes[0]):res.send({size:null})
             }
-            console.log(sizeRes)
+            //console.log(sizeRes)
         })
     })
 

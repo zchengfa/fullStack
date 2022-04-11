@@ -214,7 +214,7 @@
         })
       },
       getFlSaleData(flashSaleHour){
-        getFlashSaleData(flashSaleHour).then(res=>{
+        getFlashSaleData(flashSaleHour,7).then(res=>{
           this.flashSaleData.push(...res.data)
 
           //拿到数据后重新设置ul元素的宽度
@@ -222,9 +222,8 @@
         })
       },
       toMoreSale(product_id){
-        console.log(product_id)
-        this.$router.push('/flashSale/'+product_id)
-        // this.$toast.showToast('更多秒杀数据暂无，请等待后续完善')
+        this.$router.push({path:'/flashSale',query:{'product_id':product_id}})
+
       },
       refreshGoodsData(){
         this.goods = {
@@ -351,14 +350,16 @@
 
             if(hadHours==='00' && hadMinutes==='00' && hadSeconds==='00'){
               clearInterval(this.timer)
-              nowHours = new Date().getHours()
-              this.flashSaleHour = new Date().getHours()
-              this.flashSaleData = []
-              this.getFlSaleData(this.flashSaleHour)
-              this.restFlashSale(this.flashSaleHour)
-              this.$nextTick(()=>{
-                this.saleKey++
-              })
+              setTimeout(()=>{
+                nowHours = new Date().getHours()
+                this.flashSaleHour = new Date().getHours()
+                this.flashSaleData = []
+                this.getFlSaleData(this.flashSaleHour)
+                this.restFlashSale(this.flashSaleHour)
+                this.$nextTick(()=>{
+                  this.saleKey++
+                })
+              },1000)
             }
 					}, 1000)
 				}

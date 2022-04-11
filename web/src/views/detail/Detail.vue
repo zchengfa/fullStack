@@ -6,7 +6,7 @@
         <detail-base ref="base" class="detail-base" :base-data="detailData.baseData"></detail-base>
         <product-size :size-name="sizeName" :index="choseSizeObj.index" :item-size="choseSizeObj.item" :key="productSizeKey"></product-size>
         <detail-params  @refresh="refreshScroll" ref="params" :params="detailData.shop_detail_params"></detail-params>
-        <detail-comment ref="comment" :comment-num="Number(comment_num)"></detail-comment>
+        <detail-comment ref="comment" :comment-num="Number(comment_num)" :comments="detailData.comments" :praise-degree="detailData.baseData.praise_degree"></detail-comment>
         <detail-image ref="image" :images-data="detailData.images" @imageLoadOver="imageLoad"></detail-image>
         <Recommend ref="recommend" :recommend-data="detailData['recommend_data']" :current-type="sellType" recommend-title="商品推荐"></Recommend>
       </div>
@@ -15,7 +15,8 @@
     <detail-add-cart :product-info="productInfo" v-if="isShowAddCart" @submitAdd="submitAdd" :chose-size-obj="choseSizeObj" :size-name="sizeName"></detail-add-cart>
     <detail-bottom-bar ref="detailBottomBar" @addCart="addCart" :is-collected="isCollected"
                        @collectProduct="collectProduct"
-                        @contactCustomer="contactCustomer">
+                       @buyNow="buyNow"
+                       @contactCustomer="contactCustomer">
     </detail-bottom-bar>
   </div>
 </template>
@@ -39,6 +40,7 @@
   import mixins from "@/common/mixins/mixins";
   import ProductSize from "./component/content/ProductSize";
   import {getUserChoseSize} from "@/network/home";
+  import {submitOrder} from "@/network/cart";
 
   export default {
     name: "detail",
@@ -64,7 +66,8 @@
         productSizeKey:0,
         productDetailIndex:null,
         customer:null,
-        size_type:null
+        size_type:null,
+        operationType:null
       }
     },
     components:{
@@ -147,8 +150,18 @@
         //根据点击的选项来滚动到相应选项的位置
         this.$refs.scroll.scrollTo(0,-this.scrollToTopY[index],300)
       },
-      addCart(){
+      //立即购买
+      buyNow(type) {
+        this.operationType = type
+        this.add()
+      },
+      //加入购物车
+      addCart(type){
+        this.operationType = type
         //点击加入购物车按钮，先通过查看token是否存在来判定用户是否已经登录，未登录则引导用户进入登录页面，若已登录，则进入下一步操作
+        this.add()
+      },
+      add(){
         if (this.token) {
           //token存在，点击加入购物车按钮，显示确认加入购物车组件，并将要加入购物车的商品信息添加到productInfo对象中
           this.isShowAddCart = !this.isShowAddCart
@@ -207,20 +220,43 @@
           const product = this.productInfo
           if (this.token){
             let userInfo = this.$store.state.userInfo
-            addShopToCart(userInfo.user_id,product).then(res => {
+            if (this.operationType === 'buy'){
+              let orderArr = []
+              orderArr.push({
+                'product_id':this.detailData.baseData.product_id,
+                'product_num':e.count,
+                'product_size':e.size,
+                'sell_type':this.detailData.baseData.sell_type,
+                'product_type':this.detailData.baseData.product_type
+              })
+              submitOrder(userInfo.user_id,orderArr,e.count,this.detailData.baseData.price).then(res=>{
+                if (res.data.order_id){
+                  //将订单编号分发给vuex状态管理
+                  this.$store.dispatch('saveOrderID',res.data.order_id)
 
-              if (res.data.message) {
-                //确认加入购物车，隐藏确认加入购物车组件，并将要加入购物车的商品数据提交给后端
-                this.isShowAddCart = !this.isShowAddCart
+                  //进入订单页面
+                  this.$router.push('/order')
+                }
+              }).catch(err=>{
+                console.log(err)
+              })
+            }
+            else{
+              addShopToCart(userInfo.user_id,product).then(res => {
 
-                //点击确定按钮改变productSizeKey值，使detail组件中的ProductSize组件重新渲染，达到更新值的目的
-                this.productSizeKey +=1
-                this.$toast.showToast(res.data.message)
-              }
+                if (res.data.message) {
+                  //确认加入购物车，隐藏确认加入购物车组件，并将要加入购物车的商品数据提交给后端
+                  this.isShowAddCart = !this.isShowAddCart
 
-            }).catch(err => {
-              console.log(err)
-            })
+                  //点击确定按钮改变productSizeKey值，使detail组件中的ProductSize组件重新渲染，达到更新值的目的
+                  this.productSizeKey +=1
+                  this.$toast.showToast(res.data.message)
+                }
+
+              }).catch(err => {
+                console.log(err)
+              })
+            }
           }
         }
         else{
@@ -289,6 +325,20 @@
         })
 
         //防抖函数处理获取页面元素位置函数
+        this.getContentTopY()
+      },
+      //接收参数组件发出来的刷新scroll组件事件
+      refreshScroll(){
+        //当参数组件高度变化后，刷新scroll组件
+        this.$refs.scroll.refresh()
+
+        this.$nextTick(()=>{
+          //重新刷新评价组件距离顶部的高度
+          this.scrollToTopY[2] = this.$refs.comment.$el.offsetTop
+        })
+      },
+      getContentTopY(){
+        //防抖函数处理获取页面元素位置函数
         this.contentTopYs = debounce(()=>{
           this.scrollToTopY = []
           this.scrollToTopY.push(0)
@@ -296,13 +346,7 @@
           this.scrollToTopY.push(this.$refs.comment.$el.offsetTop)
           this.scrollToTopY.push(this.$refs.recommend.$el.offsetTop)
         },100)
-      },
-      //接收参数组件发出来的刷新scroll组件事件
-      refreshScroll(){
-        //当参数组件高度变化后，刷新scroll组件
-        this.$refs.scroll.refresh()
-      },
-
+      }
     },
     created() {
       this.initData()

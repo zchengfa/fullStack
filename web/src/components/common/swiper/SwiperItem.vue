@@ -36,7 +36,7 @@
   .swiper-item{
     position: absolute;
     left: 50%;
-    bottom:.8rem;
+    bottom:1.8rem;
     transform: translate(-50%);
   }
   ul{
@@ -44,9 +44,8 @@
   }
   ul li{
     margin-left: .4rem;
-    flex: 1;
-    width: .6rem;
-    height: .6rem;
+    width: .5rem;
+    height: .5rem;
     border-radius: .3rem;
     background-color: #dcd2d2;
   }

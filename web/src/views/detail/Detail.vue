@@ -250,7 +250,7 @@
 
                   //点击确定按钮改变productSizeKey值，使detail组件中的ProductSize组件重新渲染，达到更新值的目的
                   this.productSizeKey +=1
-                  this.$toast.showToast(res.data.message)
+                  this.$toast.showToast(res.data.message,2000,'操作成功:')
                 }
 
               }).catch(err => {

@@ -1,4 +1,4 @@
-import Toast from "@/components/common/toast/Toast";
+import Toast from "@/components/common/toast/Toast.vue";
 const toastObject = {}
 
 toastObject.install = function (Vue) {

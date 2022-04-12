@@ -22,8 +22,10 @@
       <tab-control v-show="isTabFixed" ref="tabControlOne" class="tab-control" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
       <Scroll class="content" ref="scroll"  :probe-type="3" @scroll="contentScroll"
               :pull-up-load="true" @pullingUp="loadMore">
-        <swiper class="swiper" :banner="banner" @swiperImageLoad="swiperImageLoad"></swiper>
-        <menu-list v-if="hasMenuData"></menu-list>
+        <div class="swiper-box">
+          <swiper class="swiper" :banner="banner" @swiperImageLoad="swiperImageLoad"></swiper>
+        </div>
+        <color-menu :menu-data="MenuData"></color-menu>
         <div class="flash-sale" :key="saleKey">
           <div class="sale-top">
             <div class="title">
@@ -68,9 +70,9 @@
   import TabControl from '@/components/content/tabControl/TabControl'
   import GoodsData from "@/components/content/goodsData/GoodsData"
   import Search from '@/components/content/search/Search'
+  import ColorMenu from "@/components/content/colorMenu/ColorMenu.vue";
 
-  import MenuList from "@/components/content/menuList/MenuList"
-
+  import {home_menu} from '@/assets/JSON/data'
   import {backTopMixins,refreshScrollMixins,contactCustomerMixins} from "@/common/mixins/mixins";
   //引入获取首页数据方法
   import {getHomeMultiData, getGoodsData,getFlashSaleData} from "@/network/home"
@@ -91,7 +93,7 @@
         tabOffsetTop: 0,
         noMore: false,
         userCollections: [],
-        hasMenuData: false,
+        MenuData:[],
         collectedStateArray: {
           'pop': [],
           'sell': [],
@@ -123,8 +125,8 @@
       BackTop,
       TabControl,
       GoodsData,
-      MenuList,
-      Search
+      Search,
+      ColorMenu
     },
 		watch:{
 			scrollHeight(new_height,old_height){
@@ -380,6 +382,7 @@
     },
     created() {
       this.getHomeMultiData()
+      this.MenuData = home_menu
 			this.message_icon = base64['message']
 			this.calendar_icon = base64['calendar']
       this.lightning_icon = base64['lightning']
@@ -567,6 +570,17 @@
     height: calc(100vh - 44px - 4rem);
     overflow: hidden;
   }
+  .swiper-box{
+    padding-top: 1rem;
+    width: 100%;
+    background-color: #e92e2e;
+  }
+  .swiper{
+    margin: 0 auto;
+    width: 90%;
+    border-radius: .5rem;
+  }
+
   .no-more {
     text-align: center;
     color: #a5a2a2;

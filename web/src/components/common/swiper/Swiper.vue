@@ -108,6 +108,7 @@
   .item img{
     width: 100%;
     background-size: contain;
+    border-radius: .5rem;
   }
    .previous,.next{
     position: absolute;

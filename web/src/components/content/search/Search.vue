@@ -15,12 +15,12 @@
         </div>
       </slot>
       <slot name="take_photo">
-        <div class="take-photo">
+        <div class="take-photo" @click="takePhoto">
           <img :src="take_photo_icon" alt="take_photo_icon">
         </div>
       </slot>
       <slot name="qrcode">
-        <div class="qr-code">
+        <div class="qr-code" @click="qrcode">
           <img :src="qrcode_icon" alt="qrcode_icon">
         </div>
       </slot>
@@ -46,14 +46,18 @@ export default {
 		toSearch(word){
 			this.$router.push('/searchProduct/'+word)
 		},
-    getHotSearch(){
-		  getHotSearch().then(res=>{
+    getHotSearch(){getHotSearch().then(res=>{
         res.data.length?(function (word){
           res.data.map(item =>{
             word.push(item['word'])
           })
         })(this.search_word):this.search_word = ['核酸上门检测','儿童水杯','裙子','鞋子']
       })
+    },
+    takePhoto(){this.$toast.showToast('当前网络环境不支持打开摄像头拍照')
+    },
+    qrcode(){
+      this.$toast.showToast('当前网络环境不支持打开摄像头扫描')
     }
 	},
   created() {

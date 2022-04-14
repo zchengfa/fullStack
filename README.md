@@ -161,3 +161,23 @@ export default {
   </div>
 </template>
 ```
+##### 七、使用自定义指令给页面添加数据加载效果（转圈圈）
+###### 步骤：
+1. 创建转圈圈组件。
+2. 将组件加入到App.vue中。 
+3. 在main.js文件中注册全局指令
+```javascript
+//全局注册自定义指令
+Vue.directive('loading',{
+  //bind钩子函数在参数改变时无法作出相应变化，需使用update或者componentUpdated钩子函数
+  update(el,binding){
+    console.log(binding.value)
+    if (binding.value === true){
+      el.style.display = 'block'
+    }
+    else{
+      el.style.display = 'none'
+    }
+  }
+})
+```

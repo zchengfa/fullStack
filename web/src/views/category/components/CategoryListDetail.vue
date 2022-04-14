@@ -3,7 +3,7 @@
     <div class="list-item" v-for="(item, index) in categoryListDetail" :key="index">
       <div class="title"><h4>{{item.title}}</h4><a :href="item.router">热销榜> </a></div>
       <div class="content" v-for="(items,index) in item.content" :key="index">
-        <a :href="items.location">
+        <a  @click="tip">
           <div class="image-box"><img :src="items.image" alt="image" @load="imageLoadOver"></div>
           <p class="detail-title">{{items.title}}</p>
         </a>
@@ -26,6 +26,9 @@ export default {
   methods:{
     imageLoadOver(){
       this.$emit('imageLoad')
+    },
+    tip(){
+      this.$toast.showToast('您点击的商品类型下的商品暂无，请等待开发者完善！',2000,'非常抱歉')
     }
   }
 }

@@ -19,7 +19,7 @@
     <el-table-column prop="count" label="库存" align="center"></el-table-column>
     <el-table-column prop="price" label="价格" align="center">
       <template #default="scope">
-        <span class="price">{{scope.row.price}}</span>
+        <span class="price"><span class="character" >￥</span>{{scope.row.price}}</span>
       </template>
     </el-table-column>
     <el-table-column label="操作" fixed="right" align="center">
@@ -234,5 +234,8 @@ export default defineComponent({
   margin-top: 1rem;
   height: 3rem;
 
+}
+.price .character{
+  font-size: 12px;
 }
 </style>

@@ -1,11 +1,12 @@
 <template>
-  <div>
+  <div class="banner-detail">
+    <nav-bar class="nav-bar">
+      <div class="back" slot="left" @click="goBack"><img src="~assets/image/detail/back.svg" alt="back_image"></div>
+      <div slot="center" class="center-nav">{{$route.query.brand}}专场</div>
+      <div slot="right" class="right-nav" @click="backToHome"><img src="~assets/image/home/icon_home.svg" alt="home_image"></div>
+    </nav-bar>
     <Scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll">
-      <nav-bar class="nav-bar">
-        <div class="back" slot="left" @click="goBack"><img src="~assets/image/detail/back.svg" alt="back_image"></div>
-        <div slot="center" class="center-nav">{{$route.query.brand}}专场</div>
-        <div slot="right" class="right-nav" @click="backToHome"><img src="~assets/image/home/icon_home.svg" alt="home_image"></div>
-      </nav-bar>
+
       <div class="brand-special">
         <div class="special-base">
           <img class="base-image" :src="$route.query.banner_image" alt="banner_image">
@@ -19,9 +20,9 @@
           </div>
         </div>
         <div class="special-filter">
-          <filter-bar></filter-bar>
+          <filter-bar @sort="sort"></filter-bar>
         </div>
-        <goods-data :goods="goods" :current-type="currentType"></goods-data>
+        <goods-data :key="goodsKey" :goods="sortGoods" :current-type="currentType"></goods-data>
       </div>
     </Scroll>
     <back-top  v-show="isShowBackTop" @click.native="backTop"></back-top>
@@ -29,15 +30,15 @@
 </template>
 
 <script>
-import NavBar from "@/components/common/navbar/NavBar";
-import {backPreviousPageMixins} from '@/common/mixins/mixins'
-import Scroll from "@/components/common/scroll/Scroll"
+import NavBar from "@/components/common/navbar/NavBar.vue";
+import {backPreviousPageMixins,backTopMixins} from '@/common/mixins/mixins'
+import Scroll from "@/components/common/scroll/Scroll.vue"
 import {getBrandLogo,getProductByID} from "@/network/homeContent";
-import FilterBar from "@/components/content/filterBar/FilterBar";
-import GoodsData from "@/components/content/goodsData/GoodsData";
-import {debounce} from "@/common/utils";
-import {backTopMixins} from '@/common/mixins/mixins'
-import BackTop from "@/components/content/backTop/BackTop";
+import FilterBar from "@/components/content/filterBar/FilterBar.vue";
+import GoodsData from "@/components/content/goodsData/GoodsData.vue";
+
+import BackTop from "@/components/content/backTop/BackTop.vue";
+import {bubbleSort,reverseArray,debounce} from "@/common/utils";
 
 export default {
   name: "BannerDetail",
@@ -54,7 +55,9 @@ export default {
       brand_logo:'',
       goods:[],
       brand_id:this.$route.query.brand_id,
-      currentType:''
+      currentType:'',
+      goodsKey:0,
+      sortGoods:[]
     }
   },
   methods:{
@@ -71,14 +74,33 @@ export default {
     //根据品牌id，获取该品牌所有商品数据
     getProductById(brand_id){
       getProductByID(brand_id).then(res=>{
-        res.data.goods?this.goods=res.data.goods:null
+        res.data.goods?this.goods.push(...res.data.goods):null
+        res.data.goods?this.sortGoods=res.data.goods:null
         res.data.goods?this.currentType=res.data.goods[0]['sell_type']:null
-        console.log(res)
       })
     },
     initData() {
       this.getBrandLogo(this.brand_id)
       this.getProductById(this.brand_id)
+    },
+    sort(arg){
+      this.dealSortGoods(arg,arg.way)
+      if (arg.way==='normal'){
+        this.sortGoods = []
+        this.sortGoods.push(...this.goods)
+      }
+      this.goodsKey++
+    },
+    dealSortGoods(arg,sortArg){
+      if (arg.way===sortArg){
+        if (arg.up){
+          this.sortGoods = bubbleSort(this.sortGoods,sortArg)
+        }
+        if (arg.down){
+          this.sortGoods = bubbleSort(this.sortGoods,sortArg)
+          this.sortGoods = reverseArray(this.sortGoods)
+        }
+      }
     }
   },
   created() {
@@ -94,10 +116,14 @@ export default {
 </script>
 
 <style scoped>
+.banner-detail{
+  width: 100vw;
+  height: 100vh;
+}
 .content{
   position: absolute;
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - 44px);
   z-index: 13;
   overflow: hidden;
   background-color: #fff;

@@ -36,11 +36,19 @@ export default {
 
         this.clickPriceCount===1?this.isDown=true:this.isDown=false
         this.clickPriceCount===2?this.isUp=true:this.isUp=false
+
+        if (this.isUp){
+          this.$emit('sort',{'up':this.isUp,'way':'price'})
+        }
+        if (this.isDown){
+          this.$emit('sort',{'down':this.isDown,'way':'price'})
+        }
         if (this.clickPriceCount===3){
           this.isUp = false
           this.isDown = false
           this.currentIndex = -1
           this.clickPriceCount = 0
+          this.$emit('sort',{'way':'normal'})
         }
       }
       else if(index === 1){
@@ -50,11 +58,18 @@ export default {
         this.clickFilterCount=0
         this.clickDiscountCount===1?this.isDown=true:this.isDown=false
         this.clickDiscountCount===2?this.isUp=true:this.isUp=false
+        if (this.isUp){
+          this.$emit('sort',{'up':this.isUp,'way':'discount'})
+        }
+        if (this.isDown){
+          this.$emit('sort',{'down':this.isDown,'way':'discount'})
+        }
         if (this.clickDiscountCount===3){
           this.isUp = false
           this.isDown = false
           this.currentIndex = -1
           this.clickDiscountCount = 0
+          this.$emit('sort',{'way':'normal'})
         }
       }
       else if (index===2){
@@ -65,6 +80,12 @@ export default {
         this.clickSalesCount===1?this.currentIndex=index:null
         this.clickSalesCount===2?this.currentIndex=-1:null
         this.clickSalesCount===2?this.clickSalesCount=0:null
+        if (this.clickSalesCount===1){
+          this.$emit('sort',{'up':true,'way':'sales'})
+        }
+        if (this.clickSalesCount===0){
+          this.$emit('sort',{'down':true,'way':'sales'})
+        }
       }
       else {
         this.clickPriceCount=0

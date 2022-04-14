@@ -296,6 +296,8 @@
         let user_id = null
         let userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
         userInfo?user_id = userInfo.user_id:null
+
+        this.$store.dispatch('showLoading')
         //将id和type作为参数进行请求
         getGoodsDetail(this.type,this.sellType,this.id,user_id).then(res=> {
           if (!res.data.err){
@@ -317,6 +319,7 @@
             //dom更新后自动滚动到顶部
             this.$nextTick(()=>{
               this.$refs.scroll?this.$refs.scroll.scrollTo(0,0,300):null
+              this.$store.dispatch('hideLoading')
             })
           }
 

@@ -2,6 +2,8 @@ module.exports = app => {
     const express = require('express')
     const router = express.Router()
     const shopManageDataModel = require('../../model/goodsDataModel')
+    const mysql_query = require('../../plugins/mysql_query')
+    const connection = require('../../plugins/connectMysql')()
 
     //接收前端获取管理员信息请求
     router.post('/administratorInfo',(req, res) => {
@@ -23,16 +25,22 @@ module.exports = app => {
 
     //接收前端获取商品数据请求
     router.get('/shopManage',(req, res) => {
-        shopManageDataModel.find({}, (err,doc) => {
+        // shopManageDataModel.find({}, (err,doc) => {
+        //     if (err) throw err
+        //     else {
+        //         let newDoc = []
+        //         doc.map(item =>{
+        //             newDoc.push(item)
+        //             // console.log(newDoc)
+        //         })
+        //         res.send(newDoc)
+        //     }
+        // })
+        const selectGoods = mysql_query.selectAll('mall_goods')
+        connection.query(selectGoods,(err,result)=>{
             if (err) throw err
-            else {
-                let newDoc = []
-                doc.map(item =>{
-                    newDoc.push(item)
-                    // console.log(newDoc)
-                })
-                res.send(newDoc)
-            }
+            res.send(result)
+
         })
     })
 

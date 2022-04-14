@@ -1,6 +1,7 @@
 <template>
   <div id="app">
 		<main-tab-bar></main-tab-bar>
+    <Loading v-loading="$store.state.loading"></Loading>
 <!--    使用keep-alive让vue离开当前页面时保持状态，不销毁-->
     <keep-alive>
       <router-view v-if="$route.meta.keepAlive" />
@@ -10,10 +11,13 @@
 </template>
 <script>
 	import MainTabBar from './components/content/mainTabBar/MainTabBar.vue'
+  import Loading from './components/common/loading/Loading.vue'
+
 	export default {
 		name: 'App',
 		components: {
-			MainTabBar
+			MainTabBar,
+      Loading
 		}
   }
 </script>
@@ -23,8 +27,8 @@
   #app{
     position: relative;
     margin: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
   }
 
 </style>

@@ -197,26 +197,31 @@
 
         //每获取一次数据就让当前类型商品的页数加一
         const page = this.goods[type].page +1
-        getGoodsData(user_id,type, page).then(res => {
-          if(res.data.length===0){
-            this.noMore = true
-            setTimeout(() => {
-              this.noMore = false
-            },1000)
-          }
-          else {
-            //将获取到的数据数组通过...语法糖对数组进行解构加入到list数组中
-            this.goods[type].list.push(...res.data)
-            this.goods[type].page += 1
-            this.getDataCount ++
+        this.$store.dispatch('showLoading').then(() =>{
+          getGoodsData(user_id,type, page).then(res => {
+            if(res.data.length===0){
+              this.noMore = true
+              setTimeout(() => {
+                this.noMore = false
+                this.$store.dispatch('hideLoading')
+              },1000)
+            }
+            else {
+              //将获取到的数据数组通过...语法糖对数组进行解构加入到list数组中
+              this.goods[type].list.push(...res.data)
+              this.goods[type].page += 1
+              this.getDataCount ++
+              this.$store.dispatch('hideLoading')
+            }
+            //上拉加载一次调用一次结束上拉
+            this.$refs.scroll.finishPullUp()
 
-          }
-          //上拉加载一次调用一次结束上拉
-          this.$refs.scroll.finishPullUp()
+          })
         })
+
       },
       getFlSaleData(flashSaleHour){
-        getFlashSaleData(flashSaleHour,7).then(res=>{
+        getFlashSaleData(flashSaleHour,10).then(res=>{
           this.flashSaleData.push(...res.data)
 
           //拿到数据后重新设置ul元素的宽度
@@ -225,7 +230,6 @@
       },
       toMoreSale(product_id){
         this.$router.push({path:'/flashSale',query:{'product_id':product_id}})
-
       },
       refreshGoodsData(){
         this.goods = {
@@ -390,6 +394,7 @@
 			//给定偶数的时间点为秒杀开始的时间点,秒杀持续时间为两小时
 			this.restFlashSale()
       this.flashSaleHour?this.getFlSaleData(this.flashSaleHour):null
+
     },
 		mounted() {
 			this.navHeightDefault = this.$refs.nav.$el.clientHeight

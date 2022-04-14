@@ -166,8 +166,8 @@
             result.data.filter((item:any) =>{
               return tableLogic.shopManageData.push({
                 id:<string>item.product_id,
-                title:<string>item.title,
-                imagePath:<string>item.imagePath,
+                title:<string>item.product_title,
+                imagePath:<string>item.product_image,
                 count:<string>item.favorite +'件',
                 price:<string>item.price
               });
@@ -271,7 +271,7 @@
           getMemberManageData().then(result => {
             tableLogic.memberData = result.data
             tableLogic.memberData.filter(item => {
-              console.log(result,274)
+
               !item.username?item.username = '暂未设置昵称': item.username
               !item.last_login_time?item.last_login_time = '暂未登录过': item.last_login_time
               switch (item.identity){

@@ -4,7 +4,7 @@
   <div class="params-box" ref="paramsBox">
     <table ref="table">
         <tr v-for="(item,index) in params" :key="item+index">
-          <td>{{item['attribute_title']}}</td>
+          <td class="attribute">{{item['attribute_title']}}</td>
           <td>{{item['attribute']}}</td>
         </tr>
     </table>
@@ -74,6 +74,10 @@ table tr:last-child td {
 table tr td:first-child{
   width: 34%;
   border-right: 1px solid #8a8686;
+}
+.attribute{
+  font-weight: bold;
+  color: #413f3f;
 }
 .more-params{
   position: absolute;

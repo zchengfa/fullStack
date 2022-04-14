@@ -19,7 +19,7 @@
     <div class="sale-goods">
       <div v-for="(sale,saleIndex) in flashSaleData" :key="saleIndex" class="goods-item" @click="detail(sale['product_id'],sale['product_type'],sale['sell_type'],saleIndex)">
         <div class="image-box">
-          <img :src="sale['product_image']" alt="product_image">
+          <img :src="sale['product_image']" @load="imageLoadOver" alt="product_image">
         </div>
         <div class="info">
           <p>{{sale['product_title']}}</p>
@@ -42,6 +42,7 @@ import {backPreviousPageMixins} from "@/common/mixins/mixins";
 import NavBar from "@/components/common/navbar/NavBar.vue";
 import Scroll from "@/components/common/scroll/Scroll.vue";
 import {getFlashSaleData} from "@/network/home";
+import {debounce} from "@/common/utils";
 
 export default {
   name: "FlashSale",
@@ -83,6 +84,13 @@ export default {
     },
     detail(product_id,product_type,sell_type,id){
       this.$router.push('/detail/'+sell_type+'/'+product_type +'/'+(product_id)+'/'+id)
+    },
+    imageLoadOver(){
+      //图片加载完后刷新scroll组件
+      debounce(()=>{
+        this.$refs.scroll.scroll.refresh()
+      },300)()
+
     }
   },
   created() {

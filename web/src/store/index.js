@@ -7,7 +7,9 @@ import {
     USER_INFO,
     SET_TOKEN,
     SAVE_ORDER_ID,
-    CHANGE_ORDER_ID
+    CHANGE_ORDER_ID,
+    SHOW_LOADING,
+    HIDE_LOADING
 } from "@/store/mutations-types";
 
 
@@ -21,7 +23,7 @@ const store = new Vuex.Store({
         token:sessionStorage.getItem('token'),
         //将sessionStorage存储的字符串化对象，转换成对象
         userInfo:JSON.parse(sessionStorage.getItem('userInfo')),
-
+        loading:false
     },
     getters:{
 
@@ -55,6 +57,12 @@ const store = new Vuex.Store({
         [CHANGE_ORDER_ID](state,order_id) {
             sessionStorage.setItem('trade_no',order_id)
             state.order_id=order_id
+        },
+        [SHOW_LOADING](state){
+            state.loading = true
+        },
+        [HIDE_LOADING](state){
+            state.loading = false
         }
 
     },
@@ -104,6 +112,16 @@ const store = new Vuex.Store({
                 context.commit('changeOrderId',payload)
                 resolve({'operation_code':200})
             })
+        },
+        showLoading(context){
+            return new Promise(resolve => {
+                context.commit('showLoading')
+                resolve(1)
+            })
+            //context.commit('showLoading')
+        },
+        hideLoading(context){
+            context.commit('hideLoading')
         }
     }
 })

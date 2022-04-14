@@ -91,6 +91,7 @@ export default {
 
       //每次点击列表项时让scroll滚动到顶部
       this.$refs.scrollTwo.scrollTo(0,0,0)
+
     },
     //图片加载完刷新一下scroll
     imageLoadOver() {

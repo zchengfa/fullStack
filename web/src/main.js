@@ -38,6 +38,18 @@ Vue.prototype.$bus = new Vue()
 //安装toast插件
 Vue.use(toast)
 
+//全局注册自定义指令
+Vue.directive('loading',{
+  update(el,binding){
+    if (binding.value === true){
+      el.style.display = 'block'
+    }
+    else{
+      el.style.display = 'none'
+    }
+  }
+})
+
 new Vue({
   router,
   store,

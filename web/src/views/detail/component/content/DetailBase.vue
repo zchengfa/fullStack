@@ -6,11 +6,12 @@
       </div>
       <div class="introduction-box">
         <span  v-if="baseData.self_support" class="self-support">mall自营</span>
+        <p class="brand">{{baseData['product_brand']}}</p>
         <p class="price">
           <span><span class="price-character">￥</span>{{baseData.price}}</span>
           <span class="origin-price">{{originPrice}}</span>
           <label class="discount-label" for="discountTitle">折扣：</label>
-          <span class="discount" id="discountTitle">{{baseData.discount}}折</span>
+          <span class="discount" id="discountTitle">{{baseData.discount*10}}折</span>
         </p>
         <p class="title">{{baseData.title || baseData['product_title']}}</p>
         <p class="other">
@@ -64,6 +65,11 @@ export default {
   color: #fff;
   font-size: 12px;
   border-radius: .2rem;
+}
+.brand{
+  text-indent: .5rem;
+  color: #5473ee;
+  font-weight: bold;
 }
 p{
   margin: .8rem auto;

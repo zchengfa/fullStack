@@ -2,8 +2,9 @@
   <div class="toast" v-show="isShow">
     <div class="message-box">
       <span><span class="tip">{{title}}</span>{{message}}</span>
+      <button class="know" @click="know">知道了({{time}})</button>
     </div>
-    <button class="know" @click="know">知道了({{time}})</button>
+
   </div>
 </template>
 
@@ -22,6 +23,7 @@ export default {
   },
   methods:{
     showToast(message='请输入弹框内容',duration=3000,title='温馨提示:'){
+      clearInterval(this.timerInterval)
       this.isShow = true
       this.message = message
       this.title = title
@@ -53,13 +55,23 @@ export default {
 <style scoped>
 .toast{
   position: fixed;
-  top:50%;
-  left: 50%;
-  min-width: 10rem;
+  top:0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   border-radius: .5rem;
+  background-color: transparent;
+
+  z-index: 999;
+}
+.message-box{
+  position: relative;
+  top:50%;
+  margin-left: 50%;
+  min-width: 10rem;
   background-color: #fff;
   transform: translate(-50%,-50%);
-  z-index: 999;
+  box-shadow: .2rem .2rem #cbc7c7;
 }
 .tip{
   font-weight: bold;

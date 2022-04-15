@@ -40,7 +40,8 @@ module.exports = app =>{
                 preferential_type:item.preferential_type,
                 self_support:item.self_support,
                 comment_number:item['comment_number'],
-                discount:item.discount
+                discount:item.discount,
+                stocks:item['stocks']
             })
         }
         if (query.user_id){

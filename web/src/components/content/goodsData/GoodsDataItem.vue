@@ -2,7 +2,15 @@
   <div class="goods-data-item">
     <div class="list-box">
       <trademark></trademark>
-      <div class="list-image" @click="itemClick"><img :src="list['imagePath'] || list['product_image']" alt="itemImage" @load="imageLoad"></div>
+      <div class="list-image" @click="itemClick">
+        <img :src="list['imagePath'] || list['product_image']" alt="itemImage" @load="imageLoad">
+        <!--      售罄-->
+        <div class="sell-out" v-if="list['stocks']===0">
+          <div class="sell-out-content">
+            <span>已售罄</span>
+          </div>
+        </div>
+      </div>
       <div class="list-content">
         <div class="title">{{list.title || list['product_title']}}</div>
         <div class="list-others">
@@ -125,6 +133,9 @@
     background-size: contain;
     border-radius: .3rem;
   }
+  .list-image{
+    position: relative;
+  }
   .title{
     margin: .6rem auto;
     width: 98%;
@@ -192,5 +203,32 @@
     width: 100%;
     text-indent: .2rem;
     text-align: left;
+  }
+/*  已售罄样式*/
+  .sell-out{
+    position: absolute;
+    top:0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(33, 32, 32, 0.4);
+  }
+  .sell-out .sell-out-content{
+    position: relative;
+    top:50%;
+    left: 50%;
+    width: 60%;
+    height: 60%;
+    border: .5rem dotted rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    text-align: center;
+    transform: translateY(-50%) translateX(-50%);
+  }
+  .sell-out-content span{
+    display: inline-block;
+    position: relative;
+    top: 50%;
+    color: rgba(255, 255, 255, 0.8);
+    transform: translateY(-50%);
   }
 </style>

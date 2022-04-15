@@ -118,6 +118,31 @@ module.exports = app =>{
 
     connection.query(updateOrder,(err)=>{
       if (err) throw err
+      //状态更新完成后，如果之前时确认收货状态，则将订单中含有的商品销量加一，库存减一
+      //1.根据订单中的id来查询商品 2.通过查询到的商品id来获取该商品的库存和销量 3.将销量加一，库存减一 4.更新销量与库存
+      const selectProductId = mysql_query.selectFields('mall_store_order','product_ids',`user_id = ${paramsObj.user_id} AND order_id = '${paramsObj.order_id}'`)
+      connection.query(selectProductId,(err,ids)=>{
+        if (err) throw err
+        let idsArr = JSON.parse(ids[0]['product_ids'])
+        idsArr.map(item=>{
+
+          //获取商品的库存和销量
+          const selectSalesAndStocks = mysql_query.selectFields('mall_goods','sales,stocks',`product_id = '${item}'`)
+          connection.query(selectSalesAndStocks,(err,result)=>{
+            if (err) throw err
+
+            //库存减一，销量加一
+            let sales = result[0]['sales'] + 1,stocks = result[0]['stocks'] -1
+
+            //更新商品销量和库存
+            const updateSalesAndStocks = mysql_query.update('mall_goods',`sales = ${sales},stocks = ${stocks}`,`product_id = '${item}'`)
+            connection.query(updateSalesAndStocks,(err,updateResult)=>{
+              if (err) throw err
+              console.log(updateResult)
+            })
+          })
+        })
+      })
       res.status(200)
       res.send()
     })
@@ -208,6 +233,16 @@ module.exports = app =>{
           }
         })
       })
+    })
+  })
+
+  //接收前端发起的删除用户订单请求
+  router.post('/removeUserOrder',(req,res)=>{
+    const paramsObj = JSON.parse(JSON.stringify(req.body))
+    const removeOrder = mysql_query.deleteOperation('mall_store_order',`user_id = ${paramsObj.user_id} AND order_id = '${paramsObj.order_id}'`)
+    connection.query(removeOrder,(err,result)=>{
+      if (err) throw err
+      result?res.send({'success':1}):res.send({'failed':1})
     })
   })
 

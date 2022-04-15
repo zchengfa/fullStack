@@ -23,7 +23,7 @@
         <span class="payment-status" v-if="item['payment_status']===4">已取消</span>
       </div>
       <div class="order-info clearfix">
-        <div class="image-box">
+        <div class="image-box"  @click="operate(item['order_id'])">
           <div class="image-item" v-for="(image,imgIndex) in item['product_image']" :key="imgIndex">
             <img :src="image" alt="product_image" @load="imageLoadOver">
           </div>
@@ -41,7 +41,7 @@
         <button v-if="item['payment_status']===0" @click="operate(item['order_id'])">去付款</button>
         <button v-if="item['payment_status']===2 || item['payment_status']===3 || item['payment_status']===5">再次购买</button>
         <button v-if="item['payment_status']===1" @click="operate(item['order_id'])">确认收货</button>
-        <button>删除订单</button>
+        <button @click="removeOrder(item['order_id'])">删除订单</button>
         <button v-if="item['payment_status']===2">评价晒单</button>
         <button v-if="item['payment_status']===5">追评</button>
         <button v-if="item['payment_status']===2 || item['payment_status']===3 || item['payment_status']===5">退换/售后</button>
@@ -61,7 +61,7 @@ import NavBar from "@/components/common/navbar/NavBar.vue";
 import Scroll from "@/components/common/scroll/Scroll.vue";
 import {backPreviousPageMixins,recommendMixins} from "@/common/mixins/mixins";
 import base64 from '@/assets/image/base64/base64'
-import {getUserAllOrder} from "@/network/home";
+import {getUserAllOrder,removeUserOrder} from "@/network/home";
 import Recommend from "@/components/content/recommend/Recommend.vue";
 
 export default {
@@ -120,6 +120,30 @@ export default {
         if (item['payment_status'] === num){
 
           this.showOrderData.push(item)
+        }
+      })
+    },
+    //删除订单
+    removeOrder(order_id){
+      removeUserOrder(this.$store.state.userInfo.user_id,order_id).then(res=>{
+        if (res.data.success){
+          //删除成功，将订单数据从订单列表中移除
+          this.showOrderData.map((item,index)=>{
+            if (order_id===item.order_id){
+              this.showOrderData.splice(index,1)
+              this.$nextTick(()=>{
+                this.$toast.showToast('订单删除成功',2000,'结果提示:')
+              })
+            }
+          })
+          this.userAllOrderData.map((item,index)=>{
+            if (order_id===item.order_id){
+              this.userAllOrderData.splice(index,1)
+            }
+          })
+        }
+        if (res.data.failed){
+          this.$toast.showToast('订单删除失败',2000,'结果提示:')
         }
       })
     },

@@ -470,6 +470,7 @@
     margin: 1rem auto;
     padding: .5rem 0;
     width: 94%;
+    height: 8.6rem;
     border-radius: .5rem;
     background-color: #e6e1e8;
     overflow: hidden;

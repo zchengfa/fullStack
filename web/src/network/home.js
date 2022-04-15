@@ -156,3 +156,14 @@ export function getUserAllOrder(user_id){
     }
   })
 }
+
+//导出用户订单函数
+export function removeUserOrder(user_id,order_id){
+  return requestPost({
+    url:'home/api/removeUserOrder',
+    data:{
+      user_id,
+      order_id
+    }
+  })
+}

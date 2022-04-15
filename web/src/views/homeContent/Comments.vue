@@ -101,7 +101,7 @@ export default {
         if (finishStarN===this.starsNum.length){
           submitComments(this.$store.state.userInfo,stars_num,this.reasons,this.comments,this.$route.query.order_id).then(res=>{
             if (res.data){
-              this.$toast.showToast('评价成功，感谢您！')
+              this.$toast.showToast('评价成功，感谢您！',3000,'评价提示:')
               this.$nextTick(()=>{
                 this.$router.back()
               })

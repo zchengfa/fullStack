@@ -152,15 +152,22 @@
       },
       //立即购买
       buyNow(type) {
-        this.operationType = type
-        this.add()
+        this.operationTip(type,'您购买的商品已售罄，请等待店家补货')
       },
       //加入购物车
       addCart(type){
-        this.operationType = type
-        //点击加入购物车按钮，先通过查看token是否存在来判定用户是否已经登录，未登录则引导用户进入登录页面，若已登录，则进入下一步操作
-        this.add()
+        this.operationTip(type,'您要添加到购物车的商品已售罄，请等待店家补货')
       },
+      operationTip(type,message){
+        if (this.detailData.baseData.stocks){
+          this.operationType = type
+          this.add()
+        }
+        else {
+          this.$toast.showToast(message,3000,'非常抱歉:')
+        }
+      },
+      //点击加入购物车/立即购买按钮，先通过查看token是否存在来判定用户是否已经登录，未登录则引导用户进入登录页面，若已登录，则进入下一步操作
       add(){
         if (this.token) {
           //token存在，点击加入购物车按钮，显示确认加入购物车组件，并将要加入购物车的商品信息添加到productInfo对象中

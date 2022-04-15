@@ -76,26 +76,29 @@
         <button v-if="payment_status===3" @click="toComments">评价晒单</button>
       </div>
     </div>
+    <confirm-order :is-receive="isReceive" @click="confirmReceive" @receiveNone="receiveNone" @receiveHad="receiveHad"></confirm-order>
   </div>
 </template>
 
 <script>
 import NavBar from "@/components/common/navbar/NavBar.vue";
 import Scroll from "@/components/common/scroll/Scroll.vue";
-import {getUserOrderInfo,alipayRequest,confirmReceiveOrder,updateOrderStatus} from "@/network/cart";
+import ConfirmOrder from "@/components/content/order/ConfirmOrder.vue";
+import {getUserOrderInfo,alipayRequest} from "@/network/cart";
 import {getUserAddress} from "@/network/profile";
 import base64 from '@/assets/image/base64/base64'
+import {confirmReceiveMixins} from '@/common/mixins/mixins'
 export default {
   name: "order",
+  mixins:[confirmReceiveMixins],
   components:{
     NavBar,
-    Scroll
+    Scroll,
+    ConfirmOrder
   },
   data(){
     return {
-      order_id:'',
       goodsList:[],
-      user_id:'',
       payment:'1',
       payment_status:0,
       address:[],
@@ -146,30 +149,15 @@ export default {
           this.alipayRequestFun(orderObj)
         }
         else if(this.payment==='2'){
-          this.$toast.showToast('暂未提供微信支付功能，请期待后续完善')
+          this.$toast.showToast('暂未提供微信支付功能，请期待后续完善',3000,'操作提示:')
         }
       }
       else{
         this.$router.push('/addAddress')
       }
     },
-    //点击确认收货按钮，进行订单处理
-    confirmReceive() {
-      confirmReceiveOrder(this.user_id,this.order_id).then(res=>{
-        if (res){
-          updateOrderStatus(this.user_id,this.order_id,3).then(result=>{
-            result.status?this.payment_status = 3:null
-            this.$toast.showToast('确认收货成功')
-
-            this.$nextTick(()=>{
-              this.$refs.scroll.scroll.refresh()
-            })
-          })
-        }
-      })
-    },
     toComments(){
-      this.$toast.showToast('当前页面得评价功能还未完善，敬请期待')
+      this.$router.push({path:'/comments',query:{'order_id':this.order_id}})
     },
     alipayRequestFun(order){
       alipayRequest(order).then(res=>{

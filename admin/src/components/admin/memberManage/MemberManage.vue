@@ -18,11 +18,9 @@
 				<span class="last-login-time">{{scope.row.last_login_time}}</span>
 			</template>
 		</el-table-column>
-    <el-table-column label="操作" fixed="right" align="center">
+    <el-table-column label="操作">
       <template #default="scope">
-        <div class="operation-btn">
-          <el-button class="delete-btn" size="small" @click.prevent="deleteMember(scope.$index,tableData)">删除</el-button>
-        </div>
+        <el-button class="delete-btn" size="small" @click.prevent="deleteMember(scope.$index,tableData)">删除</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -127,8 +125,11 @@ export default defineComponent({
 	color: #ff5500;
 }
 .delete-btn{
+  position: relative;
+  left: 50%;
 	background-color: #ff0000;
 	color: #fff;
+  transform: translateX(-50%);
 }
 
 </style>

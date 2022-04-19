@@ -1,7 +1,9 @@
 <template>
   <div class="data-statistics">
+    <div class="summary">1</div>
     <pie-chart-statistics class="pie"></pie-chart-statistics>
     <BarChartStatistics class="bar"></BarChartStatistics>
+    <div>4</div>
   </div>
 </template>
 
@@ -20,8 +22,17 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.pie,.bar{
-  display: inline-block;
-  margin: 1rem;
+.data-statistics{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-items: center;
+  background-color: #212020;
+  overflow: hidden;
+}
+.summary{
+  width: 600px;
+  background-color: red;
+  height: 400px;
 }
 </style>

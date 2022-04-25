@@ -231,9 +231,9 @@ export default defineComponent({
   background-color: #f00;
 }
 .pagination{
-  margin-top: 1rem;
+  margin: 1rem auto;
   height: 3rem;
-
+  width: 60%;
 }
 .price .character{
   font-size: 12px;

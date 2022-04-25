@@ -199,4 +199,29 @@ export default defineComponent( {
 .footer-row .el-col{
   margin: 8vh auto 0;
 }
+@media screen and (max-width: 500px){
+  .mall-login-header{
+    display: none;
+
+  }
+  .mall-login-main{
+    height:100vh;
+    background-image: url("../assets/image/login/bg.jpeg");
+  }
+  .mall-login-main .mall-login-content{
+    position: relative;
+    top: 50%;
+    background-color: rgba(75, 72, 72, 0.4 );
+    transform: translateY(-50%);
+  }
+  .mall-login-content .content-col{
+    margin:  0 auto;
+    width: 100%;
+    background-color: transparent;
+    color: #FFFFFF;
+  }
+  .mall-login-footer{
+    display: none;
+  }
+}
 </style>

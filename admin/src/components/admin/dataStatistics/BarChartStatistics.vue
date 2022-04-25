@@ -219,7 +219,7 @@ export default defineComponent({
 
 <style scoped>
 #bar-chart-statistics{
-  width: 40vw;
+  width: 60vw;
   height: 40vh;
   border: 1px solid #a9a9a9;
 }

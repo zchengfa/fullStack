@@ -1,65 +1,93 @@
 <template>
-  <el-container class="menu-container shopM-con">
-    <div class="content">
-      <div class="administrator">
-        <div class="avatar-box">
-         <el-avatar v-if="!administrator.info.avatar" icon="el-icon-user-solid"></el-avatar>
-         <el-avatar v-else :src="administrator.info.avatar"></el-avatar>
+  <el-row class="nav-row">
+    <el-col class="nav-col">
+      <ul>
+        <li class="time">
+          <div>
+            <span>{{navLogic.time.year}}</span>
+            <span class="current-time">{{navLogic.time.currentTime}}</span>
+            <span>{{navLogic.time.week}}</span>
+          </div>
+        </li>
+        <li>
+          <a href="/">支持我们</a>
+        </li>
+        <li>
+          <a href="/">联系开发者</a>
+        </li>
+        <li>
+          <div class="administrator">
+            <div class="avatar-box">
+              <el-avatar v-if="!administrator.info.avatar" icon="el-icon-user-solid"></el-avatar>
+              <el-avatar v-else :src="administrator.info.avatar"></el-avatar>
+            </div>
+            <div class="user-name">
+              <span>管理员:{{administrator.info.account}}</span>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </el-col>
+  </el-row>
+  <el-row class="content-row">
+    <el-col class="content-col">
+      <el-container class="menu-container shopM-con">
+        <div class="content">
+          <el-menu class="menu">
+            <el-menu-item class="menu-item" v-for="(item,index) in shopMenu.menu" :key="index" :index="index+''">
+              <slot>
+                <el-icon v-if="index===0"><Goods></Goods></el-icon>
+                <el-icon v-if="index===1"><User></User></el-icon>
+                <el-icon v-if="index===2"><TrendCharts></TrendCharts></el-icon>
+                <el-button class="menu-btn" @click="changeMenuItem(index)" :class="{'menu-btn-active':shopMenu.currentIndex===index}">{{item}}</el-button>
+              </slot>
+            </el-menu-item>
+          </el-menu>
         </div>
-        <div class="user-name">
-          <span>管理员:{{administrator.info.account}}</span>
+      </el-container>
+      <el-container class="table-container shopM-con">
+        <div class="shop-mana" v-show="shopMenu.currentIndex===0" >
+          <div class="select-group">
+            <el-button class="add-btn" type="primary" size="small" @click="addProduct">+添加商品</el-button>
+            <div class="category-selector-box">
+              <span>分类选择：</span>
+              <el-select v-model="addProductLogic.categoryCheckOption" placeholder="全部" class="select">
+                <el-option v-for="item in addProductLogic.selectCategoryOptions" :key="item" :value="item" :label="item"></el-option>
+              </el-select>
+            </div>
+            <div class="brand-selector-box">
+              <span>品牌选择：</span>
+              <el-select v-model="addProductLogic.brandCheckOption" placeholder="全部" class="select">
+                <el-option v-for="item in addProductLogic.selectBrandOptions" :key="item" :value="item" :label="item"></el-option>
+              </el-select>
+            </div>
+            <div class="search-box">
+              <span>搜索：</span>
+              <el-input class="search-input" v-model="addProductLogic.searchKeyword" @keyup="searchProduct($event)" placeholder="输入商品ID/分类/商品名称" suffix-icon="el-icon-search"></el-input>
+            </div>
+            <div class="export-data">
+              <el-button type="success" size="small" @click="tableToExcel(tableLogic.tableData)">导出数据为Excel</el-button>
+            </div>
+          </div>
+          <shop-manage
+              :table-data="tableLogic.tableData"
+          ></shop-manage>
         </div>
-      </div>
-      <el-menu class="menu">
-        <el-menu-item class="menu-item" v-for="(item,index) in shopMenu.menu" :key="index" :index="index+''">
-          <slot>
-            <button class="menu-btn" @click="changeMenuItem(index)" :class="{'menu-btn-active':shopMenu.currentIndex===index}">{{item}}</button>
-          </slot>
-        </el-menu-item>
-      </el-menu>
-    </div>
-  </el-container>
-  <el-container class="table-container shopM-con">
-    <div class="shop-mana" v-show="shopMenu.currentIndex===0" >
-      <div class="select-group">
-        <el-button class="add-btn" type="primary" size="small" @click="addProduct">+添加商品</el-button>
-        <div class="category-selector-box">
-          <span>分类选择：</span>
-          <el-select v-model="addProductLogic.categoryCheckOption" placeholder="全部" class="select">
-            <el-option v-for="item in addProductLogic.selectCategoryOptions" :key="item" :value="item" :label="item"></el-option>
-          </el-select>
+        <div class="member-mana" v-show="shopMenu.currentIndex===1">
+          <div class="select-group">
+            <div class="search-box">
+              <span>搜索用户：</span>
+              <el-input class="search-input" v-model="tableLogic.memberManaSearchKeyword" @keyup="searchUser($event)" placeholder="输入用户身份/昵称/账号" suffix-icon="el-icon-search"></el-input>
+            </div>
+          </div>
+          <member-manage :table-data="tableLogic.memberData"></member-manage>
         </div>
-        <div class="brand-selector-box">
-          <span>品牌选择：</span>
-          <el-select v-model="addProductLogic.brandCheckOption" placeholder="全部" class="select">
-            <el-option v-for="item in addProductLogic.selectBrandOptions" :key="item" :value="item" :label="item"></el-option>
-          </el-select>
+        <div class="data-statistics" v-show="shopMenu.currentIndex===2">
+          <data-statistics></data-statistics>
         </div>
-        <div class="search-box">
-          <span>搜索：</span>
-          <el-input class="search-input" v-model="addProductLogic.searchKeyword" @keyup="searchProduct($event)" placeholder="输入商品ID/分类/商品名称" suffix-icon="el-icon-search"></el-input>
-        </div>
-        <div class="export-data">
-          <el-button type="success" size="small" @click="tableToExcel(tableLogic.tableData)">导出数据为Excel</el-button>
-        </div>
-      </div>
-      <shop-manage
-          :table-data="tableLogic.tableData"
-      ></shop-manage>
-    </div>
-    <div class="member-mana" v-show="shopMenu.currentIndex===1">
-			<div class="select-group">
-				<div class="search-box">
-				  <span>搜索用户：</span>
-				  <el-input class="search-input" v-model="tableLogic.memberManaSearchKeyword" @keyup="searchUser($event)" placeholder="输入用户身份/昵称/账号" suffix-icon="el-icon-search"></el-input>
-				</div>
-			</div>
-      <member-manage :table-data="tableLogic.memberData"></member-manage>
-    </div>
-    <div class="data-statistics" v-show="shopMenu.currentIndex===2">
-      <data-statistics></data-statistics>
-    </div>
-  </el-container>
+      </el-container>
+    </el-col>
+  </el-row>
   <add-product ref="ruleForm" v-show="addProductLogic.isShowAddProduct"
                @cancel-add-click="cancelAddClick"
                @confirm-add-click="confirmAddClick"
@@ -68,7 +96,8 @@
 <script lang="ts">
     import {reactive,defineComponent,onBeforeMount} from "vue";
     import {useRouter} from 'vue-router'
-    import {ElContainer,ElHeader,ElMain,ElTabs,ElTabPane} from "element-plus";
+    import {ElContainer,ElHeader,ElMain,ElTabs,ElTabPane,ElIcon} from "element-plus";
+    import {Goods,User,TrendCharts} from '@element-plus/icons-vue'
     import ShopManage from "../components/admin/shopManage/ShopManage.vue";
     import MemberManage from "../components/admin/memberManage/MemberManage.vue"
     import {getShopManageData,addProduct,getAdministratorInfo,getMemberManageData} from "../network/request";
@@ -78,23 +107,76 @@
     export default defineComponent({
       name: "admin",
       components:{
-        ElContainer,ElHeader,ElMain,ElTabs,ElTabPane,
+        ElContainer,ElHeader,ElMain,ElTabs,ElTabPane,ElIcon,
+        Goods,User,TrendCharts,
         ShopManage,
         MemberManage,
         DataStatistics,
         AddProduct
       },
       setup(){
-        const router = useRouter()
-        const token:string |null = sessionStorage.getItem('token')
-
         onBeforeMount(()=> {
           if (checkUserIsLogin()){
             getSMData()
             getAdminInfo()
             getMMData()
+            getTime()
+          }
+
+        })
+
+        const router = useRouter()
+        const token:string |null = sessionStorage.getItem('token')
+
+        let navLogic=reactive({
+          time:{
+            year:<string>getYear(),
+            week:<string>getWeek(),
+            currentTime:<string>''
           }
         })
+
+        function getYear(){
+          let year = new Date().getFullYear()
+          let month = new Date().getMonth()
+          let date = new Date().getDate()
+          return year+'-'+month+'-'+date
+        }
+
+        function getTime(){
+          setInterval(()=>{
+            let hour = new Date().getHours()
+            let minutes = new Date().getMinutes().toString()
+            let seconds = new Date().getSeconds().toString()
+            if (Number(minutes) < 10){
+              minutes = '0' + minutes
+            }
+            if (Number(seconds) < 10){
+              seconds = '0' + seconds
+            }
+            navLogic.time.currentTime = hour+':'+minutes+':'+seconds
+          },1000)
+        }
+
+        function getWeek(){
+          let day = new Date().getDay()
+          switch (day) {
+            case 0:
+              return '星期天';
+            case 1:
+              return '星期一';
+            case 2:
+              return '星期二';
+            case 3:
+              return '星期三';
+            case 4:
+              return '星期四';
+            case 5:
+              return '星期五';
+            case 6:
+              return '星期六';
+          }
+        }
 
         /**
          * @param administrator 用管理员页面展示管理员信息
@@ -299,6 +381,7 @@
         }
 
         return {
+          navLogic,
           administrator,
           tableLogic,
           addProductLogic,
@@ -415,92 +498,143 @@
     </script>
 
     <style scoped>
-    .shopM-con{
-      float: left;
-      height: 100vh;
-    }
-    .menu-container{
-      margin-left: 0;
-      width: 12vw;
-      min-width: 10rem;
-      color: #fff;
-    }
-    .table-container{
-      margin-left: 1rem;
-      width: 87vw;
-    }
-    .content{
+    .nav-row{
+      position: fixed;
+      top:0;
+      left: 0;
       width: 100%;
+      z-index: 10;
+    }
+    .nav-col{
+      box-shadow:0 .2rem .2rem 0 #96979a;
+    }
+    .nav-col ul{
+      display: flex;
+      justify-items: center;
+      align-items: center;
+      float: right;
+      margin: 0;
+      height: 3rem;
+      min-width: 1000px;
+    }
+    ul .time span{
+      display: inline-block;
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+    ul .time .current-time{
+      width: 6rem;
+    }
+    .nav-col ul li{
+      list-style-type: none;
+      padding: 0 2rem;
+      height: 3rem;
+      line-height: 3rem;
+    }
+    a{
+      display: block;
+      height: 100%;
+      text-decoration: none;
+    }
+    a::after{
+      display: inline-block;
+      padding-left: 2rem;
+      content: '|';
+      height: 2rem;
+      color: black;
+    }
+    li .administrator{
+      display: flex;
       height: 100%;
     }
-    .administrator{
+    .administrator .user-name span{
+      margin-left: 1rem;
+    }
+    .content-row{
+      padding-top:70px;
+      overflow: hidden;
+    }
+    .content-col{
+      display: flex;
+      height: calc(100vh - 87px);
+    }
+    .shopM-con::-webkit-scrollbar{
+      display: none;
+    }
+    .menu-container{
+      flex: 1;
+      width: 10vw;
+      min-width: 150px;
+    }
+    .menu-container .content{
+      margin: 0 auto;
       width: 100%;
-      height: 14%;
-      font-size:smaller;
-      background-color: #343333;
-    }
-    .avatar-box{
-      padding-top: 1rem;
-    }
-    .user-name{
-      padding-top: 1rem;
     }
     .menu{
       width: 100%;
-      height: 86%;
-      background-color: #4d4b4b;
+      height: 100%;
     }
-    .menu-item:hover{
-      background-color: #5d5858;
+    .menu button:hover{
+      color: #0a36e1;
     }
-    .menu-btn{
-      width: 100%;
-      height: 96%;
-      border: none;
-      background-color: inherit;
-      color: #ccc9c9;
-      font-weight: bolder;
-      cursor: pointer;
-    }
-    .menu-btn-active{
-      color: #32b1e0;
-    }
-    .shop-mana,.member-mana{
+    .menu button{
+      padding-left: 0;
       width: 100%;
       height: 100%;
+      border: none;
     }
     .select-group{
       display: flex;
       align-items: center;
-      margin-top: 1rem;
-      width: 76%;
-      min-width: 800px;
-      height: 10%;
+      margin-top: 2rem;
+      width: 80%;
+      min-width: 1000px;
+      height: 5rem;
       border: 1px solid #dedada;
     }
-    .add-btn{
+    .select-group div,.select-group button{
       margin-left: 1rem;
-    }
-    .category-selector-box,.brand-selector-box{
-      flex: 1;
-    }
-    .select{
-      width: 6rem;
-    }
-    .search-box{
       margin-right: 1rem;
-      flex: 1.3;
     }
-    .category-selector-box,
-    .brand-selector-box,
+    .select-group .select{
+      width: 7rem;
+    }
+    .select-group .search-box{
+      display: flex;
+      justify-items: center;
+      align-items: center;
+      min-width: 260px;
+    }
     .search-box span{
-      font-size: 14px;
-      font-weight: bold;
+      flex: 2;
+      min-width: 3rem;
     }
     .search-box .search-input{
-      width: 60%;
+      flex: 9;
     }
-    .export-data button{
-      margin: 0 1rem;
+    .table-container{
+      flex: 10;
     }
+
+    .table-container div.shop-mana,
+    .table-container div.member-mana{
+      width: calc(100vw - 15rem);
+    }
+    .member-mana .select-group{
+      margin-left: 1rem;
+      width: 50%;
+      min-width: 300px;
+    }
+    .member-mana .select-group span{
+      min-width: 6rem;
+    }
+    .data-statistics{
+      margin: 0 auto;
+      width: 88vw;
+
+      background-color: rgb(242, 236, 247);
+    }
+    /*.data-statistics::-webkit-scrollbar{*/
+    /*  display: none;*/
+    /*}*/
     </style>

@@ -101,7 +101,10 @@ export default defineComponent({
       })()
       let option:EChartsOption = {
         title: {
-          text: '近期商品销售量走势图'
+          text: '近期商品销售量走势图',
+          textStyle:{
+            fontSize:14
+          }
         },
         tooltip: {
           trigger: 'axis',
@@ -167,7 +170,10 @@ export default defineComponent({
           {
             name: '销量折线',
             type: 'line',
-            data: seriesTwoData
+            data: seriesTwoData,
+            lineStyle:{
+              color:'red'
+            }
           }
         ]
       }
@@ -212,6 +218,10 @@ export default defineComponent({
         })
       },2100)
       barChart.setOption(option)
+      //让图表的大小根据窗口大小改变而改变
+      window.addEventListener('resize',()=>{
+        barChart.resize()
+      })
     })
   }
 })
@@ -219,8 +229,10 @@ export default defineComponent({
 
 <style scoped>
 #bar-chart-statistics{
-  width: 60vw;
-  height: 40vh;
+  float: right;
+  width: 40vw;
+  height: 50vh;
   border: 1px solid #a9a9a9;
+  background-color: #FFFFFF;
 }
 </style>

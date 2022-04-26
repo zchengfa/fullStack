@@ -3,6 +3,7 @@ import {createRouter,createWebHistory} from "vue-router";
 const admin = () => import('../views/Admin.vue')
 const login = () => import('../components/Login.vue')
 const resetPassword = () => import('../components/ResetPassword.vue')
+const L = ()=> import('../components/admin/dataStatistics/UserLocationChartStatistics.vue')
 
 const routes = [
     {
@@ -23,6 +24,10 @@ const routes = [
     {
         path: '/resetPassword',
         component: resetPassword
+    },
+    {
+        path: '/l',
+        component:L
     }
 ]
 

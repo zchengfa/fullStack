@@ -60,10 +60,12 @@
     <div class="item">
       <PieChartStatistics></PieChartStatistics>
     </div>
-    <div class="item">
+    <div class="item bar-summary">
       <BarChartStatistics></BarChartStatistics>
     </div>
-    <div class="item">3</div>
+    <div class="item">
+      <UserLocationChartStatistics></UserLocationChartStatistics>
+    </div>
   </div>
   <div class="rank"></div>
 </template>
@@ -72,6 +74,7 @@
 import {defineComponent} from "vue";
 import PieChartStatistics from "./PieChartStatistics.vue";
 import BarChartStatistics from "./BarChartStatistics.vue";
+import UserLocationChartStatistics from "./UserLocationChartStatistics.vue";
 import {ElIcon,ElButton} from 'element-plus'
 import {Warning} from '@element-plus/icons-vue'
 
@@ -81,7 +84,8 @@ export default defineComponent({
     Warning,
     ElButton,
     PieChartStatistics,
-    BarChartStatistics
+    BarChartStatistics,
+    UserLocationChartStatistics
   }
 })
 </script>
@@ -112,14 +116,16 @@ export default defineComponent({
 }
 .data-summary .item:first-child{
   height: 16vh;
-  background-color: rgba(61, 62, 63, 0.4);
-  color: #FFFFFF;
+  background-color: #fff;
   letter-spacing: .1rem;
 }
 .item h5{
   padding: .5rem;
   margin: 0;
   text-align: left;
+}
+.data-summary .bar-summary{
+  height: 50vh;
 }
 .item.info-summary h5{
   background-color: rgb(242, 236, 247);
@@ -142,8 +148,8 @@ export default defineComponent({
   align-items: center;
 }
 .info-data .data-item:nth-child(2){
-  border-left: 1px solid #FFFFFF;
-  border-right: 1px solid #FFFFFF;
+  border-left: 2px solid #e51313;
+  border-right: 2px solid #ea1414;
 }
 .data-item div:first-child{
   margin-right: 0;
@@ -159,7 +165,6 @@ export default defineComponent({
   height: 4rem;
   line-height: 4rem;
   border-radius: 50%;
-  background-color: #e5e0e0;
 }
 .info-data img{
   position: relative;
@@ -168,8 +173,8 @@ export default defineComponent({
   transform: translateY(-50%);
 }
 .delivery{
-  color: #FFFFFF;
-  background-color: rgba(0, 0, 0, 0.7);
+  /*color: #FFFFFF;*/
+  /*background-color: rgba(0, 0, 0, 0.7);*/
 }
 .data-summary .delivery{
   height: 30vh;
@@ -179,7 +184,7 @@ export default defineComponent({
   width: 48%;
   height: 80%;
   float: left;
-  background-color: #a29c9c;
+  background-color: #fff;
 }
 .delivery .status-box:last-child{
   float: right;
@@ -208,7 +213,7 @@ export default defineComponent({
   border-radius: 50%;
 }
 .status-box .finish::before{
-  background-color: greenyellow;
+  background-color: #578314;
 }
 .status-box div p{
   margin-bottom: .5rem;
@@ -219,12 +224,12 @@ export default defineComponent({
   text-indent: unset;
 }
 .status-box .finish-count{
-  color: greenyellow;
+  color: #507020;
 }
 .rank{
   float: right;
   width: 20%;
   height: 100%;
-  background-color: #2c3e50;
+  background-color: #9ca9b6;
 }
 </style>

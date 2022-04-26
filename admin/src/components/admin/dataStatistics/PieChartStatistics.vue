@@ -67,6 +67,11 @@ export default defineComponent({
         ]
       }
       pieChart.setOption(option)
+
+      //让图表的大小根据窗口大小改变而改变
+      window.addEventListener('resize',()=>{
+        pieChart.resize()
+      })
     })
   }
 })
@@ -77,5 +82,6 @@ export default defineComponent({
   width: 40vw;
   height: 40vh;
   border: 1px solid #a29d9d;
+  background-color: #FFFFFF;
 }
 </style>

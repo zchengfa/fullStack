@@ -76,6 +76,7 @@
         <span>地区</span>
         <span>消费</span>
       </div>
+      <div class="none-rank">暂无用户上榜</div>
     </div>
     <div class="product-sales-rank">
       <h5>商品销量排行榜</h5>
@@ -85,6 +86,7 @@
         <span>销量</span>
         <span>总金额</span>
       </div>
+      <div class="none-rank">暂无商品上榜</div>
     </div>
     <div class="keyword-search-rank">
       <h5>关键词搜索排行榜</h5>
@@ -93,6 +95,7 @@
         <span>关键词</span>
         <span>搜索次数</span>
       </div>
+      <div class="none-rank">暂无搜索词上榜</div>
     </div>
   </div>
 </template>
@@ -264,7 +267,7 @@ export default defineComponent({
   margin: 0 auto 2vh;
   width: 96%;
   height: 50%;
-  background-color: #cecfd0;
+
   overflow-y: scroll;
 }
 .rank h5{
@@ -291,5 +294,12 @@ export default defineComponent({
   font-weight: bold;
   text-align: center;
   transform: translateY(-50%);
+}
+.none-rank{
+  position: relative;
+  top:50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  color: #8a8686;
 }
 </style>

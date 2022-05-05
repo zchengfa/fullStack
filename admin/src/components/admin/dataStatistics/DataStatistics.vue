@@ -76,7 +76,8 @@
         <span>地区</span>
         <span>消费</span>
       </div>
-      <div class="none-rank">暂无用户上榜</div>
+      <progress-bar :progress="49" :item='0'></progress-bar>
+      <div class="none-rank" v-show="false">暂无用户上榜</div>
     </div>
     <div class="product-sales-rank">
       <h5>商品销量排行榜</h5>
@@ -86,7 +87,8 @@
         <span>销量</span>
         <span>总金额</span>
       </div>
-      <div class="none-rank">暂无商品上榜</div>
+      <progress-bar :progress="83" :item='1'></progress-bar>
+      <div class="none-rank" v-show="false">暂无用户上榜</div>
     </div>
     <div class="keyword-search-rank">
       <h5>关键词搜索排行榜</h5>
@@ -95,18 +97,21 @@
         <span>关键词</span>
         <span>搜索次数</span>
       </div>
-      <div class="none-rank">暂无搜索词上榜</div>
+      <progress-bar :progress="8 " :item='2'></progress-bar>
+      <div class="none-rank" v-show="false">暂无用户上榜</div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import {defineComponent,onBeforeMount} from "vue";
 import PieChartStatistics from "./PieChartStatistics.vue";
 import BarChartStatistics from "./BarChartStatistics.vue";
 import UserLocationChartStatistics from "./UserLocationChartStatistics.vue";
 import {ElIcon,ElButton} from 'element-plus'
 import {Warning} from '@element-plus/icons-vue'
+import ProgressBar from '../../common/ProgressBar.vue'
+import {getStatisticsData} from '../../../network/request'
 
 export default defineComponent({
   name: "DataStatistics",
@@ -115,7 +120,20 @@ export default defineComponent({
     ElButton,
     PieChartStatistics,
     BarChartStatistics,
-    UserLocationChartStatistics
+    UserLocationChartStatistics,
+    ProgressBar
+  },
+  setup(){
+    onBeforeMount(()=>{
+      getSData()
+    })
+
+    //获取统计所需要的数据
+    function getSData(){
+      getStatisticsData().then(res=>{
+        console.log(res)
+      })
+    }
   }
 })
 </script>

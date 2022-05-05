@@ -119,6 +119,9 @@ require('./router/admin/shopManage')(app)
 //导入用户管理模块
 require('./router/admin/memberManage')(app)
 
+//导入数据统计模块
+require('./router/admin/statistics')(app)
+
 //导入首页内容详情模块
 require('./router/homeContent/bannerDetail')(app)
 

@@ -236,7 +236,7 @@
                 'sell_type':this.detailData.baseData.sell_type,
                 'product_type':this.detailData.baseData.product_type
               })
-              submitOrder(userInfo.user_id,orderArr,e.count,this.detailData.baseData.price).then(res=>{
+              submitOrder(userInfo.user_id,orderArr,e.count,this.detailData.baseData.price*e.count).then(res=>{
                 if (res.data.order_id){
                   //将订单编号分发给vuex状态管理
                   this.$store.dispatch('saveOrderID',res.data.order_id)

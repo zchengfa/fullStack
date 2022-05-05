@@ -240,8 +240,10 @@
 
               total_num += item.quantity
               total_price += item.quantity * item.product_price
+              
             }
           })
+          
           submitOrder(this.user_id,orderArr,total_num,total_price).then(res=>{
             if (res.data.order_id){
               //将订单编号分发给vuex状态管理

@@ -82,7 +82,7 @@
           </div>
           <member-manage :table-data="tableLogic.memberData"></member-manage>
         </div>
-        <div class="data-statistics" v-show="shopMenu.currentIndex===2">
+        <div class="data-statistics" v-if="shopMenu.currentIndex===2">
           <data-statistics></data-statistics>
         </div>
       </el-container>

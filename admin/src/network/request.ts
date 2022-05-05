@@ -67,3 +67,9 @@ export function deleteUser(user_id:string){
 		}
 	})
 }
+
+export function getStatisticsData(){
+    return Get({
+        url:'statisticsData'
+    })
+}

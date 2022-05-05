@@ -8,7 +8,9 @@ module.exports = app =>{
 
   //接收前端发起的提交订单请求,将订单信息存入对应的用户下，并返回订单编号给前端
   router.post('/submitOrder',(req,res)=>{
+    
     const paramsObj = JSON.parse(JSON.stringify(req.body))
+    
     let user_id = paramsObj.user_id
     let total_num = paramsObj.total_num
     let total_price = paramsObj.total_price

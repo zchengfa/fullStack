@@ -181,3 +181,14 @@ Vue.directive('loading',{
   }
 })
 ```
+##### 八、node中使用mysql多表联查时报错("Column 'user_id' in field list is ambiguous")(user_id列在字段列表中存在歧义、模棱两可)
+###### 原因：出现该错误的原因是在使用多表联查时，两个表中的字段列表中都含有user_id字段，在查询的结果字段中又包含user_id字段，mysql不知道你需要显示的是哪个表中的user_id字段
+###### 错误的sql语句
+```javascript
+//查询的user_id字段不明确，应该指明是mall_store_order别名（O）表中的或者mall_user别名（U）表中的user_id字段
+const selectQuery = `SELECT user_id,account,username,total_price FROM mall_store_order as O INNER JOIN mall_user as U ON O.user_id = U.user_id and O.payment_status = 2`
+```
+###### 正确的sql语句
+```javascript
+const selectQuery = `SELECT O.user_id,account,username,total_price FROM mall_store_order as O INNER JOIN mall_user as U ON O.user_id = U.user_id and O.payment_status = 2`
+```

@@ -51,6 +51,9 @@ const mysql_query = {
     selectAllByLike(table_name,fields,keyword){
         return `SELECT * FROM ${table_name} WHERE CONCAT(${fields}) Like ${keyword}`
     },
+    selectWithInnerJoin(tableOne,tableTwo,fields,aliasOne,aliasTwo,confident){
+        return `SELECT ${fields} FROM ${tableOne} as ${aliasOne} INNER JOIN ${tableTwo} as ${aliasTwo} ON ${confident}`
+    },
     insert(table_name,fields,values){
         return `INSERT INTO ${table_name} (${fields}) VALUES (${values})`
     },

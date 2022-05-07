@@ -64,7 +64,7 @@
       <BarChartStatistics></BarChartStatistics>
     </div>
     <div class="item">
-      <UserLocationChartStatistics></UserLocationChartStatistics>
+<!--      <UserLocationChartStatistics></UserLocationChartStatistics>-->
     </div>
   </div>
   <div class="rank">
@@ -73,11 +73,20 @@
       <div class="title">
         <span>排名</span>
         <span>用户</span>
-        <span>地区</span>
         <span>消费</span>
       </div>
-      <progress-bar :progress="49" :item='0'></progress-bar>
-      <div class="none-rank" v-show="false">暂无用户上榜</div>
+      <div class="consumption">
+        <div class="rank-item" v-for="(item,index) in rank.userConsumption" :key="index">
+          <div>
+            <span>{{index+1}}</span>
+            <span v-show="item['username']">{{item['username']}}</span>
+            <span v-show="!item['username']">{{item['account']}}</span>
+            <span>{{item['totalConsumption']}}</span>
+          </div>
+          <progress-bar :progress="Math.round(Math.random()*90)" :item='index'></progress-bar>
+        </div>
+      </div>
+      <div class="none-rank" v-show="rank.userConsumption.length">暂无用户上榜</div>
     </div>
     <div class="product-sales-rank">
       <h5>商品销量排行榜</h5>
@@ -87,7 +96,6 @@
         <span>销量</span>
         <span>总金额</span>
       </div>
-      <progress-bar :progress="83" :item='1'></progress-bar>
       <div class="none-rank" v-show="false">暂无用户上榜</div>
     </div>
     <div class="keyword-search-rank">
@@ -97,14 +105,13 @@
         <span>关键词</span>
         <span>搜索次数</span>
       </div>
-      <progress-bar :progress="8 " :item='2'></progress-bar>
       <div class="none-rank" v-show="false">暂无用户上榜</div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent,onBeforeMount} from "vue";
+import {defineComponent, onBeforeMount, reactive} from "vue";
 import PieChartStatistics from "./PieChartStatistics.vue";
 import BarChartStatistics from "./BarChartStatistics.vue";
 import UserLocationChartStatistics from "./UserLocationChartStatistics.vue";
@@ -128,11 +135,19 @@ export default defineComponent({
       getSData()
     })
 
+    let rank = reactive({
+      userConsumption:<string[]>[]
+    })
+
     //获取统计所需要的数据
     function getSData(){
       getStatisticsData().then(res=>{
-        console.log(res)
+        rank.userConsumption = res.data[0].userConsumption
       })
+    }
+
+    return {
+      rank
     }
   }
 })
@@ -303,15 +318,22 @@ export default defineComponent({
   min-height: 32px;
   background-color: #fff;
 }
+.product-sales-rank .title span{
+  width: 25%;
+}
 .title span{
   position: relative;
   top: 50%;
   display: inline-block;
-  width: 25%;
+  width: 33%;
   font-size: xx-small;
   font-weight: bold;
   text-align: center;
   transform: translateY(-50%);
+}
+.rank-item span{
+  display: inline-block;
+  text-align: center;
 }
 .none-rank{
   position: relative;

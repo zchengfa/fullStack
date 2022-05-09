@@ -57,14 +57,15 @@
         </div>
       </div>
     </div>
-    <div class="item">
-      <PieChartStatistics></PieChartStatistics>
+    <div class="item pie-summary">
+      <PieChartStatistics class="pie"></PieChartStatistics>
+      <progress-bar class="circle-bar" bar-type="circle" :progress="100" :item="0"></progress-bar>
     </div>
     <div class="item bar-summary">
       <BarChartStatistics></BarChartStatistics>
     </div>
     <div class="item">
-<!--      <UserLocationChartStatistics></UserLocationChartStatistics>-->
+      <UserLocationChartStatistics></UserLocationChartStatistics>
     </div>
   </div>
   <div class="rank">
@@ -80,10 +81,10 @@
           <div>
             <span>{{index+1}}</span>
             <span v-show="item['username']">{{item['username']}}</span>
-            <span v-show="!item['username']">{{item['account']}}</span>
-            <span>{{item['totalConsumption']}}</span>
+            <span v-show="!item['username']">{{dealUserPhoneNumber(item['account'])}}</span>
+            <span>{{dealBigNumber(item['totalConsumption'])}}</span>
           </div>
-          <progress-bar :progress="Math.round(Math.random()*90)" :item='index'></progress-bar>
+          <progress-bar class="rank-bar" :progress="item['percent']" :item='index'></progress-bar>
         </div>
       </div>
       <div class="none-rank" v-show="!rank.userConsumption.length">暂无用户上榜</div>
@@ -101,10 +102,10 @@
           <div>
             <span>{{index+1}}</span>
             <span>{{item['type']}}</span>
-            <span>{{item['sales']}}</span>
-            <span>{{item['consumption']}}</span>
+            <span>{{dealBigNumber(item['sales'])}}</span>
+            <span>{{dealBigNumber(item['consumption'])}}</span>
           </div>
-          <progress-bar :progress="Math.round(Math.random()*90)" :item='index+rank.userConsumption.length'></progress-bar>
+          <progress-bar class="rank-bar" :progress="item['percent']" :item='index+rank.userConsumption.length'></progress-bar>
         </div>
       </div>
       <div class="none-rank" v-show="!rank.productSales.length">暂无用户上榜</div>
@@ -121,9 +122,9 @@
           <div>
             <span>{{index+1}}</span>
             <span>{{item['word']}}</span>
-            <span>{{item['search_count']}}</span>
+            <span>{{dealBigNumber(item['search_count'])}}</span>
           </div>
-          <progress-bar :progress="Math.round(Math.random()*90)" :item='index+rank.userConsumption.length+rank.productSales.length'></progress-bar>
+          <progress-bar class="rank-bar" :progress="item['percent']" :item='index+rank.userConsumption.length+rank.productSales.length'></progress-bar>
         </div>
       </div>
       <div class="none-rank" v-show="!rank.words.length">暂无用户上榜</div>
@@ -165,15 +166,71 @@ export default defineComponent({
     //获取统计所需要的数据
     function getSData(){
       getStatisticsData().then(res=>{
-        console.log(res)
-        rank.userConsumption = res.data[0].userConsumption
-        rank.productSales = res.data[1].productSales
-        rank.words = res.data[2].words
+        rank.userConsumption = dealPercent(res.data[0].userConsumption,'totalConsumption')
+        rank.productSales = dealPercent(res.data[1].productSales,'sales')
+        rank.words = dealPercent(res.data[2].words,'search_count')
       })
     }
 
+    //处理较大的数字
+    function dealBigNumber(num:number){
+      let numString:string = num.toString()
+
+      //判断数字中是否含有小数点
+      if (numString.indexOf('.')!==-1){
+        //有小数点，截取小数点前的所有数字
+        let subStringNum:string = numString.substr(0,numString.indexOf('.'))
+        return returnNum(subStringNum)
+      }
+      else{
+        return returnNum(numString)
+      }
+
+      function returnNum(subStringNum:string){
+        let numLength:number = subStringNum.length
+        if (numLength>=6&&numLength<9){
+          let thousandsString:string = (Number(subStringNum)/10000).toString().substring(0,(Number(subStringNum)/10000).toString().indexOf('.'))
+          return thousandsString + '万+'
+        }
+        else if (numLength>=9){
+          let hundredMillion:string = (Number(subStringNum)/100000000).toString().substring(0,(Number(subStringNum)/100000000).toString().indexOf('.'))
+          return hundredMillion + '亿+'
+        }
+        else {
+          return num
+        }
+      }
+    }
+
+    //处理用户的手机号码
+    function dealUserPhoneNumber(tel:number){
+      let telNum:number = tel.toString().length
+      if (telNum!==11){
+        throw new Error('your telephone number is illegal')
+      }
+      else{
+        return tel.toString().replace(tel.toString().substr(3,4),'****')
+      }
+    }
+
+    //处理进度条的百分比
+    function dealPercent(arr:string[],dealArg:any){
+      let total:number = 0
+      arr.map(item=>{
+        total += Number(item[dealArg])
+      })
+
+      arr.map((item:any)=>{
+        item['percent'] = (item[dealArg]/total)*100
+        item['percent'] = Math.round(Number(Number(item['percent']).toFixed(2)))
+      })
+      return arr
+    }
+
     return {
-      rank
+      rank,
+      dealBigNumber,
+      dealUserPhoneNumber
     }
   }
 })
@@ -278,6 +335,13 @@ export default defineComponent({
 .delivery .status-box:last-child{
   float: right;
 }
+.pie-summary .pie{
+  float: left;
+}
+.pie-summary .circle-bar{
+  float: right;
+}
+
 .status-box div{
   display: inline-block;
   width: 48%;
@@ -328,6 +392,9 @@ export default defineComponent({
   margin: 0 auto 2vh;
   width: 96%;
   height: 50%;
+}
+.rank-box{
+  height: 80%;
   overflow-y: scroll;
 }
 .rank h5{
@@ -358,9 +425,37 @@ export default defineComponent({
   text-align: center;
   transform: translateY(-50%);
 }
+.rank-item{
+  margin: 2vh auto;
+}
+.rank-item .rank-bar{
+  width: 86%;
+  margin: 1vh auto;
+}
 .rank-item span{
   display: inline-block;
   text-align: center;
+  width: 25%;
+  font-size: 12px;
+  color: #8a8686;
+}
+.rank-item:first-child div:first-child span:first-child{
+  font-size: 20px;
+  color: #ea1f1f;
+  font-weight: bolder;
+}
+.rank-item:nth-child(2) div:first-child span:first-child{
+  font-size: 18px;
+  color: #2121d2;
+  font-weight: bold;
+}
+.rank-item:nth-child(3) div:first-child span:first-child{
+  font-size: 16px;
+  color: #cc5a1d;
+}
+.consumption .rank-item span,
+.keywords .rank-item span{
+  width: 33%;
 }
 .none-rank{
   position: relative;
@@ -368,5 +463,9 @@ export default defineComponent({
   transform: translateY(-50%);
   font-size: 13px;
   color: #8a8686;
+}
+.circle-bar{
+  width: 20vw;
+  height: 20vw;
 }
 </style>

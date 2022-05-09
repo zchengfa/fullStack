@@ -42,19 +42,19 @@ function findAllIndexByObjectValue(arr,objectProperty,objectValue){
     }
     return resultArr
 }
-function sortArray(arr,sortArg){
-    let temp = null
-
-    arr.map((item,index)=>{
-        if (index+1<arr.length){
-            if (arr[index][sortArg]< arr[index+1][sortArg]){
-                temp = arr[index]
-                arr[index] = arr[index+1]
-                arr[index+1] = temp
+function sortArray(array,sortArg){
+    let length = array.length
+    let i,j,temp
+    for (i = length -1;0<i;i--){
+        for (j = 0;j<i;j++){
+            if (array[j][sortArg]< array[j+1][sortArg]){
+                temp = array[j]
+                array[j] = array[j+1]
+                array[j+1] = temp
             }
         }
-    })
-    return arr
+    }
+    return array
 }
 module.exports = {
     deDuplication,

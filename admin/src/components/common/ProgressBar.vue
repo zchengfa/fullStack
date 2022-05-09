@@ -45,10 +45,12 @@ export default defineComponent({
 .progress-bar{
   position: relative;
   width: 100%;
+  height: 12px;
+  overflow: hidden;
 }
 .progress-bar div{
   position: absolute;
-  height: 12px;
+  height: 100%;
   width: 100%;
   border-radius: 6px;
 }

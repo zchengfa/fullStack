@@ -75,7 +75,7 @@
         <span>用户</span>
         <span>消费</span>
       </div>
-      <div class="consumption">
+      <div class="consumption rank-box">
         <div class="rank-item" v-for="(item,index) in rank.userConsumption" :key="index">
           <div>
             <span>{{index+1}}</span>
@@ -86,7 +86,7 @@
           <progress-bar :progress="Math.round(Math.random()*90)" :item='index'></progress-bar>
         </div>
       </div>
-      <div class="none-rank" v-show="rank.userConsumption.length">暂无用户上榜</div>
+      <div class="none-rank" v-show="!rank.userConsumption.length">暂无用户上榜</div>
     </div>
     <div class="product-sales-rank">
       <h5>商品销量排行榜</h5>
@@ -96,7 +96,18 @@
         <span>销量</span>
         <span>总金额</span>
       </div>
-      <div class="none-rank" v-show="false">暂无用户上榜</div>
+      <div class="sales rank-box">
+        <div class="rank-item" v-for="(item,index) in rank.productSales" :key="index">
+          <div>
+            <span>{{index+1}}</span>
+            <span>{{item['type']}}</span>
+            <span>{{item['sales']}}</span>
+            <span>{{item['consumption']}}</span>
+          </div>
+          <progress-bar :progress="Math.round(Math.random()*90)" :item='index+rank.userConsumption.length'></progress-bar>
+        </div>
+      </div>
+      <div class="none-rank" v-show="!rank.productSales.length">暂无用户上榜</div>
     </div>
     <div class="keyword-search-rank">
       <h5>关键词搜索排行榜</h5>
@@ -105,7 +116,17 @@
         <span>关键词</span>
         <span>搜索次数</span>
       </div>
-      <div class="none-rank" v-show="false">暂无用户上榜</div>
+      <div class="keywords rank-box">
+        <div class="rank-item" v-for="(item,index) in rank.words" :key="index">
+          <div>
+            <span>{{index+1}}</span>
+            <span>{{item['word']}}</span>
+            <span>{{item['search_count']}}</span>
+          </div>
+          <progress-bar :progress="Math.round(Math.random()*90)" :item='index+rank.userConsumption.length+rank.productSales.length'></progress-bar>
+        </div>
+      </div>
+      <div class="none-rank" v-show="!rank.words.length">暂无用户上榜</div>
     </div>
   </div>
 </template>
@@ -136,13 +157,18 @@ export default defineComponent({
     })
 
     let rank = reactive({
-      userConsumption:<string[]>[]
+      userConsumption:<string[]>[],
+      productSales:<string[]>[],
+      words:<string[]>[]
     })
 
     //获取统计所需要的数据
     function getSData(){
       getStatisticsData().then(res=>{
+        console.log(res)
         rank.userConsumption = res.data[0].userConsumption
+        rank.productSales = res.data[1].productSales
+        rank.words = res.data[2].words
       })
     }
 
@@ -296,11 +322,12 @@ export default defineComponent({
   background-color: #fff;
   overflow-y: scroll;
 }
-.rank div{
+.rank .gold-user-rank,
+.rank .product-sales-rank,
+.rank .keyword-search-rank{
   margin: 0 auto 2vh;
   width: 96%;
   height: 50%;
-
   overflow-y: scroll;
 }
 .rank h5{

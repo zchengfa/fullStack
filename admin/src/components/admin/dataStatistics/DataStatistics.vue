@@ -59,7 +59,7 @@
     </div>
     <div class="item pie-summary">
       <PieChartStatistics class="pie"></PieChartStatistics>
-      <progress-bar class="circle-bar" bar-type="circle" :progress="100" :item="0"></progress-bar>
+      <progress-bar class="circle-bar" bar-type="circle" :progress="100" :item="0" circle-border-color="yellow" circle-text-color="red" circle-progress-color="blue"></progress-bar>
     </div>
     <div class="item bar-summary">
       <BarChartStatistics></BarChartStatistics>

@@ -7,7 +7,7 @@
   <div class="bar-bg">
     <div class="second-circle"></div>
     <div class="first-circle"></div>
-    <div class="mask"><span>{{percent.currentPercent}}</span></div>
+    <div class="mask"><span class="percent">{{percent.currentPercent}}</span></div>
   </div>
 </div>
 </template>
@@ -32,12 +32,16 @@ export default defineComponent({
         let barBox = <HTMLElement> document.getElementsByClassName('progress-bar').item(item.value)
         let percentEl = <HTMLElement> document.getElementsByClassName('percent').item(item.value)
         if (barBox.clientWidth){
+          //随机生成滚动条的颜色
           let rgb = `rgb(${Math.random()*255},${Math.random()*255},${Math.random()*255})`
           progressBar.style.width = '0'
           progressBar.style.backgroundColor = rgb
           let currentPercent = 0
+
+          //设置定时器
           let timer = setInterval(()=>{
 
+            //当百分比大于等于时，清除定时器，百分比显示给定的百分比
             if (currentPercent>=barPercent){
               percent.currentPercent = barPercent+'%'
               clearInterval(timer)
@@ -57,38 +61,86 @@ export default defineComponent({
         }
       }
       else{
-        function changeCircleProgress(item:any){
-          console.log(arguments[Symbol.iterator])
-          let circleElOne =<HTMLElement> document.getElementsByClassName('first-circle').item(item.value)
-          let circleElTwo =<HTMLElement> document.getElementsByClassName('second-circle').item(item.value)
-          let clipWidth = (circleElOne.clientWidth)/2 + 'px'
-          circleElOne.style.clip=`rect(auto,${clipWidth},auto,auto)`
-          circleElTwo.style.clip=`rect(auto,auto,auto,${clipWidth})`
+        //获取圆1与圆2
+        let circleElOne =<HTMLElement> document.getElementsByClassName('first-circle').item(item.value)
+        let circleElTwo =<HTMLElement> document.getElementsByClassName('second-circle').item(item.value)
+        let circleElBig =<HTMLElement> document.getElementsByClassName('bar-bg').item(item.value)
+        let percentEl = <HTMLElement> document.getElementsByClassName('percent').item(item.value)
+
+        let CBColor:string='',CTColor:string,CPColor:string
+
+        CBColor = setDefaultColor(circleBorderColor)
+        CTColor = setDefaultColor(circleTextColor)
+        CPColor = setDefaultColor(circleProgressColor)
+
+        function setDefaultColor(selfColor:any){
+          if (selfColor.value===undefined){
+            return 'black'
+          }
+          else if(!selfColor.value.length){
+            throw new Error(`your ${selfColor['_key']} cannot be empty!`)
+          }
+          else{
+            return  selfColor.value
+          }
+        }
+
+        circleElBig.style.backgroundColor = CBColor
+        percentEl.style.color = CTColor
+
+        //设置两个半圆
+        function changeCircleClip(circleOne:HTMLElement,circleTwo:HTMLElement) {
+          //利用clip属性对整圆进行裁剪成半圆
+          let clipWidth = (circleOne.clientWidth)/2 + 'px'
+          // circleOne.style.backgroundColor = CPColor
+          // circleTwo.style.backgroundColor = CBColor
+          circleOne.style.clip=`rect(auto,${clipWidth},auto,auto)`
+          circleTwo.style.clip=`rect(auto,auto,auto,${clipWidth})`
+        }
+        function changeCircleProgress(barPercent:number){
+          changeCircleClip(circleElOne,circleElTwo)
           let currentPercent = 0
+
+          //设定定时器
           let timer = setInterval(()=>{
+            //设定每过一段时间就使百分比加一
             currentPercent++
+
+            //当当前百分比大于给定的百分比时清除定时器
             if (currentPercent>barPercent){
               clearInterval(timer)
             }
             else{
+              //将百分比加载情况赋给显示百分比的变量
               percent.currentPercent  = currentPercent+'%'
+
+              //当百分比在50%及以内时，每1%就让圆2转动3.6度
               if (currentPercent<=50){
+                circleElOne.style.backgroundColor = CPColor
+                circleElTwo.style.backgroundColor = CPColor
                 circleElTwo.style.transform = `rotate(${currentPercent*3.6}deg)`
               }
+              //百分比超过50小于100时，先让圆2的旋转角度恢复到初始状态，然后将圆2的背景颜色设置成与大圆背景颜色一致后再进行旋转
               else if(currentPercent>50&&currentPercent<100){
                 circleElTwo.style.transform = `rotate(0deg)`
-                circleElTwo.style.backgroundColor = '#d52121'
+                circleElTwo.style.backgroundColor = CBColor
                 circleElTwo.style.transform = `rotate(${(currentPercent-50)*3.6}deg)`
+                if (!circleElTwo.style.backgroundColor){
+                  throw new Error(`your circleBorderColor value is invalid!`)
+                }
               }
+              //当达到100时，将圆1的背景颜色设置成与大圆背景一致的颜色，形成加载100%的效果
               else {
-                circleElOne.style.backgroundColor = '#d52121'
+                circleElOne.style.backgroundColor = CBColor
               }
             }
           },20)
         }
-        changeCircleProgress(item)
+        changeCircleProgress(barPercent)
+
         window.addEventListener('resize',()=>{
-          changeCircleProgress(item)
+          //当窗口大小改变时，裁剪的大小也要改变
+          changeCircleClip(circleElOne,circleElTwo)
         })
       }
 
@@ -133,17 +185,17 @@ span.percent{
 }
 .circle-progress-bar .bar-bg{
   position: relative;
-  background-color: #d52121;
+  /*background-color: #d52121;*/
 }
 .second-circle,.first-circle,.mask{
   position: absolute;
 }
 .second-circle{
-  background-color: #1e8efc;
+  /*background-color: #1e8efc;*/
   z-index: 9;
 }
 .first-circle{
-  background-color: #1e8efc;
+  /*background-color: #1e8efc;*/
   z-index: 8;
 }
 .mask{
@@ -151,7 +203,6 @@ span.percent{
   left: 50%;
   width: 80%;
   height: 80%;
-
   background-color: #1efc43;
   transform: translate(-50%,-50%);
   z-index: 10;

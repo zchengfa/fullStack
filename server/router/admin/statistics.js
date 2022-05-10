@@ -17,7 +17,7 @@ module.exports = app => {
         let allResult = []
         connection.query(selectUser,(err,result)=>{
             if (err) throw err
-            if (result.length){
+            if (result){
 
                 //获取数组中所有对象中的user_id
                 let idAllArr = []

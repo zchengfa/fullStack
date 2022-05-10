@@ -7,11 +7,7 @@
   <div class="bar-bg">
     <div class="second-circle"></div>
     <div class="first-circle"></div>
-<<<<<<< HEAD
     <div class="mask"><span class="circle-percent">{{percent.currentPercent}}</span></div>
-=======
-    <div class="mask"><span class="percent">{{percent.currentPercent}}</span></div>
->>>>>>> a6715a7c577bcf9f1d18d8816b5996d7dc1119aa
   </div>
 </div>
 </template>
@@ -89,7 +85,6 @@ export default defineComponent({
         let circleElOne =<HTMLElement> document.getElementsByClassName('first-circle').item(item.value)
         let circleElTwo =<HTMLElement> document.getElementsByClassName('second-circle').item(item.value)
         let circleElBig =<HTMLElement> document.getElementsByClassName('bar-bg').item(item.value)
-<<<<<<< HEAD
         let percentEl = <HTMLElement> document.getElementsByClassName('circle-percent').item(item.value)
 
         let CBColor:string='',CTColor:string,CPColor:string
@@ -101,19 +96,6 @@ export default defineComponent({
         function setDefaultColor(selfColor:any,defaultColor:string){
           if (selfColor.value===undefined){
             return defaultColor
-=======
-        let percentEl = <HTMLElement> document.getElementsByClassName('percent').item(item.value)
-
-        let CBColor:string='',CTColor:string,CPColor:string
-
-        CBColor = setDefaultColor(circleBorderColor)
-        CTColor = setDefaultColor(circleTextColor)
-        CPColor = setDefaultColor(circleProgressColor)
-
-        function setDefaultColor(selfColor:any){
-          if (selfColor.value===undefined){
-            return 'black'
->>>>>>> a6715a7c577bcf9f1d18d8816b5996d7dc1119aa
           }
           else if(!selfColor.value.length){
             throw new Error(`your ${selfColor['_key']} cannot be empty!`)
@@ -124,22 +106,14 @@ export default defineComponent({
         }
 
         circleElBig.style.backgroundColor = CBColor
-<<<<<<< HEAD
-				
+							
 				//设置圆形进度条中百分比字体颜色
-=======
->>>>>>> a6715a7c577bcf9f1d18d8816b5996d7dc1119aa
         percentEl.style.color = CTColor
 
         //设置两个半圆
         function changeCircleClip(circleOne:HTMLElement,circleTwo:HTMLElement) {
           //利用clip属性对整圆进行裁剪成半圆
           let clipWidth = (circleOne.clientWidth)/2 + 'px'
-<<<<<<< HEAD
-=======
-          // circleOne.style.backgroundColor = CPColor
-          // circleTwo.style.backgroundColor = CBColor
->>>>>>> a6715a7c577bcf9f1d18d8816b5996d7dc1119aa
           circleOne.style.clip=`rect(auto,${clipWidth},auto,auto)`
           circleTwo.style.clip=`rect(auto,auto,auto,${clipWidth})`
         }
@@ -149,11 +123,8 @@ export default defineComponent({
 
           //设定定时器
           let timer = setInterval(()=>{
-<<<<<<< HEAD
+
             //设定每过一段时间就使百分比加1%
-=======
-            //设定每过一段时间就使百分比加一
->>>>>>> a6715a7c577bcf9f1d18d8816b5996d7dc1119aa
             currentPercent++
 
             //当当前百分比大于给定的百分比时清除定时器

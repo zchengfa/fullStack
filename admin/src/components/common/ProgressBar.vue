@@ -27,27 +27,10 @@ export default defineComponent({
 
       let barPercent = progress.value
 			
-			let speed:number = 20
-			//speed = setAnimationSpeed(loadingSpeed,20)
-			
-			// function setAnimationSpeed(loading:any,speed:number){
-			// 	if(loading.value===undefined){
-			// 		return speed
-			// 	}
-			// 	else if(!loading.value.length&&loading.value!==undefined){
-			// 		console.log(loading.value.length)
-			// 	  throw new Error(`your loadingSpeed attribute cannot be empty!`)
-			// 	}
-			// 	else if(!Number(loading.value)){
-			// 		throw new Error(`your loadingSpeed attribute cannot be string,please use a value of number instead!`)
-			// 	}
-			// 	else{
-			// 		return speed
-			// 	}
-			// }
-			// console.log(loadingSpeed.value)
+			let speed:number = loadingSpeed.value
 
       if (barType.value!=='circle'){
+
         let progressBar =<HTMLElement> document.getElementsByClassName('progress').item(item.value)
         let barBox = <HTMLElement> document.getElementsByClassName('progress-bar').item(item.value)
         let percentEl = <HTMLElement> document.getElementsByClassName('percent').item(item.value)
@@ -57,7 +40,6 @@ export default defineComponent({
           progressBar.style.width = '0'
           progressBar.style.backgroundColor = rgb
           let currentPercent = 0
-
           //设置定时器
           let timer = setInterval(()=>{
 

@@ -59,7 +59,9 @@
     </div>
     <div class="item pie-summary">
       <PieChartStatistics class="pie"></PieChartStatistics>
-      <progress-bar class="circle-bar" bar-type="circle" :progress="100" :item="0" circle-border-color="yellow" circle-text-color="red" circle-progress-color="blue"></progress-bar>
+      <div class="circle-box">
+        <progress-bar class="circle-bar" bar-type="circle" :progress="100" :item="0" circle-border-color="yellow" circle-text-color="red" circle-progress-color="blue"></progress-bar>
+      </div>
     </div>
     <div class="item bar-summary">
       <BarChartStatistics></BarChartStatistics>
@@ -270,6 +272,9 @@ export default defineComponent({
   margin: 0;
   text-align: left;
 }
+/*.item div{*/
+/*  display: inline-block;*/
+/*}*/
 .data-summary .bar-summary{
   height: 50vh;
 }
@@ -318,10 +323,7 @@ export default defineComponent({
   width: 2rem;
   transform: translateY(-50%);
 }
-.delivery{
-  /*color: #FFFFFF;*/
-  /*background-color: rgba(0, 0, 0, 0.7);*/
-}
+
 .data-summary .delivery{
   height: 30vh;
 }
@@ -466,8 +468,17 @@ export default defineComponent({
   font-size: 13px;
   color: #8a8686;
 }
+.item.pie-summary div{
+  display: inline-block;
+}
+.circle-box{
+  height: 100%;
+}
 .circle-bar{
-  width: 20vw;
-  height: 20vw;
+  position: relative;
+  top:50%;
+  width: 10vw;
+  height: 10vw;
+  transform: translateY(-50%);
 }
 </style>

@@ -69,7 +69,7 @@ export default defineComponent({
         let circleElBig =<HTMLElement> document.getElementsByClassName('bar-bg').item(item.value)
         let percentEl = <HTMLElement> document.getElementsByClassName('circle-percent').item(item.value)
 
-        let CBColor:string='',CTColor:string,CPColor:string
+        let CBColor:string,CTColor:string,CPColor:string
 
         CBColor = setDefaultColor(circleBorderColor,'gray')
         CTColor = setDefaultColor(circleTextColor,'red')
@@ -188,17 +188,14 @@ span.percent{
 }
 .circle-progress-bar .bar-bg{
   position: relative;
-  /*background-color: #d52121;*/
 }
 .second-circle,.first-circle,.mask{
   position: absolute;
 }
 .second-circle{
-  /*background-color: #1e8efc;*/
   z-index: 9;
 }
 .first-circle{
-  /*background-color: #1e8efc;*/
   z-index: 8;
 }
 .mask{
@@ -218,5 +215,10 @@ span.percent{
   font-size: 24px;
   font-weight: bold;
   transform: translateY(-50%);
+}
+@media screen and (max-width: 500px){
+  .mask span.circle-percent{
+    font-size: 1rem;
+  }
 }
 </style>

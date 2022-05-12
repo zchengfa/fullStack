@@ -11,7 +11,7 @@
           <span><span class="price-character">￥</span>{{baseData.price}}</span>
           <span class="origin-price">{{originPrice}}</span>
           <label class="discount-label" for="discountTitle">折扣：</label>
-          <span class="discount" id="discountTitle">{{baseData.discount*10}}折</span>
+          <span class="discount" id="discountTitle">{{(baseData.discount*10).toFixed(1)}}折</span>
         </p>
         <p class="title">{{baseData.title || baseData['product_title']}}</p>
         <p class="other">

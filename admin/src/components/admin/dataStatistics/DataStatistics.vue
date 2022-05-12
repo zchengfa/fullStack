@@ -60,7 +60,13 @@
     <div class="item pie-summary">
       <PieChartStatistics class="pie"></PieChartStatistics>
       <div class="circle-box">
-        <progress-bar class="circle-bar" bar-type="circle" :progress="100" :item="0" circle-border-color="yellow" circle-text-color="red" circle-progress-color="blue"></progress-bar>
+        <progress-bar class="circle-bar" bar-type="circle" :progress="100"  :item="0"
+                      circle-border-color="#cd9cf2"
+                      circle-text-color="red"
+                      mask-color="pink"
+                      circle-progress-color="#b8cbb8">
+
+        </progress-bar>
       </div>
     </div>
     <div class="item bar-summary">
@@ -272,11 +278,9 @@ export default defineComponent({
   margin: 0;
   text-align: left;
 }
-/*.item div{*/
-/*  display: inline-block;*/
-/*}*/
 .data-summary .bar-summary{
-  height: 50vh;
+  width: 40vw;
+  height: 40vh;
 }
 .item.info-summary h5{
   background-color: rgb(242, 236, 247);

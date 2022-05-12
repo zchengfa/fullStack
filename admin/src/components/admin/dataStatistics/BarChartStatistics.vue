@@ -230,8 +230,8 @@ export default defineComponent({
 <style scoped>
 #bar-chart-statistics{
   float: right;
-  width: 40vw;
-  height: 50vh;
+  width: 100%;
+  height: 100%;
   border: 1px solid #a9a9a9;
   background-color: #FFFFFF;
 }

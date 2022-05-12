@@ -7,7 +7,12 @@
   <div class="bar-bg">
     <div class="second-circle"></div>
     <div class="first-circle"></div>
-    <div class="mask"><span class="circle-percent">{{percent.currentPercent}}</span></div>
+    <div class="mask">
+      <div>
+        <span v-if="percent.label" class="mask-label">{{percent.label}}</span>
+        <span class="circle-percent">{{percent.currentPercent}}</span>
+      </div>
+    </div>
   </div>
 </div>
 </template>
@@ -17,13 +22,14 @@ import {defineComponent, reactive, onMounted, toRefs} from "vue";
 
 export default defineComponent({
   name: "ProgressBar",
-  props:['progress','item','barType','circleBorderColor','circleProgressColor','circleTextColor','loadingSpeed'],
+  props:['progress','item','barType','circleBorderColor','circleProgressColor','circleTextColor','maskColor','loadingSpeed','label'],
   setup(props){
     let percent = reactive({
-      currentPercent:<string>'0%'
+      currentPercent:<string>'0%',
+      label:<string>''
     })
     onMounted(()=>{
-      const {progress,item,barType,circleBorderColor,circleProgressColor,circleTextColor,loadingSpeed} = toRefs(props)
+      const {progress,item,barType,circleBorderColor,circleProgressColor,circleTextColor,maskColor,loadingSpeed,label} = toRefs(props)
 
       let barPercent = progress.value
 			
@@ -59,7 +65,6 @@ export default defineComponent({
               }
             }
           },speed)
-
         }
       }
       else{
@@ -68,12 +73,21 @@ export default defineComponent({
         let circleElTwo =<HTMLElement> document.getElementsByClassName('second-circle').item(item.value)
         let circleElBig =<HTMLElement> document.getElementsByClassName('bar-bg').item(item.value)
         let percentEl = <HTMLElement> document.getElementsByClassName('circle-percent').item(item.value)
+        let maskEl = <HTMLElement> document.getElementsByClassName('mask').item(item.value)
 
-        let CBColor:string,CTColor:string,CPColor:string
+        let CBColor:string,CTColor:string,CPColor:string,MaskColor:string
 
         CBColor = setDefaultColor(circleBorderColor,'gray')
         CTColor = setDefaultColor(circleTextColor,'red')
         CPColor = setDefaultColor(circleProgressColor,'#fff')
+        MaskColor = setDefaultColor(maskColor,'pink')
+        console.log(MaskColor)
+
+        percent.label = label.value
+        //没有label值时百分比元素paddingTop为0
+        if (!label.value){
+          percentEl.style.paddingTop = '0px'
+        }
 
         function setDefaultColor(selfColor:any,defaultColor:string){
           if (selfColor.value===undefined){
@@ -87,7 +101,8 @@ export default defineComponent({
           }
         }
 
-        circleElBig.style.backgroundColor = CBColor
+        circleElBig.style.background = CBColor
+        maskEl.style.background = MaskColor
 							
 				//设置圆形进度条中百分比字体颜色
         percentEl.style.color = CTColor
@@ -119,22 +134,22 @@ export default defineComponent({
 
               //当百分比在50%及以内时，每1%就让圆2转动3.6度
               if (currentPercent<=50){
-                circleElOne.style.backgroundColor = CPColor
-                circleElTwo.style.backgroundColor = CPColor
+                circleElOne.style.background = CPColor
+                circleElTwo.style.background = CPColor
                 circleElTwo.style.transform = `rotate(${currentPercent*3.6}deg)`
               }
               //百分比超过50小于100时，先让圆2的旋转角度恢复到初始状态，然后将圆2的背景颜色设置成与大圆背景颜色一致后再进行旋转
               else if(currentPercent>50&&currentPercent<100){
                 circleElTwo.style.transform = `rotate(0deg)`
-                circleElTwo.style.backgroundColor = CBColor
+                circleElTwo.style.background = CBColor
                 circleElTwo.style.transform = `rotate(${(currentPercent-50)*3.6}deg)`
-                if (!circleElTwo.style.backgroundColor){
+                if (!circleElTwo.style.background){
                   throw new Error(`your circleBorderColor value is invalid!`)
                 }
               }
               //当达到100时，将圆1的背景颜色设置成与大圆背景一致的颜色，形成加载100%的效果
               else {
-                circleElOne.style.backgroundColor = CBColor
+                circleElOne.style.background = CBColor
               }
             }
           },speed)
@@ -203,18 +218,21 @@ span.percent{
   left: 50%;
   width: 80%;
   height: 80%;
-  background-color: #1efc43;
   transform: translate(-50%,-50%);
   z-index: 10;
 }
 .mask span.circle-percent{
-  display: inline-block;
+  padding-top: 12px;
+}
+.mask div{
   position: relative;
   top:50%;
-	height: auto;
-  font-size: 24px;
-  font-weight: bold;
+  width: auto;
+  height: auto;
   transform: translateY(-50%);
+}
+.mask div span{
+  display: block;
 }
 @media screen and (max-width: 500px){
   .mask span.circle-percent{

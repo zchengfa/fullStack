@@ -3,7 +3,7 @@ const express = require('express')
 const http = require('http')
 const cors = require('cors')
 const {verifyToken} = require("./util/token");
-const mysql_query = require("./plugins/mysql_query");
+
 const bodyParser = require("body-parser");
 const app = express()
 const server = http.createServer(app)
@@ -15,9 +15,9 @@ app.use(bodyParser.urlencoded({extended:false}))
 //允许跨域
 app.use(cors())
 
-//除了/admin/loginAdministrator请求，其他请求都必须先进行token验证，验证通过后才能进行当次请求
+//除了白名单内的请求，其他请求都必须先进行token验证，验证通过后才能进行当次请求
 app.use((req,res,next)=>{
-  //console.log(req.url,'app.js 20 row')
+  //查询数据库中是否已存储了该ip，若有则不存储，
   let requestQuery = ''
   let category_type = ''
   let product_type = ''

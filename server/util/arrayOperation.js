@@ -56,9 +56,19 @@ function sortArray(array,sortArg){
     }
     return array
 }
+
+//获取访问者的ip
+function getClientIp(req){
+    let ip = req.socket.remoteAddress || req.ip
+
+    ip = ip.replace('::ffff:','')
+
+    return ip
+}
 module.exports = {
     deDuplication,
     findAllIndex,
     findAllIndexByObjectValue,
-    sortArray
+    sortArray,
+    getClientIp
 }

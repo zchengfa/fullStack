@@ -1,6 +1,7 @@
 //const collectionModel = require("../../model/goodsDataModel");
 const connection = require('../../plugins/connectMysql')()
 const mysql_query = require('../../plugins/mysql_query')
+const {getClientIp} = require("../../util/arrayOperation");
 module.exports = app =>{
     const express = require('express')
     const router = express.Router()
@@ -11,9 +12,35 @@ module.exports = app =>{
             if (err)  throw err
             res.send(result.slice(0,req.query.num))
         })
+
+
+        //获取用户ip并存储到数据库
+        let ip = getClientIp(req)
+        const selectIp = mysql_query.selectFields('mall_visitor','ip,count',`ip = '${ip}'`)
+        connection.query(selectIp,(err,ips)=>{
+            if (err) throw err
+            //已存储过，则将count加一
+            if (ips.length){
+                let count = ips[0]['count'] +1
+                const updateIpCount = mysql_query.update('mall_visitor',`count = ${count}`,`ip = '${ip}'`)
+                connection.query(updateIpCount,(err)=>{
+                    if (err) throw err
+                    console.log(`用户：${ip}浏览次数加1`)
+                })
+            }
+            //没有存储过该ip
+            else{
+                const insertIp = mysql_query.insert('mall_visitor','ip',`'${ip}'`)
+                connection.query(insertIp,(err)=>{
+                    if (err) throw err
+                    console.log('用户ip已记录在数据库中')
+                })
+            }
+        })
     })
 
     router.get('/goodsData', (req, res)=>{
+
         //获取请求参数
         const query = req.query
         // console.log(query)

@@ -392,6 +392,7 @@
           changeMenuItem,
         }
       },
+
       methods:{
         //实现子组件发出的cancelAddClick方法
         cancelAddClick(){

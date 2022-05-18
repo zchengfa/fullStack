@@ -253,7 +253,7 @@
                 id:<string>item.product_id,
                 title:<string>item.product_title,
                 imagePath:<string>item.product_image,
-                count:<string>item.favorite +'件',
+                count:<string>item.stocks +'件',
                 price:<string>item.price
               });
 

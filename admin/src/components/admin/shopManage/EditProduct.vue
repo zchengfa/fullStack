@@ -101,7 +101,7 @@ export default defineComponent({
 					//当submitData[k]值不为空，且k等于price时，对其进行格式化
 					else {
             if(k === 'price' || k === 'count'){
-              submitData.price ='￥'+ submitData.price.toString().replace('￥','')
+              submitData.price =submitData.price.toString().replace('￥','')
             }
           }
 				}

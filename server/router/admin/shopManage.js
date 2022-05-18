@@ -58,7 +58,7 @@ module.exports = app => {
                     imagePath:paramsObj.imageLink,
                     price:'￥'+paramsObj.price,
                     origin_price:'￥'+(paramsObj.price*1.2).toFixed(1),
-                    favorite:paramsObj.productCount.toString()
+                    stocks:paramsObj.productCount.toString()
                 }
             ]
         }
@@ -76,13 +76,20 @@ module.exports = app => {
 				let product_id = bodyData.product_id
 				let paramsObj = bodyData.alterData
 				console.log(bodyData)
-				shopManageDataModel.updateOne({'product_id':product_id},{'title':paramsObj.title,'imagePath':paramsObj.imagePath,
-				'price':paramsObj.price,'favorite':paramsObj.count},(err,result)=>{
-					if(err)console.error(err)
-					else{
-						res.send({'success':'编辑成功'})
-					}
-				})
+        const updateGoods = mysql_query.update('mall_goods',`product_title = '${paramsObj.title}',
+        product_image = '${paramsObj.imagePath}',stocks = ${paramsObj.count},price = ${paramsObj.price}`,`product_id = '${product_id}'`)
+        connection.query(updateGoods,(err,updateR)=>{
+            if (err) throw err
+            console.log(updateR)
+            res.send({'success':'编辑成功'})
+        })
+				// shopManageDataModel.updateOne({'product_id':product_id},{'title':paramsObj.title,'imagePath':paramsObj.imagePath,
+				// 'price':paramsObj.price,'stocks':paramsObj.count},(err,result)=>{
+				// 	if(err)console.error(err)
+				// 	else{
+				// 		res.send({'success':'编辑成功'})
+				// 	}
+				// })
     })
 
     //接收前端删除商品请求

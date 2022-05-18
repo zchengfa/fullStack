@@ -60,7 +60,7 @@
     <div class="item pie-summary">
       <PieChartStatistics class="pie"></PieChartStatistics>
       <div class="circle-box">
-        <progress-bar class="circle-bar" bar-type="circle" :progress="100"  :item="0"
+        <progress-bar class="circle-bar" bar-type="circle" label="用户转化率" :progress="100"  :item="0"
                       circle-border-color="#cd9cf2"
                       circle-text-color="red"
                       mask-color="pink"

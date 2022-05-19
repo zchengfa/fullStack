@@ -81,7 +81,6 @@ export default defineComponent({
         CTColor = setDefaultColor(circleTextColor,'red')
         CPColor = setDefaultColor(circleProgressColor,'#fff')
         MaskColor = setDefaultColor(maskColor,'pink')
-        console.log(MaskColor)
 
         percent.label = label.value
         //没有label值时百分比元素paddingTop为0

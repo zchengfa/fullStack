@@ -52,13 +52,13 @@
             <div class="category-selector-box">
               <span>分类选择：</span>
               <el-select v-model="addProductLogic.categoryCheckOption" placeholder="全部" class="select">
-                <el-option v-for="item in addProductLogic.selectCategoryOptions" :key="item" :value="item" :label="item"></el-option>
+                <el-option v-for="item in addProductLogic.selectCategoryOptions" :key="item" @click="showGoodsByCategoryOrBrand(item)" :value="item" :label="item"></el-option>
               </el-select>
             </div>
             <div class="brand-selector-box">
               <span>品牌选择：</span>
               <el-select v-model="addProductLogic.brandCheckOption" placeholder="全部" class="select">
-                <el-option v-for="item in addProductLogic.selectBrandOptions" :key="item" :value="item" :label="item"></el-option>
+                <el-option v-for="item in addProductLogic.selectBrandOptions" :key="item" @click="showGoodsByCategoryOrBrand(item)" :value="item" :label="item"></el-option>
               </el-select>
             </div>
             <div class="search-box">
@@ -289,7 +289,11 @@
         function addProduct(){
           addProductLogic.isShowAddProduct = true
         }
-				
+
+        //点击具体分类或具体品牌名来展示对应的商品
+        function showGoodsByCategoryOrBrand(item:string){
+          console.log(item)
+        }
 
         /**
          *@function searchProduct 该方法用于管理员搜索想搜索的商品，通过绑定keyUp键盘事件来获取管理员按下的键来判断何时执行搜索方法
@@ -390,6 +394,7 @@
           shopMenu,
 					searchUser,
           changeMenuItem,
+          showGoodsByCategoryOrBrand
         }
       },
 

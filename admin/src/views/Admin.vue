@@ -52,13 +52,13 @@
             <div class="category-selector-box">
               <span>分类选择：</span>
               <el-select v-model="addProductLogic.categoryCheckOption" placeholder="全部" class="select">
-                <el-option v-for="item in addProductLogic.selectCategoryOptions" :key="item" @click="showGoodsByCategoryOrBrand(item)" :value="item" :label="item"></el-option>
+                <el-option v-for="item in addProductLogic.selectCategoryOptions" :key="item" @click="showGoodsByCategoryOrBrand(item,'type')" :value="item" :label="item"></el-option>
               </el-select>
             </div>
             <div class="brand-selector-box">
               <span>品牌选择：</span>
               <el-select v-model="addProductLogic.brandCheckOption" placeholder="全部" class="select">
-                <el-option v-for="item in addProductLogic.selectBrandOptions" :key="item" @click="showGoodsByCategoryOrBrand(item)" :value="item" :label="item"></el-option>
+                <el-option v-for="item in addProductLogic.selectBrandOptions" :key="item" @click="showGoodsByCategoryOrBrand(item,'brand')" :value="item" :label="item"></el-option>
               </el-select>
             </div>
             <div class="search-box">
@@ -254,13 +254,23 @@
                 title:<string>item.product_title,
                 imagePath:<string>item.product_image,
                 count:<string>item.stocks +'件',
-                price:<string>item.price
+                price:<string>item.price,
+                brand:<string>item.product_brand,
+                type:<string>item.product_type
               });
-
             })
-            //console.log(result.data)
+
+            //获取商品中的品牌跟类型
+            result.data.map((item:any)=>{
+              if (addProductLogic.selectBrandOptions.indexOf(item['product_brand'])===-1){
+                addProductLogic.selectBrandOptions.push(item['product_brand'])
+              }
+              if (addProductLogic.selectCategoryOptions.indexOf(item['product_type'])===-1){
+                addProductLogic.selectCategoryOptions.push(item['product_type'])
+              }
+            })
             tableLogic.tableData = tableLogic.shopManageData
-            //console.log(shopManageData)
+
           })
               .catch(err =>{
                 throw err
@@ -279,8 +289,8 @@
          */
         let addProductLogic = reactive({
           isShowAddProduct:<boolean>false,
-          selectCategoryOptions:<string[]>['上衣','裤子'],
-          selectBrandOptions:<string[]>['太贫鸟','南极'],
+          selectCategoryOptions:<string[]>[],
+          selectBrandOptions:<string[]>[],
           categoryCheckOption:<string>'',
           brandCheckOption:<string>'',
           searchKeyword:<string>''
@@ -291,8 +301,18 @@
         }
 
         //点击具体分类或具体品牌名来展示对应的商品
-        function showGoodsByCategoryOrBrand(item:string){
-          console.log(item)
+        function showGoodsByCategoryOrBrand(item:string,regType:string){
+          let operationArr:string[] = [],regExpArr:string[] = []
+          operationArr.push(...tableLogic.shopManageData)
+
+          let regExp:RegExp = new RegExp(item)
+          regType==='brand'?addProductLogic.categoryCheckOption='':addProductLogic.brandCheckOption=''
+          operationArr.map((items:any)=>{
+            if (regExp.test(items['brand']) || regExp.test(items['type'])){
+              regExpArr.push(items)
+            }
+          })
+          tableLogic.tableData = regExpArr
         }
 
         /**

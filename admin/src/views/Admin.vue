@@ -37,8 +37,13 @@
             <el-menu-item class="menu-item" v-for="(item,index) in shopMenu.menu" :key="index" :index="index+''">
               <slot>
                 <el-icon v-if="index===0"><Goods></Goods></el-icon>
-                <el-icon v-if="index===1"><User></User></el-icon>
-                <el-icon v-if="index===2"><TrendCharts></TrendCharts></el-icon>
+                <el-icon v-else-if="index===1"><User></User></el-icon>
+                <el-icon v-else-if="index===2"><Timer></Timer></el-icon>
+                <el-icon v-else-if="index===3"><Van></Van></el-icon>
+                <el-icon v-else-if="index===4"><Unlock></Unlock></el-icon>
+                <el-icon v-else-if="index===5"><Watch></Watch></el-icon>
+                <el-icon v-else-if="index===shopMenu.menu.length-2"><TrendCharts></TrendCharts></el-icon>
+                <el-icon v-else><Setting></Setting></el-icon>
                 <el-button class="menu-btn" @click="changeMenuItem(index)" :class="{'menu-btn-active':shopMenu.currentIndex===index}">{{item}}</el-button>
               </slot>
             </el-menu-item>
@@ -82,7 +87,7 @@
           </div>
           <member-manage :table-data="tableLogic.memberData"></member-manage>
         </div>
-        <div class="data-statistics" v-if="shopMenu.currentIndex===2">
+        <div class="data-statistics" v-if="shopMenu.currentIndex===shopMenu.menu.length-2">
           <data-statistics></data-statistics>
         </div>
       </el-container>
@@ -97,7 +102,7 @@
     import {reactive,defineComponent,onBeforeMount} from "vue";
     import {useRouter} from 'vue-router'
     import {ElContainer,ElHeader,ElMain,ElTabs,ElTabPane,ElIcon} from "element-plus";
-    import {Goods,User,TrendCharts} from '@element-plus/icons-vue'
+    import {Goods,User,TrendCharts,Unlock,Timer,Setting,Van,Watch} from '@element-plus/icons-vue'
     import ShopManage from "../components/admin/shopManage/ShopManage.vue";
     import MemberManage from "../components/admin/memberManage/MemberManage.vue"
     import {getShopManageData,addProduct,getAdministratorInfo,getMemberManageData} from "../network/request";
@@ -108,7 +113,7 @@
       name: "admin",
       components:{
         ElContainer,ElHeader,ElMain,ElTabs,ElTabPane,ElIcon,
-        Goods,User,TrendCharts,
+        Goods,User,TrendCharts,Unlock,Timer,Setting,Van,Watch,
         ShopManage,
         MemberManage,
         DataStatistics,
@@ -207,7 +212,7 @@
          * @function changeMenuItem 用户点击菜单，获取到点击的菜单索引。并将其赋给currentIndex
          */
         let shopMenu = reactive({
-          menu:<string[]>['商品管理','用户管理','数据统计'],
+          menu:<string[]>['商品管理','用户管理','轮播管理','库存管理','商品上架','秒杀管理','数据统计','系统设置'],
           currentIndex:<number>0
         })
 

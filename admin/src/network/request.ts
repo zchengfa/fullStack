@@ -73,3 +73,9 @@ export function getStatisticsData(){
         url:'statisticsData'
     })
 }
+
+export function getBannerData(){
+    return Post({
+        url:'banner'
+    })
+}

@@ -654,7 +654,8 @@
     }
 
     .table-container div.shop-mana,
-    .table-container div.member-mana{
+    .table-container div.member-mana,
+    .table-container div.swiper-mana{
       width: calc(100vw - 15rem);
     }
     .member-mana .select-group{

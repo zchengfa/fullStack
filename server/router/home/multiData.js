@@ -7,7 +7,7 @@ module.exports = app =>{
     const connection = require('../../plugins/connectMysql')()
 
     router.get('/multiData', (req, res)=>{
-        const selectQuery = selectAll('mall_banner')
+        const selectQuery = selectAll('mall_banner',`isShow = 1`)
         connection.query(selectQuery, (err,result)=>{
            if (err) throw err
             result?res.send(result):null

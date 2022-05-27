@@ -70,12 +70,24 @@ export function deleteUser(user_id:string){
 
 export function getStatisticsData(){
     return Get({
-        url:'statisticsData'
+        url:'/statisticsData'
+    })
+}
+interface operation {
+    isShow:boolean,
+    id:number
+}
+export function operateBanner(operation:operation | null){
+    return Post({
+        url:'/operationBanner',
+        data:stringify({
+            ...operation
+        })
     })
 }
 
 export function getBannerData(){
     return Post({
-        url:'banner'
+        url:'/banner',
     })
 }

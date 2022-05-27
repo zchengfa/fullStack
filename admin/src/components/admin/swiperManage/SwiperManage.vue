@@ -1,17 +1,27 @@
 <template>
-  <swiper :modules="[EffectCoverflow]" effect="coverflow" class="swiper" autoplay>
+  <swiper :key="swiperKey" :modules="[EffectCoverflow]" effect="coverflow" class="swiper" autoplay>
     <swiper-slide v-for="(item,index) in banner.data" :key="index" v-show="item['isShow']">
       <img :src="item['banner_image']" alt="banner">
     </swiper-slide>
   </swiper>
   <el-table :data="banner.tableData" class="swiper-table" :header-cell-style="headerStyle" :cell-style="rowStyle" border empty-text="用户数据为空">
-    <el-table-column width="200" prop="id" label="序号" align="center"></el-table-column>
-    <el-table-column  prop="banner_image" label="图片链接" align="center"></el-table-column>
-    <el-table-column width="200" prop="brand" label="所属品牌" align="center"></el-table-column>
-    <el-table-column width="300" prop="isShow" label="是否在项目中展示" align="center">
+    <el-table-column prop="id" label="序号" align="center"></el-table-column>
+    <el-table-column width="414" prop="banner_image" label="图片链接" align="center">
+      <template #default="scope">
+        <div class="image-column-box"><span>{{scope.row.banner_image}}</span></div>
+      </template>
+    </el-table-column>
+    <el-table-column  prop="brand" label="所属品牌" align="center"></el-table-column>
+    <el-table-column  prop="isShow" label="是否在项目中展示" align="center">
       <template #default="scope">
         <span v-if="scope.row.isShow">正在展示</span>
         <span v-else>已取消展示</span>
+      </template>
+    </el-table-column>
+    <el-table-column  prop="isShow" label="操作" align="center">
+      <template #default="scope">
+        <el-button size="small" type="success" v-show="!scope.row.isShow" @click="operationBanner(scope.row)">开启轮播</el-button>
+        <el-button size="small" type="danger" v-show="scope.row.isShow" @click="operationBanner(scope.row)">关闭轮播</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -19,10 +29,10 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, reactive, watchEffect} from "vue";
+import {defineComponent, onMounted, reactive, ref, watchEffect} from "vue";
 import {EffectCoverflow} from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/vue';
-import {getBannerData} from "../../../network/request";
+import {getBannerData, operateBanner} from "../../../network/request";
 
 import 'swiper/css';
 import 'swiper/css/effect-fade';
@@ -35,10 +45,12 @@ export default defineComponent({
   },
   setup() {
 
+    let swiperKey = ref(0)
+
     let banner = reactive({
       data:<string[]>[],
       tableData:<string[]>[],
-      pageSize:<number>6
+      pageSize:<number>4
     })
 
     const headerStyle = ()=>{
@@ -75,6 +87,24 @@ export default defineComponent({
       return banner.data.slice(start,end)
     }
 
+    const operationBanner = (row: { isShow: boolean; brand_id: number; })=>{
+      operateBanner({
+        isShow:row.isShow,
+        id:row.brand_id
+      }).then(res=>{
+        if (res.data){
+          banner.tableData.map((item:any)=>{
+            if (item['brand_id'] === row.brand_id){
+              item.isShow = res.data.operation_responsive
+            }
+          })
+
+          //改变swiper组件的key值，刷新swiper组件
+          swiperKey.value ++
+        }
+      })
+    }
+
     onMounted(()=>{
       watchEffect(()=>{
         banner.tableData = sliceTableData(0,banner.pageSize)
@@ -83,10 +113,12 @@ export default defineComponent({
 
     return {
       EffectCoverflow,
+      swiperKey,
       banner,
       currentPageChange,
       headerStyle,
-      rowStyle
+      rowStyle,
+      operationBanner
     };
   },
 })
@@ -94,15 +126,18 @@ export default defineComponent({
 
 <style scoped>
 .swiper{
-  width: 80%;
+  width: 60%;
   height: 30vh;
 }
 img{
-  width: 100%;
-  background-size:cover;
+  height: 100%;
+  background-size: cover;
 }
 .swiper-table{
   margin: 5vh auto;
   width: 90%;
+}
+.image-column-box span{
+  color: red;
 }
 </style>

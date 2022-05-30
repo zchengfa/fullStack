@@ -91,3 +91,9 @@ export function getBannerData(){
         url:'/banner',
     })
 }
+
+export function getOrderData(){
+    return Post({
+        url:'getOrderData'
+    })
+}

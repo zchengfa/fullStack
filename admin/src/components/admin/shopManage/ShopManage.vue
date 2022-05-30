@@ -16,13 +16,13 @@
         <el-image class="table-image" :src="scope.row.imagePath" alt="productImage"></el-image>
       </template>
     </el-table-column>
-    <el-table-column prop="count" label="库存" align="center">
-      <template #default="scope">
-        <el-button v-if="scope.row.count.length <=2 && scope.row.count.toString().indexOf('0')===-1" type="danger" size="small" round>库存不足</el-button>
-        <el-button v-else-if="scope.row.count.length <=2 && scope.row.count.toString().indexOf('0')!==-1" type="info" size="small" round>已售罄</el-button>
-        <span v-else>{{scope.row.count}}</span>
-      </template>
-    </el-table-column>
+<!--    <el-table-column prop="count" label="库存" align="center">-->
+<!--      <template #default="scope">-->
+<!--        <el-button v-if="scope.row.count.length <=2 && scope.row.count.toString().indexOf('0')===-1" type="danger" size="small" round>库存不足</el-button>-->
+<!--        <el-button v-else-if="scope.row.count.length <=2 && scope.row.count.toString().indexOf('0')!==-1" type="info" size="small" round>已售罄</el-button>-->
+<!--        <span v-else>{{scope.row.count}}</span>-->
+<!--      </template>-->
+<!--    </el-table-column>-->
     <el-table-column prop="price" label="价格" align="center">
       <template #default="scope">
         <span class="price"><span class="character" >￥</span>{{scope.row.price}}</span>

@@ -43,6 +43,7 @@
                 <el-icon v-else-if="index===4"><Unlock></Unlock></el-icon>
                 <el-icon v-else-if="index===5"><Watch></Watch></el-icon>
                 <el-icon v-else-if="index===6"><Grape></Grape></el-icon>
+                <el-icon v-else-if="index===7"><Management></Management></el-icon>
                 <el-icon v-else-if="index===shopMenu.menu.length-2"><TrendCharts></TrendCharts></el-icon>
                 <el-icon v-else><Setting></Setting></el-icon>
                 <el-button class="menu-btn" @click="changeMenuItem(index)" :class="{'menu-btn-active':shopMenu.currentIndex===index}">{{item}}</el-button>
@@ -91,6 +92,9 @@
         <div class="swiper-mana" v-show="shopMenu.currentIndex===2">
           <swiper-manage></swiper-manage>
         </div>
+        <div class="order-mana" v-show="shopMenu.currentIndex===7">
+          <order-manage></order-manage>
+        </div>
         <div class="data-statistics" v-if="shopMenu.currentIndex===shopMenu.menu.length-2">
           <data-statistics></data-statistics>
         </div>
@@ -106,9 +110,10 @@
     import {reactive,defineComponent,onBeforeMount} from "vue";
     import {useRouter} from 'vue-router'
     import {ElContainer,ElHeader,ElMain,ElTabs,ElTabPane,ElIcon} from "element-plus";
-    import {Goods,User,TrendCharts,Unlock,Timer,Setting,Van,Watch,Grape} from '@element-plus/icons-vue'
+    import {Goods,User,TrendCharts,Unlock,Timer,Setting,Van,Watch,Grape,Management} from '@element-plus/icons-vue'
     import ShopManage from "../components/admin/shopManage/ShopManage.vue";
     import MemberManage from "../components/admin/memberManage/MemberManage.vue"
+    import OrderManage from '../components/admin/orderManage/OrderManage.vue'
     import SwiperManage from '../components/admin/swiperManage/SwiperManage.vue'
     import {getShopManageData,addProduct,getAdministratorInfo,getMemberManageData} from "../network/request";
     import DataStatistics from "../components/admin/dataStatistics/DataStatistics.vue";
@@ -118,10 +123,11 @@
       name: "admin",
       components:{
         ElContainer,ElHeader,ElMain,ElTabs,ElTabPane,ElIcon,
-        Goods,User,TrendCharts,Unlock,Timer,Setting,Van,Watch,Grape,
+        Goods,User,TrendCharts,Unlock,Timer,Setting,Van,Watch,Grape,Management,
         ShopManage,
         MemberManage,
         SwiperManage,
+        OrderManage,
         DataStatistics,
         AddProduct
       },
@@ -218,10 +224,9 @@
          * @function changeMenuItem 用户点击菜单，获取到点击的菜单索引。并将其赋给currentIndex
          */
         let shopMenu = reactive({
-          menu:<string[]>['商品管理','用户管理','轮播管理','库存管理','商品上架','秒杀管理','优惠管理','数据统计','系统设置'],
+          menu:<string[]>['商品管理','用户管理','轮播管理','库存管理','商品上架','秒杀管理','优惠管理','订单管理','数据统计','系统设置'],
           currentIndex:<number>0
         })
-
         function changeMenuItem (index:number){
           shopMenu.currentIndex = index
         }
@@ -655,7 +660,8 @@
 
     .table-container div.shop-mana,
     .table-container div.member-mana,
-    .table-container div.swiper-mana{
+    .table-container div.swiper-mana,
+    .table-container div.order-mana{
       width: calc(100vw - 15rem);
     }
     .member-mana .select-group{

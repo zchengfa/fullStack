@@ -54,7 +54,7 @@ export default defineComponent({
     })
 
     const headerStyle = ()=>{
-      return "background:#606bff;color:#fff"
+      return "background-color: #88da0b;color:#fff"
     }
 
     const rowStyle = ({rowIndex})=>{

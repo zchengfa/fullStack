@@ -73,9 +73,13 @@ export default defineComponent( {
       tableKey:0,
       isRotate:false
     })
+    interface status {
+      title:string,
+      isChecked:boolean
+    }
 
     let statusLabel = reactive({
-      data:<string[]>[{'title':'待支付','isChecked':false},{'title':'已支付','isChecked':false},{'title':'待签收','isChecked':false},{'title':'取消支付','isChecked':false},{'title':'待评价','isChecked':false},{'title':'待追评','isChecked':false}],
+      data:<status[]>[{title:'待支付',isChecked:false},{title:'已支付',isChecked:false},{title:'待签收',isChecked:false},{title:'取消支付',isChecked:false},{title:'待评价',isChecked:false},{title:'待追评',isChecked:false}],
       buttonType:<string[]>['primary','success','danger','info','warning','success'],
       searchConfident:<string>'',
       showEmptyTip:false
@@ -116,7 +120,7 @@ export default defineComponent( {
 
     //点击标签显示对应的数据
     const showLabelData = (title:string,index:number)=>{
-      statusLabel.data.map((item:any,labelIndex:number)=>{
+      statusLabel.data.map((item:{title:string,isChecked:boolean},labelIndex:number)=>{
         if (labelIndex!== index){
           item['isChecked'] = false
         }
@@ -144,11 +148,11 @@ export default defineComponent( {
           payment_status = 5
           break;
       }
-      searchData(payment_status,'status')
+      searchData(payment_status.toString(),'status')
     }
 
     //查找订单函数
-    const findData = (findArr:string[],searchConfident:string|number,target:string)=>{
+    const findData = (findArr:string[],searchConfident:string|RegExp,target:string)=>{
       let regExp:RegExp = new RegExp(searchConfident)
       let newData:string[] = []
 
@@ -168,6 +172,8 @@ export default defineComponent( {
             if (regExp.test(item.order_id) || regExp.test(item.account) || regExp.test(item.username)){
               newData.push(item)
             }
+            //清除标签按钮的选中状态
+            clearButtonChecked()
           }
         })
 
@@ -176,7 +182,8 @@ export default defineComponent( {
     }
 
     //点击搜索按钮搜索订单
-    const searchData = (confident:string | number,target:string)=>{
+    const searchData = (confident:string | RegExp,target:string)=>{
+
       let regExpArr:string[] | null = findData(order.allData,confident,target)
       if (regExpArr!==null){
         order.data = []
@@ -187,9 +194,9 @@ export default defineComponent( {
       }
     }
 
-    const searchDataByKeyUp = (e)=>{
+    const searchDataByKeyUp = (e: { keyCode: number; })=>{
       if (e.keyCode===13){
-        searchData(statusLabel.searchConfident)
+        searchData(statusLabel.searchConfident,'')
       }
     }
 
@@ -201,10 +208,22 @@ export default defineComponent( {
       order.data.push(...order.allData)
       order.tableData.push(...order.allData)
       statusLabel.searchConfident = ''
+
+      //清除标签按钮的选中状态
+      clearButtonChecked()
+
       let timer = setTimeout(()=>{
         order.isRotate = false
         clearTimeout(timer)
       },1000)
+    }
+
+    const clearButtonChecked = ()=>{
+      statusLabel.data.map((item:{isChecked:boolean})=>{
+        if (item.isChecked){
+          item.isChecked = false
+        }
+      })
     }
 
     onMounted(()=>{

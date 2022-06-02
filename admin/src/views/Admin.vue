@@ -92,6 +92,9 @@
         <div class="swiper-mana" v-show="shopMenu.currentIndex===2">
           <swiper-manage></swiper-manage>
         </div>
+        <div class="order-mana" v-show="shopMenu.currentIndex===5">
+          <seckill-manage :seckill-data="tableLogic.tableData"></seckill-manage>
+        </div>
         <div class="order-mana" v-show="shopMenu.currentIndex===7">
           <order-manage></order-manage>
         </div>
@@ -115,6 +118,7 @@
     import MemberManage from "../components/admin/memberManage/MemberManage.vue"
     import OrderManage from '../components/admin/orderManage/OrderManage.vue'
     import SwiperManage from '../components/admin/swiperManage/SwiperManage.vue'
+    import SeckillManage from '../components/admin/seckillManage/SeckillManage.vue'
     import {getShopManageData,addProduct,getAdministratorInfo,getMemberManageData} from "../network/request";
     import DataStatistics from "../components/admin/dataStatistics/DataStatistics.vue";
     import AddProduct from '../components/admin/shopManage/AddProduct.vue';
@@ -128,6 +132,7 @@
         MemberManage,
         SwiperManage,
         OrderManage,
+        SeckillManage,
         DataStatistics,
         AddProduct
       },

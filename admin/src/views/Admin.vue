@@ -93,7 +93,7 @@
           <swiper-manage></swiper-manage>
         </div>
         <div class="order-mana" v-show="shopMenu.currentIndex===5">
-          <seckill-manage :seckill-data="tableLogic.tableData"></seckill-manage>
+          <seckill-manage :seckill-data="seckill.data"></seckill-manage>
         </div>
         <div class="order-mana" v-show="shopMenu.currentIndex===7">
           <order-manage></order-manage>
@@ -281,13 +281,18 @@
               });
             })
 
-            //获取商品中的品牌跟类型
+            //获取商品中的品牌跟类型、活动
             result.data.map((item:any)=>{
               if (addProductLogic.selectBrandOptions.indexOf(item['product_brand'])===-1){
                 addProductLogic.selectBrandOptions.push(item['product_brand'])
               }
               if (addProductLogic.selectCategoryOptions.indexOf(item['product_type'])===-1){
                 addProductLogic.selectCategoryOptions.push(item['product_type'])
+              }
+
+              //获取秒杀商品数据
+              if (item.preferential_type==='秒杀'){
+                seckill.data.push(item)
               }
             })
             tableLogic.tableData = tableLogic.shopManageData
@@ -425,10 +430,17 @@
           })
         }
 
+        //处理获取到的商品数据，将含有秒杀活动的商品进行汇总并传给子组件
+        let seckill = reactive({
+          data:<string[]>[]
+        });
+
+
         return {
           navLogic,
           administrator,
           tableLogic,
+          seckill,
           addProductLogic,
           addProduct,
           searchProduct,

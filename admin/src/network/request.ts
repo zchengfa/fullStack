@@ -97,3 +97,12 @@ export function getOrderData(){
         url:'getOrderData'
     })
 }
+
+export function saveFlashTime(data:any){
+    return Post({
+        url:'/saveFlashTime',
+        data:{
+            data
+        }
+    })
+}

@@ -92,7 +92,7 @@
         <div class="swiper-mana" v-show="shopMenu.currentIndex===2">
           <swiper-manage></swiper-manage>
         </div>
-        <div class="order-mana" v-show="shopMenu.currentIndex===5">
+        <div class="seckill-mana" v-show="shopMenu.currentIndex===5">
           <seckill-manage :seckill-data="seckill.data"></seckill-manage>
         </div>
         <div class="order-mana" v-show="shopMenu.currentIndex===7">
@@ -678,7 +678,8 @@
     .table-container div.shop-mana,
     .table-container div.member-mana,
     .table-container div.swiper-mana,
-    .table-container div.order-mana{
+    .table-container div.order-mana,
+    .table-container div.seckill-mana{
       width: calc(100vw - 15rem);
     }
     .member-mana .select-group{
@@ -694,6 +695,13 @@
       width: 88vw;
 
       background-color: rgb(242, 236, 247);
+    }
+    .seckill-mana{
+      margin: 0 auto;
+      overflow-y: scroll;
+    }
+    .seckill-mana::-webkit-scrollbar{
+      display: none;
     }
     /*.data-statistics::-webkit-scrollbar{*/
     /*  display: none;*/

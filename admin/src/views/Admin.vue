@@ -93,7 +93,7 @@
           <swiper-manage></swiper-manage>
         </div>
         <div class="seckill-mana" v-show="shopMenu.currentIndex===5">
-          <seckill-manage :seckill-data="seckill.data"></seckill-manage>
+          <seckill-manage :seckill-data="seckill.data" :no-seckill-data="seckill.noSeckill"></seckill-manage>
         </div>
         <div class="order-mana" v-show="shopMenu.currentIndex===7">
           <order-manage></order-manage>
@@ -224,8 +224,8 @@
         }
 
         /**
-         * @param menu 存储菜单名
-         * @param currentIndex 用于存储用户当前点击菜单项索引，用索引控制对应内容的展示与隐藏
+         * @let menu 存储菜单名
+         * @let currentIndex 用于存储用户当前点击菜单项索引，用索引控制对应内容的展示与隐藏
          * @function changeMenuItem 用户点击菜单，获取到点击的菜单索引。并将其赋给currentIndex
          */
         let shopMenu = reactive({
@@ -252,8 +252,8 @@
         }
 
         /**
-         * @param tableData 存储表格内需要展示的数据
-         * @param shopManageData 存储后台获得的商品管理数据
+         * @let tableData 存储表格内需要展示的数据
+         * @let shopManageData 存储后台获得的商品管理数据
          */
 
         let tableLogic = reactive({
@@ -294,6 +294,9 @@
               if (item.preferential_type==='秒杀'){
                 seckill.data.push(item)
               }
+              else{
+                seckill.noSeckill.push(item)
+              }
             })
             tableLogic.tableData = tableLogic.shopManageData
 
@@ -306,12 +309,12 @@
 
         /**
          * @function addProduct 点击按钮控制添加商品的页面显示与隐藏
-         * @param isShowAddProduct bool值代表添加商品按钮的显示与隐藏
-         * @param selectCategoryOptions 分类选项组的内容
-         * @param selectBrandOptions 品牌选项组的内容
-         * @param categoryCheckOption 已选择的分类
-         * @param brandCheckOption 已选择的品牌
-         * @param searchKeyword 需要查询的关键字（ID/名称/分类）
+         * @let isShowAddProduct bool值代表添加商品按钮的显示与隐藏
+         * @let selectCategoryOptions 分类选项组的内容
+         * @let selectBrandOptions 品牌选项组的内容
+         * @let categoryCheckOption 已选择的分类
+         * @let brandCheckOption 已选择的品牌
+         * @let searchKeyword 需要查询的关键字（ID/名称/分类）
          */
         let addProductLogic = reactive({
           isShowAddProduct:<boolean>false,
@@ -343,9 +346,9 @@
 
         /**
          *@function searchProduct 该方法用于管理员搜索想搜索的商品，通过绑定keyUp键盘事件来获取管理员按下的键来判断何时执行搜索方法
-         * @param searchArr 获取从后台得到的商品数据
-         * @param regExp 正则规则（new RegExp(addProductLogic.searchKeyword)将管理员输入的内容作为正则规则）
-         * @param regExpArr 用于存储正则规则匹配到的商品数据
+         * @let searchArr 获取从后台得到的商品数据
+         * @let regExp 正则规则（new RegExp(addProductLogic.searchKeyword)将管理员输入的内容作为正则规则）
+         * @let regExpArr 用于存储正则规则匹配到的商品数据
          */
         function searchProduct(e:any){
           let searchArr:any[] = tableLogic.shopManageData
@@ -374,9 +377,9 @@
 				
 				/**
 				 *@function searchUser 该方法用于管理员搜索想搜索的用户，通过绑定keyUp键盘事件来获取管理员按下的键来判断何时执行搜索方法
-				 * @param searchArr 获取从后台得到的用户数据
-				 * @param regExp 正则规则（new RegExp(tableLogic.memberManaSearchKeyword)将管理员输入的内容作为正则规则）
-				 * @param regExpArr 用于存储正则规则匹配到的用户数据
+				 * @let searchArr 获取从后台得到的用户数据
+				 * @let regExp 正则规则（new RegExp(tableLogic.memberManaSearchKeyword)将管理员输入的内容作为正则规则）
+				 * @let regExpArr 用于存储正则规则匹配到的用户数据
 				 */
 				
 				function searchUser(e:any){
@@ -432,7 +435,8 @@
 
         //处理获取到的商品数据，将含有秒杀活动的商品进行汇总并传给子组件
         let seckill = reactive({
-          data:<string[]>[]
+          data:<string[]>[],
+          noSeckill:<string[]>[]
         });
 
 

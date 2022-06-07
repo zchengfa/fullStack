@@ -28,15 +28,22 @@
     </el-table-column>
   </el-table>
   <el-button v-show="seckill.changed.length" @click="saveChanged" type="success" size="small" class="save-button">保存编辑</el-button>
+  <el-button class="add-seckill-button" @click="addSeckill" type="danger" size="small">添加秒杀商品</el-button>
+  <add-seckill @close-add-seckill="closeAddSeckill" :no-seckill-data="$props.noSeckillData" class="add-seckill-box"></add-seckill>
 </template>
 
 <script lang="ts">
 import {defineComponent, reactive} from "vue";
 import {saveFlashTime} from "../../../network/request";
+import AddSeckill from './AddSeckill.vue'
+
 
 export default defineComponent({
   name: "SeckillManage",
-  props:['seckillData'],
+  props:['seckillData','noSeckillData'],
+  components:{
+    AddSeckill
+  },
   setup(props){
     interface changed {
       id:string,
@@ -46,7 +53,8 @@ export default defineComponent({
 
     let seckill = reactive({
       time:<string[]>[],
-      changed:<changed[]>[]
+      changed:<changed[]>[],
+      isShowAddSeckill:<boolean>false
     })
 
     const changeFlashSaleTime = function (index:number) {
@@ -86,9 +94,41 @@ export default defineComponent({
             beginTimeButton.style.margin = '0 auto'
 
           })
-
         }
       })
+    }
+
+    const addSeckill = function (){
+      setAnimation('add-seckill-box','rtl')
+    }
+
+    const closeAddSeckill = function (){
+      setAnimation('add-seckill-box','ltr')
+    }
+
+    const setAnimation =function (className:string,direction:string='rtl'){
+      let e = <HTMLElement> document.getElementsByClassName(className).item(0)
+      direction==='rtl'?(()=>{
+        let c = 0
+        let intervalTimer = setInterval(()=>{
+          c++
+          e.style.transform = `translateX(-${c}%)`
+          c>=100?clearInterval(intervalTimer):null
+        })
+      })():null
+
+      direction==='ltr'?(()=>{
+        let c = 100
+        let intervalTimer = setInterval(()=>{
+          c--
+          e.style.transform = `translateX(-${c}%)`
+          c<=0?clearInterval(intervalTimer):null
+        })
+      })():null
+
+      if (direction!=='ltr'&& direction!=='rtl'){
+        throw new Error('your direction should be rtl or ltr')
+      }
 
     }
 
@@ -96,9 +136,10 @@ export default defineComponent({
       seckill,
       changeFlashSaleTime,
       selectTime,
-      saveChanged
+      saveChanged,
+      addSeckill,
+      closeAddSeckill
     }
-
   }
 })
 </script>
@@ -112,5 +153,19 @@ img{
 }
 .save-button{
   margin: 5vh auto;
+}
+.add-seckill-button{
+  margin-top: 5vh;
+
+  margin-bottom: 5vh;
+}
+.add-seckill-box{
+  position: fixed;
+  left:calc(100vw + 48px);
+  top:48px;
+  width: 30vw;
+  height: calc(100vh - 48px);
+  background-color: #f3eeee;
+  z-index: 11;
 }
 </style>

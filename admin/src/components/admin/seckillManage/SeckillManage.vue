@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, reactive} from "vue";
+import {defineComponent, reactive,getCurrentInstance,ComponentInternalInstance} from "vue";
 import {saveFlashTime} from "../../../network/request";
 import AddSeckill from './AddSeckill.vue'
 
@@ -45,6 +45,8 @@ export default defineComponent({
     AddSeckill
   },
   setup(props){
+    const {appContext} = getCurrentInstance() as ComponentInternalInstance
+
     interface changed {
       id:string,
       time:number,
@@ -132,13 +134,23 @@ export default defineComponent({
 
     }
 
+    // const confirmAddSeckill = function (){
+    //   closeAddSeckill()
+    // }
+
+    //监听AddSeckill子组件发出的confirmAddSeckill事件
+    appContext.config.globalProperties.$bus.on('confirmAddSeckill',()=>{
+      closeAddSeckill()
+    })
+
     return {
       seckill,
       changeFlashSaleTime,
       selectTime,
       saveChanged,
       addSeckill,
-      closeAddSeckill
+      closeAddSeckill,
+      //confirmAddSeckill
     }
   }
 })
@@ -163,7 +175,7 @@ img{
   position: fixed;
   left:calc(100vw + 48px);
   top:48px;
-  width: 30vw;
+  width: 35vw;
   height: calc(100vh - 48px);
   background-color: #f3eeee;
   z-index: 11;

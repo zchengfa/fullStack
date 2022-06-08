@@ -66,6 +66,7 @@ export default {
       this.getFlashSaleD(hour)
     },
     getFlashSaleD(hour){
+      hour===24?hour=0:null
       getFlashSaleData(hour,40).then(res=>{
         this.flashSaleData = []
         this.flashSaleData.push(...res.data)

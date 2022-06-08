@@ -106,3 +106,12 @@ export function saveFlashTime(data:any){
         }
     })
 }
+
+export function addSeckill(data:string[]){
+    return Post({
+        url:'/addSeckill',
+        data:{
+            data
+        }
+    })
+}

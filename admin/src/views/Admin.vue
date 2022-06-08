@@ -110,7 +110,7 @@
   ></add-product>
 </template>
 <script lang="ts">
-    import {reactive,defineComponent,onBeforeMount} from "vue";
+    import {reactive,defineComponent,onBeforeMount,getCurrentInstance,ComponentInternalInstance} from "vue";
     import {useRouter} from 'vue-router'
     import {ElContainer,ElHeader,ElMain,ElTabs,ElTabPane,ElIcon} from "element-plus";
     import {Goods,User,TrendCharts,Unlock,Timer,Setting,Van,Watch,Grape,Management} from '@element-plus/icons-vue'
@@ -119,7 +119,7 @@
     import OrderManage from '../components/admin/orderManage/OrderManage.vue'
     import SwiperManage from '../components/admin/swiperManage/SwiperManage.vue'
     import SeckillManage from '../components/admin/seckillManage/SeckillManage.vue'
-    import {getShopManageData,addProduct,getAdministratorInfo,getMemberManageData} from "../network/request";
+    import {getShopManageData,addProduct,getAdministratorInfo,getMemberManageData,addSeckill} from "../network/request";
     import DataStatistics from "../components/admin/dataStatistics/DataStatistics.vue";
     import AddProduct from '../components/admin/shopManage/AddProduct.vue';
 
@@ -146,6 +146,7 @@
           }
 
         })
+        const {appContext} = getCurrentInstance() as ComponentInternalInstance
 
         const router = useRouter()
         const token:string |null = sessionStorage.getItem('token')
@@ -438,6 +439,15 @@
           data:<string[]>[],
           noSeckill:<string[]>[]
         });
+
+        //监听事件总线发出的confirmAddSeckill事件
+        appContext.config.globalProperties.$bus.on('confirmAddSeckill',(data:string[])=>{
+          //获得添加到秒杀活动的商品数据，向后端发起请求将对应商品一一更改为秒杀商品
+          addSeckill(data).then(res=>{
+            console.log(res.data)
+          })
+          //console.log(data)
+        })
 
 
         return {

@@ -19,5 +19,24 @@ module.exports = app =>{
     })
   })
 
+  router.post('/addSeckill',(req, res) => {
+    const paramsObj = JSON.parse(JSON.stringify(req.body))
+
+    let updateFinish = 0
+    paramsObj.data.map(item=>{
+      const updateSeckill = update('mall_goods',`preferential_type = '秒杀',flash_sale_time = 20`,`product_id = '${item.product_id}'`)
+      connection.query(updateSeckill,(err,upR)=>{
+        if (err) throw err
+        console.log(upR)
+        if (Object.keys(upR).length){
+          updateFinish++
+        }
+        updateFinish===paramsObj.data.length?res.send({'addResult':true}):null
+      })
+    })
+
+    //res.send(paramsObj)
+  })
+
   app.use('/admin',router)
 }

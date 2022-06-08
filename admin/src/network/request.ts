@@ -107,11 +107,21 @@ export function saveFlashTime(data:any){
     })
 }
 
-export function addSeckill(data:string[]){
+export function addSeckill(data:string[],time:number){
     return Post({
         url:'/addSeckill',
         data:{
-            data
+            data,
+            time
+        }
+    })
+}
+
+export function removeSeckill(id:string){
+    return Post({
+        url:'/removeSeckill',
+        data:{
+            id
         }
     })
 }

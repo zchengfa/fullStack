@@ -93,7 +93,7 @@
           <swiper-manage></swiper-manage>
         </div>
         <div class="seckill-mana" v-show="shopMenu.currentIndex===5">
-          <seckill-manage :seckill-data="seckill.data" :no-seckill-data="seckill.noSeckill"></seckill-manage>
+          <seckill-manage :seckill-data="seckill.data" :no-seckill-data="seckill.noSeckill" :key="seckill.key"></seckill-manage>
         </div>
         <div class="order-mana" v-show="shopMenu.currentIndex===7">
           <order-manage></order-manage>
@@ -437,16 +437,28 @@
         //处理获取到的商品数据，将含有秒杀活动的商品进行汇总并传给子组件
         let seckill = reactive({
           data:<string[]>[],
-          noSeckill:<string[]>[]
+          noSeckill:<string[]>[],
+          key:<number>0
         });
 
         //监听事件总线发出的confirmAddSeckill事件
-        appContext.config.globalProperties.$bus.on('confirmAddSeckill',(data:string[])=>{
+        appContext.config.globalProperties.$bus.on('confirmAddSeckill',(obj:{data:string[],time:string})=>{
           //获得添加到秒杀活动的商品数据，向后端发起请求将对应商品一一更改为秒杀商品
-          addSeckill(data).then(res=>{
-            console.log(res.data)
+          addSeckill(obj.data,parseInt(obj.time.replace(':00',''))).then(res=>{
+            if (res.data.addResult){
+              alert('已将您选择的商品加入到秒杀活动中')
+              obj.data.map((item:any)=>{
+                seckill.noSeckill.map((noItem:any,index:number)=>{
+                  if (item.product_id===noItem.product_id){
+                    seckill.noSeckill.splice(index,1)
+                    seckill.data.push(item)
+                    seckill.key++
+                  }
+                })
+              })
+            }
           })
-          //console.log(data)
+
         })
 
 

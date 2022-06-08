@@ -26,6 +26,13 @@
         <span>{{scope.row['flash_sale_time']+2+':00'}}</span>
       </template>
     </el-table-column>
+    <el-table-column label="操作" fixed="right" align="center">
+      <template #default="scope">
+        <div class="operation-btn">
+          <el-button class="edit-btn" size="small" type="danger" @click.prevent="removeSeckillData(scope.row.product_id,scope.$index)">移出秒杀活动栏</el-button>
+        </div>
+      </template>
+    </el-table-column>
   </el-table>
   <el-button v-show="seckill.changed.length" @click="saveChanged" type="success" size="small" class="save-button">保存编辑</el-button>
   <el-button class="add-seckill-button" @click="addSeckill" type="danger" size="small">添加秒杀商品</el-button>
@@ -34,7 +41,7 @@
 
 <script lang="ts">
 import {defineComponent, reactive,getCurrentInstance,ComponentInternalInstance} from "vue";
-import {saveFlashTime} from "../../../network/request";
+import {saveFlashTime,removeSeckill} from "../../../network/request";
 import AddSeckill from './AddSeckill.vue'
 
 
@@ -134,9 +141,13 @@ export default defineComponent({
 
     }
 
-    // const confirmAddSeckill = function (){
-    //   closeAddSeckill()
-    // }
+    const removeSeckillData = function (id:string,index:number){
+      removeSeckill(id).then(res=>{
+        if (res.data.removeResult){
+          props.seckillData.splice(index,1)
+        }
+      })
+    }
 
     //监听AddSeckill子组件发出的confirmAddSeckill事件
     appContext.config.globalProperties.$bus.on('confirmAddSeckill',()=>{
@@ -150,7 +161,7 @@ export default defineComponent({
       saveChanged,
       addSeckill,
       closeAddSeckill,
-      //confirmAddSeckill
+      removeSeckillData
     }
   }
 })

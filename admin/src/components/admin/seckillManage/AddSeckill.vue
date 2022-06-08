@@ -2,7 +2,7 @@
 <div class="add-seckill">
   <el-button size="small" circle class="close" @click="closeAddSeckill"><el-icon><Close></Close></el-icon></el-button>
   <div>
-    <el-button type="success" size="small" @click="confirmAddSeckill" v-show="noSeckill.data.length">确认添加</el-button>
+    <el-button type="danger" size="small" @click="confirmAddSeckill" v-show="noSeckill.data.length">确认添加</el-button>
     <span class="count-tip">共计{{$props.noSeckillData.length}}件商品可加入秒杀活动</span>
   </div>
   <div class="item-box">
@@ -10,12 +10,18 @@
       <img :src="item.product_image" :alt="item.product_title"><p>{{item.product_title}}</p>
     </div>
   </div>
+  <div class="time-selector" v-show="noSeckill.isShowTimeSelector">
+    <p>选择时间</p>
+    <el-time-select v-model="noSeckill.seckillTime" start="00:00" step="02:00" end="22:00" @change="selectTime"></el-time-select>
+    <el-button class="confirm-button" size="small" type="success" @click="confirmAdd">确定</el-button>
+  </div>
 </div>
 </template>
 
 <script lang="ts">
 import {Close} from "@element-plus/icons-vue";
 import {defineComponent, reactive,getCurrentInstance,ComponentInternalInstance} from "vue";
+
 
 
 export default defineComponent({
@@ -29,7 +35,9 @@ export default defineComponent({
     const {appContext} = getCurrentInstance() as ComponentInternalInstance
 
     let noSeckill = reactive({
-      data:<string[]>[]
+      data:<string[]>[],
+      seckillTime:<string>'00:00',
+      isShowTimeSelector:<boolean>false
     })
 
     const closeAddSeckill = ()=>{
@@ -60,14 +68,30 @@ export default defineComponent({
     }
 
     const confirmAddSeckill = ()=>{
-      appContext.config.globalProperties.$bus.emit('confirmAddSeckill',noSeckill.data)
+      noSeckill.isShowTimeSelector = true
+    }
+
+    const selectTime = (val:string)=>{
+      noSeckill.seckillTime = val
+    }
+
+    const confirmAdd = ()=>{
+      //将选择的商品活动类型改为秒杀，秒杀时间以选择的为准
+      noSeckill.data.map((item:any)=>{
+        item.preferential_type = '秒杀'
+        item.flash_sale_time = parseInt(noSeckill.seckillTime.replace(':00',''))
+      })
+      appContext.config.globalProperties.$bus.emit('confirmAddSeckill',{'data':noSeckill.data,'time':noSeckill.seckillTime})
+      noSeckill.isShowTimeSelector = false
     }
 
     return {
       closeAddSeckill,
       selectProduct,
       noSeckill,
-      confirmAddSeckill
+      confirmAddSeckill,
+      selectTime,
+      confirmAdd
     }
   }
 })
@@ -127,5 +151,21 @@ export default defineComponent({
 }
 .active-item{
   border: 1px solid #fd001e;
+}
+.time-selector{
+  position: absolute;
+  top:50%;
+  left: 50%;
+  padding: 2rem;
+  transform: translateX(-50%) translateY(-50%);
+  background-color: #FFFFFF;
+  border-radius: .2rem;
+  z-index: 9999;
+}
+.time-selector p{
+  margin-top: 0;
+}
+.time-selector .confirm-button{
+  margin-top: 1rem;
 }
 </style>

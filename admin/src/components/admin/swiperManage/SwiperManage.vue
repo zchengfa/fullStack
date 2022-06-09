@@ -1,10 +1,10 @@
 <template>
   <swiper :key="swiperKey" :modules="[EffectCoverflow]" effect="coverflow" class="swiper" autoplay>
-    <swiper-slide v-for="(item,index) in banner.data" :key="index" v-show="item['isShow']">
+    <swiper-slide v-for="(item,index) in table.data" :key="index" v-show="item['isShow']">
       <img :src="item['banner_image']" alt="banner">
     </swiper-slide>
   </swiper>
-  <el-table :data="banner.tableData" class="swiper-table" :header-cell-style="headerStyle" :cell-style="rowStyle" border empty-text="用户数据为空">
+  <el-table :data="table.tableData" class="swiper-table" :header-cell-style="headerStyle" :cell-style="rowStyle" border empty-text="用户数据为空">
     <el-table-column prop="id" label="序号" align="center"></el-table-column>
     <el-table-column width="414" prop="banner_image" label="图片链接" align="center">
       <template #default="scope">
@@ -25,7 +25,7 @@
       </template>
     </el-table-column>
   </el-table>
-  <el-pagination class="pagination" :page-size="banner.pageSize" :total="banner.data.length" @current-change="currentPageChange"></el-pagination>
+  <el-pagination class="pagination" :page-size="table.pageSize" :total="table.data.length" @current-change="currentPageChange"></el-pagination>
 </template>
 
 <script lang="ts">
@@ -33,6 +33,7 @@ import {defineComponent, onMounted, reactive, ref, watchEffect} from "vue";
 import {EffectCoverflow} from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import {getBannerData, operateBanner} from "../../../network/request";
+import useTable from "../../../common/useTable";
 
 import 'swiper/css';
 import 'swiper/css/effect-fade';
@@ -45,13 +46,9 @@ export default defineComponent({
   },
   setup() {
 
-    let swiperKey = ref(0)
+    const {table,currentPageChange} = useTable(4)
 
-    let banner = reactive({
-      data:<string[]>[],
-      tableData:<string[]>[],
-      pageSize:<number>4
-    })
+    let swiperKey = ref(0)
 
     const headerStyle = ()=>{
       return "background-color: #88da0b;color:#fff"
@@ -68,24 +65,11 @@ export default defineComponent({
 
     const getBanner = ()=>{
       getBannerData().then(res=>{
-        banner.data.push(...res.data)
-        banner.tableData.push(...banner.data)
+        table.data.push(...res.data)
+        table.tableData.push(...table.data)
       })
     }
     getBanner()
-
-    const currentPageChange = (val:number)=>{
-      if (val===1){
-        banner.tableData = sliceTableData(val-1,banner.pageSize)
-      }
-      else {
-        banner.tableData = sliceTableData((val-1)*banner.pageSize,((val-1)*banner.pageSize)+banner.pageSize)
-      }
-    }
-
-    const sliceTableData = (start:number,end:number)=>{
-      return banner.data.slice(start,end)
-    }
 
     const operationBanner = (row: { isShow: boolean; brand_id: number; })=>{
       operateBanner({
@@ -93,7 +77,7 @@ export default defineComponent({
         id:row.brand_id
       }).then(res=>{
         if (res.data){
-          banner.tableData.map((item:any)=>{
+          table.tableData.map((item:any)=>{
             if (item['brand_id'] === row.brand_id){
               item.isShow = res.data.operation_responsive
             }
@@ -105,16 +89,10 @@ export default defineComponent({
       })
     }
 
-    onMounted(()=>{
-      watchEffect(()=>{
-        banner.tableData = sliceTableData(0,banner.pageSize)
-      })
-    })
-
     return {
       EffectCoverflow,
       swiperKey,
-      banner,
+      table,
       currentPageChange,
       headerStyle,
       rowStyle,

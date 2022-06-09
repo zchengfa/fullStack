@@ -13,3 +13,4 @@ export function getPropertyArray (array:any){
     }
     return _propertyArray
 }
+

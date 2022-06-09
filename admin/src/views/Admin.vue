@@ -92,6 +92,12 @@
         <div class="swiper-mana" v-show="shopMenu.currentIndex===2">
           <swiper-manage></swiper-manage>
         </div>
+        <div class="stocks-mana" v-show="shopMenu.currentIndex===3">
+          <stocks-manage></stocks-manage>
+        </div>
+        <div class="ground-mana" v-show="shopMenu.currentIndex===4">
+          <ground-manage :ground-data="ground.data"></ground-manage>
+        </div>
         <div class="seckill-mana" v-show="shopMenu.currentIndex===5">
           <seckill-manage :seckill-data="seckill.data" :no-seckill-data="seckill.noSeckill" :key="seckill.key"></seckill-manage>
         </div>
@@ -118,7 +124,9 @@
     import MemberManage from "../components/admin/memberManage/MemberManage.vue"
     import OrderManage from '../components/admin/orderManage/OrderManage.vue'
     import SwiperManage from '../components/admin/swiperManage/SwiperManage.vue'
+    import StocksManage from '../components/admin/stocksManage/StocksManage.vue'
     import SeckillManage from '../components/admin/seckillManage/SeckillManage.vue'
+    import GroundManage from "../components/admin/groundManage/GroundManage.vue";
     import {getShopManageData,addProduct,getAdministratorInfo,getMemberManageData,addSeckill} from "../network/request";
     import DataStatistics from "../components/admin/dataStatistics/DataStatistics.vue";
     import AddProduct from '../components/admin/shopManage/AddProduct.vue';
@@ -134,7 +142,9 @@
         OrderManage,
         SeckillManage,
         DataStatistics,
-        AddProduct
+        AddProduct,
+        StocksManage,
+        GroundManage
       },
       setup(){
         onBeforeMount(()=> {
@@ -265,6 +275,18 @@
 					memberManaSearchKeyword:<string>''
         })
 
+        //处理获取到的商品数据，将含有秒杀活动的商品进行汇总并传给子组件
+        let seckill = reactive({
+          data:<string[]>[],
+          noSeckill:<string[]>[],
+          key:<number>0
+        });
+
+        //商品上架所需数据
+        let ground = reactive({
+          data:<string[]>[]
+        })
+
         /**
          *@function getShopManageData 获取商品管理数据
          */
@@ -298,6 +320,9 @@
               else{
                 seckill.noSeckill.push(item)
               }
+
+              //获取上架管理组件所需的数据
+              ground.data.push(item)
             })
             tableLogic.tableData = tableLogic.shopManageData
 
@@ -434,13 +459,6 @@
           })
         }
 
-        //处理获取到的商品数据，将含有秒杀活动的商品进行汇总并传给子组件
-        let seckill = reactive({
-          data:<string[]>[],
-          noSeckill:<string[]>[],
-          key:<number>0
-        });
-
         //监听事件总线发出的confirmAddSeckill事件
         appContext.config.globalProperties.$bus.on('confirmAddSeckill',(obj:{data:string[],time:string})=>{
           //获得添加到秒杀活动的商品数据，向后端发起请求将对应商品一一更改为秒杀商品
@@ -473,7 +491,8 @@
           shopMenu,
 					searchUser,
           changeMenuItem,
-          showGoodsByCategoryOrBrand
+          showGoodsByCategoryOrBrand,
+          ground
         }
       },
 
@@ -705,7 +724,8 @@
     .table-container div.member-mana,
     .table-container div.swiper-mana,
     .table-container div.order-mana,
-    .table-container div.seckill-mana{
+    .table-container div.seckill-mana,
+    .table-container div.ground-mana{
       width: calc(100vw - 15rem);
     }
     .member-mana .select-group{

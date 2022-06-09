@@ -110,7 +110,7 @@ export default defineComponent({
   flex-wrap: wrap;
   margin: 0 auto;
   width: 80%;
-  height: 100%;
+  height: 90%;
   overflow-y: scroll;
   background-color: #FFFFFF;
   transform: translateX(-24px);

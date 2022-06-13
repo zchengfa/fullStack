@@ -28,6 +28,7 @@
 <script lang="ts">
 import { defineComponent, reactive,watchEffect} from "vue";
 import useTable from '../../../common/useTable'
+import {groundProduct} from '../../../network/request'
 
 export default defineComponent({
   name:'GroundManage',
@@ -42,11 +43,17 @@ export default defineComponent({
     table.data = props.groundData
     
     const underPro = (id:string)=>{
-      
+      groundGoods(id,0)
     }
 
     const groundPro = (id:string)=>{
+      groundGoods(id,1)
+    }
 
+    const groundGoods = (id:string,status:number)=>{
+      groundProduct({id,status}).then(res=>{
+        console.log(res)
+      })
     }
   
     return {

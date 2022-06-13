@@ -122,6 +122,9 @@ require('./router/admin/memberManage')(app)
 //导入轮播图管理模块
 require('./router/admin/bannerManage')(app)
 
+//导入商品上下架管理模块
+require('./router/admin/grounding')(app)
+
 //导入秒杀管理模块
 require('./router/admin/seckill')(app)
 

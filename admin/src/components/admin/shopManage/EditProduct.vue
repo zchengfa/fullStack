@@ -185,7 +185,7 @@ export default defineComponent({
   overflow: hidden;
 }
 .edit-label,.edit-label-content{
-  display: inline-block;
+  display: block;
   float: left;
 
 }

@@ -125,3 +125,17 @@ export function removeSeckill(id:string){
         }
     })
 }
+
+interface params {
+    id:string,
+    status:number
+}
+
+export function groundProduct(params:string[] | params) {
+    return Post({
+        url:'/groundPro',
+        data:{
+            params
+        }
+    })
+}

@@ -6,40 +6,40 @@
         <input id="search" type="text" placeholder="请输入搜索条件">
       </div> 
       <div class="filter-button">
-        <el-button size="small" @click="groundMany">批量上架</el-button>
-        <el-button size="small" @click="underMany">批量下架</el-button>
+        <el-button size="small" @click="groundUnderMany('上架',1)">批量上架</el-button>
+        <el-button size="small" @click="groundUnderMany('下架',0)">批量下架</el-button>
       </div>   
     </el-col>
   </el-row>
   <el-table :data="table.tableData" border class="table" @selection-change="handleSelection">
-  <el-table-column type="selection" width="55" />
-    <el-table-column label="id" prop="product_id"></el-table-column>
-    <el-table-column label="描述" prop="product_title" align="center"></el-table-column>
-    <el-table-column label="图片" align="center">
-      <template #default="scope">
-        <img :src="scope.row.product_image" alt="product_image" :title="scope.row.product_title"/>
-      </template>
-    </el-table-column>
-    <el-table-column label="上下架状态" align="center">
-      <template #default="scope">
-        <span class="grounding shop-status" v-show="scope.row.isGrounding">上架</span>
-        <span class="under shop-status" v-show="!scope.row.isGrounding">下架</span>
-      </template>
-    </el-table-column>
-    <el-table-column label="操作"  align="center" >
-      <template #default="scope">
-        <div class="operation-btn">
-          <el-button class="ground-btn" size="small" type="danger" v-show="scope.row.isGrounding" @click.prevent="underPro(scope.row.product_id)">下架</el-button>
-          <el-button class="under-btn" size="small" type="primary" v-show="!scope.row.isGrounding" @click.prevent="groundPro(scope.row.product_id)">上架</el-button>
-        </div>
-      </template>
-    </el-table-column>
+    <el-table-column type="selection" width="55" />
+      <el-table-column label="id" prop="product_id"></el-table-column>
+      <el-table-column label="描述" prop="product_title" align="center"></el-table-column>
+      <el-table-column label="图片" align="center">
+        <template #default="scope">
+          <img :src="scope.row.product_image" alt="product_image" :title="scope.row.product_title"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="上下架状态" align="center">
+        <template #default="scope">
+          <span class="grounding shop-status" v-show="scope.row.isGrounding">上架</span>
+          <span class="under shop-status" v-show="!scope.row.isGrounding">下架</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作"  align="center" >
+        <template #default="scope">
+          <div class="operation-btn">
+            <el-button class="ground-btn" size="small" type="danger" v-show="scope.row.isGrounding" @click.prevent="underPro(scope.row.product_id)">下架</el-button>
+            <el-button class="under-btn" size="small" type="primary" v-show="!scope.row.isGrounding" @click.prevent="groundPro(scope.row.product_id)">上架</el-button>
+          </div>
+        </template>
+      </el-table-column>
   </el-table>
   <el-pagination class="pagination" :page-size="table.pageSize" :total="table.data.length" @current-change="currentPageChange"></el-pagination>
 </template>
 
 <script lang="ts">
-import { defineComponent, getCurrentInstance,ComponentInternalInstance} from "vue";
+import {defineComponent, getCurrentInstance, ComponentInternalInstance, reactive,nextTick} from "vue";
 import useTable from '../../../common/useTable'
 import {groundProduct} from '../../../network/request'
 
@@ -55,30 +55,70 @@ export default defineComponent({
     const {table,currentPageChange} = useTable(6)
 
     table.data = props.groundData
+
+    let groundingUnder = reactive({
+      selection:<string[]>[]
+    })
     
     const underPro = (id:string)=>{
-      groundGoods(id,0)
+      groundUnderGoods(id,0,'下架成功')
     }
 
     const groundPro = (id:string)=>{
-      groundGoods(id,1)
+      groundUnderGoods(id,1,'上架成功')
     }
 
-    const groundGoods = (id:string,status:number)=>{
+    const groundUnderGoods = (id:string | string[],status:number,response:string)=>{
       groundProduct({id,status}).then(res=>{
-        console.log(res)
+        res.data.grounding_result?(()=>{
+          //获得反馈后弹出提示框，并更新表中的数据
+          appContext.config.globalProperties.$toast.showToast(response,3000,'结果：')
+          nextTick(()=>{
+            if (Array.isArray(id)){
+              table.tableData.map((item:any)=>{
+                id.map((idItem:string)=>{
+                  if (item.product_id===idItem){
+                    item.isGrounding = status
+                  }
+                })
+              })
+            }
+            else{
+              table.tableData.map((item:any)=>{
+                if (item.product_id===id){
+                  item.isGrounding = status
+                }
+              })
+            }
+          })
+
+        })():null
       })
     }
 
-    const handleSelection = (val:any)=>{
-      console.log(val)
+    const handleSelection = (val:string[])=>{
+      groundingUnder.selection = val
     }
 
-    const groundMany = ()=>{
-      appContext.config.globalProperties.$toast.showToast('您选中的商品中含有已上架的商品，无法进行上架操作',3000,'上架提醒：')
-    }
+    const groundUnderMany = (operation:string,confident:number)=>{
+      let selectionData = groundingUnder.selection
+      !selectionData.length?appContext.config.globalProperties.$toast.showToast(`您未选中任何商品，无法进行${operation}操作`,3000,`${operation}提醒：`):null
+      selectionData.length?(()=>{
+        let selectPro:string[] = [],hadGroundUnderCount:number = 0
+        selectionData.map((item:any)=>{
+          item.isGrounding===confident?hadGroundUnderCount++:null
 
-    const underMany = ()=>{
+          hadGroundUnderCount?appContext.config.globalProperties.$toast.showToast(`您选中的商品中含有已${operation}的商品，无法进行${operation}操作，请取消勾选已${operation}的商品`,3000,`${operation}提醒：`)
+              :(()=>{
+                selectPro.push(item.product_id)
+              })()
+
+          selectPro.length===selectionData.length?(()=>{
+            groundUnderGoods(selectPro,confident,`商品批量${operation}成功`)
+          })():null
+        })
+
+      })():null
 
     }
   
@@ -88,8 +128,7 @@ export default defineComponent({
       groundPro,
       currentPageChange,
       handleSelection,
-      groundMany,
-      underMany
+      groundUnderMany
     }
   }
 })

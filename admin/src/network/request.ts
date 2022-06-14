@@ -127,11 +127,11 @@ export function removeSeckill(id:string){
 }
 
 interface params {
-    id:string,
+    id:string | string[],
     status:number
 }
 
-export function groundProduct(params:string[] | params) {
+export function groundProduct(params: params) {
     return Post({
         url:'/groundPro',
         data:{

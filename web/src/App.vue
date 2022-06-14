@@ -18,10 +18,7 @@
 		components: {
 			MainTabBar,
       Loading
-		},
-    mounted() {
-      console.log(this.$toast)
-    },
+		}
   }
 </script>
 <style scoped>

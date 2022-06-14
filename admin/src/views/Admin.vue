@@ -690,7 +690,6 @@
     .select-group{
       display: flex;
       align-items: center;
-      margin-top: 2rem;
       width: 80%;
       min-width: 1000px;
       height: 5rem;
@@ -728,6 +727,9 @@
     .table-container div.ground-mana{
       width: calc(100vw - 15rem);
     }
+    .shop-mana{
+      margin: 0 auto;
+    }
     .member-mana .select-group{
       margin-left: 1rem;
       width: 50%;
@@ -748,6 +750,9 @@
     }
     .seckill-mana::-webkit-scrollbar{
       display: none;
+    }
+    .ground-mana{
+      margin: 0 auto ;
     }
     /*.data-statistics::-webkit-scrollbar{*/
     /*  display: none;*/

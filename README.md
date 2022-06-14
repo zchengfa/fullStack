@@ -192,3 +192,174 @@ const selectQuery = `SELECT user_id,account,username,total_price FROM mall_store
 ```javascript
 const selectQuery = `SELECT O.user_id,account,username,total_price FROM mall_store_order as O INNER JOIN mall_user as U ON O.user_id = U.user_id and O.payment_status = 2`
 ```
+
+##### 九、vue3中全局挂载自定义插件（install）
+###### 实现步骤：
+1. 创建自己的组件(Toast.vue)
+```vue
+<template>
+  <div></div>
+</template>
+
+<script lang="ts">
+import { defineComponent,reactive } from "vue"
+export default defineComponent( {
+  name: "Toast",
+  setup(){
+    let toast = reactive({})
+
+    const showToast = ()=>{}
+    
+    const know = ()=>{}
+
+    return {
+        toast,
+        showToast,
+        know
+    }
+  }
+})
+</script>
+
+<style scoped>
+/* 组件样式 */
+</style>
+```
+
+2. 创建一个ts文件(toast.ts)
+```typescript
+import Toast from "./Toast.vue";
+import { createApp } from "vue";
+
+export default {
+    install(app:any){
+
+        //创建应用实例
+        const application = createApp(Toast)
+
+        //将实例挂载到div上
+        const appEl = application.mount(
+            document.createElement('div')
+        )
+
+        //将挂载有实例的盒子加入到body中
+        document.body.appendChild(appEl.$el)
+
+        //含有方法的对象
+        const PUBLIC_FUN = {
+            showToast(message:string,duration:number,title:string){
+                // @ts-ignore
+                appEl.showToast(message,duration,title)
+            }
+        }
+
+        //将对象挂载为app的全局属性
+        app.config.globalProperties.$toast = PUBLIC_FUN
+    }
+}
+```
+
+3. 在main.ts中安装插件(main.ts)
+```typescript
+import { createApp } from 'vue'
+import App from './App.vue'
+import toast from "./components/common/toast";
+
+const app = createApp(App)
+
+//安装自定义插件
+app.use(toast)
+
+app.mount('#app')
+```
+
+##### 十、在vue3项目中使用事件总线$bus(mitt)
+###### 实现步骤：
+1. 安装mitt
+```
+npm install mitt --save
+```
+
+2. 在main.ts文件中引入mitt
+```typescript
+import { createApp } from 'vue'
+import App from './App.vue'
+import mitt from "mitt";
+
+const app = createApp(App)
+
+//将事件总线注册为全局属性
+app.config.globalProperties.$bus = mitt()
+
+app.mount('#app')
+
+```
+
+3. 使用
+```vue
+<template>
+  <el-button class="confirm-button" size="small" type="success" @click="confirmAdd">确定</el-button>
+</template>
+
+<script lang="ts">
+import {defineComponent, reactive,getCurrentInstance,ComponentInternalInstance} from "vue";
+
+export default defineComponent({
+  name: "AddSeckill",
+  setup(props,context){
+    const {appContext} = getCurrentInstance() as ComponentInternalInstance
+
+    const confirmAdd = ()=>{
+      appContext.config.globalProperties.$bus.emit('事件名称',{'data':''})
+    }
+
+    return {
+      confirmAdd
+    }
+  }
+})
+</script>
+
+<style scoped></style>
+
+```
+
+##### 十一、vue3项目中如何实现与vue2一样的mixins混入效果（使用vue3的组合式API  CompositionApi）
+###### 实现步骤：
+1. 创建一个ts文件
+```typescript
+//利用CompositionApi实现类似vue2的mixins混入效果
+import { reactive , watchEffect } from "vue";
+
+export default function (size:number) {
+  let table = reactive({
+     pageSize:<number>size
+  })
+
+  
+  const currentPageChange = (val:number)=>{}
+
+  const sliceTableData = (start:number,end:number)=>{}
+
+  watchEffect(()=>{})
+
+  return {
+    table,
+    currentPageChange,
+    sliceTableData
+  }
+}
+```
+
+2. 使用
+```vue
+<script lang="ts">
+import { defineComponent} from "vue";
+import useTable from '../../../common/useTable'
+
+export default defineComponent({
+  setup(props){
+    const {table,currentPageChange} = useTable(6)
+  }
+</script>
+```

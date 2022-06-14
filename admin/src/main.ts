@@ -5,11 +5,13 @@ import router from "./router";
 import ElementPlus from 'element-plus/lib/index'
 import 'element-plus/theme-chalk/index.css'
 
+import toast from "./components/common/toast";
+
 import mitt from "mitt";
 
 const app = createApp(App)
 
-//将事件总线变为全局属性
+//将事件总线注册为全局属性
 app.config.globalProperties.$bus = mitt()
 
 //安装ElementPlus
@@ -17,6 +19,9 @@ app.use(ElementPlus,{})
 
 //安装router
 app.use(router)
+
+//安装自定义插件
+app.use(toast)
 
 //全局的路由守卫，进入所有路由前，检测是否需要登录后才能进入
 router.beforeEach((to,from,next)=>{

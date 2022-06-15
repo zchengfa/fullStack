@@ -124,7 +124,7 @@ export default defineComponent( {
             else {
               alert(result.data['failed'])
             }
-            console.log(result)
+
           }).catch(err => {
             console.log(err)
           })

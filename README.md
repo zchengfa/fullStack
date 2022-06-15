@@ -361,5 +361,5 @@ export default defineComponent({
   setup(props){
     const {table,currentPageChange} = useTable(6)
   }
-</script>
+</script> 
 ```

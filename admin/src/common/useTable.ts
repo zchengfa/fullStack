@@ -5,6 +5,7 @@ import { reactive , watchEffect } from "vue";
 export default function (size:number) {
   let table = reactive({
      data:<string[]>[],
+     dataCopy:<string[]>[],
      tableData:<string[]>[],
      pageSize:<number>size
   })
@@ -24,6 +25,50 @@ export default function (size:number) {
     return table.data.slice(start,end)
   }
 
+  //通过搜索框搜索商品
+  const search = (parentArr:string[],showArr:string[],keyword:string,keyCode:number,confidentArr:string[])=>{
+    let searchArr:any[] = parentArr
+		let regExpArr:any[] = []
+		let regExp:RegExp = new RegExp(keyword)
+		if(keyCode === 13){
+		  if(keyword.length !=0){
+		    searchArr.map((item,index) => {
+		      let expString = returnExpConfident()
+
+          if(eval(expString)){
+            regExpArr.push(searchArr[index])
+          }
+		    })
+        showArr = regExpArr
+		  }
+		  else{
+		    showArr = parentArr
+		  }
+		}
+    return showArr
+    
+    //根据传入的检测对象数量来生成检测条件
+    function returnExpConfident (){
+      let Exp:string = ''
+      let appendCount:number = 0
+      confidentArr.map((c:string)=>{
+        Exp += `regExp.test(item.${c}) || `
+        appendCount++
+
+        if(appendCount===confidentArr.length){
+      
+          Exp = Exp.substring(0,Exp.length - 3)
+
+          return Exp
+        }
+  
+      })
+
+      return Exp
+    }
+    
+  }
+
   //监听tableData的值
   watchEffect(()=>{
     table.tableData = sliceTableData(0,table.pageSize)
@@ -32,6 +77,7 @@ export default function (size:number) {
   return {
     table,
     currentPageChange,
-    sliceTableData
+    sliceTableData,
+    search
   }
 }

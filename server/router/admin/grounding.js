@@ -7,7 +7,7 @@ module.exports = app =>{
     //接收前端发起的下架商品请求，修改商品状态并反馈给前端
     router.post('/groundPro',(req,res)=>{
         const paramsObj = JSON.parse(JSON.stringify(req.body))
-        console.log(paramsObj.params)
+        
         //如果前端传入的参数类型是数组，则需要的是批量上下架，
         if(Array.isArray(paramsObj.params.id)){
             let ids = paramsObj.params.id

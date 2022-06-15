@@ -131,6 +131,8 @@
     import DataStatistics from "../components/admin/dataStatistics/DataStatistics.vue";
     import AddProduct from '../components/admin/shopManage/AddProduct.vue';
 
+    import useTable from "../common/useTable";
+
     export default defineComponent({
       name: "admin",
       components:{
@@ -377,28 +379,11 @@
          * @let regExpArr 用于存储正则规则匹配到的商品数据
          */
         function searchProduct(e:any){
-          let searchArr:any[] = tableLogic.shopManageData
-          let regExpArr:any[] = []
-          let regExp:RegExp = new RegExp(addProductLogic.searchKeyword)
-          //enter键抬起，开始搜索内容
-          if (e.keyCode === 13){
-            //通过判断关键字的长度来判断管理员是否输入了想要搜索的关键字，关键字长度大于0则执行正则匹配
-            if (addProductLogic.searchKeyword.length != 0){
-              searchArr.filter((item,index) => {
-                //将正则匹配到的数据push进regExp数组中
-                if (regExp.test(item.id) || regExp.test(item.title)){
-                  regExpArr.push(searchArr[index])
-                }
-
-              })
-              tableLogic.tableData = regExpArr
-            }
-            //关键字长度小于1，无关键字，表格展示所有数据
-            else {
-              tableLogic.tableData = tableLogic.shopManageData
-            }
+          if(e.keyCode===13){
+            let arr = search(tableLogic.shopManageData,tableLogic.tableData,addProductLogic.searchKeyword,e.keyCode,['id','title'])
+            tableLogic.tableData = arr
           }
-					
+          	
         }
 				
 				/**
@@ -407,25 +392,13 @@
 				 * @let regExp 正则规则（new RegExp(tableLogic.memberManaSearchKeyword)将管理员输入的内容作为正则规则）
 				 * @let regExpArr 用于存储正则规则匹配到的用户数据
 				 */
-				
+				const {search} = useTable(7)
 				function searchUser(e:any){
-					let searchArr:any[] = tableLogic.memberDataCopy
-					let regExpArr:any[] = []
-					let regExp:RegExp = new RegExp(tableLogic.memberManaSearchKeyword)
-					if(e.keyCode === 13){
-						if(tableLogic.memberManaSearchKeyword.length !=0){
-							searchArr.map((item,index) => {
-								if(regExp.test(item.identity) || regExp.test(item.username) || regExp.test(item.account)){
-									regExpArr.push(searchArr[index])
-									
-								}	
-							})
-							tableLogic.memberData = regExpArr
-						}
-						else{
-							tableLogic.memberData = tableLogic.memberDataCopy
-						}	
-					}					
+          if(e.keyCode===13){
+            let arr = search(tableLogic.memberDataCopy,tableLogic.memberData,tableLogic.memberManaSearchKeyword,e.keyCode,['identity','username','account'])
+            tableLogic.memberData = arr
+          }
+				
 				}
 
         /**

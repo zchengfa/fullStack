@@ -3,7 +3,7 @@
     <el-col :span="16" class="filter-row">
       <div class="filter-box">
         <label for="search">搜索：</label>
-        <input id="search" type="text" placeholder="请输入搜索条件">
+        <input id="search" v-model="groundingUnder.searchKeyword" type="text" placeholder="请输入搜索条件" @keyup="searchGrounding($event)">
       </div> 
       <div class="filter-button">
         <el-button size="small" @click="groundUnderMany('上架',1)">批量上架</el-button>
@@ -22,8 +22,8 @@
       </el-table-column>
       <el-table-column label="上下架状态" align="center">
         <template #default="scope">
-          <span class="grounding shop-status" v-show="scope.row.isGrounding">上架</span>
-          <span class="under shop-status" v-show="!scope.row.isGrounding">下架</span>
+          <span class="grounding shop-status" v-show="scope.row.isGrounding">已上架</span>
+          <span class="under shop-status" v-show="!scope.row.isGrounding">已下架</span>
         </template>
       </el-table-column>
       <el-table-column label="操作"  align="center" >
@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, getCurrentInstance, ComponentInternalInstance, reactive,nextTick} from "vue";
+import {defineComponent, getCurrentInstance, ComponentInternalInstance, reactive,nextTick, toRaw} from "vue";
 import useTable from '../../../common/useTable'
 import {groundProduct} from '../../../network/request'
 
@@ -52,12 +52,15 @@ export default defineComponent({
   setup(props){
     const {appContext} = getCurrentInstance() as ComponentInternalInstance
 
-    const {table,currentPageChange} = useTable(6)
+    const {table,currentPageChange,search} = useTable(6)
 
     table.data = props.groundData
+    table.dataCopy = props.groundData
+    
 
     let groundingUnder = reactive({
-      selection:<string[]>[]
+      selection:<string[]>[],
+      searchKeyword:<any>''
     })
     
     const underPro = (id:string)=>{
@@ -121,14 +124,47 @@ export default defineComponent({
       })():null
 
     }
+
+    const searchGrounding = (e:any)=>{
+      if (e.keyCode===13){
+        if(groundingUnder.searchKeyword==='已上架' || groundingUnder.searchKeyword==='上架'){
+          let arr = returnGrounding(table.dataCopy,1)
+          table.data = arr
+        }
+        else if(groundingUnder.searchKeyword==='已下架' || groundingUnder.searchKeyword==='下架'){
+          let arr = returnGrounding(table.dataCopy,0)
+          table.data = arr
+        }
+        else{
+          let arr = search(table.data,table.tableData,groundingUnder.searchKeyword,e.keyCode,['product_title','product_id','isGrounding'])
+        table.tableData = arr
+        table.data = arr
+        if (!groundingUnder.searchKeyword.length){
+          table.data = props.groundData
+        }
+        }
+
+        function returnGrounding(data:any[],grounding:number){
+          let groundingArr:any[] = []
+          data.map((item:any)=>{
+            if(item.isGrounding===grounding){
+              groundingArr.push(item)
+            }
+          })
+          return groundingArr
+        }
+      }
+    }
   
     return {
       table,
+      groundingUnder,
       underPro,
       groundPro,
       currentPageChange,
       handleSelection,
-      groundUnderMany
+      groundUnderMany,
+      searchGrounding
     }
   }
 })
@@ -158,10 +194,14 @@ export default defineComponent({
 
 }
 #search{
-  width: 25%;
+  width: 30%;
   height: 1.6rem;
   border-radius: 1rem;
   text-indent: 1rem;
+  border: 1px solid #8b8a8d;
+}
+#search:focus{
+  outline: 1px solid #e494d2;
 }
 .table{
   width: 100%;

@@ -69,6 +69,7 @@ export default defineComponent({
 
     const confirmAddSeckill = ()=>{
       noSeckill.isShowTimeSelector = true
+      
     }
 
     const selectTime = (val:string)=>{
@@ -76,12 +77,19 @@ export default defineComponent({
     }
 
     const confirmAdd = ()=>{
-      //将选择的商品活动类型改为秒杀，秒杀时间以选择的为准
-      noSeckill.data.map((item:any)=>{
-        item.preferential_type = '秒杀'
-        item.flash_sale_time = parseInt(noSeckill.seckillTime.replace(':00',''))
-      })
-      appContext.config.globalProperties.$bus.emit('confirmAddSeckill',{'data':noSeckill.data,'time':noSeckill.seckillTime})
+      
+      if(noSeckill.seckillTime){
+        //将选择的商品活动类型改为秒杀，秒杀时间以选择的为准
+        noSeckill.data.map((item:any)=>{
+          item.preferential_type = '秒杀'
+          item.flash_sale_time = parseInt(noSeckill.seckillTime.replace(':00',''))
+        })
+        appContext.config.globalProperties.$bus.emit('confirmAddSeckill',{'data':noSeckill.data,'time':noSeckill.seckillTime})
+        
+      }
+      else{
+        appContext.config.globalProperties.$toast.showToast('您未给商品选择时间，无法添加到秒杀活动中',3000,'错误：')
+      }
       noSeckill.isShowTimeSelector = false
     }
 

@@ -28,3 +28,13 @@ export function getUserAddress(user_id,isDefault){
         }
     })
 }
+
+export function removeAddress(address_id,user_id){
+    return requestPost({
+        url:'/removeAddress',
+        data:{
+            address_id,
+            user_id
+        }
+    })
+}

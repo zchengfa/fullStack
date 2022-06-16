@@ -15,27 +15,54 @@
         <div class="address-info">
           <div class="name-phone">
             <span clss="user-name user-info">{{item.username}}</span>
-            <span class="user-phone user-info">{{item.phone}}</span>
+            <span class="user-phone user-info">{{dealPhone(item.phone)}}</span>
           </div>
           <div class="default-complete">
-            <span v-show="item.isDefault" class="default">默认</span>
+            <span v-if="item.isDefault" class="default">默认</span>
             <span class="location">{{item.region+item['complete_address']}}</span>
           </div>
         </div>
-        <div class="edit-address">
-          <button>删除</button>
-          <button>编辑</button>
+        <div class="edit-address-box">
+          <button class="delete-address" @click="removeUserAddress(item.id,item.user_id)">删除</button>
+          <button class="edit-address" @click="showEditor(item.id)">编辑</button>
         </div>
       </li>
     </ul>
   </div>
   <div :class="{'has-address':address.length}"><button @click="addAddress" >+添加收货地址</button></div>
+  <div class="address-editor" v-show="isShowEditor">
+    <div class="receiver-box">
+      <label for="receiver">收货人：</label>
+      <input type="text" id="receiver" v-model="addressSelected.receiver">
+    </div>
+    <div class="receiver-box">
+      <label for="phone">手机号码：</label>
+      <input type="text" id="phone" v-model="addressSelected.phone">
+    </div>
+    <div class="receiver-box">
+      <label for="region">地区：</label>
+      <input type="text" id="region" v-model="addressSelected.region">
+    </div>
+    <div class="receiver-box">
+      <label for="comAddress">详细地址：</label>
+      <input type="text" id="comAddress" v-model="addressSelected.completeAddress">
+    </div>
+    <div class="set-default-box">
+      <div class="switch-tip">
+        <label for="switch">设置默认地址</label>
+        <p>提醒：下单会优先使用改地址</p>
+      </div>
+      <input type="checkbox" id="switch" v-model="addressSelected.isDefault">
+    </div>
+    <button class="save-address">保存</button>
+  </div>
 </div>
 </template>
 
 <script>
-import NavBar from "@/components/common/navbar/NavBar";
-import {getUserAddress} from "@/network/profile";
+import NavBar from "@/components/common/navbar/NavBar.vue";
+import {getUserAddress,removeAddress} from "@/network/profile";
+import {dealPhoneByStars} from "@/common/utils";
 
 export default {
   name: "ManageAddress",
@@ -44,7 +71,16 @@ export default {
   },
   data(){
     return{
-      address:[]
+      address:[],
+      isShowEditor:false,
+      addressSelected:{
+        receiver:'',
+        phone:null,
+        region:'',
+        completeAddress:'',
+        isDefault:0,
+        address_id:''
+      }
     }
   },
   methods:{
@@ -59,10 +95,38 @@ export default {
       let user_id = this.$store.state.userInfo.user_id
       getUserAddress(user_id).then(res=>{
         this.address = res.data
-        this.address.map(item =>{
-          //手机号码带*处理
-          item.phone = item.phone.replace(/(\d{3})\d*(\d{4})/,'$1*****$2')
-        })
+      })
+    },
+    //删除用户的收货地址
+    removeUserAddress(address_id,id){
+      removeAddress(address_id,id).then(res=>{
+        if (res.data.remove_result){
+          this.address.map((item,index)=>{
+            if (address_id===item.id){
+              this.address.splice(index,1)
+              this.$nextTick(()=>{
+                this.$toast.showToast('地址删除成功',3000,'结果：')
+              })
+            }
+          })
+        }
+      })
+    },
+    dealPhone(phone){
+      return dealPhoneByStars(phone)
+    },
+    showEditor(address_id){
+      this.isShowEditor = true
+
+      this.address.map(item=>{
+        if (address_id===item.id){
+          this.addressSelected.receiver = item.username
+          this.addressSelected.phone = item.phone
+          this.addressSelected.region = item.region
+          this.addressSelected.completeAddress = item.complete_address
+          this.addressSelected.isDefault = item.isDefault
+          this.addressSelected.address_id = item.id
+        }
       })
     }
   },
@@ -145,18 +209,94 @@ li .address-info{
 }
 .address-info div .default{
   padding: .2rem;
-  background-color: #3b75d9;
+  background-color: #ee3f30;
   color: #fff;
   border-radius: .2rem;
 }
 li button{
   margin-right: 1rem;
   border:1px solid #010915;
-  border-radius: 1rem;
+  border-radius: .5rem;
   color: #3b75d9;
 }
-.edit-address{
-  padding: 1rem 0;
+.edit-address-box{
+  padding: .5rem 0;
   text-align: right;
+}
+.edit-address{
+  color: #fd001e;
+  border-color: #fd001e;
+}
+.user-phone{
+  color: #8a8686;
+}
+.address-editor{
+  position: absolute;
+  top:44px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 44px);
+  background-color: #fff;
+  z-index: 15;
+}
+.address-editor div{
+  padding: 1rem;
+  width: 90%;
+  margin: 0 auto;
+  text-align: left;
+}
+.address-editor label{
+  display: inline-block;
+  min-width: 80px;
+  color: #5e5b5b;
+  text-align: right;
+}
+.address-editor input{
+  font-weight: bold;
+}
+.set-default-box .switch-tip{
+  display: inline-block;
+  padding-left: 0;
+  padding-right: 0;
+  width: auto;
+}
+.switch-tip p{
+  color: #8a8686;
+  font-size: 12px;
+}
+#switch{
+  position: relative;
+  left: 40%;
+  width: 3rem;
+  height: 1.2rem;
+  outline: none;
+  border-radius: 1rem;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: #aba8a8;
+  transition: all .2s ease;
+  transform: translateY(-50%);
+}
+#switch::after{
+  position: absolute;
+  top:0;
+  left: 0;
+  content: '';
+  width: 50%;
+  height: 100%;
+  background-color: #fff;
+  border-radius: 1rem;
+  transition: all .2s ease;
+}
+#switch:checked{
+  background-color: #fd001e;
+}
+#switch:checked::after{
+  left: 50%;
+}
+.save-address{
+  width: 60%;
+  background-color: #fd001e;
+  color: #fff;
 }
 </style>

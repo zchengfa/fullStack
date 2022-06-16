@@ -363,3 +363,5 @@ export default defineComponent({
   }
 </script> 
 ```
+
+#### 待做事项：使用web worker api处理大数据量（数据量过大一次性渲染会造成页面卡顿，影响用户体验）

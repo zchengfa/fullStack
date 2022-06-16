@@ -88,8 +88,9 @@ module.exports = app => {
         })
 
         function addAddress(isDefault){
-            const insertAddress = mysql_query.insert('mall_user_address','user_id,region,username,phone,complete_address,isDefault',
-              `${paramsObj.user_id},'${paramsObj.region}','${paramsObj.username}','${paramsObj.phone}','${paramsObj['completeAddress']}',${isDefault}`)
+            let addressId = new Date().getTime()
+            const insertAddress = mysql_query.insert('mall_user_address','id,user_id,region,username,phone,complete_address,isDefault',
+              `${addressId},${paramsObj.user_id},'${paramsObj.region}','${paramsObj.username}','${paramsObj.phone}','${paramsObj['completeAddress']}',${isDefault}`)
 
             connection.query(insertAddress,(err,result)=>{
                 if (err) throw err
@@ -123,7 +124,17 @@ module.exports = app => {
                 }
             })
         }
+    })
 
+    router.post('/removeAddress',(req, res) => {
+        const paramsObj = JSON.parse(JSON.stringify(req.body))
+        const removeQuery = mysql_query.deleteOperation('mall_user_address',`id = ${paramsObj.address_id} AND user_id = ${paramsObj.user_id}`)
+        connection.query(removeQuery,(err,removeR)=>{
+            if (err) throw err
+            if (removeR){
+                res.send({'remove_result':true})
+            }
+        })
     })
 
     app.use('/', router)

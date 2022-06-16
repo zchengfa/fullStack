@@ -131,5 +131,8 @@ export default defineComponent({
 	color: #fff;
   transform: translateX(-50%);
 }
-
+.pagination{
+  margin: 0 auto;
+  width: 60%;
+}
 </style>

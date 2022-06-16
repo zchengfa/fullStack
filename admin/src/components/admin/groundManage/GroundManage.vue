@@ -122,7 +122,6 @@ export default defineComponent({
         })
 
       })():null
-
     }
 
     const searchGrounding = (e:any)=>{
@@ -137,8 +136,8 @@ export default defineComponent({
         }
         else{
           let arr = search(table.data,table.tableData,groundingUnder.searchKeyword,e.keyCode,['product_title','product_id','isGrounding'])
-        table.tableData = arr
-        table.data = arr
+          table.tableData = arr
+          table.data = arr
         if (!groundingUnder.searchKeyword.length){
           table.data = props.groundData
         }
@@ -224,5 +223,6 @@ img{
 }
 .pagination{
   margin-top: 2rem;
+  width: 60%;
 }
 </style>

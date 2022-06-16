@@ -45,3 +45,8 @@ export function reverseArray(array){
     }
     return newArr
 }
+
+//手机号带星处理
+export function dealPhoneByStars(phone){
+    return phone.replace(/(\d{3})\d*(\d{4})/,'$1*****$2')
+}

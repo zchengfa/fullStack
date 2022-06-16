@@ -66,6 +66,7 @@ export default defineComponent({
       isShowAddSeckill:<boolean>false
     })
 
+    //点击时间按钮，控制el-select-time组件的显示与隐藏
     const changeFlashSaleTime = function (index:number) {
 
       let beginTimeButton:HTMLElement =<HTMLElement> document.getElementsByClassName('begin-time-button').item(index)
@@ -76,6 +77,7 @@ export default defineComponent({
 
     }
 
+    //将新时间添加到seckill.changed中
     const selectTime = function (index:number,val:string,id:string) {
       seckill.changed.push({
         id:id,
@@ -84,6 +86,7 @@ export default defineComponent({
       })
     }
 
+    //保存新的秒杀时间
     const saveChanged = function () {
       saveFlashTime(seckill.changed).then(res=>{
         if (res.data.saveResult){
@@ -107,10 +110,12 @@ export default defineComponent({
       })
     }
 
+    //点击添加秒杀商品按钮，Add-seckill组件从右往左出现
     const addSeckill = function (){
       setAnimation('add-seckill-box','rtl')
     }
 
+    //点击关闭秒杀按钮，Add-seckill组件从左往右出现
     const closeAddSeckill = function (){
       setAnimation('add-seckill-box','ltr')
     }
@@ -126,6 +131,7 @@ export default defineComponent({
         })
       })():null
 
+      //ltr从左往右出现，rtl从右往左出现
       direction==='ltr'?(()=>{
         let c = 100
         let intervalTimer = setInterval(()=>{
@@ -141,6 +147,7 @@ export default defineComponent({
 
     }
 
+    //点击删除按钮，将商品移除秒杀活动 
     const removeSeckillData = function (id:string,index:number){
       removeSeckill(id).then(res=>{
         if (res.data.removeResult){
@@ -153,6 +160,7 @@ export default defineComponent({
     appContext.config.globalProperties.$bus.on('confirmAddSeckill',()=>{
       closeAddSeckill()
     })
+    
 
     return {
       seckill,

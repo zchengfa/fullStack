@@ -47,6 +47,9 @@
                 <el-icon v-else-if="index===shopMenu.menu.length-2"><TrendCharts></TrendCharts></el-icon>
                 <el-icon v-else><Setting></Setting></el-icon>
                 <el-button class="menu-btn" @click="changeMenuItem(index)" :class="{'menu-btn-active':shopMenu.currentIndex===index}">{{item}}</el-button>
+                <div class="system-setting" v-if="shopMenu.isShowSystemChildren&&index===shopMenu.menu.length-1">
+                  <el-button size="small" @click="logout">退出系统</el-button>
+                </div>
               </slot>
             </el-menu-item>
           </el-menu>
@@ -243,10 +246,13 @@
          */
         let shopMenu = reactive({
           menu:<string[]>['商品管理','用户管理','轮播管理','库存管理','商品上架','秒杀管理','优惠管理','订单管理','数据统计','系统设置'],
-          currentIndex:<number>0
+          currentIndex:<number>0,
+          isShowSystemChildren:<boolean>false
         })
         function changeMenuItem (index:number){
-          shopMenu.currentIndex = index
+          index===shopMenu.menu.length-1?(()=>{
+            shopMenu.isShowSystemChildren = !shopMenu.isShowSystemChildren
+          })():shopMenu.currentIndex = index
         }
 
         /**
@@ -568,6 +574,13 @@
         //输出base64编码
         base64 (s:any) {
           return window.btoa(unescape(encodeURIComponent(s)))
+        },
+        logout(){
+          //退出管理页面，返回到登录页面
+          this.$router.push('/login')
+
+          //删除浏览器中存储的token登录信息
+          sessionStorage.removeItem('token')
         }
       }
     })
@@ -726,6 +739,10 @@
     }
     .ground-mana{
       margin: 0 auto ;
+    }
+    .system-setting{
+      margin-left: 12%;
+
     }
     /*.data-statistics::-webkit-scrollbar{*/
     /*  display: none;*/

@@ -118,4 +118,9 @@ img{
 .image-column-box span{
   color: red;
 }
+.pagination{
+  margin: 1vh auto;
+  width: 60%;
+
+}
 </style>

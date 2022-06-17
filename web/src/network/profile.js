@@ -38,3 +38,14 @@ export function removeAddress(address_id,user_id){
         }
     })
 }
+
+export function alterAddress(address_id,user_id,alterInfo){
+    return requestPost({
+        url:'/alterAddress',
+        data:{
+            address_id,
+            user_id,
+            alterInfo
+        }
+    })
+}

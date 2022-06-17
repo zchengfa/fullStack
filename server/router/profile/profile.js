@@ -137,5 +137,25 @@ module.exports = app => {
         })
     })
 
+    router.post('/alterAddress',(req,res)=>{
+        const paramsObj = JSON.parse(JSON.stringify(req.body))
+
+        let objPropertyArr = Object.getOwnPropertyNames(paramsObj.alterInfo)
+        let valuePart = ''
+        objPropertyArr.map(item=>{
+            valuePart += `${item}='${paramsObj.alterInfo[`${item}`]}',`
+        })
+
+        let alterQuery = mysql_query.update('mall_user_address',valuePart.substring(0,valuePart.length-1),`id=${paramsObj.address_id} AND user_id=${paramsObj.user_id}`)
+        //console.log(alterQuery)
+        connection.query(alterQuery,(err,upR)=>{
+            if (err) throw err
+            if (upR){
+                console.log(upR)
+            }
+        })
+        res.send(paramsObj)
+    })
+
     app.use('/', router)
 }

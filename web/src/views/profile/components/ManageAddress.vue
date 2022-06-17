@@ -33,7 +33,7 @@
   <div class="address-editor" v-show="isShowEditor">
     <div class="receiver-box">
       <label for="receiver">收货人：</label>
-      <input type="text" id="receiver" v-model="addressSelected.receiver">
+      <input type="text" id="receiver" v-model="addressSelected.username">
     </div>
     <div class="receiver-box">
       <label for="phone">手机号码：</label>
@@ -45,7 +45,7 @@
     </div>
     <div class="receiver-box">
       <label for="comAddress">详细地址：</label>
-      <input type="text" id="comAddress" v-model="addressSelected.completeAddress">
+      <input type="text" id="comAddress" v-model="addressSelected.complete_address">
     </div>
     <div class="set-default-box">
       <div class="switch-tip">
@@ -54,14 +54,14 @@
       </div>
       <input type="checkbox" id="switch" v-model="addressSelected.isDefault">
     </div>
-    <button class="save-address">保存</button>
+    <button class="save-address" @click="saveAddressEdit">保存</button>
   </div>
 </div>
 </template>
 
 <script>
 import NavBar from "@/components/common/navbar/NavBar.vue";
-import {getUserAddress,removeAddress} from "@/network/profile";
+import {getUserAddress,removeAddress,alterAddress} from "@/network/profile";
 import {dealPhoneByStars} from "@/common/utils";
 
 export default {
@@ -74,12 +74,13 @@ export default {
       address:[],
       isShowEditor:false,
       addressSelected:{
-        receiver:'',
+        username:'',
         phone:null,
         region:'',
-        completeAddress:'',
+        complete_address:'',
         isDefault:0,
-        address_id:''
+        id:'',
+        user_id:''
       }
     }
   },
@@ -120,14 +121,46 @@ export default {
 
       this.address.map(item=>{
         if (address_id===item.id){
-          this.addressSelected.receiver = item.username
+          this.addressSelected.username = item.username
           this.addressSelected.phone = item.phone
           this.addressSelected.region = item.region
-          this.addressSelected.completeAddress = item.complete_address
+          this.addressSelected.complete_address = item.complete_address
           this.addressSelected.isDefault = item.isDefault
-          this.addressSelected.address_id = item.id
+          this.addressSelected.id = item.id
+          this.addressSelected.user_id = item.user_id
         }
       })
+    },
+    saveAddressEdit(){
+      //先查看用户地址与之前有无差异，有差异就向后端发起修改请求，没有差异则直接关闭修改框
+      let objPropertyArr = Object.getOwnPropertyNames(this.addressSelected)
+      objPropertyArr.pop()
+      let sameCount = 0
+      let alterInfo = {}
+      this.address.map((ad)=>{
+        if (ad.id===this.addressSelected.id){
+          objPropertyArr.map(item=>{
+            if (this.addressSelected[`${item}`]===ad[`${item}`]){
+              sameCount++
+            }
+            else{
+              alterInfo[`${item}`] = this.addressSelected[`${item}`]
+            }
+          })
+        }
+      })
+
+      //全都一致，直接关闭修改框
+      if (sameCount===objPropertyArr.length){
+        this.isShowEditor = false
+      }
+      //有不一致的，用户修改了信息，向后端发起修改请求
+      else{
+        alterAddress(this.addressSelected.id,this.addressSelected.user_id,alterInfo).then(res=>{
+          console.log(res.data)
+        })
+      }
+
     }
   },
   created() {
@@ -252,6 +285,7 @@ li button{
   text-align: right;
 }
 .address-editor input{
+  width: 60%;
   font-weight: bold;
 }
 .set-default-box .switch-tip{

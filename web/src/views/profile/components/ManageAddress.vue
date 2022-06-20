@@ -157,7 +157,12 @@ export default {
       //有不一致的，用户修改了信息，向后端发起修改请求
       else{
         alterAddress(this.addressSelected.id,this.addressSelected.user_id,alterInfo).then(res=>{
-          console.log(res.data)
+          if (res.data.edit_result){
+            //获得后台反馈重新获取用户地址
+            this.getUserAddress()
+            this.$toast.showToast('地址信息修改成功',2000,'结果提醒：')
+            this.isShowEditor = false
+          }
         })
       }
 

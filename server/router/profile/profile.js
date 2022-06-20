@@ -141,20 +141,40 @@ module.exports = app => {
         const paramsObj = JSON.parse(JSON.stringify(req.body))
 
         let objPropertyArr = Object.getOwnPropertyNames(paramsObj.alterInfo)
+
+        //由于数据库不能自动转换bool值，需要先转换再进行数据库操作
+        if(objPropertyArr.indexOf('isDefault')!==-1){
+            paramsObj.alterInfo.isDefault===true?paramsObj.alterInfo.isDefault = 1:paramsObj.alterInfo.isDefault = 0
+        }
         let valuePart = ''
         objPropertyArr.map(item=>{
             valuePart += `${item}='${paramsObj.alterInfo[`${item}`]}',`
         })
 
         let alterQuery = mysql_query.update('mall_user_address',valuePart.substring(0,valuePart.length-1),`id=${paramsObj.address_id} AND user_id=${paramsObj.user_id}`)
-        //console.log(alterQuery)
+
         connection.query(alterQuery,(err,upR)=>{
             if (err) throw err
             if (upR){
-                console.log(upR)
+                //查看当前用户下的地址中有无多个默认地址，有就只留一个默认，其他修改为不默认
+                const selectDefault = mysql_query.selectFields('mall_user_address','id',`user_id = ${paramsObj.user_id} AND isDefault = 1`)
+                connection.query(selectDefault,(err,selectR)=>{
+                    if (err) throw err
+                    if (selectR.length>=2){
+                        //除了当前操作的地址，其他全部修改为不默认
+                        selectR.map(item=>{
+                            if (item.id!==paramsObj.address_id){
+                               let alterDefault = mysql_query.update('mall_user_address',`isDefault = 0`,`id = ${item.id}`)
+                                connection.query(alterDefault,(err)=>{
+                                    if (err) throw err
+                                })
+                            }
+                        })
+                    }
+                })
+                res.send({'edit_result':true})
             }
         })
-        res.send(paramsObj)
     })
 
     app.use('/', router)

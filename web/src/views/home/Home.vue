@@ -7,7 +7,7 @@
       <div class="nav-title" slot="center">
         <div class="title-box">
           <button @click="toIndexPage" :class="{'active':isIndex}">首页</button>
-          <button @click="toNearbyPage" :class="{'active':!isIndex}">附近</button>
+          <button @click="toHotVideo" :class="{'active':!isIndex}">热点</button>
         </div>
       </div>
 			<div class="nav-right" slot="right">
@@ -55,7 +55,7 @@
         <div class="no-more" v-show="noMore"><p>没有更多了哦!</p></div>
       </Scroll>
     </div>
-    <div v-show="!isIndex" class="nearby-content">附近相关的</div>
+    <hot-video v-if="!isIndex"></hot-video>
     <back-top v-show="isShowBackTop" @click.native="backTop"></back-top>
 	</div>
 </template>
@@ -64,13 +64,14 @@
   //引入组件
   import NavBar from '@/components/common/navbar/NavBar.vue'
   import Swiper from '@/components/common/swiper/Swiper.vue'
-  import Scroll from "@/components/common/scroll/Scroll"
-  import BackTop from "@/components/content/backTop/BackTop"
+  import Scroll from "@/components/common/scroll/Scroll.vue"
+  import BackTop from "@/components/content/backTop/BackTop.vue"
 
-  import TabControl from '@/components/content/tabControl/TabControl'
-  import GoodsData from "@/components/content/goodsData/GoodsData"
-  import Search from '@/components/content/search/Search'
-  import ColorMenu from "@/components/content/colorMenu/ColorMenu.vue";
+  import TabControl from '@/components/content/tabControl/TabControl.vue'
+  import GoodsData from "@/components/content/goodsData/GoodsData.vue"
+  import Search from '@/components/content/search/Search.vue'
+  import ColorMenu from "components/content/colorMenu/ColorMenu.vue";
+  import HotVideo from "components/content/hotVideo/HotVideo.vue";
 
   import {home_menu} from '@/assets/JSON/data'
   import {backTopMixins,refreshScrollMixins,contactCustomerMixins} from "@/common/mixins/mixins";
@@ -126,7 +127,8 @@
       TabControl,
       GoodsData,
       Search,
-      ColorMenu
+      ColorMenu,
+      HotVideo
     },
 		watch:{
 			scrollHeight(new_height,old_height){
@@ -150,7 +152,7 @@
         this.isIndex = true
       },
       //点击导航栏中间的按钮切换对应的内容进行显示
-      toNearbyPage(){
+      toHotVideo(){
         this.isIndex = false
       },
       tabClick(index){
@@ -405,6 +407,7 @@
       this.$refs.saleUl.addEventListener('touchstart',(e)=>{
         e.stopPropagation()
       });
+
 		},
     activated() {
       this.refreshGoodsData()

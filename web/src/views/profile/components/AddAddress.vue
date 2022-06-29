@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import NavBar from "@/components/common/navbar/NavBar";
+import NavBar from "@/components/common/navbar/NavBar.vue";
 import {addAddress} from "@/network/profile";
 //import Region from "@/components/content/region/Region";
 export default {

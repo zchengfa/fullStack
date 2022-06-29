@@ -95,7 +95,9 @@ const contactCustomerMixins ={
       //通过token判断用户是否登录，若已登录进入customer页面
       if (this.token) {
         //已经登录，再判断登录者是否是客服，若是客服登录的，就不允许进入与客服聊天界面，引导登录者去专门的客服专用页面
-        //this.$store.state.userInfo.identity!==1000?this.$router.push({path:'/customer'+'/'+this.customer.account}):this.$router.push({path:'/chatForCustomer'})
+        if (!this.customer){
+          this.$toast.showToast('未查询到任何客服信息，请开发者完善客服信息')
+        }
         if (this.$store.state.userInfo.identity!==1000){
           if (this.customer.username){
             this.$router.push({path:'/customer'+'/'+this.customer.username}).then()

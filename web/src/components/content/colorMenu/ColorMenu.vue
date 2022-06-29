@@ -1,6 +1,6 @@
 <template>
   <div class="menu-box">
-    <div v-for="(menu,menuIndex) in $props.MenuData" :key="menuIndex" @click="toMenuDetail(menu['location'])">
+    <div v-for="(menu,menuIndex) in $props.MenuData" :key="menuIndex" @click="toMenuDetail(menu['location'],menu['title'])">
       <div class="image-box"><img :src="menu['icon']" alt="menu_icon"></div>
       <span>{{menu['title']}}</span>
     </div>
@@ -19,12 +19,12 @@ export default {
     }
   },
   methods:{
-    toMenuDetail(location){
+    toMenuDetail(location,title){
       if (location){
         this.$router.push(location)
       }
       else{
-        this.$toast.showToast('菜单详情页还未完善，敬请期待！')
+        this.$toast.showToast(`${title}详情页还未完善，敬请期待！`)
       }
     }
   }

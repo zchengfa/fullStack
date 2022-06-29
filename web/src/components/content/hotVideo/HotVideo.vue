@@ -38,8 +38,8 @@ export default {
     itemImageLoad(){
       this.$bus.$emit('itemImageLoad')
       if (!this.coverHeight&&!this.coverWidth){
-        let coverElHeight = document.querySelectorAll('.image-cover').item(0).scrollHeight
-        let coverElWidth = document.querySelectorAll('.image-cover').item(0).scrollWidth
+        let coverElHeight = document.querySelectorAll('.image-cover').item(0).clientHeight
+        let coverElWidth = document.querySelectorAll('.image-cover').item(0).clientWidth
         this.coverHeight = coverElHeight
         this.coverWidth = coverElWidth
       }

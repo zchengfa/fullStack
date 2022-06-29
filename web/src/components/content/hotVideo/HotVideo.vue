@@ -20,6 +20,8 @@ import {play_button} from 'assets/JSON/data'
 import Scroll from "components/common/scroll/Scroll.vue";
 import {refreshScrollMixins} from "common/mixins/mixins";
 
+import axios from "axios";
+
 export default {
   name: "HotVideo",
   mixins:[refreshScrollMixins],
@@ -60,10 +62,18 @@ export default {
   },
   created() {
     this.play = play_button
-    this.dataJson = hotVideoData['result']
-    this.dataJson.map(item=>{
-      item['isShowVideoWrapper'] = false
+    // this.dataJson = hotVideoData['result']
+    // this.dataJson.map(item=>{
+    //   item['isShowVideoWrapper'] = false
+    // })
+    axios.get('/api/billboard?type=hot_video&key=6045739589f45edbd9ef1c67c581f33a&size=50').then(res=>{
+      console.log(res.data.result)
+      this.dataJson = res.data.result
+      this.dataJson.map(item=>{
+        item['isShowVideoWrapper'] = false
+      })
     })
+
   },
   mounted() {
 
@@ -74,7 +84,7 @@ export default {
 <style scoped>
 .video-content{
   width: 100vw;
-  height: calc(100vh - 44px - 5rem);
+  height: calc(100vh - 44px - 6rem);
   overflow: hidden;
 }
 .video-item{

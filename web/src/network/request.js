@@ -3,6 +3,11 @@ import axios from 'axios'
 import {URL} from "@/common/utils";
 import router from "../router";
 
+//导出获取热点视频数据函数
+export function getHotVideo(){
+  return axios.get('/api/billboard?type=hot_video&key=6045739589f45edbd9ef1c67c581f33a&size=50')
+}
+
 //导出request函数
 export function request(config) {
   //创建实例

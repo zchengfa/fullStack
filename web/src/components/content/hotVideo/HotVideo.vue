@@ -2,10 +2,11 @@
   <Scroll ref="scroll" class="video-content" :probe-type="3">
     <div class="video-item" v-for="(item,index) in dataJson" :key="index">
       <div class="author">{{item.author}}</div>
-      <div class="image-cover" v-show="!item.isShowVideoWrapper" @click="playVideo(index)">
+      <div class="image-cover" v-show="!item.isShowVideoWrapper" @click="playVideo(index,item['share_url'])">
         <img :src="item['item_cover']" @load="itemImageLoad" :alt="item.author">
         <img class="play" :src="play" >
       </div>
+<!--      视频资源暂缺，等候完善-->
       <video controls v-show="item.isShowVideoWrapper" :width="coverWidth" :height="coverHeight">
         <source :src="item['share_url']">
       </video>
@@ -15,12 +16,11 @@
 </template>
 
 <script>
-import hotVideoData from 'assets/JSON/hot_video'
 import {play_button} from 'assets/JSON/data'
 import Scroll from "components/common/scroll/Scroll.vue";
 import {refreshScrollMixins} from "common/mixins/mixins";
+import {getHotVideo} from "network/request";
 
-import axios from "axios";
 
 export default {
   name: "HotVideo",
@@ -46,37 +46,39 @@ export default {
         this.coverWidth = coverElWidth
       }
     },
-    playVideo(index){
-      let data = []
-      data.push(...this.dataJson)
-      data.map((item,videoIndex)=>{
-        if (videoIndex===index){
-          item['isShowVideoWrapper'] = true
-        }
-        else{
-          item['isShowVideoWrapper'] = false
-        }
-      })
-      this.dataJson = data
+    playVideo(index,url){
+      //跳转到第三方查看视频
+      window.location.href = url
+
+      //改变数据，控制组件的显示隐藏
+      // let data = []
+      // data.push(...this.dataJson)
+      // data.map((item,videoIndex)=>{
+      //   if (videoIndex===index){
+      //     item['isShowVideoWrapper'] = true
+      //   }
+      //   else{
+      //     item['isShowVideoWrapper'] = false
+      //   }
+      // })
+      // this.dataJson = data
     }
   },
   created() {
     this.play = play_button
-    // this.dataJson = hotVideoData['result']
-    // this.dataJson.map(item=>{
-    //   item['isShowVideoWrapper'] = false
-    // })
-    axios.get('/api/billboard?type=hot_video&key=6045739589f45edbd9ef1c67c581f33a&size=50').then(res=>{
-      console.log(res.data.result)
-      this.dataJson = res.data.result
-      this.dataJson.map(item=>{
-        item['isShowVideoWrapper'] = false
-      })
+    getHotVideo().then(res=>{
+      //由于第三方接口每天的请求次数有限制，需将请求到的数据进行存储，带请求次数上限时，从本地存储中获取数据
+      if (res.data.result){
+        this.dataJson = res.data.result
+        this.dataJson.map(item=>{
+          item['isShowVideoWrapper'] = false
+        })
+        localStorage.setItem('hot_video',JSON.stringify(this.dataJson))
+      }
+      else{
+        this.dataJson = JSON.parse(localStorage.getItem('hot_video'))
+      }
     })
-
-  },
-  mounted() {
-
   }
 }
 </script>

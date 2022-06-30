@@ -136,9 +136,9 @@ export default {
   width: 100vw;
   height: 100vh;
   text-align: center;
+  overflow: hidden;
 }
 .nav-bar{
-
   background-color: #e5dede;
 }
 .nav-bar div{

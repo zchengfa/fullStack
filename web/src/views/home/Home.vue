@@ -150,6 +150,10 @@
       //点击导航栏中间的按钮切换对应的内容进行显示
       toIndexPage(){
         this.isIndex = true
+        this.$nextTick(()=>{
+          //Dom更新后刷新scroll组件
+          this.$refs.scroll.refresh()
+        })
       },
       //点击导航栏中间的按钮切换对应的内容进行显示
       toHotVideo(){

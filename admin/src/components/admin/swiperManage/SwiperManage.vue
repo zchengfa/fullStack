@@ -1,7 +1,7 @@
 <template>
   <swiper :key="swiperKey" :modules="[EffectCoverflow]" effect="coverflow" class="swiper" autoplay>
-    <swiper-slide v-for="(item,index) in table.data" :key="index" v-show="item['isShow']">
-      <img :src="item['banner_image']" alt="banner">
+    <swiper-slide v-for="(item,index) in table.data" :key="index" v-show="item.isShow">
+      <img :src="item.banner_image" alt="banner">
     </swiper-slide>
   </swiper>
   <el-table :data="table.tableData" class="swiper-table" :header-cell-style="headerStyle" :cell-style="rowStyle" border empty-text="用户数据为空">

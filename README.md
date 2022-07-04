@@ -364,4 +364,70 @@ export default defineComponent({
 </script> 
 ```
 
-#### 待做事项：使用web worker api处理大数据量（数据量过大一次性渲染会造成页面卡顿，影响用户体验）
+##### 十二、后台管理项目打包时出现element-plus找不到module的报错（node_modules/element-plus/lib/components/table/index.d.ts:235:27 - error TS2307: Cannot find module './src/table/defaults' or its corresponding type declarations.）
+###### 三种解决方案：
+1. 在项目的tsconfig.json文件中添加skipLibCheck:true属性
+```json
+{
+  "compilerOptions": {
+    "skipLibCheck": true 
+  }
+}
+```
+
+2. 在项目的package.json文件中修改打包指令（将build中的vue-tsc --noEmit && vite build 修改为 vue-tsc --noEmit --skipLibCheck && vite build）
+```json
+{
+  "scripts": {
+    "build": "vue-tsc --noEmit --skipLibCheck && vite build"
+  }
+}
+
+```
+3. 在项目的package.json文件中的打包指令删除打包时肩型ts检测的指令（删除vue-tsc --noEmit --skipLibCheck && ）
+```json
+{
+  "scripts": {
+    "build": "vite build"
+  }
+}
+```
+
+##### 十三、将server文件夹中的文件打包成.exe执行程序（启动服务可以直接点击执行程序启动，不需要手动输入启动五福指令）
+###### 步骤：
+1. 全局安装pkg
+```text
+npm install pkg -g
+```
+2. 执行打包指令
+```text
+pkg app.js
+```
+3. 在电脑的项目中找到打包好的.exe文件双击启动就可以了
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

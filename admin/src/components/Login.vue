@@ -29,7 +29,7 @@
               ></el-input>
             </el-form-item>
             <el-form-item class="form-item">
-              <el-button class="login-button" type="primary" @click="loginAdmin(this.$refs.ruleForm,ruleForm.account,ruleForm.pass)">登录</el-button>
+              <el-button class="login-button" type="primary" @click="loginAdmin($refs.ruleForm,ruleForm.account,ruleForm.pass)">登录</el-button>
               <el-button class="forget-password" @click="enterResetPage()">忘记密码？</el-button>
             </el-form-item>
           </el-form>

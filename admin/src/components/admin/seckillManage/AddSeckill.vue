@@ -44,7 +44,7 @@ export default defineComponent({
       context.emit('closeAddSeckill')
     }
 
-    const selectProduct = (item: any, index: number)=>{
+    const selectProduct = (item: any, index: number | string)=>{
       let el = <HTMLElement>document.getElementsByClassName('item').item(index)
 
       if (!noSeckill.data.length){

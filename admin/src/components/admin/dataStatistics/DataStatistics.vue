@@ -166,9 +166,9 @@ export default defineComponent({
     })
 
     let rank = reactive({
-      userConsumption:<string[]>[],
-      productSales:<string[]>[],
-      words:<string[]>[]
+      userConsumption:<any[]>[],
+      productSales:<any[]>[],
+      words:<any[]>[]
     })
 
     //获取统计所需要的数据

@@ -176,7 +176,7 @@
 
         function getYear(){
           let year = new Date().getFullYear()
-          let month = new Date().getMonth()
+          let month = (new Date().getMonth())+1
           let date = new Date().getDate()
           return year+'-'+month+'-'+date
         }

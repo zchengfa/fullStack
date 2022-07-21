@@ -160,7 +160,6 @@ export default defineComponent({
     appContext.config.globalProperties.$bus.on('confirmAddSeckill',()=>{
       closeAddSeckill()
     })
-    
 
     return {
       seckill,

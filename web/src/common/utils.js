@@ -1,5 +1,5 @@
 export function debounce(func, delay){
-    //防抖函数，用于处理频繁处理的事件
+    //防抖函数，用于处理频繁处理的事件，设定时间，在时间内触发事件会重新计时，多次触发只执行一次
     let timer = null
     return function (...args){
         if(timer){
@@ -8,6 +8,20 @@ export function debounce(func, delay){
         timer = setTimeout(()=>{
             func.apply(this, args)
         }, delay)
+    }
+}
+
+//节流，不管你操作多少次，都只会按照设定的时间每过一段时间执行一次
+export function throttle (func,delay) {
+    let flag = true
+    return function (...args) {
+        if (flag) {
+            setTimeout(()=>{
+                func.call(this,args)
+                flag = true
+            },delay)
+        }
+        flag = false
     }
 }
 
@@ -50,3 +64,4 @@ export function reverseArray(array){
 export function dealPhoneByStars(phone){
     return phone.replace(/(\d{3})\d*(\d{4})/,'$1*****$2')
 }
+

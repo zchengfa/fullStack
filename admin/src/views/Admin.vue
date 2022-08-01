@@ -119,24 +119,24 @@
   ></add-product>
 </template>
 <script lang="ts">
-    import {reactive,defineComponent,onBeforeMount,getCurrentInstance,ComponentInternalInstance} from "vue";
-    import {useRouter} from 'vue-router'
-    import {ElContainer,ElHeader,ElMain,ElTabs,ElTabPane,ElIcon} from "element-plus";
-    import {Goods,User,TrendCharts,Unlock,Timer,Setting,Van,Watch,Grape,Management} from '@element-plus/icons-vue'
-    import ShopManage from "../components/admin/shopManage/ShopManage.vue";
-    import MemberManage from "../components/admin/memberManage/MemberManage.vue"
-    import OrderManage from '../components/admin/orderManage/OrderManage.vue'
-    import SwiperManage from '../components/admin/swiperManage/SwiperManage.vue'
-    import StocksManage from '../components/admin/stocksManage/StocksManage.vue'
-    import SeckillManage from '../components/admin/seckillManage/SeckillManage.vue'
-    import GroundManage from "../components/admin/groundManage/GroundManage.vue";
-    import {getShopManageData,addProduct,getAdministratorInfo,getMemberManageData,addSeckill} from "../network/request";
-    import DataStatistics from "../components/admin/dataStatistics/DataStatistics.vue";
-    import AddProduct from '../components/admin/shopManage/AddProduct.vue';
+import {ComponentInternalInstance, defineComponent, getCurrentInstance, onBeforeMount, reactive} from "vue";
+import {useRouter} from 'vue-router'
+import {ElContainer, ElHeader, ElIcon, ElMain, ElTabPane, ElTabs} from "element-plus";
+import {Goods, Grape, Management, Setting, Timer, TrendCharts, Unlock, User, Van, Watch} from '@element-plus/icons-vue'
+import ShopManage from "../components/admin/shopManage/ShopManage.vue";
+import MemberManage from "../components/admin/memberManage/MemberManage.vue"
+import OrderManage from '../components/admin/orderManage/OrderManage.vue'
+import SwiperManage from '../components/admin/swiperManage/SwiperManage.vue'
+import StocksManage from '../components/admin/stocksManage/StocksManage.vue'
+import SeckillManage from '../components/admin/seckillManage/SeckillManage.vue'
+import GroundManage from "../components/admin/groundManage/GroundManage.vue";
+import {addProduct, addSeckill, getAdministratorInfo, getMemberManageData, getShopManageData} from "../network/request";
+import DataStatistics from "../components/admin/dataStatistics/DataStatistics.vue";
+import AddProduct from '../components/admin/shopManage/AddProduct.vue';
 
-    import useTable from "../common/useTable";
+import useTable from "../common/useTable";
 
-    export default defineComponent({
+export default defineComponent({
       name: "admin",
       components:{
         ElContainer,ElHeader,ElMain,ElTabs,ElTabPane,ElIcon,
@@ -401,8 +401,7 @@
 				const {search} = useTable(7)
 				function searchUser(e:any){
           if(e.keyCode===13){
-            let arr = search(tableLogic.memberDataCopy,tableLogic.memberData,tableLogic.memberManaSearchKeyword,e.keyCode,['identity','username','account'])
-            tableLogic.memberData = arr
+            tableLogic.memberData = search(tableLogic.memberDataCopy, tableLogic.memberData, tableLogic.memberManaSearchKeyword, e.keyCode, ['identity', 'username', 'account'])
           }
 				
 				}
@@ -526,7 +525,7 @@
           //下载的表格模板数据(需要设置编码格式utf-8，不设置会在打开Excel文件时会乱码)
           let template = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
                   xmlns:x="urn:schemas-microsoft-com:office:excel"
-                  xmlns="http://www.w3.org/TR/REC-html40">
+                  xmlns="http://www.w3.org/TR/REC-html40" lang="en">
                   <head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
                     <x:Name>${worksheet}</x:Name>
                     <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
@@ -566,7 +565,7 @@
                             width: 100px;
 
                        }
-                    </style>
+                    </style><title></title>
                     </head><body><table>${str}</table></body></html>`;
           //下载模板
           window.location.href = uri + this.base64(template)
@@ -582,6 +581,7 @@
           //删除浏览器中存储的token登录信息
           sessionStorage.removeItem('token')
         }
+
       }
     })
 

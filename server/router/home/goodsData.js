@@ -2,6 +2,8 @@
 const connection = require('../../plugins/connectMysql')()
 const mysql_query = require('../../plugins/mysql_query')
 const {getClientIp} = require("../../util/arrayOperation");
+const {timeFormatting} = require("../../util/timeFormatting");
+
 module.exports = app =>{
     const express = require('express')
     const router = express.Router()
@@ -16,13 +18,15 @@ module.exports = app =>{
 
         //获取用户ip并存储到数据库
         let ip = getClientIp(req)
-        const selectIp = mysql_query.selectFields('mall_visitor','ip,count',`ip = '${ip}'`)
+        const selectIp = mysql_query.selectFields('mall_visitor','ip,count,time',`ip = '${ip}'`)
         connection.query(selectIp,(err,ips)=>{
             if (err) throw err
-            //已存储过，则将count加一
+            //已存储过，则将count加一，并记录时间
+            let time = timeFormatting('yyyy-mm-dd')
             if (ips.length){
                 let count = ips[0]['count'] +1
-                const updateIpCount = mysql_query.update('mall_visitor',`count = ${count}`,`ip = '${ip}'`)
+
+                const updateIpCount = mysql_query.update('mall_visitor',`count = ${count},time = '${time}'`,`ip = '${ip}'`)
                 connection.query(updateIpCount,(err)=>{
                     if (err) throw err
                     console.log(`用户：${ip}浏览次数加1`)
@@ -30,7 +34,7 @@ module.exports = app =>{
             }
             //没有存储过该ip
             else{
-                const insertIp = mysql_query.insert('mall_visitor','ip',`'${ip}'`)
+                const insertIp = mysql_query.insert('mall_visitor','ip,time',`'${ip}','${time}'`)
                 connection.query(insertIp,(err)=>{
                     if (err) throw err
                     console.log('用户ip已记录在数据库中')
@@ -49,7 +53,7 @@ module.exports = app =>{
         //根据请求参数来查询数据库里的数据
         function findData(callback) {
             //collectionModel.find({"type": `${query.type}`, "page": `${query.page}`}, callback)
-            connection.query(mysql_query.selectAll('mall_goods',`sell_type = '${query.type}' AND page = ${query.page}`),callback)
+            connection.query(mysql_query.selectAll('mall_goods',`sell_type = '${query.type}' AND page = ${query.page} AND isGrounding = 1`),callback)
         }
         function pushData(newArray,item){
             newArray.push({
@@ -68,7 +72,8 @@ module.exports = app =>{
                 self_support:item.self_support,
                 comment_number:item['comment_number'],
                 discount:item.discount,
-                stocks:item['stocks']
+                stocks:item['stocks'],
+                isGrounding:item['isGrounding']
             })
         }
         if (query.user_id){

@@ -1,5 +1,22 @@
 <template>
   <div class="data-summary">
+    <div class="item visitor-summary">
+      <h5>项目流量统计</h5>
+      <div class="visitor-box">
+        <div class="today-visitor">
+          <p>今日访客</p>
+          <span>{{total_visC.todayVis}}人</span>
+        </div>
+        <div class="total-visitor">
+          <p>累计访客</p>
+          <span>{{rank.visitorCount}}人</span>
+        </div>
+        <div class="total-visC">
+          <p>总访问次数</p>
+          <span>{{rank.totalVisCount}}次</span>
+        </div>
+      </div>
+    </div>
     <div class="item info-summary">
       <h5>平台信息数据统计</h5>
       <div class="info-data">
@@ -9,7 +26,7 @@
           </div>
           <div class="data">
             <p>会员数量</p>
-            <span>454人</span>
+            <span>{{ rank.users }}人</span>
           </div>
         </div>
         <div class="goods data-item">
@@ -18,7 +35,7 @@
           </div>
           <div class="data">
             <p>商品数量</p>
-            <span>5272件</span>
+            <span>{{ rank.goods }}件</span>
           </div>
         </div>
         <div class="store data-item">
@@ -27,7 +44,7 @@
           </div>
           <div class="data">
             <p>店铺数量</p>
-            <span>24家</span>
+            <span>1家</span>
           </div>
         </div>
       </div>
@@ -37,22 +54,22 @@
       <div class="status-box">
         <p>订单统计</p>
         <div>
-          <p>4543</p>
-          <span>正在运输</span>
+          <p>{{rank.order_not_finish}}</p>
+          <span>未完成的订单</span>
         </div>
         <div>
-          <p  class="finish-count">4448</p>
+          <p  class="finish-count">{{rank.order_finished}}</p>
           <span class="finish">已完成的订单</span>
         </div>
       </div>
       <div class="status-box">
         <p>仓库统计</p>
         <div>
-          <p>58</p>
+          <p>0</p>
           <span>已开通海外仓卖家</span>
         </div>
         <div>
-          <p  class="finish-count">8448</p>
+          <p  class="finish-count">0</p>
           <span class="finish">海外仓总数</span>
         </div>
       </div>
@@ -60,11 +77,12 @@
     <div class="item pie-summary">
       <PieChartStatistics class="pie"></PieChartStatistics>
       <div class="circle-box">
-        <progress-bar class="circle-bar" bar-type="circle" label="用户转化率" :progress="100"  :item="0"
+<!--        添加v-if在百分比计算完成后并且不等于0时渲染-->
+        <progress-bar v-if="rank.percent" class="circle-bar" bar-type="circle" label="用户转化率" :progress="rank.percent"  :item="0"
                       circle-border-color="#cd9cf2"
                       circle-text-color="red"
                       mask-color="pink"
-                      circle-progress-color="#b8cbb8">
+                      circle-progress-color="#8a8686">
 
         </progress-bar>
       </div>
@@ -72,9 +90,9 @@
     <div class="item bar-summary">
       <BarChartStatistics></BarChartStatistics>
     </div>
-    <div class="item">
-      <UserLocationChartStatistics></UserLocationChartStatistics>
-    </div>
+<!--    <div class="item">-->
+<!--      <UserLocationChartStatistics></UserLocationChartStatistics>-->
+<!--    </div>-->
   </div>
   <div class="rank">
     <div class="gold-user-rank">
@@ -141,7 +159,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onBeforeMount, reactive} from "vue";
+import {defineComponent, reactive,computed} from "vue";
 import PieChartStatistics from "./PieChartStatistics.vue";
 import BarChartStatistics from "./BarChartStatistics.vue";
 import UserLocationChartStatistics from "./UserLocationChartStatistics.vue";
@@ -161,24 +179,67 @@ export default defineComponent({
     ProgressBar
   },
   setup(){
-    onBeforeMount(()=>{
-      getSData()
-    })
 
     let rank = reactive({
       userConsumption:<any[]>[],
       productSales:<any[]>[],
-      words:<any[]>[]
+      words:<any[]>[],
+      goods:<number>0,
+      users:<number>0,
+      visitor:<string[]>[],
+      visitorCount:<number>0,
+      order_finished:<number>0,
+      order_not_finish:<number>0,
+      totalVisCount:<number>0,
+      percent:<number>0
     })
+
+    const total_visC = computed(()=>{
+
+      let todayVis = 0
+      let year = new Date().getFullYear()
+      let month:number | string = new Date().getMonth()+1
+      let day:number | string = new Date().getDay()
+      if ( month < 10) {
+        month = '0'+ month
+      }
+      if ( day < 10){
+        day = '0'+ day
+      }
+      let today = year+'-'+month+'-'+day
+      rank.visitor.map((item:any)=>{
+        if (today === item.time){
+          todayVis ++
+        }
+      })
+
+      return {
+        'todayVis':todayVis
+      }
+    })
+
 
     //获取统计所需要的数据
     function getSData(){
       getStatisticsData().then(res=>{
+        console.log(res.data)
         rank.userConsumption = dealPercent(res.data[0].userConsumption,'totalConsumption')
         rank.productSales = dealPercent(res.data[1].productSales,'sales')
         rank.words = dealPercent(res.data[2].words,'search_count')
+        rank.goods = res.data[3].total_goods
+        rank.users = res.data[3].total_user
+        rank.visitor = res.data[3].visitor
+        rank.visitorCount = rank.visitor.length
+        rank.order_finished = res.data[3].order_finished
+        rank.order_not_finish = res.data[3].order_not_finish
+        rank.visitor.map((item:any)=>{
+          rank.totalVisCount += item.count
+        })
+        rank.percent = Math.round((rank.visitorCount/rank.totalVisCount)*100)
+
       })
     }
+    getSData()
 
     //处理较大的数字
     function dealBigNumber(num:number){
@@ -238,7 +299,8 @@ export default defineComponent({
     return {
       rank,
       dealBigNumber,
-      dealUserPhoneNumber
+      dealUserPhoneNumber,
+      total_visC
     }
   }
 })
@@ -248,7 +310,7 @@ export default defineComponent({
 .data-summary{
   position: relative;
   display: flex;
-  justify-items: center;
+  justify-content: center;
   align-items: center;
   flex-wrap: wrap;
   float: left;
@@ -268,13 +330,38 @@ export default defineComponent({
   height: 40vh;
   text-align: center;
 }
-.data-summary .item:first-child{
-  height: 16vh;
+.data-summary .item.visitor-summary{
+  height: auto;
+}
+.data-summary .item.visitor-summary .visitor-box{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  color: #fff;
+}
+.visitor-box div{
+  flex: 1;
+  max-width: 25%;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+.visitor-box div.total-visitor{
+  background: linear-gradient(to right , #a100ff, #aa56ee);
+}
+.visitor-box div.today-visitor{
+  background: linear-gradient(to right , #002aff, #135ade);
+}
+.visitor-box div.total-visC{
+  background: linear-gradient(to right , #06c9f5, #20ade1);
+}
+.data-summary .item.info-summary{
+  height: auto;
   background-color: #fff;
   letter-spacing: .1rem;
 }
 .item h5{
-  padding: .5rem;
+  padding: 1rem .5rem;
   margin: 0;
   text-align: left;
 }
@@ -287,15 +374,17 @@ export default defineComponent({
 }
 .info-data{
   display: flex;
-  justify-items: center;
+  justify-content: center;
   align-items: center;
   width: 100%;
   height: 80%;
 }
 .info-data div{
   margin: 0 auto;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
   width: 30%;
-  height: 70%;
+
 }
 .info-data .data-item{
   display: flex;

@@ -173,6 +173,11 @@
         }
         this.$refs.tabControlOne.currentIndex = index
         this.$refs.tabControlTwo.currentIndex = index
+
+        this.$nextTick(()=>{
+          //刷新scroll组件，让scroll重新获取可滚动高度
+          this.$refs.scroll.refresh()
+        })
       },
       loadMore(){
         //上拉加载更多数据

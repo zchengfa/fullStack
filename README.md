@@ -115,7 +115,7 @@ export default {
 
 ##### 四、事件总线中的事件被多次触发($bus)
 ###### 解决：在组件销毁前手动注销该事件(beforeDestroy)
-###### 原因：事件总线时全局的，它不会随着组件的销毁而注销，每次切换路由时，事件的执行次数就会加一，需要手动注销
+###### 原因：事件总线是全局的，它不会随着组件的销毁而注销，每次切换路由时，事件的执行次数就会加一，需要手动注销
 ```vue
 <script >
   export default ({
@@ -416,7 +416,21 @@ pkg app.js
 3. 在电脑的项目中找到打包好的.exe文件双击启动就可以了
 
 
-
+##### 十四、在vue2中使用vue-lazyload实现图片的懒加载，报错 failed to resolve directive:lazy
+###### 原因：版本问题     解决：本项目安装的是@1.3.3版本不会报错
+    1. npm 安装依赖
+```text
+npm install vue-lazyload@1.3.3 --save
+```
+    2. 安装插件
+```javascript
+import VueLazyload from "vue-lazyload";
+Vue.use(VueLazyload)
+```
+    3. 在图片标签中使用v-lazy指令
+```vue
+<img v-lazy="address" alt="picture">
+```
 
 
 

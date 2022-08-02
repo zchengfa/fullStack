@@ -3,7 +3,7 @@
     <div class="list-box">
       <trademark></trademark>
       <div class="list-image" @click="itemClick">
-        <img :src="list['imagePath'] || list['product_image']" alt="itemImage" @load="imageLoad">
+        <img v-lazy="list['imagePath'] || list['product_image']" alt="itemImage" class="image-data" @load="imageLoad">
         <!--      售罄-->
         <div class="sell-out" v-if="list['stocks']===0">
           <div class="sell-out-content">

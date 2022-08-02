@@ -6,7 +6,14 @@ import store from "@/store";
 import toast from "@/components/common/toast";
 
 import {URL} from "@/common/utils";
+import VueLazyload from "vue-lazyload";
 
+Vue.use(VueLazyload,{
+  preLoad:1.3,
+  error:'assets/image/error.png',
+  loading:'assets/image/loading.gif',
+  attempt:3
+})
 
 //将用户token值加入到vue原型中成为全局变量
 // const token = sessionStorage.getItem('token')
@@ -38,7 +45,7 @@ Vue.prototype.$bus = new Vue()
 //安装toast插件
 Vue.use(toast)
 
-//全局注册自定义指令
+//全局注册自定义指令（数据加载效果）
 Vue.directive('loading',{
   update(el,binding){
     if (binding.value === true){
@@ -50,8 +57,31 @@ Vue.directive('loading',{
   }
 })
 
+//全局注册自定义指令（实现图片懒加载）
+  //Vue.directive('lazyload', {
+    // 指令的定义
+    // bind: function(el, binding) {
+    //   let lazyImageObserver = new IntersectionObserver((entries) => {
+    //     entries.forEach((entry) => {
+    //       let lazyImage = entry.target;
+    //       // 相交率，默认是相对于浏览器视窗
+    //       if(entry.intersectionRatio > 0) {
+    //         lazyImage.src = binding.value;
+    //         // 当前图片加载完之后需要去掉监听
+    //         lazyImageObserver.unobserve(lazyImage);
+    //       }
+    //
+    //     })
+    //   })
+    //   lazyImageObserver.observe(el);
+    // },
+ // });
+
+
 new Vue({
   router,
   store,
   render: h => h(App)
 }).$mount('#app')
+
+

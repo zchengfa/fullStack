@@ -1,5 +1,4 @@
-const {sortArray, findAllIndexByObjectValue} = require("../../util/arrayOperation");
-const {selectFields, selectCount} = require("../../plugins/mysql_query");
+const {sortArray} = require("../../util/arrayOperation");
 
 module.exports = app => {
     const express = require('express')
@@ -205,13 +204,18 @@ module.exports = app => {
                                     }
                                 })
                                 data.push({
-                                    type,
-                                    sales
+                                    'name':type,
+                                    'value':sales
                                 })
 
                             })
+
+                            //降序
+                            data = sortArray(data,'sales')
+
+                            //只返回前四数据
                             resultFour.push({
-                                'sales':data
+                                'sales':data.splice(0,10)
                             })
                             resolve(resultFour)
                         }

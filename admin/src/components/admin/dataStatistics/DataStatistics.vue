@@ -75,7 +75,8 @@
       </div>
     </div>
     <div class="item pie-summary">
-      <PieChartStatistics class="pie"></PieChartStatistics>
+<!--      添加v-if判断，当数据请求完之后在去渲染图表-->
+      <PieChartStatistics v-if="rank.salesData.length" class="pie" :sales-data="rank.salesData"></PieChartStatistics>
       <div class="circle-box">
 <!--        添加v-if在百分比计算完成后并且不等于0时渲染-->
         <progress-bar v-if="rank.percent" class="circle-bar" bar-type="circle" label="用户转化率" :progress="rank.percent"  :item="0"
@@ -191,7 +192,8 @@ export default defineComponent({
       order_finished:<number>0,
       order_not_finish:<number>0,
       totalVisCount:<number>0,
-      percent:<number>0
+      percent:<number>0,
+      salesData:<string[]>[]
     })
 
     const total_visC = computed(()=>{
@@ -222,7 +224,7 @@ export default defineComponent({
     //获取统计所需要的数据
     function getSData(){
       getStatisticsData().then(res=>{
-        console.log(res.data)
+        //console.log(res.data)
         rank.userConsumption = dealPercent(res.data[0].userConsumption,'totalConsumption')
         rank.productSales = dealPercent(res.data[1].productSales,'sales')
         rank.words = dealPercent(res.data[2].words,'search_count')
@@ -236,6 +238,7 @@ export default defineComponent({
           rank.totalVisCount += item.count
         })
         rank.percent = Math.round((rank.visitorCount/rank.totalVisCount)*100)
+        rank.salesData = res.data[4].sales
 
       })
     }

@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import {defineComponent,  reactive} from "vue";
 import * as echarts from 'echarts/core'
 import {
   TitleComponent,
@@ -27,15 +27,27 @@ import {onMounted} from "vue";
 
 export default defineComponent({
   name: "PieChartStatistics",
-  setup(){
-    onMounted(() =>{
+  props:{
+    salesData:{
+      type:Array
+    }
+  },
+  setup(props){
+    let data = reactive({
+      sales:props.salesData,
+      pieKey:0
+    })
+
+    const setChart = ()=>{
       //获取dom
       let chartDom =<HTMLElement>document.getElementById('pie-chart-statistics')
+
       let pieChart = echarts.init(chartDom)
+
       //饼图配置项
       let option = {
         title:{
-          text:'四季度销售图',
+          text:'销量前十商品类型',
           left:'center'
         },
         tooltip:{
@@ -47,15 +59,10 @@ export default defineComponent({
         },
         series:[
           {
-            name: '四季度销售量',
+            name: '销量前四商品类型',
             type: 'pie',
             radius: '50%',
-            data: [
-              { value: 1048, name: '春季' },
-              { value: 735, name: '夏季' },
-              { value: 580, name: '秋季' },
-              { value: 484, name: '冬季' },
-            ],
+            data: data.sales,
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,
@@ -66,13 +73,18 @@ export default defineComponent({
           }
         ]
       }
+
+
       pieChart.setOption(option)
 
       //让图表的大小根据窗口大小改变而改变
       window.addEventListener('resize',()=>{
         pieChart.resize()
       })
+    }
 
+    onMounted(() =>{
+      setChart()
     })
   }
 })

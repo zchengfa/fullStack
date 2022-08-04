@@ -33,6 +33,7 @@ const FlashSale = ()=> import('@/components/content/flashSale/FlashSale.vue')
 const SearchProduct = ()=> import('@/views/homeContent/SearchProduct.vue')
 const WaitComments = ()=> import('@/views/homeContent/WaitComments.vue')
 const Comments = ()=> import('@/views/homeContent/Comments.vue')
+const Avatar = ()=> import('@/views/profile/components/Avatar.vue')
 
 //创建路由映射表对象
 const routes =[
@@ -149,6 +150,11 @@ const routes =[
 		meta: {
 			keepAlive: true
 		}
+	},
+	{
+		path:'/avatar',
+		name:'avatar',
+		component:Avatar
 	}
 ]
 

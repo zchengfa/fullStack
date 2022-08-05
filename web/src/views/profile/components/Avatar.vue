@@ -39,10 +39,12 @@ export default {
 .personal-avatar>.content{
   display: flex;
   justify-content: center;
-  margin-top: 25%;
+  position: relative;
+  top:25%;
   width: 100%;
   height: 50%;
-
+  transform: translateY(-25%);
+  background-color: #fff;
 }
 
 .personal-img{
@@ -54,7 +56,10 @@ export default {
   height: 100%;
 }
 .file{
+  position: relative;
+  top:15%;
   margin-top: 1rem;
   text-align: center;
+  transform: translateY(-25%);
 }
 </style>

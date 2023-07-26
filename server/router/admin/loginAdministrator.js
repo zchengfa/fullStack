@@ -1,3 +1,4 @@
+const mysql_query = require("../../plugins/mysql_query");
 module.exports = app => {
     const express = require('express')
     const bodyParser = require('body-parser')
@@ -52,7 +53,53 @@ module.exports = app => {
                                    if(err) throw err
                                    else{
                                        console.log('用户登录时间已保存至数据库',l)
-                                       res.send({'success':'登录成功','token':token})
+                                       //res.send({'success':'登录成功','token':token})
+                                       const selectIdentity = mysql_query.selectFields('mall_administrator','identity',`account = "${results[0]['account']}"`)
+                                       connection.query(selectIdentity,(e,r)=>{
+
+                                           if (e) throw e
+                                           else {
+                                               let  rights =[{name:'商品管理'},{name:'用户管理'},{name:'轮播管理'},{name:'库存管理'},{name:'商品上架'},{name:'秒杀管理'},{name:'优惠管理'},{name:'订单管理'},{name:'数据统计'},{name:'系统设置'}]
+                                               rights.forEach((item,index)=>{
+                                                   switch (item.name) {
+                                                       case '商品管理':
+                                                           item.icon = 'Goods'
+                                                           item.children = [
+                                                               {
+                                                                   id:index + new Date().getTime(),
+                                                                   children_name:'商品列表',
+                                                                   path:'goods',
+                                                                   rights:['delete','edit']
+                                                               }
+                                                           ]
+                                                            break;
+                                                       case '用户管理':
+                                                           item.icon = 'User'
+                                                           item.children = [
+                                                               {
+                                                                   id:index + new Date().getTime(),
+                                                                   children_name:'用户列表',
+                                                                   path:'user',
+                                                                   rights:['delete']
+                                                               }
+                                                           ]
+                                                           break;
+                                                       default:
+                                                           return false
+                                                   }
+
+                                                   item.id = index
+                                               })
+
+                                               if (r[0].identity === 9999){
+
+                                               }
+                                               else{
+
+                                               }
+                                               res.send({'success':'登录成功','token':token,'userInfo':administrator,'rights':rights})
+                                           }
+                                       })
                                    }
                                })
                            }catch(e){
@@ -70,5 +117,5 @@ module.exports = app => {
        })
    })
 
-    app.use('/admin',router)
+    app.use('/admins',router)
 }

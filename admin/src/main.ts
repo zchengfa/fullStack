@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 
 import router from "./router";
+import { createPinia } from "pinia";
 import ElementPlus from 'element-plus/lib/index'
 import 'element-plus/theme-chalk/index.css'
 
@@ -19,6 +20,9 @@ app.use(ElementPlus,{})
 
 //安装router
 app.use(router)
+
+//安装pinia
+app.use(createPinia())
 
 //安装自定义插件
 app.use(toast)

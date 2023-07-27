@@ -15,6 +15,63 @@ export function getPropertyArray (array:any){
 }
 
 /**
+ * 获取当前时间（xxxx年-xx月-xx日）
+ * @return { string } 返回年月日字符串
+ */
+export function getYear(){
+    let year = new Date().getFullYear()
+    let month = (new Date().getMonth())+1
+    let date = new Date().getDate()
+    return year+'-'+month+'-'+date
+}
+
+/**
+ * 获取星期信息
+ * @return { string } 返回星期
+ */
+export function getWeek(){
+    let day = new Date().getDay()
+    switch (day) {
+        case 0:
+            return '星期天';
+        case 1:
+            return '星期一';
+        case 2:
+            return '星期二';
+        case 3:
+            return '星期三';
+        case 4:
+            return '星期四';
+        case 5:
+            return '星期五';
+        case 6:
+            return '星期六';
+        default:
+            return null;
+    }
+}
+
+/**
+ * 实时获取当前时间
+ * @param targetTime
+ */
+export function getTime(targetTime:any){
+    setInterval(()=>{
+        let hour = new Date().getHours()
+        let minutes = new Date().getMinutes().toString()
+        let seconds = new Date().getSeconds().toString()
+        if (Number(minutes) < 10){
+            minutes = '0' + minutes
+        }
+        if (Number(seconds) < 10){
+            seconds = '0' + seconds
+        }
+        targetTime = hour+':'+minutes+':'+seconds
+    },1000)
+}
+
+
+/**
  * //ts+promise手写ajax
  interface ajaxOption {
     url:string,

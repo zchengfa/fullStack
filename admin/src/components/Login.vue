@@ -54,6 +54,7 @@ import {encrypt} from "../common/crypt";
 import {defineComponent} from "vue";
 import {useRouter} from "vue-router";
 import {loginAdministrator} from "../network/request";
+import { userStore } from "../pinia/pinia";
 
 export default defineComponent( {
   name: "login",
@@ -65,8 +66,10 @@ export default defineComponent( {
       router.push('/resetPassword')
     }
 
+    let userStorePinia = userStore()
+
     return {
-      enterResetPage
+        enterResetPage, userStorePinia
     }
   },
   data() {
@@ -116,9 +119,8 @@ export default defineComponent( {
           loginAdministrator(account,encrypt(password)).then(result => {
             //登录成功进入管理页面
             if (result.data['success']){
-
-              //将token储存在sessionStorage中
-              sessionStorage.setItem('token',result.data['token'])
+              this.userStorePinia.setToken(result.data['token'])
+              this.userStorePinia.setRights(result.data['rights'])
               this.$router.push('/')
             }
             else {
@@ -130,7 +132,7 @@ export default defineComponent( {
           })
         }
         else {
-          console.log('err submit')
+          // console.log('err submit')
           return false
         }
       })

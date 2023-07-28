@@ -59,6 +59,8 @@ module.exports = app => {
 
                                            if (e) throw e
                                            else {
+
+
                                                let  rights =[{name:'商品管理'},{name:'用户管理'},{name:'轮播管理'},{name:'库存管理'},{name:'商品上架'},{name:'秒杀管理'},{name:'优惠管理'},{name:'订单管理'},{name:'数据统计'},{name:'系统设置'}]
                                                rights.forEach((item,index)=>{
                                                    switch (item.name) {
@@ -68,7 +70,7 @@ module.exports = app => {
                                                                {
                                                                    id:index + new Date().getTime(),
                                                                    children_name:'商品列表',
-                                                                   path:'goods',
+                                                                   path:'/goods',
                                                                    rights:['delete','edit']
                                                                }
                                                            ]
@@ -79,7 +81,7 @@ module.exports = app => {
                                                                {
                                                                    id:index + new Date().getTime(),
                                                                    children_name:'用户列表',
-                                                                   path:'user',
+                                                                   path:'/user',
                                                                    rights:['delete']
                                                                }
                                                            ]
@@ -117,5 +119,5 @@ module.exports = app => {
        })
    })
 
-    app.use('/admins',router)
+    app.use('/admin',router)
 }

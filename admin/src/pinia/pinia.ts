@@ -12,13 +12,17 @@ export const userStore = defineStore('user',{
             this.token = t
             sessionStorage.setItem('token',t)
         },
-        setRights(r:any[]){
-            this.rights = r
-            sessionStorage.setItem('rights',JSON.stringify(r))
+        setRights(r:string){
+            this.rights = JSON.parse(r)
+            sessionStorage.setItem('rights',r)
         },
-        setUserInfo(i:object){
-            this.userInfo = i
-            sessionStorage.setItem('rights',JSON.stringify(i))
+        setUserInfo(i:string){
+            this.userInfo = JSON.parse(i)
+            sessionStorage.setItem('userInfo',i)
+        },
+        addRoutes(f:Function){
+            f()
+
         }
     }
 })

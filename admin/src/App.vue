@@ -1,5 +1,13 @@
 <script setup lang="ts">
-
+// import { addDynamicRoutes } from "./router";
+// import { userStore } from "./pinia/pinia";
+//
+// let { token ,addRoutes} = userStore()
+//
+// if(token !== null){
+//
+//   //addRoutes(addDynamicRoutes)
+// }
 </script>
 
 <template>

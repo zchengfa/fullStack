@@ -298,6 +298,7 @@ export default defineComponent({
         })
 
         /**
+         * 获取商品管理数据
          *@function getShopManageData 获取商品管理数据
          */
         function getSMData (){

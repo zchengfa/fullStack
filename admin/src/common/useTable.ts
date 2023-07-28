@@ -4,25 +4,29 @@ import { reactive , watchEffect } from "vue";
 //导出函数（接收一个每页多少条数据参数）
 export default function (size:number) {
   let table = reactive({
-     data:<string[]>[],
-     dataCopy:<string[]>[],
-     tableData:<string[]>[],
-     pageSize:<number>size
+    //请求得到的所有数据
+     manageData:<any[]>[],
+    //copy
+     dataCopy:<any[]>[],
+    //当前页面显示的数据
+     tableData:<any[]>[],
+     pageSize:<number>size,
+     currentPageData:<any[]>[]
   })
 
   //实现element-plus分页组件的@current-change方法(@current-change="currentPageChange")
   const currentPageChange = (val:number)=>{
     if (val===1){
-     table.tableData = sliceTableData(val-1,table.pageSize)
+     table.currentPageData = sliceTableData(val-1,table.pageSize)
    }
    else {
-    table.tableData = sliceTableData((val-1)*table.pageSize,((val-1)*table.pageSize)+table.pageSize)
+    table.currentPageData = sliceTableData((val-1)*table.pageSize,((val-1)*table.pageSize)+table.pageSize)
    }
  }
 
   //提取对应部分的数据
   const sliceTableData = (start:number,end:number)=>{
-    return table.data.slice(start,end)
+    return table.tableData.slice(start,end)
   }
 
   //通过搜索框搜索商品
@@ -71,7 +75,7 @@ export default function (size:number) {
 
   //监听tableData的值
   watchEffect(()=>{
-    table.tableData = sliceTableData(0,table.pageSize)
+    table.currentPageData = sliceTableData(0,table.pageSize)
   })
 
   return {

@@ -18,10 +18,10 @@
        <el-input class="search-input" v-model="addProductLogic.searchKeyword" @keyup="searchProduct($event)" placeholder="输入商品ID/分类/商品名称" suffix-icon="el-icon-search"></el-input>
      </div>
      <div class="export-data">
-       <el-button type="success" size="small" @click="tableToExcel(tableLogic.tableData)">导出数据为Excel</el-button>
+       <el-button type="success" size="small" @click="tableToExcel(table.tableData)">导出数据为Excel</el-button>
      </div>
    </div>
-  <el-table class="mall-table" :data="currentPageData.pageData" @selection-change="selection" border empty-text="商品数据为空">
+  <el-table class="mall-table" :data="table.currentPageData" @selection-change="selection" border empty-text="商品数据为空">
     <el-table-column type="selection"></el-table-column>
     <el-table-column prop="id" label="商品ID">
       <template #default="scope">
@@ -53,8 +53,8 @@
     <el-table-column label="操作" fixed="right" align="center">
       <template #default="scope">
         <div class="operation-btn">
-          <el-button type="primary" class="edit-btn" size="small" @click.prevent="editProduct(scope.$index,currentPageData.pageData)" plain disabled>编辑</el-button>
-          <el-button type="danger" class="delete-btn" size="small" @click.prevent="deletePro(scope.$index,currentPageData.pageData)" plain>删除</el-button>
+          <el-button type="primary" class="edit-btn" size="small" @click.prevent="editProduct(scope.$index,table.currentPageData)" plain disabled>编辑</el-button>
+          <el-button type="danger" class="delete-btn" size="small" @click.prevent="deletePro(scope.$index,table.currentPageData)" plain>删除</el-button>
         </div>
       </template>
     </el-table-column>
@@ -65,7 +65,7 @@
     <!--    >-->
     <!--    </el-table-column>-->
   </el-table>
-  <pagination :total="tableLogic.tableData.length" @currentPageChange="currentPageChange"></pagination>
+  <pagination :total="table.tableData.length" @currentPageChange="currentPageChange"></pagination>
 
   <edit-product v-show="editProductLogic.isShow" :current-product-data="editProductLogic.currentProductData"
 		@cancel-edit='cancelEdit'
@@ -73,15 +73,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onBeforeMount, reactive, watchEffect} from "vue";
+import {defineComponent, onBeforeMount, reactive} from "vue";
 import {deleteProduct, alterProduct, getShopManageData} from "../../../network/request";
 import EditProduct from './EditProduct.vue'
 import useTable from "../../../common/useTable";
 import { tableToExcel } from "../../../common/utils";
 import Pagination from "../../common/Pagination.vue";
-
-
-
+import { shopStore } from "../../../pinia/pinia";
 
 export default defineComponent({
   name: "ShopManage",
@@ -90,23 +88,9 @@ export default defineComponent({
     Pagination,
     EditProduct
   },
-  setup(props){
+  setup(){
 
-    const {search} = useTable(7)
-
-    /**
-     * @param currentPageData 存储当前数据变量的对象
-     * @param pageData 存储当前需要显示的数据数组
-     * @function currentPageChange该方法通过获取到的页码值来控制对应页面需要显示的数据
-     */
-    let currentPageData = reactive({
-      pageData:<any[]>[]
-    })
-
-    let tableLogic = reactive({
-      shopManageData:<any[]>[],
-      tableData:<any[]>[],
-    })
+    const {table,currentPageChange,search} = useTable(7)
 
     let addProductLogic = reactive({
       isShowAddProduct:<boolean>false,
@@ -123,9 +107,9 @@ export default defineComponent({
 
     //点击具体分类或具体品牌名来展示对应的商品
     function showGoodsByCategoryOrBrand(item:string,regType:string){
-      console.log(item,regType)
+
       let operationArr:string[] = [],regExpArr:string[] = []
-      operationArr.push(...tableLogic.shopManageData)
+      operationArr.push(...table.manageData)
 
       let regExp:RegExp = new RegExp(item)
       regType==='brand'?addProductLogic.categoryCheckOption='':addProductLogic.brandCheckOption=''
@@ -134,7 +118,7 @@ export default defineComponent({
           regExpArr.push(items)
         }
       })
-      tableLogic.tableData = regExpArr
+      table.tableData = regExpArr
     }
 
 
@@ -146,8 +130,8 @@ export default defineComponent({
      */
     function searchProduct(e:any){
       if(e.keyCode===13){
-        let arr = search(tableLogic.shopManageData,tableLogic.tableData,addProductLogic.searchKeyword,e.keyCode,['id','title'])
-        tableLogic.tableData = arr
+        let arr = search(table.manageData,table.tableData,addProductLogic.searchKeyword,e.keyCode,['id','title'])
+        table.tableData = arr
 
       }
 
@@ -164,7 +148,7 @@ export default defineComponent({
     })
 
     function editProduct(index:number,rows:any[]){
-     console.log(index,rows)
+
       editProductLogic.isShow = true
       //先清空之前编辑的商品项
       editProductLogic.currentProductData = []
@@ -192,7 +176,7 @@ export default defineComponent({
 							//  location.reload()
 						 // },1000)
 						 //接收到后台编辑商品成功的反馈后，将修改后的数据修改到当前列表显示的数据中，做到不刷新页面而刷新数据的效果
-						 currentPageData.pageData.filter(item =>{
+						 table.currentPageData.filter(item =>{
 							 if(item.id === data.id){
 								 item.title = submitDataCopy.title
 								 item.imagePath = submitDataCopy.imagePath
@@ -202,7 +186,7 @@ export default defineComponent({
 							 }
 						 })
 						 alert(res.data.success)
-						  editProductLogic.isShow = false
+             editProductLogic.isShow = false
            }}).catch(err =>{
            	  console.log(err)
            	})
@@ -241,14 +225,16 @@ export default defineComponent({
     }
 
 
+    let { saveShopData } = shopStore()
     /**
      * 获取商品管理数据
      *@function getShopManageData 获取商品管理数据
      */
     function getSMData (){
       getShopManageData().then(result =>{
+
         result.data.filter((item:any) =>{
-          return tableLogic.shopManageData.push({
+          table.manageData.push({
             id:<string>item.product_id,
             title:<string>item.product_title,
             imagePath:<string>item.product_image,
@@ -257,7 +243,11 @@ export default defineComponent({
             brand:<string>item.product_brand,
             type:<string>item.product_type
           });
+
+          //将获取道德商品数据提交给pinia管理
+          saveShopData(<any[]>result.data)
         })
+
         //获取商品中的品牌跟类型、活动
         result.data.map((item:any)=>{
           if (addProductLogic.selectBrandOptions.indexOf(item['product_brand'])===-1){
@@ -267,18 +257,8 @@ export default defineComponent({
             addProductLogic.selectCategoryOptions.push(item['product_type'])
           }
 
-          // //获取秒杀商品数据
-          // if (item.preferential_type==='秒杀'){
-          //   seckill.data.push(item)
-          // }
-          // else{
-          //   seckill.noSeckill.push(item)
-          // }
-          //
-          // //获取上架管理组件所需的数据
-          // ground.data.push(item)
         })
-        tableLogic.tableData = tableLogic.shopManageData
+        table.tableData = table.manageData
 
 
       })
@@ -287,22 +267,6 @@ export default defineComponent({
           })
     }
 
-    watchEffect(()=>{
-      currentPageData.pageData = sliceTableData(0,7)
-    })
-
-    function currentPageChange(val:any){
-      if (val===1){
-        currentPageData.pageData = sliceTableData(val-1,7)
-      }
-      else {
-        currentPageData.pageData = sliceTableData((val-1)*7,((val-1)*7)+7)
-      }
-    }
-
-    function sliceTableData(start:number,end:number) {
-      return tableLogic.tableData.slice(start,end)
-    }
 
     onBeforeMount(()=>{
       getSMData()
@@ -316,13 +280,12 @@ export default defineComponent({
       deletePro,
       selection,
       currentPageChange,
-      currentPageData,
-      tableLogic,
       addProductLogic,
       addProduct,
       showGoodsByCategoryOrBrand,
       searchProduct,
-      tableToExcel
+      tableToExcel,
+      table
     }
     /**
      * @function returnTableProp 是一个返回tableData表中需要的prop值的函数

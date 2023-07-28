@@ -33,13 +33,6 @@ const activeItem = (data:activePath)=>{
 
 
 onBeforeMount(()=> {
-  // if (checkUserIsLogin()){
-  //   getSMData()
-  //   getAdminInfo()
-  //   getMMData()
-  //   getTime(navLogic.time.currentTime)
-  // }
-
   getTime(navLogic.time.currentTime)
 })
 
@@ -82,7 +75,7 @@ onMounted(()=>{
     </el-col>
   </el-row>
   <el-row>
-    <el-col :span="3">
+    <el-col :span="3" class="menu-col">
       <el-menu
           active-text-color="#ffd04b"
           background-color="#fff"
@@ -105,8 +98,8 @@ onMounted(()=>{
             <el-icon class="menu-title-icon" v-else-if="item.icon==='Setting'"><Setting></Setting></el-icon>
             {{item.name}}
           </template>
-          <div v-if="item.children">
-            <el-menu-item :class="{'is-actived':cIndex === 0 && i===0} && isDefaultActive === true" style="padding-left: 70px;"  @click="activeItem" v-for="(child,cIndex) in item.children" :key="child.id" :index="child.path">{{child.children_name}}</el-menu-item>
+          <div v-if="item.children" class="menu-children-box">
+            <el-menu-item :class="{'is-actived':cIndex === 0 && i===0} && isDefaultActive === true"   @click="activeItem" v-for="(child,cIndex) in item.children" :key="child.id" :index="child.path">{{child.children_name}}</el-menu-item>
           </div>
         </el-sub-menu>
       </el-menu>
@@ -128,6 +121,7 @@ onMounted(()=>{
   left: 0;
   width: 100%;
   z-index: 999;
+  background-color: #fff;
 }
 .nav-col{
   box-shadow:0 .2rem .2rem 0 #96979a;
@@ -178,8 +172,18 @@ li .administrator{
 /**
 *侧边菜单栏
  */
+.menu-children-box{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: 100%;
+
+}
 .el-menu-item{
   color: #a8a3a3;
+  text-align: left;
+  text-indent: 30px;
+
 }
 .el-menu-item.is-active{
   color: #3a7af3;
@@ -188,5 +192,12 @@ li .administrator{
   position: relative;
   top:-3px;
   right:10px;
+}
+.menu-col{
+  max-height: calc(100vh - 3rem);
+  overflow-y: scroll;
+}
+.menu-col::-webkit-scrollbar{
+  display: none;
 }
 </style>

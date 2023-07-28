@@ -8,12 +8,12 @@ const index = () => import('../views/index.vue')
 const resetPassword = () => import('../components/ResetPassword.vue')
 const L = ()=> import('../components/admin/dataStatistics/UserLocationChartStatistics.vue')
 
-const goods  = () => import('../components/admin/shopManage/ShopManage.vue')
-const user = () => import('../components/admin/memberManage/MemberManage.vue')
-
 const routeMapping:any = {
-    '/goods':{path:'goods',component: goods},
-    '/user':{path:'user',component: user}
+    '/goods':{path:'goods',component: () => import('../components/admin/shopManage/ShopManage.vue')},
+    '/user':{path:'user',component: () => import('../components/admin/memberManage/MemberManage.vue')},
+    '/banner':{path:'banner',component: () => import('../components/admin/swiperManage/SwiperManage.vue')},
+    '/grounding':{path:'grounding',component: () => import('../components/admin/groundManage/GroundManage.vue')},
+    '/seckill':{path:'seckill',component: () => import('../components/admin/seckillManage/SeckillManage.vue')},
 }
 
 const routes = [
@@ -54,8 +54,10 @@ export function addDynamicRoutes(){
     let { rights } = userStore()
     if(rights){
         rights.forEach((item:any)=>{
-            item.children.forEach((child:any)=>{
-                router.addRoute('index',routeMapping[child.path])
+            item.children?.forEach((child:any)=>{
+                if(routeMapping[child.path]){
+                    router.addRoute('index',routeMapping[child.path])
+                }
 
             })
         })

@@ -1,13 +1,5 @@
 <script setup lang="ts">
-// import { addDynamicRoutes } from "./router";
-// import { userStore } from "./pinia/pinia";
-//
-// let { token ,addRoutes} = userStore()
-//
-// if(token !== null){
-//
-//   //addRoutes(addDynamicRoutes)
-// }
+
 </script>
 
 <template>
@@ -26,5 +18,8 @@ body{
   color: #2c3e50;
   margin: 0;
   width: 100vw;
+}
+.mall-table{
+  height: 70vh !important;
 }
 </style>

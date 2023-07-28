@@ -19,10 +19,20 @@ export const userStore = defineStore('user',{
         setUserInfo(i:string){
             this.userInfo = JSON.parse(i)
             sessionStorage.setItem('userInfo',i)
-        },
-        addRoutes(f:Function){
-            f()
+        }
+    }
+})
 
+export const shopStore = defineStore('shop',{
+    state:()=>{
+        return {
+            data:<any[]>JSON.parse(<string>sessionStorage.getItem('shop')),
+        }
+    },
+    actions:{
+        saveShopData(d:any[]){
+            this.data = d
+            sessionStorage.setItem('shop',JSON.stringify(d))
         }
     }
 })

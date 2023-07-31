@@ -18,8 +18,7 @@ module.exports = app => {
 
        //创建查询符合请求参数的identity字段(是否为管理员)语句
        const selectUser = mysql_query.selectFields('mall_administrator','username,account,avatar,identity',`account = '${paramsObj.account}' 
-                                    AND password = '${paramsObj.password}' 
-                                    AND identity = 9999` )
+                                    AND password = '${paramsObj.password}'` )
 
        connection.query(selectUser,(err,results) => {
            if (err) throw err
@@ -71,7 +70,7 @@ module.exports = app => {
                                                                    id:index + new Date().getTime(),
                                                                    children_name:'商品列表',
                                                                    path:'/goods',
-                                                                   rights:['delete','edit']
+                                                                   rights:['delete','edit','add']
                                                                },
                                                                {
                                                                    id:index + new Date().getTime(),
@@ -88,7 +87,7 @@ module.exports = app => {
                                                                    id:index + new Date().getTime(),
                                                                    children_name:'用户列表',
                                                                    path:'/user',
-                                                                   rights:['closeLoop']
+                                                                   rights:['delete']
                                                                }
                                                            ]
                                                            break;
@@ -99,7 +98,7 @@ module.exports = app => {
                                                                    id:index + new Date().getTime(),
                                                                    children_name:'轮播列表',
                                                                    path:'/banner',
-                                                                   rights:['delete']
+                                                                   rights:['close','open']
                                                                }
                                                            ]
                                                            break;
@@ -213,12 +212,14 @@ module.exports = app => {
                                                    item.id = index
                                                })
 
-                                               if (r[0].identity === 9999){
-
+                                               if (r[0].identity !== 9999){
+                                                   rights.forEach(item=>{
+                                                       item.children.forEach(i=>{
+                                                           i.rights = []
+                                                       })
+                                                   })
                                                }
-                                               else{
 
-                                               }
                                                res.send({'success':'登录成功','token':token,'userInfo':administrator,'rights':rights})
                                            }
                                        })

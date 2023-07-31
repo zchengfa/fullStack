@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, useRouter } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import { userStore } from "../pinia/pinia";
 
 const admin = () => import('../views/Admin.vue')
@@ -54,17 +54,21 @@ const router = createRouter({
 //根据后端返回的菜单权限数据来给index页面动态添加路由
 export function addDynamicRoutes(){
     let { rights } = userStore()
+
     if(rights){
         rights.forEach((item:any)=>{
             item.children?.forEach((child:any)=>{
                 if(routeMapping[child.path]){
-                    router.addRoute('index',routeMapping[child.path])
-                }
+                    const temp = routeMapping[child.path]
+                    temp.meta = {
+                        rights:child.rights
+                    }
 
+                    router.addRoute('index',temp)
+                }
             })
         })
     }
-
 }
 
 

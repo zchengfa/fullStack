@@ -20,8 +20,8 @@
     </el-table-column>
     <el-table-column  prop="isShow" label="操作" align="center">
       <template #default="scope">
-        <el-button size="small" type="success" v-show="!scope.row.isShow" @click="operationBanner(scope.row)">开启轮播</el-button>
-        <el-button size="small" type="danger" v-show="scope.row.isShow" @click="operationBanner(scope.row)">关闭轮播</el-button>
+        <el-button size="small" type="success" v-show="!scope.row.isShow" @click="operationBanner(scope.row)" v-permission="{permission:'open',effect:'disabled'}">开启轮播</el-button>
+        <el-button size="small" type="danger" v-show="scope.row.isShow" @click="operationBanner(scope.row)" v-permission="{permission:'close',effect:'disabled'}">关闭轮播</el-button>
       </template>
     </el-table-column>
   </el-table>

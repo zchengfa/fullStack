@@ -6,8 +6,8 @@
         <input id="search" v-model="groundingUnder.searchKeyword" type="text" placeholder="请输入搜索条件" @keyup="searchGrounding($event)">
       </div> 
       <div class="filter-button">
-        <el-button size="small" @click="groundUnderMany('上架',1)">批量上架</el-button>
-        <el-button size="small" @click="groundUnderMany('下架',0)">批量下架</el-button>
+        <el-button size="small" @click="groundUnderMany('上架',1)" v-permission="{permission:'up',effect:'disabled'}">批量上架</el-button>
+        <el-button size="small" @click="groundUnderMany('下架',0)" v-permission="{permission:'down',effect:'disabled'}">批量下架</el-button>
       </div>   
     </el-col>
   </el-row>
@@ -29,8 +29,8 @@
       <el-table-column label="操作"  align="center" >
         <template #default="scope">
           <div class="operation-btn">
-            <el-button class="ground-btn" size="small" type="danger" v-show="scope.row.isGrounding" @click.prevent="underPro(scope.row.product_id)">下架</el-button>
-            <el-button class="under-btn" size="small" type="primary" v-show="!scope.row.isGrounding" @click.prevent="groundPro(scope.row.product_id)">上架</el-button>
+            <el-button class="ground-btn" size="small" type="danger" v-show="scope.row.isGrounding" v-permission="{permission:'down',effect:'disabled'}" @click.prevent="underPro(scope.row.product_id)">下架</el-button>
+            <el-button class="under-btn" size="small" type="primary" v-show="!scope.row.isGrounding" v-permission="{permission:'up',effect:'disabled'}" @click.prevent="groundPro(scope.row.product_id)">上架</el-button>
           </div>
         </template>
       </el-table-column>

@@ -57,7 +57,7 @@ export default defineComponent({
   },
   setup(props){
     const { appContext } = getCurrentInstance() as ComponentInternalInstance
-    const { table,currentPageChange } = useTable(6)
+    const { table,currentPageChange } = useTable(7)
     const { data } = shopStore()
 
     interface changed {

@@ -1,6 +1,6 @@
  <template>
    <div class="select-group">
-     <el-button class="add-btn" type="primary" size="small" @click="addProduct">+添加商品</el-button>
+     <el-button class="add-btn" type="primary" size="small" @click="addProduct" v-permission="{permission:'add',effect:'disabled'}">+添加商品</el-button>
      <div class="category-selector-box">
        <span>分类选择：</span>
        <el-select v-model="addProductLogic.categoryCheckOption" placeholder="全部" class="select">
@@ -53,8 +53,8 @@
     <el-table-column label="操作" fixed="right" align="center">
       <template #default="scope">
         <div class="operation-btn">
-          <el-button type="primary" class="edit-btn" size="small" @click.prevent="editProduct(scope.$index,table.currentPageData)" plain disabled>编辑</el-button>
-          <el-button type="danger" class="delete-btn" size="small" @click.prevent="deletePro(scope.$index,table.currentPageData)" plain>删除</el-button>
+          <el-button type="primary" class="edit-btn" size="small" @click.prevent="editProduct(scope.$index,table.currentPageData)" plain v-permission="{permission:'edit',effect:'disabled'}">编辑</el-button>
+          <el-button type="danger" class="delete-btn" size="small" @click.prevent="deletePro(scope.$index,table.currentPageData)" plain v-permission="{permission:'delete',effect:'disabled'}">删除</el-button>
         </div>
       </template>
     </el-table-column>

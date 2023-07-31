@@ -72,4 +72,27 @@ router.beforeEach((to,from,next)=>{
 
 })
 
+//全局自定义指令
+app.directive('permission',{
+    mounted(el,binding){
+        let permission = binding.value.permission
+        let effect = binding.value.effect
+        //判断当前用户在当前路由中是否具备对应权限
+        let metaArr = router.currentRoute.value.meta.rights
+
+        // @ts-ignore
+        if(metaArr.indexOf(permission) === -1){
+
+           //没有该权限
+            if(effect === 'disabled'){
+                el.disabled = true
+                el.classList.add('is-disabled')
+            }
+            else{
+                el.parentNode.removeChild(el)
+            }
+        }
+    }
+})
+
 app.mount('#app')

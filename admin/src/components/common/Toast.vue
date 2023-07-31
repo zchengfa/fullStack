@@ -1,7 +1,8 @@
 <template>
   <div class="toast" v-show="toast.isShow">
     <div class="message-box">
-      <span><span class="tip">{{toast.title}}</span>{{toast.message}}</span>
+      <span class="tip">{{toast.title}}</span>
+      <span class="msg">{{toast.message}}</span>
       <button class="know" @click="know">知道了({{toast.time}})</button>
     </div>
 
@@ -18,7 +19,7 @@ export default defineComponent( {
         isShow:<boolean>false,
         time:<number>0,
         timerInterval:<number | undefined>undefined,
-        timerTimeOut:<number|undefined>undefined,
+        timerTimeOut:<number | undefined>undefined,
         title:''
     })
 
@@ -61,44 +62,41 @@ export default defineComponent( {
 
 <style scoped>
 .toast{
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: fixed;
   top:0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  border-radius: .5rem;
-  background-color: transparent;
+  background-color: rgba(0,0,0,.3);
   z-index: 999;
 }
 .message-box{
-  position: relative;
-  top:50%;
-  margin-left: 50%;
-  width: 15%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 0;
+  width: 30%;
   min-width: 15rem;
   background-color: #fff;
-  transform: translate(-50%,-50%);
-  box-shadow: .2rem .2rem #cbc7c7;
+  border-radius: 6px;
 }
-.tip{
-  font-weight: bold;
-  color: #fd001e;
+.message-box span{
+  padding: 10px;
 }
-span{
-  display: inline-block;
-  padding: .6rem;
-  font-size: .9rem;
-  text-align: center;
-  line-height: 150%;
-}
-button{
-  margin: .5rem 0 1rem 50%;
-  padding: .3rem 1rem;
-  min-width: 6rem;
+.know{
+  padding: 8px 16px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 6px;
+  background-color: #15dcc5;
   color: #fff;
-  font-size: .9rem;
-  background-color: #fd001e;
-  border-radius: 1rem;
-  transform: translateX(-50%);
+}
+.msg{
+  color: #7e7878;
+  font-size: 14px;
 }
 </style>

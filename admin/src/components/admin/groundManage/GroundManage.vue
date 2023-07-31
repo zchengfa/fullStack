@@ -80,7 +80,7 @@ export default defineComponent({
         console.log(res)
         res.data.grounding_result?(()=>{
           //获得反馈后弹出提示框，并更新表中的数据
-          appContext.config.globalProperties.$toast.showToast(response,3000,'结果：')
+          appContext.config.globalProperties.$toast.showToast(response,3000,'操作结果')
           nextTick(()=>{
             if (Array.isArray(id)){
               table.tableData.map((item:any)=>{
@@ -229,5 +229,8 @@ img{
 .pagination{
   margin-top: 2rem;
   width: 60%;
+}
+.under-btn{
+  margin-left: 0;
 }
 </style>

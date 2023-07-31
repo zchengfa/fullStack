@@ -107,7 +107,7 @@ export function saveFlashTime(data:any){
     })
 }
 
-export function addSeckill(data:string[],time:number){
+export function addSeckillRequest(data:string[],time:number){
     return Post({
         url:'/addSeckill',
         data:{

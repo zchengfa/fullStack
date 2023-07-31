@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import { userStore } from "../pinia/pinia";
-import {reactive, onBeforeMount, onMounted, ref} from "vue";
+import { reactive, onBeforeMount, onMounted, ref } from "vue";
 import { getTime, getWeek, getYear } from "../common/utils";
 import { storeToRefs } from "pinia";
-import {useRouter} from "vue-router";
-import {Goods, Grape, Management, Setting, Timer, TrendCharts, Unlock, User, Van, Watch} from '@element-plus/icons-vue'
+import { useRouter } from "vue-router";
+import { Goods, Grape, Management, Setting, Timer, TrendCharts, Unlock, User, Van, Watch } from '@element-plus/icons-vue'
 
 let router = useRouter()
-
 let userPinia = userStore()
 const { userInfo } = storeToRefs(userPinia)
 
+const centerDialogVisible = ref(false)
 let navLogic = reactive({
   time:{
     year:<string>getYear(),
@@ -26,10 +26,20 @@ interface activePath {
   indexPath:string[]
 }
 const activeItem = (data:activePath)=>{
-  router.push('/index'+ data.index)
+  data.index === '/logout' ? (()=>{
+    centerDialogVisible.value = true
+
+  })() :router.push('/index'+ data.index)
   isDefaultActive.value = false
 }
 
+function confirmDialog(){
+  //删除浏览器中存储的登录信息
+  userPinia.setToken('')
+  userPinia.setUserInfo(JSON.stringify({}))
+  userPinia.setRights(JSON.stringify([]))
+  router.push('/login')
+}
 
 
 onBeforeMount(()=> {
@@ -108,7 +118,19 @@ onMounted(()=>{
       <router-view></router-view>
     </el-col>
   </el-row>
-
+  <el-dialog v-model="centerDialogVisible" title="操作确认" width="30%" center>
+    <span style="display: inline-block;width:100%;text-align: center;">
+      是否退出后台管理
+    </span>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="centerDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="confirmDialog">
+          确认退出
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped>

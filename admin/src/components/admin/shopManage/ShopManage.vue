@@ -70,21 +70,27 @@
   <edit-product v-show="editProductLogic.isShow" :current-product-data="editProductLogic.currentProductData"
 		@cancel-edit='cancelEdit'
 	 @save-edit="saveEdit"></edit-product>
+   <add-product ref="ruleForm" v-show="addProductLogic.isShowAddProduct"
+                @cancel-add-click="cancelAddClick"
+                @confirm-add-click="confirmAddClick"
+   ></add-product>
 </template>
 
 <script lang="ts">
 import {defineComponent, onBeforeMount, reactive} from "vue";
-import {deleteProduct, alterProduct, getShopManageData} from "../../../network/request";
+import {deleteProduct, alterProduct, getShopManageData, addProduct} from "../../../network/request";
 import EditProduct from './EditProduct.vue'
 import useTable from "../../../common/useTable";
 import { tableToExcel } from "../../../common/utils";
 import Pagination from "../../common/Pagination.vue";
 import { shopStore } from "../../../pinia/pinia";
+import AddProduct from "./AddProduct.vue";
 
 export default defineComponent({
   name: "ShopManage",
 
   components:{
+    AddProduct,
     Pagination,
     EditProduct
   },
@@ -287,21 +293,108 @@ export default defineComponent({
       tableToExcel,
       table
     }
-    /**
-     * @function returnTableProp 是一个返回tableData表中需要的prop值的函数
-     * @param index 方法接收index索引值,通过索引值判断这是哪一列
-     * @param data 方法接收一个数组,遍历数组得到数组中对象存在的属性名（因为data数组中每个对象中的属性名都一致，只需遍历其中一个对象即可）
-     * @param dataPropertyArray 将data数组中对象存在的属性名存储的数组
-     */
-    // function returnTableProp(index:number,data: any[]) {
-    //   let dataPropertyArray = getPropertyArray(data[0])
-    //   //因为data数组中每个对象中的属性名都一致，只需遍历第一个对象即可
-    //   return dataPropertyArray[index];
-    // }
-    //
-    // return {
-    //   returnTableProp
-    // }
+
+  },
+  methods:{
+    //实现子组件发出的cancelAddClick方法
+    cancelAddClick(){
+      //关闭添加商品组件
+      this.addProductLogic.isShowAddProduct = false
+    },
+    //实现子组件发出的confirmAddClick方法
+    confirmAddClick(ruleForm:any){
+      //点击确认添加商品按钮，将商品数据提交给后台保存并接收后台返回的处理结果，若后台返回结果为成功则立即关闭当前组件，反之则将错误反馈给用户
+      addProduct(ruleForm).then(result => {
+        //根据后台反馈判断商品是否添加成功，若成功则将数据push进tableData中进行数据更新显示
+        if (result.data.success){
+          this.table.tableData.push({
+            id:<string>result.data.product_id,
+            title:<string>ruleForm.description,
+            imagePath:<string>ruleForm.imageLink,
+            count:<string>ruleForm.productCount +'件',
+            price:<string>'￥'+ruleForm.price
+          })
+
+          //接收到后台添加商品数据成功的反馈，关闭添加商品组件
+          this.addProductLogic.isShowAddProduct = false
+        }
+
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    tableToExcel(data:any[]){
+      //列标题
+      let head = `<tr class="table-header"><td>商品id</td><td>商品标题</td><td>图片</td><td>价格</td><td>库存</td></tr>`;
+      let tbody="";//内容
+      for (let item in data) {
+        tbody+=
+            `<tr class="product">
+                        <td class="id">${data[item]['id'] + '\t'}</td>
+                        <td class="title">${data[item]['title'] + '\t'}</td>
+                        <td class="path">${data[item]['imagePath'] + '\t'}</td>
+                        <td class="price">￥${data[item]['price'] + '\t'}</td>
+                        <td class="stocks">${data[item]['count'] + '\t'}</td>
+                    </tr>`
+      }
+      let str = head+tbody;//头部跟身体内容连接
+
+      //Worksheet名
+      let worksheet = '商品数据'
+      let uri = 'data:application/vnd.ms-excel;base64,';
+
+      //下载的表格模板数据(需要设置编码格式utf-8，不设置会在打开Excel文件时会乱码)
+      let template = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
+                  xmlns:x="urn:schemas-microsoft-com:office:excel"
+                  xmlns="http://www.w3.org/TR/REC-html40" lang="en">
+                  <head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+                    <x:Name>${worksheet}</x:Name>
+                    <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+                    </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+                    <meta charset="UTF-8">
+                    <style type="text/css">
+                       .table-header td{
+                            padding: 16px;
+                            height: 60px;
+                            text-align: center;
+                            color: #FFFFFF;
+                            background-color: #1e8efc;
+                            border: 1px solid #8a8a8a;
+                       }
+                       .product{
+                            text-align: center;
+                       }
+                       td{
+                            padding: 16px;
+                       }
+
+                       .id{
+                            color: #1e8efc;
+                       }
+                       .title{
+                            color: #d91868;
+                       }
+                       .path{
+                            color: orchid;
+                            font-weight: bold;
+                       }
+                       .price{
+                            width: 100px;
+                            color: red;
+                       }
+                       .stocks{
+                            width: 100px;
+
+                       }
+                    </style><title></title>
+                    </head><body><table>${str}</table></body></html>`;
+      //下载模板
+      window.location.href = uri + this.base64(template)
+    },
+    //输出base64编码
+    base64 (s:any) {
+      return window.btoa(unescape(encodeURIComponent(s)))
+    },
   }
 })
 </script>

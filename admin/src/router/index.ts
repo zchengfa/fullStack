@@ -14,6 +14,8 @@ const routeMapping:any = {
     '/banner':{path:'banner',component: () => import('../components/admin/swiperManage/SwiperManage.vue')},
     '/grounding':{path:'grounding',component: () => import('../components/admin/groundManage/GroundManage.vue')},
     '/seckill':{path:'seckill',component: () => import('../components/admin/seckillManage/SeckillManage.vue')},
+    '/order':{path:'order',component: () => import('../components/admin/orderManage/OrderManage.vue')},
+    '/dataMonitor':{path:'dataMonitor',component: () => import('../components/admin/dataStatistics/DataStatistics.vue')}
 }
 
 const routes = [

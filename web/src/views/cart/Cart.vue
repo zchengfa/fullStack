@@ -467,6 +467,7 @@
   .nav-cart{
     width: 100vw;
     height: 100vh;
+    max-width: 500px;
   }
   .cart-nav-bar{
     background-color: #db7093;

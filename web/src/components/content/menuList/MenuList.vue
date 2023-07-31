@@ -59,6 +59,7 @@
 <style scoped>
 .menu-list{
   width: 100%;
+  max-width: 500px;
   min-height: 10rem;
 }
 .menu-content{

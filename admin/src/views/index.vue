@@ -1,35 +1,61 @@
 <script lang="ts" setup>
 import { userStore } from "../pinia/pinia";
-import { reactive, onBeforeMount, onMounted, ref } from "vue";
+import { reactive, onBeforeMount, onMounted, ref,getCurrentInstance,ComponentInternalInstance } from "vue";
 import { getTime, getWeek, getYear } from "../common/utils";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import { Goods, Grape, Management, Setting, Timer, TrendCharts, Unlock, User, Van, Watch } from '@element-plus/icons-vue'
+import SkewArrow from "../components/common/SkewArrow.vue";
 
 let router = useRouter()
 let userPinia = userStore()
 const { userInfo } = storeToRefs(userPinia)
+const { appContext } = getCurrentInstance() as ComponentInternalInstance
 
 const centerDialogVisible = ref(false)
 let navLogic = reactive({
   time:{
     year:<string>getYear(),
     week:<string>getWeek(),
-    currentTime:<string>''
-  }
+    currentTime:<string>'',
+  },
+  defaultPath:<string>userPinia.rights[0].children[0].path
 })
 
 let isDefaultActive = ref(true)
+
+const typeArr = ref(['default','primary','success','info','warning','danger'])
 
 interface activePath {
   index:string,
   indexPath:string[]
 }
 const activeItem = (data:activePath)=>{
+
   data.index === '/logout' ? (()=>{
     centerDialogVisible.value = true
 
-  })() :router.push('/index'+ data.index)
+  })() :(()=>{
+    router.push('/index'+ data.index)
+
+    let rights = userPinia.rights , name = ''
+    rights.forEach((item:any)=>{
+      if(item.name === data.indexPath[0] ){
+        item.children.forEach((i:any)=>{
+          if(i.path === data.indexPath[1]){
+            name = i['children_name']
+          }
+        })
+      }
+    })
+    userPinia.setSkewMenu(JSON.stringify({
+      'name':name,
+      'path':data.indexPath[1],
+      'type':typeArr.value[Math.floor(Math.random()*(typeArr.value.length))]
+    }))
+
+  })()
+
   isDefaultActive.value = false
 }
 
@@ -41,6 +67,22 @@ function confirmDialog(){
   router.push('/login')
 }
 
+function closeSkew(name:string){
+  userPinia.closeSkewMenu(name).then(path=>{
+    router.push('/index'+path)
+    navLogic.defaultPath =<string>path
+
+  }).catch(err=>{
+    if(err.msg){
+      appContext.config.globalProperties.$toast.showToast(err.msg,3000,'操作错误')
+    }
+    else if(err.path){
+      navLogic.defaultPath =<string>err.path
+      window.location.reload()
+    }
+
+  })
+}
 
 onBeforeMount(()=> {
   getTime(navLogic.time.currentTime)
@@ -48,6 +90,13 @@ onBeforeMount(()=> {
 
 onMounted(()=>{
   router.push('/index/goods')
+
+  userPinia.setSkewMenu(JSON.stringify({
+    'name':userPinia.rights[0].children[0]['children_name'],
+    'path':userPinia.rights[0].children[0]['path'],
+    'type':typeArr.value[Math.floor(Math.random()*(typeArr.value.length))]
+  }))
+
   isDefaultActive.value = true
 })
 
@@ -84,13 +133,13 @@ onMounted(()=>{
       </ul>
     </el-col>
   </el-row>
-  <el-row>
+  <el-row style="flex-wrap: nowrap">
     <el-col :span="3" class="menu-col">
       <el-menu
           active-text-color="#ffd04b"
           background-color="#fff"
           text-color="#000"
-          default-active="/goods"
+          :default-active="navLogic.defaultPath"
           class="el-menu-vertical-demo"
       >
         <el-sub-menu :index="item.name" v-for="(item,i) in userPinia.rights" :key="item.id">
@@ -114,7 +163,8 @@ onMounted(()=>{
         </el-sub-menu>
       </el-menu>
     </el-col>
-    <el-col :span="21">
+    <el-col :span="21" class="router-view-col">
+      <skew-arrow :menu="userPinia.routesSkewMenu" @close-skew="closeSkew"></skew-arrow>
       <router-view></router-view>
     </el-col>
   </el-row>
@@ -217,9 +267,14 @@ li .administrator{
 }
 .menu-col{
   max-height: calc(100vh - 3rem);
+  min-width: 200px;
   overflow-y: scroll;
 }
 .menu-col::-webkit-scrollbar{
   display: none;
+}
+.router-view-col{
+  max-height: calc(100vh - 3rem);
+  overflow-y: scroll;
 }
 </style>

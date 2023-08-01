@@ -15,7 +15,8 @@ const routeMapping:any = {
     '/grounding':{path:'grounding',component: () => import('../components/admin/groundManage/GroundManage.vue')},
     '/seckill':{path:'seckill',component: () => import('../components/admin/seckillManage/SeckillManage.vue')},
     '/order':{path:'order',component: () => import('../components/admin/orderManage/OrderManage.vue')},
-    '/dataMonitor':{path:'dataMonitor',component: () => import('../components/admin/dataStatistics/DataStatistics.vue')}
+    '/dataMonitor':{path:'dataMonitor',component: () => import('../components/admin/dataStatistics/DataStatistics.vue')},
+    '/preferential':{path:'preferential',component: () => import('../components/admin/preferentialManage/PreferentialManage.vue')}
 }
 
 const routes = [

@@ -233,8 +233,10 @@ a::after{
   height: 2rem;
   color: black;
 }
-li .administrator{
+li .administrator,.avatar-box{
   display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100%;
 }
 .administrator .user-name span{

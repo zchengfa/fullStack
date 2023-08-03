@@ -12,6 +12,22 @@ export function loginAdministrator (account:string,password:string){
     })
 }
 
+export function getPreferential (){
+    return Get({
+        url:'/preferential',
+
+    })
+}
+
+export function releasePreferential(status:boolean,id:number){
+    return Post({
+        url:'/releasePreferential',
+        data:{
+            status,id
+        }
+    })
+}
+
 export function getShopManageData(){
     return Get({
         url:'/shopManage'

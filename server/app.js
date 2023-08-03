@@ -134,6 +134,9 @@ require('./router/admin/orderManage')(app)
 //导入数据统计模块
 require('./router/admin/statistics')(app)
 
+//导入优惠券管理模块
+require('./router/admin/preferential')(app)
+
 //导入首页内容详情模块
 require('./router/homeContent/bannerDetail')(app)
 

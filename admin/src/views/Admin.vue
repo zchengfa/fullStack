@@ -130,7 +130,7 @@ import SwiperManage from '../components/admin/swiperManage/SwiperManage.vue'
 import StocksManage from '../components/admin/stocksManage/StocksManage.vue'
 import SeckillManage from '../components/admin/seckillManage/SeckillManage.vue'
 import GroundManage from "../components/admin/groundManage/GroundManage.vue";
-import {addProduct, addSeckill, getAdministratorInfo, getMemberManageData, getShopManageData} from "../network/request";
+import {addProduct, getAdministratorInfo, getMemberManageData, getShopManageData} from "../network/request";
 import DataStatistics from "../components/admin/dataStatistics/DataStatistics.vue";
 import AddProduct from '../components/admin/shopManage/AddProduct.vue';
 

@@ -7,7 +7,7 @@
          <el-option v-for="item in addProductLogic.selectCategoryOptions" :key="item" @click="showGoodsByCategoryOrBrand(item,'type')" :value="item" :label="item"></el-option>
        </el-select>
      </div>
-     <div class="brand-selector-box">
+     <div class="brand-selector-box category-selector-box">
        <span>品牌选择：</span>
        <el-select v-model="addProductLogic.brandCheckOption" placeholder="全部" class="select">
          <el-option v-for="item in addProductLogic.selectBrandOptions" :key="item" @click="showGoodsByCategoryOrBrand(item,'brand')" :value="item" :label="item"></el-option>
@@ -408,6 +408,15 @@ export default defineComponent({
 .product-id{
   color: #1e8efc;
 }
+.category-selector-box{
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+}
+.category-selector-box span{
+    min-width: 100px;
+}
 .title{
   display: block;
   min-width: 200px;
@@ -446,7 +455,7 @@ export default defineComponent({
   display: flex;
   align-items: center;
   margin-top: 10px;
-  width: 80%;
+  width: 94%;
   min-width: 1000px;
   height: 5rem;
   border: 1px solid #dedada;

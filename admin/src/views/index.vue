@@ -6,6 +6,7 @@ import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import { Goods, Grape, Management, Setting, Timer, TrendCharts, Unlock, User, Van, Watch } from '@element-plus/icons-vue'
 import SkewArrow from "../components/common/SkewArrow.vue";
+import {ElMessage} from "element-plus";
 
 let router = useRouter()
 let userPinia = userStore()
@@ -37,7 +38,13 @@ const activeItem = (data:activePath)=>{
 
   })() :(()=>{
     router.push('/index'+ data.index)
-
+      //若该路由下的组件没有实现，提示用户
+      if(!router.hasRoute('/index'+ data.index)){
+          ElMessage({
+              type:'error',
+              message:'该路由组件暂未实现，敬请期待'
+          })
+      }
     let rights = userPinia.rights , name = ''
     rights.forEach((item:any)=>{
       if(item.name === data.indexPath[0] ){

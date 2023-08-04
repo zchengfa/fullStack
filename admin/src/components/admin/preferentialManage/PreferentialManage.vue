@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { getPreferential,releasePreferential } from '../../../network/request'
 import Pagination from "../../common/Pagination.vue";
+import Preferential from "../../common/Preferential.vue";
 import useTable from "../../../common/useTable";
-import {Goods} from "@element-plus/icons-vue";
+import {DeleteFilled, Edit, Goods} from "@element-plus/icons-vue";
 import {ElMessage} from "element-plus";
+import { ref } from 'vue'
+
 
 const { table,currentPageChange } = useTable(6)
 function preferential(){
@@ -36,31 +39,51 @@ function preferential(){
 
 preferential()
 
+let selection = ref([])
+let selectOptions = (data:any[],name:string) => {
+    let options:Array<string> = []
+    data.forEach((item:any)=>{
+        if(options.indexOf(item[name]) === -1){
+            options.push(item[name])
+        }
+    })
+
+    return options
+}
+
+let filterOption = (item:string)=>{
+    let operationArr:string[] = [],regExpArr:string[] = []
+    operationArr.push(...table.manageData)
+
+    let regExp:RegExp = new RegExp(item)
+
+    operationArr.map((items:any)=>{
+        if (regExp.test(items['type'])){
+            regExpArr.push(items)
+        }
+    })
+    table.tableData = regExpArr
+}
+
 </script>
 
 <template>
   <el-row class="padding-box filter-box">
     <el-button type="warning" size="small" class="add-preferential">添加优惠券</el-button>
-<!--    <div class="category-container">-->
-<!--      <div class="category-selector-box">-->
-<!--        <span>优惠券名称：</span>-->
-<!--        <el-input  placeholder="请输入优惠券名称"></el-input>-->
-<!--      </div>-->
-<!--      <div class="category-selector-box">-->
-<!--        <span>优惠券类型：</span>-->
-<!--        <el-select placeholder="全部" class="select">-->
-<!--          <el-option label="全部"></el-option>-->
-<!--        </el-select>-->
-<!--      </div>-->
-<!--      <div class="category-selector-box">-->
-<!--        <span>店铺/平台券：</span>-->
-<!--        <el-select placeholder="全部" class="select">-->
-<!--          <el-option label="全部"></el-option>-->
-<!--        </el-select>-->
-<!--      </div>-->
-<!--      <el-button type="success" size="small" class="search">搜索</el-button>-->
-<!--      <el-button type="danger" size="small" class="reset">重置</el-button>-->
-<!--    </div>-->
+    <div class="category-container">
+      <div class="category-selector-box">
+        <span>优惠券名称：</span>
+        <el-input  placeholder="请输入优惠券名称"></el-input>
+      </div>
+      <div class="category-selector-box">
+        <span>优惠券类型：</span>
+        <el-select placeholder="全部" class="select" v-model="selection">
+          <el-option  v-for="item in selectOptions(table.manageData,'type')" @click="filterOption(item)" :key="item" :value="item" :label="item"></el-option>
+        </el-select>
+      </div>
+      <el-button type="success" size="small" class="search">搜索</el-button>
+      <el-button type="danger" size="small" class="reset">重置</el-button>
+    </div>
   </el-row>
   <el-row>
       <el-table :data="table.currentPageData" border class="table mall-table">
@@ -68,12 +91,12 @@ preferential()
           <el-table-column label="id" prop="id" align="center"></el-table-column>
           <el-table-column label="优惠券名称" align="center">
               <template #default="scope">
-                  <span>{{scope.row.name}}</span>
+                  <Preferential class="preferential-com" :threshold="<string>scope.row['name']"></Preferential>
               </template>
           </el-table-column>
           <el-table-column label="优惠类型" align="center">
               <template #default="scope">
-                  <span>{{scope.row['type']}}</span>
+                  <span style="padding: 10px;background-color: red;color: #fff;font-size: 12px;">{{scope.row['type']}}</span>
               </template>
           </el-table-column>
           <el-table-column label="消费门槛" align="center">
@@ -88,8 +111,8 @@ preferential()
           </el-table-column>
           <el-table-column label="是否发布" align="center">
               <template #default="scope">
-                  <span v-if="scope.row['release_status']">已发布</span>
-                  <span v-else>未发布</span>
+                  <span v-if="scope.row['release_status']" style="padding: 10px;background-color: #99bde0;color: #fff;font-size: 12px;border-radius: 14px">已发布</span>
+                  <span v-else style="padding: 10px;background-color: #acaeb0;color: #fff;font-size: 12px;border-radius: 14px">未发布</span>
               </template>
           </el-table-column>
           <el-table-column label="库存量" align="center">
@@ -106,10 +129,10 @@ preferential()
               <template #default="scope">
                   <div class="operation-btn">
                       <el-button type="primary" class="edit-btn" size="small" @click.prevent="editProduct(scope.$index,table.currentPageData)"  v-permission="{permission:'edit',effect:'disabled'}">
-                          <el-icon class="menu-title-icon"><Goods></Goods></el-icon>
+                          <el-icon class="menu-title-icon"><Edit></Edit></el-icon>
                       </el-button>
                       <el-button type="danger" class="edit-btn" size="small" @click.prevent="editProduct(scope.$index,table.currentPageData)" v-permission="{permission:'edit',effect:'disabled'}">
-                          <el-icon class="menu-title-icon"><Goods></Goods></el-icon>
+                          <el-icon class="menu-title-icon"><DeleteFilled /></el-icon>
                       </el-button>
                   </div>
               </template>
@@ -121,6 +144,10 @@ preferential()
 </template>
 
 <style scoped>
+.preferential-com{
+    width: 100px;
+    height: 60px;
+}
 .padding-box{
   padding: 10px;
   border: 1px solid #d7d4d4;
@@ -149,4 +176,5 @@ preferential()
     min-width: 100px;
     font-size: 14px;
 }
+
 </style>

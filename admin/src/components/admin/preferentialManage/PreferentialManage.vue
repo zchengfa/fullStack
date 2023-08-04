@@ -4,7 +4,7 @@ import Pagination from "../../common/Pagination.vue";
 import Preferential from "../../common/Preferential.vue";
 import useTable from "../../../common/useTable";
 import {DeleteFilled, Edit, Goods} from "@element-plus/icons-vue";
-import {ElMessage} from "element-plus";
+import {ElMessage, ElIcon} from "element-plus";
 import { ref } from 'vue'
 
 
@@ -40,6 +40,13 @@ function preferential(){
 preferential()
 
 let selection = ref([])
+
+/**
+ * 获取所有数据中含有的选择项数组
+ * @param data { Array } 所有数据
+ * @param name { string } 判断属性
+ * @return { Array } 返回选择项数组
+ */
 let selectOptions = (data:any[],name:string) => {
     let options:Array<string> = []
     data.forEach((item:any)=>{
@@ -51,6 +58,10 @@ let selectOptions = (data:any[],name:string) => {
     return options
 }
 
+/**
+ * 点击选择项筛选对应数据
+ * @param item { string } 选择的选项
+ */
 let filterOption = (item:string)=>{
     let operationArr:string[] = [],regExpArr:string[] = []
     operationArr.push(...table.manageData)
@@ -64,6 +75,15 @@ let filterOption = (item:string)=>{
     })
     table.tableData = regExpArr
 }
+
+let editPreferential = (index:number,data:any[])=> {
+
+}
+
+let deletePreferential = (index:number,data:any[])=> {
+
+}
+
 
 </script>
 
@@ -128,10 +148,10 @@ let filterOption = (item:string)=>{
           <el-table-column label="操作" align="center">
               <template #default="scope">
                   <div class="operation-btn">
-                      <el-button type="primary" class="edit-btn" size="small" @click.prevent="editProduct(scope.$index,table.currentPageData)"  v-permission="{permission:'edit',effect:'disabled'}">
+                      <el-button type="primary" class="edit-btn" size="small" @click.prevent="editPreferential(scope.$index,table.currentPageData)"  v-permission="{permission:'edit',effect:'disabled'}">
                           <el-icon class="menu-title-icon"><Edit></Edit></el-icon>
                       </el-button>
-                      <el-button type="danger" class="edit-btn" size="small" @click.prevent="editProduct(scope.$index,table.currentPageData)" v-permission="{permission:'edit',effect:'disabled'}">
+                      <el-button type="danger" class="edit-btn" size="small" @click.prevent="deletePreferential(scope.$index,table.currentPageData)" v-permission="{permission:'edit',effect:'disabled'}">
                           <el-icon class="menu-title-icon"><DeleteFilled /></el-icon>
                       </el-button>
                   </div>

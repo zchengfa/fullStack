@@ -6,7 +6,8 @@ import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import { Goods, Grape, Management, Setting, Timer, TrendCharts, Unlock, User, Van, Watch } from '@element-plus/icons-vue'
 import SkewArrow from "../components/common/SkewArrow.vue";
-import {ElMessage} from "element-plus";
+import {ElIcon,ElMessage} from "element-plus";
+
 
 let router = useRouter()
 let userPinia = userStore()
@@ -25,7 +26,7 @@ let navLogic = reactive({
 
 let isDefaultActive = ref(true)
 
-const typeArr = ref(['default','primary','success','info','warning','danger'])
+const typeArr = ref(['primary','success','info','warning','danger'])
 
 interface activePath {
   index:string,
@@ -37,29 +38,37 @@ const activeItem = (data:activePath)=>{
     centerDialogVisible.value = true
 
   })() :(()=>{
-    router.push('/index'+ data.index)
+
       //若该路由下的组件没有实现，提示用户
-      if(!router.hasRoute('/index'+ data.index)){
+      const routesArr = router.getRoutes() , pathArr:any[] = []
+      routesArr.forEach((item:any)=>{
+          pathArr.push(item.path)
+      })
+
+      if(pathArr.indexOf('/index'+ data.index) === -1){
           ElMessage({
               type:'error',
               message:'该路由组件暂未实现，敬请期待'
           })
       }
-    let rights = userPinia.rights , name = ''
-    rights.forEach((item:any)=>{
-      if(item.name === data.indexPath[0] ){
-        item.children.forEach((i:any)=>{
-          if(i.path === data.indexPath[1]){
-            name = i['children_name']
-          }
-        })
+      else{
+          router.push('/index'+ data.index)
+          let rights = userPinia.rights , name = ''
+          rights.forEach((item:any)=>{
+              if(item.name === data.indexPath[0] ){
+                  item.children.forEach((i:any)=>{
+                      if(i.path === data.indexPath[1]){
+                          name = i['children_name']
+                      }
+                  })
+              }
+          })
+          userPinia.setSkewMenu(JSON.stringify({
+              'name':name,
+              'path':data.indexPath[1],
+              'type':typeArr.value[Math.floor(Math.random()*(typeArr.value.length))]
+          }))
       }
-    })
-    userPinia.setSkewMenu(JSON.stringify({
-      'name':name,
-      'path':data.indexPath[1],
-      'type':typeArr.value[Math.floor(Math.random()*(typeArr.value.length))]
-    }))
 
   })()
 

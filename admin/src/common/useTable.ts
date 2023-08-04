@@ -73,6 +73,7 @@ export default function (size:number) {
     
   }
 
+
   //监听tableData的值
   watchEffect(()=>{
     table.currentPageData = sliceTableData(0,table.pageSize)
@@ -85,3 +86,4 @@ export default function (size:number) {
     search
   }
 }
+

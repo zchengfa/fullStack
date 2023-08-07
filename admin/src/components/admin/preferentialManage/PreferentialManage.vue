@@ -3,10 +3,10 @@ import { getPreferential,releasePreferential } from '../../../network/request'
 import Pagination from "../../common/Pagination.vue";
 import Preferential from "../../common/Preferential.vue";
 import useTable from "../../../common/useTable";
-import {DeleteFilled, Edit, Goods} from "@element-plus/icons-vue";
+import {DeleteFilled, Edit} from "@element-plus/icons-vue";
 import {ElMessage, ElIcon} from "element-plus";
 import { ref } from 'vue'
-
+import AddPreferential from "./AddPreferential.vue";
 
 const { table,currentPageChange } = useTable(6)
 function preferential(){
@@ -84,12 +84,20 @@ let deletePreferential = (index:number,data:any[])=> {
 
 }
 
+let showAddPreferentialComponent = ref(false)
+let addPreferential = ()=> {
+    showAddPreferentialComponent.value = true
+}
+let closeAddPreferential = ()=> {
+    showAddPreferentialComponent.value = false
+}
 
 </script>
 
 <template>
   <el-row class="padding-box filter-box">
-    <el-button type="warning" size="small" class="add-preferential">添加优惠券</el-button>
+<!--      v-permission="{action:'add',effect:'disabled'}"-->
+    <el-button type="warning" size="small" @click="addPreferential" class="add-preferential" >添加优惠券</el-button>
     <div class="category-container">
       <div class="category-selector-box">
         <span>优惠券名称：</span>
@@ -161,6 +169,7 @@ let deletePreferential = (index:number,data:any[])=> {
       </el-table>
       <pagination :total="table.tableData.length" @currentPageChange="currentPageChange"></pagination>
   </el-row>
+  <add-preferential class="add-preferential-com" v-if="showAddPreferentialComponent" @cancel-com="closeAddPreferential"></add-preferential>
 </template>
 
 <style scoped>
@@ -196,5 +205,12 @@ let deletePreferential = (index:number,data:any[])=> {
     min-width: 100px;
     font-size: 14px;
 }
-
+.add-preferential-com{
+    position: absolute;
+    left: 0;
+    top:0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+}
 </style>

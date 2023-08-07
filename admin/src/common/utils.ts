@@ -1,3 +1,5 @@
+import {ElMessageBox} from "element-plus";
+
 export const URL:string = 'http:'+ '//' + window.location.host.toString().split(':')[0] + ':3000'
 
 
@@ -70,73 +72,105 @@ export function getTime(targetTime:any){
     },1000)
 }
 
+export function createFormRule (propertyArr:any[]){
+    let obj:any = {}
+    propertyArr.forEach((item:any)=>{
+        if(typeof item === 'string'){
+            obj[`${item}`] = {
+                required:true,
+                message:'该项内容不能为空',
+                trigger:'blur'
+            }
+        }
+        else{
+            obj[`${item.name}`] = {
+                required:true,
+                message:item.message,
+                trigger:'blur'
+            }
+        }
+    })
+    return obj
+}
+
+
  export function tableToExcel(data:any[]){
-    //列标题
-    let head = `<tr class="table-header"><td>商品id</td><td>商品标题</td><td>图片</td><td>价格</td><td>库存</td></tr>`;
-    let tbody="";//内容
-    for (let item in data) {
-        tbody+=
-          `<tr class="product">
-                        <td class="id">${data[item]['id'] + '\t'}</td>
-                        <td class="title">${data[item]['title'] + '\t'}</td>
-                        <td class="path">${data[item]['imagePath'] + '\t'}</td>
-                        <td class="price">￥${data[item]['price'] + '\t'}</td>
-                        <td class="stocks">${data[item]['count'] + '\t'}</td>
-                    </tr>`
-    }
-    let str = head+tbody;//头部跟身体内容连接
 
-    //Worksheet名
-    let worksheet = '商品数据'
-    let uri = 'data:application/vnd.ms-excel;base64,';
+     ElMessageBox.alert('确定将当前数据导出为Excel文件？','操作确认',{
+         cancelButtonText:'取消',
+         confirmButtonText:'确认导出',
+         callback:(value, action)=>{
+             if(value === 'confirm'){
+                 //列标题
+                 let head = `<tr class="table-header"><td>商品id</td><td>商品标题</td><td>图片</td><td>价格</td><td>库存</td></tr>`;
+                 let tbody="";//内容
+                 for (let item in data) {
+                     tbody+=
+                       `<tr class="product">
+                                     <td class="id">${data[item]['id'] + '\t'}</td>
+                                     <td class="title">${data[item]['title'] + '\t'}</td>
+                                     <td class="path">${data[item]['imagePath'] + '\t'}</td>
+                                     <td class="price">￥${data[item]['price'] + '\t'}</td>
+                                     <td class="stocks">${data[item]['count'] + '\t'}</td>
+                                 </tr>`
+                 }
+                 let str = head+tbody;//头部跟身体内容连接
 
-    //下载的表格模板数据(需要设置编码格式utf-8，不设置会在打开Excel文件时会乱码)
-    let template = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
-                  xmlns:x="urn:schemas-microsoft-com:office:excel"
-                  xmlns="http://www.w3.org/TR/REC-html40" lang="en">
-                  <head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
-                    <x:Name>${worksheet}</x:Name>
-                    <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
-                    </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
-                    <meta charset="UTF-8">
-                    <style type="text/css">
-                       .table-header td{
-                            padding: 16px;
-                            height: 60px;
-                            text-align: center;
-                            color: #FFFFFF;
-                            background-color: #1e8efc;
-                            border: 1px solid #8a8a8a;
-                       }
-                       .product{
-                            text-align: center;
-                       }
-                       td{
-                            padding: 16px;
-                       }
+                 //Worksheet名
+                 let worksheet = '商品数据'
+                 let uri = 'data:application/vnd.ms-excel;base64,';
 
-                       .id{
-                            color: #1e8efc;
-                       }
-                       .title{
-                            color: #d91868;
-                       }
-                       .path{
-                            color: orchid;
-                            font-weight: bold;
-                       }
-                       .price{
-                            width: 100px;
-                            color: red;
-                       }
-                       .stocks{
-                            width: 100px;
+                 //下载的表格模板数据(需要设置编码格式utf-8，不设置会在打开Excel文件时会乱码)
+                 let template = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
+                               xmlns:x="urn:schemas-microsoft-com:office:excel"
+                               xmlns="http://www.w3.org/TR/REC-html40" lang="en">
+                               <head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+                                 <x:Name>${worksheet}</x:Name>
+                                 <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+                                 </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+                                 <meta charset="UTF-8">
+                                 <style type="text/css">
+                                    .table-header td{
+                                         padding: 16px;
+                                         height: 60px;
+                                         text-align: center;
+                                         color: #FFFFFF;
+                                         background-color: #1e8efc;
+                                         border: 1px solid #8a8a8a;
+                                    }
+                                    .product{
+                                         text-align: center;
+                                    }
+                                    td{
+                                         padding: 16px;
+                                    }
 
-                       }
-                    </style><title></title>
-                    </head><body><table>${str}</table></body></html>`;
-    //下载模板
-    window.location.href = uri + base64(template)
+                                    .id{
+                                         color: #1e8efc;
+                                    }
+                                    .title{
+                                         color: #d91868;
+                                    }
+                                    .path{
+                                         color: orchid;
+                                         font-weight: bold;
+                                    }
+                                    .price{
+                                         width: 100px;
+                                         color: red;
+                                    }
+                                    .stocks{
+                                         width: 100px;
+
+                                    }
+                                 </style><title></title>
+                                 </head><body><table>${str}</table></body></html>`;
+                 //下载模板
+                 window.location.href = uri + base64(template)
+             }
+         }
+     })
+
 }
 //输出base64编码
 export function base64 (s:any) {

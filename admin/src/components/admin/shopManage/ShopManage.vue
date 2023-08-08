@@ -1,6 +1,6 @@
  <template>
    <div class="select-group">
-     <el-button class="add-btn" type="primary" size="small" @click="addProduct" v-permission="{permission:'add',effect:'disabled'}">+添加商品</el-button>
+     <el-button class="add-btn" type="primary" size="small" @click="addProduct" v-permission="{permission:'add',effect:'disabled'}"><el-icon class="add-pro"><CirclePlus></CirclePlus></el-icon>添加商品</el-button>
      <div class="category-selector-box">
        <span>分类选择：</span>
        <el-select v-model="addProductLogic.categoryCheckOption" placeholder="全部" class="select">
@@ -86,11 +86,13 @@ import Pagination from "../../common/Pagination.vue";
 import { shopStore } from "../../../pinia/pinia";
 import AddProduct from "./AddProduct.vue";
 import {ElMessageBox} from "element-plus";
+import {CirclePlus} from "@element-plus/icons-vue";
 
 export default defineComponent({
   name: "ShopManage",
 
   components:{
+      CirclePlus,
     AddProduct,
     Pagination,
     EditProduct
@@ -333,6 +335,12 @@ export default defineComponent({
   margin-top:1rem;
   width: 100%;
   height: 70vh;
+}
+.add-pro{
+    position: relative;
+    top: 2px;
+    padding-right: .2rem;
+    font-size: 12px;
 }
 .product-id{
   color: #1e8efc;

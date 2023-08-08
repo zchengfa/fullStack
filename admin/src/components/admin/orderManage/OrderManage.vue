@@ -3,9 +3,9 @@
     <div>
       <span>订单搜索：</span>
       <el-input placeholder="请输入订单编号、买家昵称、订单状态" v-model="statusLabel.searchConfident" @keyup="searchDataByKeyUp($event)" class="search-input"></el-input>
-      <el-button @click="searchData(statusLabel.searchConfident,'')">搜索</el-button>
+      <el-button size="small" type="success" @click="searchData(statusLabel.searchConfident,'')"><el-icon class="search"><Search></Search></el-icon>搜索</el-button>
       <span v-show="statusLabel.showEmptyTip" class="empty-tip">请输入搜索条件</span>
-      <el-button size="small" class="refresh-button" @click="refreshTable"><el-icon class="refresh" :class="{'rotate-icon':order.isRotate}"><refresh></refresh></el-icon>重置</el-button>
+      <el-button size="small" type="danger" class="refresh-button" @click="refreshTable"><el-icon class="refresh" :class="{'rotate-icon':order.isRotate}"><refresh></refresh></el-icon>重置</el-button>
     </div>
     <div class="search-for-label">
       <span>标签查询：</span>
@@ -65,13 +65,14 @@
 <script lang="ts">
 import {defineComponent, nextTick, onMounted, reactive, watchEffect} from "vue";
 import { getOrderData } from "../../../network/request";
-import {Check, Refresh} from "@element-plus/icons-vue";
+import {Check, Refresh, Search} from "@element-plus/icons-vue";
 import Pagination from "../../common/Pagination.vue";
 import useTable from "../../../common/useTable";
 
 export default defineComponent( {
   name: "OrderManage",
   components:{
+      Search,
       Check,
     Pagination,
     Refresh
@@ -333,15 +334,17 @@ export default defineComponent( {
   width: 60%;
   transform: translateX(-50%);
 }
-.refresh{
+.refresh,.search{
   position: relative;
-  top: 1px;
+  top: 2px;
   padding-right: .2rem;
+  font-size: 12px;
 }
 .refresh-button{
   margin-left: 1rem;
 }
 .rotate-icon{
+    transform-origin: 50% 50%;
   animation: rotateIcon 1s linear;
 }
 @keyframes rotateIcon {

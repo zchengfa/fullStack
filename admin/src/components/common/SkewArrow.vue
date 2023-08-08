@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {ref} from "vue";
+import {CircleCloseFilled} from "@element-plus/icons-vue";
 
 const props = defineProps({
   type:{
@@ -37,7 +38,7 @@ function closeSkew(name:string){
         <div class="skew-box" :class="{'border-skew':item.type === 'default'}" :style="{backgroundColor:color[item.type]}"></div>
         <div class="title-icon">
           <span class="skew-title" :class="{'default-color':item.type === 'default'}">{{item.name}}</span>
-          <span class="close-tag" :class="{'default-color':item.type === 'default'}">x</span>
+            <el-icon class="close-tag" :class="{'default-color':item.type === 'default'}"><CircleCloseFilled /></el-icon>
         </div>
         <div class="skew-box" :class="{'border-skew':item.type === 'default'}" :style="{backgroundColor:color[item.type]}"></div>
       </div>
@@ -86,13 +87,15 @@ function closeSkew(name:string){
   position: absolute;
   top:50%;
   left: 50%;
-
+  display: flex;
+    align-items: center;
+    justify-content: center;
   transform: translate(-50% , -50%);
   white-space: nowrap;
   z-index: 1;
 }
 .skew-title{
-  margin-right: 8px;
+  margin-right: 4px;
   font-size: 12px;
   color: #fff;
   white-space: nowrap;

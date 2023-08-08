@@ -9,7 +9,14 @@
     </div>
     <div class="search-for-label">
       <span>标签查询：</span>
-      <el-button size="small" v-for="(label,index) in statusLabel.data" :type="statusLabel.buttonType[index]" @click="showLabelData(label['title'],index)" :key="index">{{label['title']}}<span v-show="label['isChecked']">√</span></el-button>
+      <el-button size="small" v-for="(label,index) in statusLabel.data" :type="statusLabel.buttonType[index]" @click="showLabelData(label['title'],index)" :key="index">
+          <template #default>
+              <div  class="label-btn">
+                  <span>{{label['title']}}</span>
+                  <el-icon class="check-icon" v-show="label['isChecked']"><Check /></el-icon>
+              </div>
+          </template>
+      </el-button>
     </div>
   </div>
   <el-table class="mall-table" :data="table.currentPageData"  border empty-text="商品数据为空">
@@ -58,13 +65,14 @@
 <script lang="ts">
 import {defineComponent, nextTick, onMounted, reactive, watchEffect} from "vue";
 import { getOrderData } from "../../../network/request";
-import { Refresh } from "@element-plus/icons-vue";
+import {Check, Refresh} from "@element-plus/icons-vue";
 import Pagination from "../../common/Pagination.vue";
 import useTable from "../../../common/useTable";
 
 export default defineComponent( {
   name: "OrderManage",
   components:{
+      Check,
     Pagination,
     Refresh
   },
@@ -229,7 +237,17 @@ export default defineComponent( {
 </script>
 
 <style scoped>
+.search-box .label-btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
 
+}
+.check-icon{
+    font-size: 12px;
+
+}
 .mall-table,.search-box{
   margin: 0 auto;
   width: 90%;

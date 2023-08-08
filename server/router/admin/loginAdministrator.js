@@ -168,7 +168,7 @@ module.exports = app => {
                                                                     id:index + new Date().getTime(),
                                                                     children_name:'优惠列表',
                                                                     path:'/preferential',
-                                                                    rights:['delete']
+                                                                    rights:['delete','push','add','edit']
                                                                 }
                                                             ]
                                                             break;

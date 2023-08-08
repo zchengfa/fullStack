@@ -41,8 +41,19 @@ router.beforeEach((to,from,next)=>{
 
     //若需要登录后进入，则判断是否有token值
     if (to.meta.requireAuth){
+
         //有token，表示已经登录过，直接进入
         if (sessionStorage.getItem('token')){
+
+            if(to.fullPath === '/index/preferential'){
+                // @ts-ignore
+                if(to.meta.rights.indexOf('push') === -1){
+                    sessionStorage.setItem('pushPreferential','false')
+                }
+                else{
+                    sessionStorage.setItem('pushPreferential','true')
+                }
+            }
             next()
         }
         //没有token，表示未登录，重定向到登录页

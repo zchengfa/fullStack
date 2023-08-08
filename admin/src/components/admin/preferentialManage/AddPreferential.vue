@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import { createFormRule } from "../../../common/utils";
-import { reactive } from "vue";
+import { reactive,ref } from "vue";
+import {ElMessage} from "element-plus";
 
-let emit = defineEmits(['cancelCom'])
+let emit = defineEmits(['cancelCom','confirmAddPreferential'])
 function cancelCom (){
     emit("cancelCom")
 }
 
-function addPreferential(){
-
-}
 let preferentialRules = reactive({
     rules:createFormRule(
         [
@@ -24,34 +22,52 @@ let preferentialRules = reactive({
             'threshold','expired','count'
         ]
     ),
-    preferentialForm:{
-        name:<string>''
+    preferentialFormData:{
+        name:<string>'',
+        type:<string>'',
+        threshold:<number>0,
+        expired:<Date> new Date(),
+        count:<number>0
     }
 })
 
+let preferentialForm = ref(null)
+let addPreferential = (formData:{name:string, type:string, threshold:number, expired:Date, count:number})=>{
+
+    (<any>preferentialForm).value.validate((valid:any) => {
+        if(valid){
+            let { count,threshold } = preferentialRules.preferentialFormData
+            count <= 0 ? ElMessage({message:'优惠券库存量需大于0',type:'error'}) : null ;
+
+            threshold <= 0 ? ElMessage({message:'消费门槛需大于0',type:'error'}) : null ;
+
+            (count > 0 && threshold > 0 ) ? emit('confirmAddPreferential',formData) : null ;
+        }
+    })
+}
 
 </script>
 
 <template>
 <el-row class="com-bg">
-   <el-form class="preferential-form" :model="preferentialRules.preferentialForm" :rules="preferentialRules.rules">
+   <el-form class="preferential-form" ref="preferentialForm" :model="preferentialRules.preferentialFormData" :rules="preferentialRules.rules">
        <el-form-item label="优惠券名称：" prop="name">
-           <el-input placeholder="请输入优惠券名称"></el-input>
+           <el-input v-model="preferentialRules.preferentialFormData.name" placeholder="请输入优惠券名称"></el-input>
        </el-form-item>
        <el-form-item label="优惠类型：" prop="type">
-           <el-input placeholder="请输入优惠类型"></el-input>
+           <el-input v-model="preferentialRules.preferentialFormData.type" placeholder="请输入优惠类型"></el-input>
        </el-form-item>
        <el-form-item label="消费门槛：" prop="threshold">
-           <el-input-number size="small" placeholder="消费门槛"></el-input-number>
+           <el-input-number  v-model.number="preferentialRules.preferentialFormData.threshold" size="small" placeholder="消费门槛"></el-input-number>
        </el-form-item>
        <el-form-item label="使用期限：" prop="expired">
-           <el-date-picker type="date" size="small" placeholder="选择期限"></el-date-picker>
+           <el-date-picker v-model="preferentialRules.preferentialFormData.expired" type="date" size="small" placeholder="选择期限"></el-date-picker>
        </el-form-item>
        <el-form-item label="优惠券数量：" prop="count">
-           <el-input size="small" type="number" placeholder="发行数量"></el-input>
+           <el-input v-model.number="preferentialRules.preferentialFormData.count" size="small" type="number" placeholder="发行数量"></el-input>
        </el-form-item>
        <el-form-item class="btn-form-box">
-           <el-button type="primary" size="small" @click="addPreferential">添加优惠券</el-button>
+           <el-button type="primary" size="small" @click="addPreferential(preferentialRules.preferentialFormData)">添加优惠券</el-button>
            <el-button size="small" @click="cancelCom" >取消</el-button>
        </el-form-item>
    </el-form>

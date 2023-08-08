@@ -1,6 +1,7 @@
 const express = require("express");
 const mysql_query = require("../../plugins/mysql_query");
 const bodyParser = require('body-parser')
+const { getIntervalDays } = require('../../util/timeFormatting')
 module.exports = app => {
 
     const router = express.Router()
@@ -35,6 +36,34 @@ module.exports = app => {
         }
         catch (e) {
             res.send({err:'发生错误'})
+        }
+    })
+
+    router.post('/addPreferential',(req,res)=>{
+        //接受请求参数
+        const { formData } = JSON.parse(JSON.stringify(req.body))
+        let now = new Date() , expired = new Date(formData.expired)
+        const insertQuery = mysql_query.insert('mall_preferential','name,use_threshold,stock,expiration_time,type',`'${formData.name}',${formData.threshold},${formData.count},${getIntervalDays(now,expired)},'${formData.type}'`)
+        try{
+            connection.query(insertQuery,(err,result)=>{
+                if(err) {
+
+                    res.send({
+                        err,
+                        msg:'优惠券添加失败'
+                    })
+                    console.log(err)
+                }
+                else{
+                    res.send({msg:'优惠券添加成功'})
+                }
+            })
+        }
+        catch (err){
+            res.send({
+                err,
+                msg:'服务出现错误'
+            })
         }
     })
 

@@ -28,6 +28,15 @@ export function releasePreferential(status:boolean,id:number){
     })
 }
 
+export function addPreferentialRequest(formData: any){
+    return Post({
+        url:'/addPreferential',
+        data:{
+            formData
+        }
+    })
+}
+
 export function getShopManageData(){
     return Get({
         url:'/shopManage'

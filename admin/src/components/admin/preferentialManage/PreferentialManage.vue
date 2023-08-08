@@ -1,23 +1,31 @@
 <script setup lang="ts">
-import { getPreferential,releasePreferential } from '../../../network/request'
+import { getPreferential,releasePreferential,addPreferentialRequest } from '../../../network/request'
 import Pagination from "../../common/Pagination.vue";
 import Preferential from "../../common/Preferential.vue";
 import useTable from "../../../common/useTable";
 import {DeleteFilled, Edit} from "@element-plus/icons-vue";
-import {ElMessage, ElIcon} from "element-plus";
+import {ElMessage, ElIcon, ElMessageBox} from "element-plus";
 import { ref } from 'vue'
 import AddPreferential from "./AddPreferential.vue";
 
+
 const { table,currentPageChange } = useTable(6)
+
+
 function preferential(){
     getPreferential().then(res=>{
 
         if(res.status === 200){
             let data = res.data.query
+            const pushPreferential = sessionStorage.getItem('pushPreferential')
+
             data.forEach((item:any)=>{
+                Boolean(JSON.parse(<any>pushPreferential)) ? item['disabled'] = false : item['disabled'] = true
+
+
                 //给每个item添加单独的处理switch的函数
                 item['release_status'] = Boolean(item['release_status'])
-                item.switchChange = ()=>{
+                item.switchChange = ()=> {
                     return new Promise(resolve => {
                         releasePreferential(!item['release_status'],item.id).then((result)=>{
                             //消息提示
@@ -77,11 +85,20 @@ let filterOption = (item:string)=>{
 }
 
 let editPreferential = (index:number,data:any[])=> {
-
+    ElMessageBox.alert('优惠券编辑功能待完善','操作提示',{
+        confirmButtonText:'知道了'
+    })
 }
 
 let deletePreferential = (index:number,data:any[])=> {
+    ElMessageBox.alert('优惠券删除功能待完善','操作提示',{
+        confirmButtonText:'知道了'
+    })
+}
 
+let resetOptions = ()=> {
+    (<any>selection).value = ''
+    filterOption(<any>(selection).value)
 }
 
 let showAddPreferentialComponent = ref(false)
@@ -92,12 +109,31 @@ let closeAddPreferential = ()=> {
     showAddPreferentialComponent.value = false
 }
 
+let confirmAddPreferential = (formData:{name:string, type:string, threshold:number, expired:Date, count:number})=> {
+
+    addPreferentialRequest(formData).then(res=>{
+        if(res.data.err){
+            ElMessage({
+                type:'error',
+                message:res.data.msg
+            })
+        }
+        else{
+            ElMessage({
+                type:'success',
+                message:res.data.msg
+            })
+            preferential()
+        }
+        showAddPreferentialComponent.value = false
+    })
+}
 </script>
 
 <template>
   <el-row class="padding-box filter-box">
 <!--      v-permission="{action:'add',effect:'disabled'}"-->
-    <el-button type="warning" size="small" @click="addPreferential" class="add-preferential" >添加优惠券</el-button>
+    <el-button type="warning" size="small" @click="addPreferential" class="add-preferential" v-permission="{permission:'add',effect:'disabled'}">添加优惠券</el-button>
     <div class="category-container">
       <div class="category-selector-box">
         <span>优惠券名称：</span>
@@ -110,7 +146,7 @@ let closeAddPreferential = ()=> {
         </el-select>
       </div>
       <el-button type="success" size="small" class="search">搜索</el-button>
-      <el-button type="danger" size="small" class="reset">重置</el-button>
+      <el-button type="danger" size="small" class="reset" @click="resetOptions">重置</el-button>
     </div>
   </el-row>
   <el-row>
@@ -150,7 +186,7 @@ let closeAddPreferential = ()=> {
           </el-table-column>
           <el-table-column label="发布开关" align="center">
               <template #default="scope">
-                  <el-switch :before-change="scope.row['switchChange']" v-model="scope.row['release_status']"  style="--el-switch-on-color: #13ce66;"/>
+                  <el-switch :before-change="scope.row['switchChange']" v-model="scope.row['release_status']" :disabled="scope.row['disabled']"  style="--el-switch-on-color: #13ce66;"/>
               </template>
           </el-table-column>
           <el-table-column label="操作" align="center">
@@ -169,13 +205,14 @@ let closeAddPreferential = ()=> {
       </el-table>
       <pagination :total="table.tableData.length" @currentPageChange="currentPageChange"></pagination>
   </el-row>
-  <add-preferential class="add-preferential-com" v-if="showAddPreferentialComponent" @cancel-com="closeAddPreferential"></add-preferential>
+  <add-preferential class="add-preferential-com" v-if="showAddPreferentialComponent" @cancel-com="closeAddPreferential" @confirm-add-preferential="confirmAddPreferential"></add-preferential>
 </template>
 
 <style scoped>
 .preferential-com{
     width: 100px;
     height: 60px;
+    transform: scale(.7);
 }
 .padding-box{
   padding: 10px;

@@ -11,7 +11,7 @@
       </div>   
     </el-col>
   </el-row>
-  <el-table :data="table.currentPageData" border class="table mall-table" @selection-change="handleSelection">
+  <el-table :data="table.currentPageData" max-height="450"   border class="table mall-table" @selection-change="handleSelection">
     <el-table-column type="selection" width="55" />
       <el-table-column label="id" prop="product_id"></el-table-column>
       <el-table-column label="描述" prop="product_title" align="center"></el-table-column>

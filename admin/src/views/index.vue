@@ -284,7 +284,7 @@ li .administrator,.avatar-box{
   right:10px;
 }
 .menu-col{
-  max-height: calc(100vh - 3rem);
+  max-height: calc(100vh - 5rem);
   min-width: 200px;
   overflow-y: scroll;
 }
@@ -292,7 +292,10 @@ li .administrator,.avatar-box{
   display: none;
 }
 .router-view-col{
-  max-height: calc(100vh - 3rem);
+  max-height: calc(100vh - 4rem);
   overflow-y: scroll;
+}
+.router-view-col::-webkit-scrollbar{
+    display: none;
 }
 </style>

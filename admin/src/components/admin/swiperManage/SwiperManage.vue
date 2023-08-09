@@ -4,7 +4,7 @@
       <img :src="item.banner_image" alt="banner">
     </swiper-slide>
   </swiper>
-  <el-table :data="table.currentPageData" class="swiper-table" :header-cell-style="headerStyle" :cell-style="rowStyle" border empty-text="用户数据为空">
+  <el-table :data="table.currentPageData" class="swiper-table" max-height="450"   :header-cell-style="headerStyle" :cell-style="rowStyle" border empty-text="用户数据为空">
     <el-table-column prop="id" label="序号" align="center"></el-table-column>
     <el-table-column width="414" prop="banner_image" label="图片链接" align="center">
       <template #default="scope">

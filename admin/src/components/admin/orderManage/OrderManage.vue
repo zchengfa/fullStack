@@ -2,9 +2,9 @@
   <div class="search-box">
     <div>
       <span>订单搜索：</span>
-      <el-input placeholder="请输入订单编号、买家昵称、订单状态" v-model="statusLabel.searchConfident" @keyup="searchDataByKeyUp($event)" class="search-input"></el-input>
+      <el-input :placeholder="!statusLabel.showEmptyTip ? '请输入订单编号、买家昵称、订单状态' :'请输入搜索条件' " v-model="statusLabel.searchConfident" @keyup="searchDataByKeyUp($event)" class="search-input"></el-input>
       <el-button size="small" type="success" @click="searchData(statusLabel.searchConfident,'')"><el-icon class="search"><Search></Search></el-icon>搜索</el-button>
-      <span v-show="statusLabel.showEmptyTip" class="empty-tip">请输入搜索条件</span>
+<!--      <span v-show="statusLabel.showEmptyTip" class="empty-tip">请输入搜索条件</span>-->
       <el-button size="small" type="danger" class="refresh-button" @click="refreshTable"><el-icon class="refresh" :class="{'rotate-icon':order.isRotate}"><refresh></refresh></el-icon>重置</el-button>
     </div>
     <div class="search-for-label">
@@ -19,7 +19,7 @@
       </el-button>
     </div>
   </div>
-  <el-table class="mall-table" :data="table.currentPageData"  border empty-text="商品数据为空">
+  <el-table class="mall-table" :data="table.currentPageData" max-height="450"  border empty-text="商品数据为空">
     <el-table-column prop="order_id" label="订单编号">
       <template #default="scope">
         <span class="order-id">{{scope.row.order_id}}</span>
@@ -68,6 +68,7 @@ import { getOrderData } from "../../../network/request";
 import {Check, Refresh, Search} from "@element-plus/icons-vue";
 import Pagination from "../../common/Pagination.vue";
 import useTable from "../../../common/useTable";
+import {ElMessage} from "element-plus";
 
 export default defineComponent( {
   name: "OrderManage",
@@ -156,6 +157,10 @@ export default defineComponent( {
 
       if (!searchConfident.toString().length){
         statusLabel.showEmptyTip = true
+          ElMessage({
+              type:'error',
+              message:'请输入搜索条件'
+          })
         return null
       }
       else{
@@ -267,11 +272,7 @@ export default defineComponent( {
   margin-left: 0;
   width: 40%;
 }
-.empty-tip{
-  margin-left: 1rem;
-  color: #ee4444;
-  font-weight: normal;
-}
+
 .search-box div{
   margin: 1rem;
 }

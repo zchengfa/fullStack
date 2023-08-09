@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="table.currentPageData" class="mall-table" border>
+  <el-table :data="table.currentPageData" max-height="450"   class="mall-table" border>
     <el-table-column label="商品描述"  align="center">
       <template #default="scope">
         <span>{{scope.row.product_title}}</span>

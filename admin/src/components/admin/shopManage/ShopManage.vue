@@ -21,7 +21,7 @@
        <el-button type="success" size="small" @click="tableToExcel(table.tableData)">导出数据为Excel</el-button>
      </div>
    </div>
-  <el-table class="mall-table" :data="table.currentPageData" @selection-change="selection" border empty-text="商品数据为空">
+  <el-table class="mall-table" :data="table.currentPageData" max-height="450"  @selection-change="selection" border empty-text="商品数据为空">
     <el-table-column type="selection"></el-table-column>
     <el-table-column prop="id" label="商品ID">
       <template #default="scope">

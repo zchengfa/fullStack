@@ -150,7 +150,7 @@ let confirmAddPreferential = (formData:{name:string, type:string, threshold:numb
     </div>
   </el-row>
   <el-row>
-      <el-table :data="table.currentPageData" border class="table mall-table">
+      <el-table :data="table.currentPageData" border max-height="450"   class="table mall-table">
 
           <el-table-column label="id" prop="id" align="center"></el-table-column>
           <el-table-column label="优惠券名称" align="center">

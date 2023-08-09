@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="table.currentPageData" class="member-table mall-table" border :header-cell-style="headerStyle" :cell-style="rowStyle" empty-text="用户数据为空">
+  <el-table :data="table.currentPageData" class="member-table mall-table" max-height="450"   border :header-cell-style="headerStyle" :cell-style="rowStyle" empty-text="用户数据为空">
     <el-table-column prop="user_id" label="用户ID" align="center">
 		<template #default="scope">
 			<span class="user-id">{{scope.row.user_id}}</span>

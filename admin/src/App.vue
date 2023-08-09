@@ -21,5 +21,7 @@ body{
 }
 .mall-table{
   height: 70vh !important;
+
 }
+
 </style>

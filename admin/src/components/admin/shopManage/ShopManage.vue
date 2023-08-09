@@ -1,23 +1,23 @@
  <template>
    <div class="select-group">
      <el-button class="add-btn" type="primary" size="small" @click="addProduct" v-permission="{permission:'add',effect:'disabled'}"><el-icon class="add-pro"><CirclePlus></CirclePlus></el-icon>添加商品</el-button>
-     <div class="category-selector-box">
+     <div class="category-selector-box select-item">
        <span>分类选择：</span>
        <el-select v-model="addProductLogic.categoryCheckOption" placeholder="全部" class="select">
          <el-option v-for="item in addProductLogic.selectCategoryOptions" :key="item" @click="showGoodsByCategoryOrBrand(item,'type')" :value="item" :label="item"></el-option>
        </el-select>
      </div>
-     <div class="brand-selector-box category-selector-box">
+     <div class="brand-selector-box category-selector-box select-item">
        <span>品牌选择：</span>
        <el-select v-model="addProductLogic.brandCheckOption" placeholder="全部" class="select">
          <el-option v-for="item in addProductLogic.selectBrandOptions" :key="item" @click="showGoodsByCategoryOrBrand(item,'brand')" :value="item" :label="item"></el-option>
        </el-select>
      </div>
-     <div class="search-box">
+     <div class="search-box select-item">
        <span>搜索：</span>
-       <el-input class="search-input" v-model="addProductLogic.searchKeyword" @keyup="searchProduct($event)" placeholder="输入商品ID/分类/商品名称" suffix-icon="el-icon-search"></el-input>
+       <el-input size="small" class="search-input" v-model="addProductLogic.searchKeyword" @keyup="searchProduct($event)" placeholder="输入商品ID/分类/商品名称" suffix-icon="el-icon-search"></el-input>
      </div>
-     <div class="export-data">
+     <div class="export-data select-item">
        <el-button type="success" size="small" @click="tableToExcel(table.tableData)">导出数据为Excel</el-button>
      </div>
    </div>
@@ -345,14 +345,21 @@ export default defineComponent({
 .product-id{
   color: #1e8efc;
 }
-.category-selector-box{
+.add-btn{
+    margin-top: 20px;
+    margin-right: 20px;
+}
+.select-item{
     display: flex;
     flex-wrap: nowrap;
     justify-content: flex-start;
     align-items: center;
+    margin-right: 20px;
+    margin-top: 20px;
+    font-size: 14px;
 }
-.category-selector-box span{
-    min-width: 100px;
+.select-item span{
+    white-space: nowrap;
 }
 .title{
   display: block;
@@ -391,31 +398,14 @@ export default defineComponent({
 .select-group{
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   margin-top: 10px;
+  flex-wrap: wrap;
   width: 94%;
   min-width: 1000px;
-  height: 5rem;
+  padding: 0 20px 20px 20px;
   border: 1px solid #dedada;
 }
-.select-group div,.select-group button{
-  margin-left: 1rem;
-  margin-right: 1rem;
-}
-.select-group .select{
-  width: 7rem;
-}
-.select-group .search-box{
-  display: flex;
-  justify-items: center;
-  align-items: center;
-  min-width: 260px;
-}
-.search-box span{
-  flex: 2;
-  min-width: 3rem;
-}
-.search-box .search-input{
-  flex: 9;
-}
+
 
 </style>

@@ -32,6 +32,7 @@ import {defineComponent, onBeforeMount, reactive, watchEffect} from "vue";
 import useTable from "../../../common/useTable";
 import {deleteUser, getMemberManageData} from "../../../network/request";
 import Pagination from "../../common/Pagination.vue";
+import { timeFormatting } from '../../../common/utils'
 
 export default defineComponent({
   name: "MemberManage",
@@ -77,6 +78,7 @@ export default defineComponent({
 
           !item.username?item.username = '暂未设置昵称': item.username
           !item.last_login_time?item.last_login_time = '暂未登录过': item.last_login_time
+          item.last_login_time = timeFormatting(new Date(item.last_login_time))
           switch (item.identity){
             case 0:
               item.identity = '普通用户';
@@ -106,7 +108,7 @@ export default defineComponent({
 			headerStyle,
 			rowStyle,
 			deleteMember,
-      table,currentPageChange,search,
+      table,currentPageChange,search
     }
   }
 })

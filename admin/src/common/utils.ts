@@ -177,6 +177,46 @@ export function base64 (s:any) {
     return window.btoa(unescape(encodeURIComponent(s)))
 }
 
+export function timeFormatting (time:any,fm:string = 'YYYY-MM-DD hh:mm:ss',){
+    //拓展Date的时间格式化函数
+    //@ts-ignore
+    Date.prototype.format = function (fmt:string){
+        let formatObject = {
+            "M+": this.getMonth() + 1,                   //月份
+            "d+": this.getDate(),                        //日
+            "h+": this.getHours(),                       //小时
+            "m+": this.getMinutes(),                     //分
+            "s+": this.getSeconds(),                     //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds()                  //毫秒
+        };
+
+        //  获取年份
+        // ①
+        if (/(y+)/i.test(fmt)) {
+            fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        }
+
+        for (let k in formatObject) {
+            // ②
+            if (new RegExp("(" + k + ")", "i").test(fmt)) {
+                fmt = fmt.replace(
+                    //@ts-ignore
+                    RegExp.$1, (RegExp.$1.length === 1) ? (formatObject[k]) : (("00" + formatObject[k]).substr(("" + formatObject[k]).length)));
+            }
+        }
+        return fmt;
+    }
+    if (time){
+        return time.format(fm)
+    }
+    else {
+        //@ts-ignore
+        return new Date().format(fm)
+    }
+
+}
+
 /**
  * //ts+promise手写ajax
  interface ajaxOption {

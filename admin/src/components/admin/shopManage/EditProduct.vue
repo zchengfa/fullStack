@@ -158,13 +158,13 @@ export default defineComponent({
 
 <style scoped>
 .edit-product{
-  position: absolute;
+  position: fixed;
   top:0;
   left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(211,211,220,.5);
-  z-index: 9;
+  z-index: 1000;
   overflow: hidden;
 }
 .edit-row{
@@ -175,6 +175,7 @@ export default defineComponent({
   display: flex;
   margin: auto;
   height: 100%;
+  min-width: 500px;
   align-items: center;
   justify-content: center;
   background-color: #fff;
@@ -182,6 +183,7 @@ export default defineComponent({
 }
 .edit-form{
   width: 80%;
+
   overflow: hidden;
 }
 .edit-label,.edit-label-content{
@@ -193,6 +195,7 @@ export default defineComponent({
   width: 20%;
   text-align: right;
 	font-weight: bold;
+  white-space: nowrap;
 }
 .edit-label-content,.edit-alter-input{
   width: 60%;

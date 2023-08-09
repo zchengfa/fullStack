@@ -1,7 +1,7 @@
 <template>
   <div class="add-product">
     <el-row class="add-product-row">
-      <el-col :span="12">
+      <el-col :span="18">
         <el-form class="add-product-form" ref="ruleForm" :model="rulesLogic.ruleForm" :rules="rulesLogic.addProductRules">
           <el-form-item label="商品描述：" prop="description">
             <el-input v-model="rulesLogic.ruleForm.description" type="textarea" :autosize="{maxRows:5}" placeholder="请添加商品描述"></el-input>
@@ -12,10 +12,10 @@
             </el-input>
           </el-form-item>
           <el-form-item label="商品数量：" prop="productCount">
-            <el-input v-model.number="rulesLogic.ruleForm.productCount" type="number" placeholder="数量"></el-input>
+            <el-input  size="small" v-model.number="rulesLogic.ruleForm.productCount" type="number" placeholder="数量"></el-input>
           </el-form-item>
           <el-form-item label="商品价格：" prop="price">
-            <el-input v-model.number="rulesLogic.ruleForm.price" placeholder="价格"></el-input>
+            <el-input  size="small" v-model.number="rulesLogic.ruleForm.price" placeholder="价格"></el-input>
           </el-form-item>
           <el-form-item label="尺寸：" prop="sizeCheckList">
             <el-checkbox-group v-model="rulesLogic.ruleForm.sizeCheckList">
@@ -41,8 +41,8 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="cancelAdd">取消</el-button>
-            <el-button type="success" @click="confirmAdd(rulesLogic.ruleForm)">添加</el-button>
+            <el-button  size="small" type="primary" @click="cancelAdd">取消</el-button>
+            <el-button size="small" type="success" @click="confirmAdd(rulesLogic.ruleForm)">添加</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -132,19 +132,23 @@ export default defineComponent({
 
 <style scoped>
 .add-product{
-  position: absolute;
+  position: fixed;
   top:0;
   left: 0;
   width: 100vw;
   height: 100vh;
   background-color: rgba(211,211,220,.5);
-  z-index: 10;
+  z-index: 1000;
 }
 .add-product-row{
-  margin: 1rem auto;
+  margin: 0 auto;
   width: 50%;
-  height: 80%;
+  height: 100%;
   background-color: #fff;
+  overflow-y: scroll;
+}
+.add-product-row::-webkit-scrollbar{
+    display: none;
 }
 .add-product-form{
   width: 90%;

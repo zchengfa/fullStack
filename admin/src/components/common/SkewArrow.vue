@@ -59,7 +59,7 @@ function closeSkew(name:string){
 <style scoped>
 .menu-container{
   margin: 10px 0;
-
+  width: 95%;
   border: 1px solid #e9dede;
 }
 .show-skew-box{

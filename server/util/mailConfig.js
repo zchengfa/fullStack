@@ -2,8 +2,8 @@ const config = {
     host:'smtp.qq.com',
     port:'465',
     auth: {
-        user:'chengfa9468@foxmail.com',
-        pass:'xpexvowolshxjabf'
+        user:'3398210751@qq.com',
+        pass:'wzxwnawnknsfdafc'
     }
 }
 

@@ -154,7 +154,7 @@ const routes =[
 
 const router = new VueRouter({
 	routes,
-	mode:'history',
+	mode:'hash',
 	scrollBehavior(to,from,position) {
 		if (position) {
 			return position

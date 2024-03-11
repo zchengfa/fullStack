@@ -121,14 +121,13 @@ export default {
   .submit{
     margin: 1rem auto;
     height: 3rem;
+    text-align: center;
   }
   .submit button{
-    margin-left: 50%;
     width: 86%;
     height: 90%;
     color: #fff;
     border-radius: 2rem;
     background-color: #fd001e;
-    transform: translateX(-50%);
   }
 </style>

@@ -58,11 +58,13 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    position: fixed;
+    position: absolute;
     top:0;
-    left: 0;
-    width: 100vw;
+    left: 50%;
+    width: 100%;
+    max-width: var(--app-max-width);
     height: 100vh;
+  transform: translateX(-50%);
     background-color: rgba(0,0,0,.3);
     z-index: 999;
 }

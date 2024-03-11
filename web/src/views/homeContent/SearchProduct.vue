@@ -232,8 +232,9 @@ export default {
     position: relative;
     margin: 0 auto;
     width:94%;
-    min-height: calc(100vh - 44px);
+    height: calc(100vh - 44px);
     background-color: #FFFFFF;
+    overflow-y: scroll;
   }
   .content .title h4{
     float: left;

@@ -29,7 +29,8 @@
     margin: 0 auto;
     width: 100vw;
     height: 100vh;
-    max-width: 500px;
+    max-width: var(--app-max-width);
+    scroll-behavior: smooth;
   }
 
   :root{

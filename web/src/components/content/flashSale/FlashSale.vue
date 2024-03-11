@@ -125,7 +125,7 @@ span.active{
 }
 .flash-sale{
   position: relative;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   background-color: #f1eded;
   z-index: 11;

@@ -391,6 +391,7 @@
   .content{
     position: relative;
     height: calc(100% - 14vh);
+    max-width: var(--app-max-width);
     overflow: hidden;
     z-index: 9;
   }

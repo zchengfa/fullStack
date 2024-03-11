@@ -14,7 +14,7 @@ name: "BackTop"
 
 <style scoped>
   .back-top{
-    position: fixed;
+    position: absolute;
     right: 1rem;
     bottom: 4rem;
     width: 3rem;

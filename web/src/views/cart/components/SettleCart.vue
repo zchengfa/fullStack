@@ -91,6 +91,7 @@ export default {
   position: fixed;
   display: flex;
   width: 100%;
+  max-width: var(--app-max-width);
   height: 3rem;
   bottom: 3rem;
   line-height: 3rem;

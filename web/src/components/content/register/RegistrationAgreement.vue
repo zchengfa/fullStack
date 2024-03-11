@@ -55,6 +55,7 @@ export default {
   top: 0;
   width: 100vw;
   height: 100vh;
+  max-width: var(--app-max-width);
   justify-content: center;
   align-items: center;
   background-color: rgba(45, 41, 41, 0.8);

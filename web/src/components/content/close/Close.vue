@@ -15,7 +15,7 @@ export default {
 
 <style scoped>
 .close{
-  position: fixed;
+  position: absolute;
   top:1rem;
   left: 1rem;
   width: 3rem;

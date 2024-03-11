@@ -21,7 +21,7 @@
 		}
   }
 </script>
-<style scoped>
+<style >
 	@import url("assets/css/normalize.css");
   @import url("assets/css/reset.css");
   #app{
@@ -30,6 +30,10 @@
     width: 100vw;
     height: 100vh;
     max-width: 500px;
+  }
+
+  :root{
+    --app-max-width:500px
   }
 
 </style>

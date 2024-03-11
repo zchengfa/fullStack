@@ -45,6 +45,7 @@ export default {
 <style scoped>
 .content{
   width: 100vw;
+  max-width: var(--app-max-width);
   overflow: hidden;
 }
 .image-box{

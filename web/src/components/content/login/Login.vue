@@ -112,7 +112,7 @@ export default {
 }
 .login{
   display: flex;
-  position: absolute;
+  position: relative;
   width: 100%;
   height: 100vh;
   background-repeat: no-repeat;

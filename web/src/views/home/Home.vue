@@ -396,6 +396,7 @@
 			}
     },
     created() {
+      console.log(navigator)
       this.getHomeMultiData()
       this.MenuData = home_menu
 			this.message_icon = base64['message']
@@ -422,7 +423,7 @@
       this.refreshGoodsData()
       let url = new URL(window.location.href)
       let pathName = url.pathname
-
+      //当从支付页面跳转回来时，让其跳转到支付结果页
       if(pathName === '/paymentStatus'){
         let params = new URLSearchParams(url.search)
 
@@ -430,8 +431,6 @@
             out_trade_no:params.get('out_trade_no'),
             trade_no:params.get('trade_no')
           }})
-
-        console.log(this.$router)
       }
     }
   }

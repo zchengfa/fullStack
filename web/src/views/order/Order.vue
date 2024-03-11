@@ -416,6 +416,7 @@ h4{
   position: fixed;
   bottom: 0;
   width: 100%;
+  max-width: var(--app-max-width);
   height: 4rem;
   background-color: #fff;
   text-align: center;

@@ -68,10 +68,11 @@ export default {
 
 <style scoped>
   .detail-bottom-bar{
-    position: fixed;
+    position: absolute;
     bottom:0;
     left: 0;
-    right: 0;
+    width: 100%;
+    max-width: var(--app-max-width);
     background-color: #fff;
     z-index: 10;
   }

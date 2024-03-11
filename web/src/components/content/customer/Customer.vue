@@ -419,13 +419,14 @@ export default {
   position: relative;
   width: 100vw;
   height: 100vh;
+  max-width: var(--app-max-width);
   background-color: #fff;
   z-index: 10;
 }
 .nav {
-  position: fixed;
+  position: absolute;
   top:0;
-  width: 100vw;
+  width: 100%;
   border-bottom: 1px solid #cdc9c9;
   background-color: #fff;
 }
@@ -443,7 +444,7 @@ export default {
   height: calc(100vh - 44px - 4rem);
 }
 .content {
-  width: 100vw;
+  width: 100%;
   height: 100%;
   overflow: hidden;
 }
@@ -524,7 +525,8 @@ export default {
   border-color: transparent #1e8efc transparent transparent;
 }
 .bottom {
-  position: fixed;
+  position: absolute;
   bottom: 0;
+  width: 100%;
 }
 </style>

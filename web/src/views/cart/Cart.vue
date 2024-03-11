@@ -521,7 +521,7 @@
     align-items: center;
     margin:1rem auto 1rem;
     padding:1rem;
-    width: 90vw;
+    width: 90%;
     border-radius: .5rem;
     background-color: #fff;
   }

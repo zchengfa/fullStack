@@ -224,6 +224,7 @@ export default {
   align-items: center;
   width: 100vw;
   height: 100vh;
+  max-width: var(--app-max-width);
   background-image: url("~assets/image/register/register_bg.png");
   background-size: cover;
   text-align: center;

@@ -250,6 +250,7 @@ input{
 .content{
   position: relative;
   width: 100vw;
+  max-width: var(--app-max-width);
   height: calc(100vh - 44px - 3rem);
   background-color: #f6f3f3;
   z-index: 11;

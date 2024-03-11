@@ -190,6 +190,7 @@ export default {
 		position: absolute;
 		width: 100vw;
 		height: 100%;
+    max-width: var(--app-max-width);
     min-height: 100vh;
 		background-color: #fff;
 		z-index: 11;
@@ -200,6 +201,7 @@ export default {
 		align-items: center;
 		width: 100vw;
 		height: 2.8rem;
+    max-width: var(--app-max-width);
 		background-color: #fff;
 	}
 	.nav div{

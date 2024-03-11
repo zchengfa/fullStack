@@ -420,6 +420,19 @@
 		},
     activated() {
       this.refreshGoodsData()
+      let url = new URL(window.location.href)
+      let pathName = url.pathname
+
+      if(pathName === '/paymentStatus'){
+        let params = new URLSearchParams(url.search)
+
+        this.$router.push({path:'/paymentStatus',query:{
+            out_trade_no:params.get('out_trade_no'),
+            trade_no:params.get('trade_no')
+          }})
+
+        console.log(this.$router)
+      }
     }
   }
 </script>

@@ -432,13 +432,20 @@ Vue.use(VueLazyload)
 <img v-lazy="address" alt="picture">
 ```
 
-##### 十五、echarts图表使用请求过来的数据后，刷新页面，或重新渲染时图表消失
-###### 原因：请求数据时异步的，当你数据请求完，图表就已经渲染完了，此时的图表是不带数据的，所以会是空白图表
-###### 解决：在创建图表组件前先判断数据是否请求完成，完成后才创建
-  ```vue
-<!--      添加v-if判断，当数据请求完之后再去创建渲染图表-->
-<PieChartStatistics v-if="rank.salesData.length" class="pie" :sales-data="rank.salesData"></PieChartStatistics>
-```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -30,7 +30,7 @@
 	}
   .top{
     display: flex;
-    justify-items: center;
+    justify-content: center;
     align-items: center;
     width: 100%;
     height: 44px;

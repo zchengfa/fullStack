@@ -185,7 +185,7 @@ export default {
 }
 .nav{
   align-items: center;
-  justify-items: center;
+  justify-content: center;
   border-bottom: 1px solid #c5b9b9;
 }
 .nav{

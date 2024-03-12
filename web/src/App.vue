@@ -36,5 +36,8 @@
   :root{
     --app-max-width:500px
   }
+  .nav-bar .left img{
+    transform: scale(.8);
+  }
 
 </style>

@@ -396,7 +396,6 @@
 			}
     },
     created() {
-      console.log(navigator)
       this.getHomeMultiData()
       this.MenuData = home_menu
 			this.message_icon = base64['message']
@@ -597,7 +596,7 @@
   }
   .content{
     width: 100vw;
-    height: calc(100vh - 44px - 4rem);
+    height: calc(100vh - 48px - 5rem);
     overflow: hidden;
     max-width: 500px;
   }

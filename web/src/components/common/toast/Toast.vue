@@ -89,9 +89,12 @@ export default {
     border-radius: 6px;
     background-color: #dc1561;
     color: #fff;
+    transform: scale(.9);
 }
 .msg{
     color: #7e7878;
     font-size: 14px;
+    text-align: center;
+    line-height: 1.2rem;
 }
 </style>

@@ -36,5 +36,6 @@ export default {
   color: #fff;
   border-radius: 50%;
   line-height: 1rem;
+  transform: scale(.8);
 }
 </style>

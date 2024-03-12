@@ -11,7 +11,7 @@
       </div>
       <div>
         <img :src="meansList['borrow_money']" alt="borrow_money">
-        <p>借钱</p>
+        <p>省钱</p>
       </div>
       <div>
         <img :src="meansList['small_change']" alt="small_change">

@@ -194,7 +194,7 @@ export default {
 .back img{
   position: relative;
   margin-top: 25%;
-  transform: translateY(-25%);
+  transform: translateY(-25%) scale(.8);
 }
 input{
   width: 100%;

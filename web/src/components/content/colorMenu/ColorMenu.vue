@@ -55,12 +55,13 @@ export default {
   display: inline-block;
   width: 100%;
   font-size: .9rem;
-  color: #0a36e1;
+  color: #fff;
   text-align: center;
 }
 .menu-box div img{
   width: 2.4rem;
   height: 2.4rem;
   border-radius: 50%;
+  transform: scale(.8);
 }
 </style>

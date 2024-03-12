@@ -33,7 +33,7 @@
             <div class="search-history-box">
               <div @click="searchGoods(item)" v-for="(item,index) in word_history" :key="index">
                 <span>{{item}}</span>
-                <span v-show="!isShowDelete">x</span>
+                <span v-show="!isShowDelete" class="delete-icon">x</span>
                 <div class="delete-word" v-show="!isShowDelete" @click.stop="deleteItem(index)"></div>
               </div>
             </div>
@@ -195,6 +195,9 @@ export default {
 		background-color: #fff;
 		z-index: 11;
 	}
+  .delete-icon{
+    padding: 0 4px;
+  }
 	.nav{
 		display: flex;
 		justify-content: center;
@@ -209,7 +212,8 @@ export default {
 		text-align: center;
 	}
 	.nav .left img{
-		width: 1rem;
+		width: 1.6rem;
+    mix-blend-mode: difference;
 	}
 	.nav .input-box{
 		flex: 8;

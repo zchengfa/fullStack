@@ -84,24 +84,8 @@ export default {
   },
   methods:{
     showGoods(index){
-      this.currentIndex = index
-      switch (index) {
-        case 0:
-          this.showOrderData = this.userAllOrderData
-          break;
-        case 1:
-          this.pushSpecialData(0)
-          break;
-        case 2:
-          this.pushSpecialData(1)
-          break;
-        case 3:
-          this.pushSpecialData(2)
-          break;
-        case 4:
-          this.pushSpecialData(4)
-          break;
-      }
+      this.currentIndex = index;
+      index === 0 ? this.showOrderData = this.userAllOrderData : this.pushSpecialData(index -1)
     },
     getAllOrder(){
       getUserAllOrder(this.$store.state.userInfo.user_id).then(res=>{

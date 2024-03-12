@@ -159,7 +159,9 @@ const recommendMixins = {
     },
     getUserRecommend(token){
       getUserRecommend(token).then(res => {
-        this.recommendData = res.data
+        if(!res.data.err_code){
+          this.recommendData = res.data
+        }
       }).catch(err => {
         console.log(err)
       })

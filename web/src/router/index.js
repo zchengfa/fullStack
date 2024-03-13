@@ -45,23 +45,31 @@ const routes =[
 		path:'/home',
 		component:Home,
 		meta:{
-			keepAlive:true
+			keepAlive:true,
+			hiddeTabBar:false
 		}
 	},
 	{
 		path:'/category',
 		component:Category,
 		meta:{
-			keepAlive:true
+			keepAlive:true,
+			hiddeTabBar: false
 		}
 	},
 	{
 		path:'/cart',
-		component:Cart
+		component:Cart,
+		meta: {
+			hiddeTabBar:false
+		}
 	},
 	{
 		path:'/profile',
-		component:Profile
+		component:Profile,
+		meta: {
+			hiddeTabBar:false
+		}
 	},
 	{
 		//路由传参
@@ -157,6 +165,13 @@ const routes =[
 		component:Avatar
 	}
 ]
+
+routes.forEach((item)=>{
+	if(!item.meta){
+		item.meta = {}
+		item.meta.hiddeTabBar = true
+	}
+})
 
 const router = new VueRouter({
 	routes,

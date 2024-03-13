@@ -142,16 +142,16 @@ export default {
   background-color: #e5dede;
 }
 .nav-bar div{
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100%;
 }
-img{
-  position: relative;
-  top:50%;
-  transform: translateY(-50%);
-  z-index: 2;
-}
+
 .search-box{
   position: relative;
+  width: 100%;
+  height: 100%;
 }
 .search-box img:first-child{
   position: absolute;
@@ -162,7 +162,7 @@ img{
   right: 1rem;
 }
 .search-box input{
-  width:96%;
+  width: 15rem;
   height: 70%;
   border-radius: 1rem;
   text-indent: 2rem;

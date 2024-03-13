@@ -235,23 +235,17 @@ export default {
   width: 80%;
   max-width: 400px;
   min-width: 360px;
-  background-color: rgba(26, 25, 25, 0.5);
+  background-color: #fff;
+  box-shadow: rgba(0,0,0,.5) 10px 10px 10px;
+  border-radius: 1rem;
 }
 input{
   display: block;
   margin: 1rem auto;
   width: 80%;
   height: 2rem;
-  color: #fff;
-  background-color: transparent;
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid #8a8a8a;
   font-size: .9rem;
-}
-input::-ms-input-placeholder{
-  color: #fff;
-}
-input::-webkit-input-placeholder{
-  color: #fff;
 }
 .error-msg{
   display: block;

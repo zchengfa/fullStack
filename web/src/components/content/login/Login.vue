@@ -1,26 +1,30 @@
 <template>
   <div class="login" v-if="isClose">
     <Close @close="closeCurrentPage"></Close>
-    <form class="form" name="login">
-      <div class="content">
-        <div class="input-box">
-          <input type="text" placeholder="手机号/QQ邮箱" @blur="autoJoinPassword" @input="onChange" v-model="account"/>
-          <input type="password" placeholder="密码" @input="onChange" v-model="password" autocomplete/>
-        </div>
-        <div class="option">
-          <div class="remember-box">
-            <input type="checkbox" @click="checkBox" id="remember" :checked="isChecked" :disabled="isAble" />
-            <label for="remember">记住密码</label>
+    <img src="~assets/image/login/login_bg.jpeg" class="login-bg" alt="bg">
+    <div class="form-box">
+      <form class="form-com" name="login">
+        <div class="avatar-mark"><img class="avatar" src="~assets/image/login/avatar.jpg" alt="avatar_default"></div>
+        <div class="content">
+          <div class="input-box">
+            <input type="text" placeholder="手机号/QQ邮箱" @blur="autoJoinPassword" @input="onChange" v-model="account"/>
+            <input type="password" placeholder="密码" @input="onChange" v-model="password" autocomplete/>
           </div>
-          <router-link class="register-link" :to="{path:'/register'}" replace>没有账号?去注册</router-link>
+          <div class="option">
+            <div class="remember-box">
+              <input type="checkbox" @click="checkBox" id="remember" :checked="isChecked" :disabled="isAble" />
+              <label for="remember">记住密码</label>
+            </div>
+            <router-link class="register-link" :to="{path:'/register'}" replace>没有账号?去注册</router-link>
+          </div>
+          <button type="button" class="login-button" @click="login" :disabled="isAble" :class="{active:!isAble}">登录</button>
         </div>
-        <button type="button" class="login-button" @click="login" :disabled="isAble" :class="{active:!isAble}">登录</button>
-      </div>
-      <div class="login-way" @click="loginWay">
-        <div class="qq"><img src="~assets/image/login/QQ.svg" alt="QQ"><span>QQ登录</span></div>
-        <div class="weChat"><img src="~assets/image/login/WeChat.svg" alt="WeChat"><span>微信登录</span></div>
-      </div>
-    </form>
+        <div class="login-way" @click="loginWay">
+          <div class="qq"><img src="~assets/image/login/QQ.svg" alt="QQ"><span>QQ登录</span></div>
+          <div class="weChat"><img src="~assets/image/login/WeChat.svg" alt="WeChat"><span>微信登录</span></div>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -104,88 +108,105 @@ export default {
     }
   },
   mounted() {
-
+    console.log(this.$route)
   }
 }
 </script>
 
 <style scoped>
-.active {
-  background-color: #f31b1b !important;
-  border: none;
+.active{
+  background-color: #0d84ff !important;
 }
 .login{
-  display: flex;
-  position: relative;
   width: 100%;
-  height: 100vh;
+  height: 100%;
+  text-align: center;
+  vertical-align: middle;
+}
+.login{
+  position: relative;
+  z-index: 999;
+}
+.login-bg{
+  width: 100%;
+  height: 100%;
   background-repeat: no-repeat;
   background-size: cover;
-  background-image: url("~assets/image/login/login_bg.png");
+  filter: blur(5px);
+}
+.avatar-mark{
+  display: flex;
   justify-content: center;
   align-items: center;
-  color: #fff;
-  font-size: .9rem;
-  z-index: 10;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 5rem;
+  height: 5rem;
+  background-color: #fff;
+  border-radius: 50%;
+  transform: translate(-50% ,-50%);
+  box-shadow: rgba(0,0,0,.1) 2px 2px 10px;
 }
-.login .form{
-  width: 90%;
-  max-width: 400px;
-  min-width: 360px;
-  height: 40%;
-  min-height: 18rem;
-  text-align: center;
-  background: rgba(83, 76, 76, 0.3);
+.avatar{
+  width:80%;
+  height: 80%;
+  border-radius: 50%;
 }
-.input-box input{
-  position: relative;
-  margin-top:1rem;
-  width: 80%;
-  height: 2.2rem;
-  background: transparent;
-  border: 1px solid #d7c5c5;
-  color: #fff;
+.form-box{
+  position: absolute;
+  top:50%;
+  left: 50%;
+  width: 84%;
+  transform: translate(-50% ,-50%);
+  background-color: #fff;
+  border-radius: 1rem;
+  box-shadow: rgba(0,0,0,.5) 10px 10px 10px;
 }
-.input-box input::placeholder{
-  color: #fff;
+.form-com{
+  padding: 2rem;
+}
+input[type=text],input[type=password]{
+  margin-top: 1rem;
+  width: 100%;
+  height: 2rem;
+  border-bottom: 1px solid #8a8a8a;
+}
+input[type=password]{
+  margin-bottom: 1rem;
 }
 .option{
-  margin: 1rem auto 0;
-  width: 80%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  font-size: 12px;
 }
-.remember-box{
-  display: inline-block;
-  width: 50%;
-  text-align: left;
+.option .remember-box{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.remember-box #remember{
+  margin-right: 4px;
 }
 .register-link{
-  color: #1e8efc;
-}
-.login-way{
-  display: flex;
-  margin-top: 1.5rem;
-}
-.login-way div{
-  flex: 1;
-}
-.login-way span{
-  position: relative;
-  display: inline-block;
-  top: -.5rem;
-  width: 50%;
-  text-align: left;
-}
-.login-way img{
-  width: 1.5rem;
-  height: 1.5rem;
+  color: #0d84ff;
 }
 .login-button{
-  position: relative;
-  margin-top: 1rem;
+  margin: 1rem 0;
   width: 60%;
-  height: 2.2rem;
+  height: 2rem;
+  background-color: #ff0d62;
   border-radius: 1rem;
-  background-color: #3b75d9;
   color: #fff;
+}
+.login-way,.qq,.weChat{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  font-size: 14px;
+}
+.login-way img{
+  transform: scale(.7);
 }
 </style>

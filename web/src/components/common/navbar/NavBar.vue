@@ -1,13 +1,13 @@
 <template>
 	<div class="nav-bar">
 		<div class="top">
-      <div class="left">
+      <div class="left top-item">
         <slot name="left"></slot>
       </div>
-      <div class="center">
+      <div class="center top-item">
         <slot name="center"></slot>
       </div>
-      <div class="right">
+      <div class="right top-item">
         <slot name="right"></slot>
       </div>
     </div>
@@ -24,28 +24,31 @@
 </script>
 
 <style scoped>
-	.nav-bar{
-    position: relative;
-    z-index: 9;
-	}
-  .top{
+.nav-bar{
+  position: relative;
+  width: 100%;
+  z-index: 99;
+}
+	.top{
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     width: 100%;
     height: 44px;
-    line-height: 44px;
-    text-align: center;
-    overflow: hidden;
   }
-	.left,.right{
-		min-width: 60px;
-		height: 44px;
-	}
-	.center{
-		flex: 1;
-		height: 44px;
-	}
+  .top-item{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .top-item.center{
+    flex: 1;
+    height: 100%;
+  }
+  .left,.right{
+    width: 44px;
+    height: 44px;
+  }
   .bottom{
     display: block;
     width: 100%;

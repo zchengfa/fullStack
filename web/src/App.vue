@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-		<main-tab-bar></main-tab-bar>
+    <main-tab-bar v-if="!$route.meta.hiddeTabBar"></main-tab-bar>
     <Loading v-loading="$store.state.loading"></Loading>
 <!--    使用keep-alive让vue离开当前页面时保持状态，不销毁-->
     <keep-alive>

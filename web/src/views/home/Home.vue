@@ -448,7 +448,9 @@
     background-color: #e92e2e;
   }
 	.nav-left{
-		width: 60px;
+		display: flex;
+    justify-content: center;
+    align-items: center;
 	}
 	.nav-title button{
     width: 4.6rem;

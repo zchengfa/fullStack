@@ -2,6 +2,7 @@
 import axios from 'axios'
 import {URL} from "@/common/utils";
 import router from "../router";
+import store from "../store";
 
 //导出获取热点视频数据函数
 export function getHotVideo(){
@@ -35,8 +36,8 @@ export function requestPost (config) {
 function axiosInterceptors(instance){
   //axios请求拦截器
   instance.interceptors.request.use(function (config){
-    if (sessionStorage.getItem('token')){
-      config.headers.authorization = sessionStorage.getItem('token')
+    if (store.state.token){
+      config.headers.authorization = store.state.token
     }
     return config
   }, (err) =>{
@@ -45,8 +46,22 @@ function axiosInterceptors(instance){
 
   //axios响应拦截器
   instance.interceptors.response.use((response) =>{
-    if (response.data.err === 401){
+    if (response.data.err_code === 401){
       router.push('/login').then()
+    }
+    else if(response.data.err_code === 4011){
+      requestPost({
+        url:'/refreshToken',
+        data:{
+          refresh_token:localStorage.getItem('Refresh_token'),
+          user_id:store.state.userInfo.user_id
+        }
+      }).then(res=>{
+        store.dispatch('setToken',JSON.stringify({
+          Access_token:res.data.Access_token,
+          Refresh_token:res.data.Refresh_token
+        })).then()
+      })
     }
 
     return response

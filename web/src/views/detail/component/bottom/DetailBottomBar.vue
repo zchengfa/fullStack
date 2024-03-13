@@ -4,14 +4,17 @@
       <div class="left">
         <div class="box">
           <div class="cart">
-            <div class="image-box"><img src="~assets/image/detail/cart.png" alt="image"></div>
-            <div class="button-box"><button><router-link :to="{path:'/cart'}">购物车</router-link></button></div>
+            <router-link :to="{path:'/cart'}">
+              <div class="image-box"><img src="~assets/image/detail/cart.png" alt="image"></div>
+              <div class="button-box"><button>购物车</button></div>
+            </router-link>
+
           </div>
         </div>
         <div class="box">
-          <div class="customer">
+          <div class="customer" @click="contactCustomer">
             <div class="image-box"><img src="~assets/image/detail/customer.png" alt="image"></div>
-            <div class="button-box" @click="contactCustomer"><button>客服</button></div>
+            <div class="button-box"><button>客服</button></div>
           </div>
         </div>
         <div class="box">
@@ -70,10 +73,12 @@ export default {
   .detail-bottom-bar{
     position: fixed;
     bottom:0;
-    left: 0;
-    right: 0;
+    left: 50%;
+    width: 100%;
+    max-width: var(--app-max-width);
     background-color: #fff;
     z-index: 10;
+    transform: translateX(-50%);
   }
   .content{
     display: flex;
@@ -110,6 +115,9 @@ export default {
   }
   .buy button{
     background-color: #f00;
+  }
+  .button-box button{
+    color: #000;
   }
   .join-cart button{
     background-color: #FFA500;

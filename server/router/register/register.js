@@ -42,10 +42,10 @@ module.exports = app => {
                 verifyCodeExpired = 0
 
             },verifyCodeExpired * 1000)
-        }).catch(() => {
+        }).catch((e) => {
             //验证码接收者不存在，清除当前接收者
             userEmail = ''
-            console.log(`${paramsObj.email}不存在，无法发送邮箱验证`)
+            console.log(`${paramsObj.email}不存在，无法发送邮箱验证`,e)
             res.send({'email_non_exist':`${paramsObj.email}邮箱不存在,无法发送邮箱验证`})
         })
     })

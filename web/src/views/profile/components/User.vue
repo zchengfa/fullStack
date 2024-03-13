@@ -87,9 +87,7 @@ export default {
   background-color: #fff;
 }
 .nav img{
-  width: 2rem;
-  margin-top: 25%;
-  transform: translateY(-25%);
+  transform: scale(.5);
 }
 img{
   width: 3rem;

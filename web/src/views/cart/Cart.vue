@@ -4,7 +4,7 @@
       <div slot="center">
         <div class="nav-title">购物车({{cartList.length}})</div>
       </div>
-      <div slot="right" @click="manageOrComplete">
+      <div slot="right" @click="manageOrComplete" class="nav-button-box">
         <button v-show="!isComplete" class="manage">管理</button>
         <button v-show="isComplete" class="complete">完成</button>
       </div>
@@ -469,6 +469,13 @@
     height: 100vh;
     max-width: 500px;
   }
+  .nav-button-box{
+    margin-right: 1rem;
+    height: 100%;
+  }
+  .manage,.complete{
+    padding: 10px;
+  }
   .cart-nav-bar{
     background-color: #db7093;
   }
@@ -521,7 +528,7 @@
     align-items: center;
     margin:1rem auto 1rem;
     padding:1rem;
-    width: 90vw;
+    width: 90%;
     border-radius: .5rem;
     background-color: #fff;
   }

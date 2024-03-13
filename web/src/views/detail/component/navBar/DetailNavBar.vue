@@ -51,6 +51,7 @@
   .detail-nav-bar{
     position: relative;
     width: 100%;
+    height: 44px;
     background-color: #ffffff;
     border-bottom: 1px solid #d9d2d2;
     z-index: 10;
@@ -62,13 +63,16 @@
     margin-top: 15%;
     width: 26px;
     height: 26px;
-
   }
   .nav-center{
     display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
   }
   .nav-title{
-    flex:1;
+    margin: 0 1rem;
+    padding: 4px;
     font-size: .8rem;
   }
 </style>

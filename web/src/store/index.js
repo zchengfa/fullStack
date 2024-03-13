@@ -20,7 +20,7 @@ const store = new Vuex.Store({
         cartList:[],
         position:{},
         order_id:sessionStorage.getItem('trade_no'),
-        token:sessionStorage.getItem('token'),
+        token:sessionStorage.getItem('Access_token'),
         //将sessionStorage存储的字符串化对象，转换成对象
         userInfo:JSON.parse(sessionStorage.getItem('userInfo')),
         loading:false
@@ -34,9 +34,11 @@ const store = new Vuex.Store({
             sessionStorage.setItem('userInfo',JSON.stringify(userInfo))
             state.userInfo = userInfo
         },
-        [SET_TOKEN](state,token){
-            sessionStorage.setItem('token',token)
-            state.token = token
+        [SET_TOKEN](state,payload){
+            let {Access_token,Refresh_token} = JSON.parse(payload)
+            sessionStorage.setItem('Access_token',Access_token)
+            localStorage.setItem('Refresh_token',Refresh_token)
+            state.token = Access_token
         },
         [SAVE_ORDER_ID](state,order_id){
             sessionStorage.setItem('trade_no',order_id)

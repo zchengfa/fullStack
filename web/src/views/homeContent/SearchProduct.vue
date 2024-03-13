@@ -33,7 +33,7 @@
             <div class="search-history-box">
               <div @click="searchGoods(item)" v-for="(item,index) in word_history" :key="index">
                 <span>{{item}}</span>
-                <span v-show="!isShowDelete">x</span>
+                <span v-show="!isShowDelete" class="delete-icon">x</span>
                 <div class="delete-word" v-show="!isShowDelete" @click.stop="deleteItem(index)"></div>
               </div>
             </div>
@@ -190,16 +190,21 @@ export default {
 		position: absolute;
 		width: 100vw;
 		height: 100%;
+    max-width: var(--app-max-width);
     min-height: 100vh;
 		background-color: #fff;
 		z-index: 11;
 	}
+  .delete-icon{
+    padding: 0 4px;
+  }
 	.nav{
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		width: 100vw;
 		height: 2.8rem;
+    max-width: var(--app-max-width);
 		background-color: #fff;
 	}
 	.nav div{
@@ -207,7 +212,8 @@ export default {
 		text-align: center;
 	}
 	.nav .left img{
-		width: 1rem;
+		width: 1.6rem;
+    mix-blend-mode: difference;
 	}
 	.nav .input-box{
 		flex: 8;
@@ -230,8 +236,9 @@ export default {
     position: relative;
     margin: 0 auto;
     width:94%;
-    min-height: calc(100vh - 44px);
+    height: calc(100vh - 44px);
     background-color: #FFFFFF;
+    overflow-y: scroll;
   }
   .content .title h4{
     float: left;

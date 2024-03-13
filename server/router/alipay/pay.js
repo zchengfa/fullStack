@@ -45,26 +45,27 @@ module.exports = app =>{
 
 		//支付完成后需要跳转的地址
 		const redirectPay = getClientIPAddress(req) +'paymentStatus'
-		console.log(redirectPay)
 
     formData.addField('returnUrl',redirectPay)
 
-    const result = alipaySdk.exec('alipay.trade.page.pay',{},{formData:formData})
+    //alipay.trade.wap.pay 手机支付地址  alipay.trade.page.pay浏览器支付地址
+    const result = alipaySdk.exec('alipay.trade.wap.pay',{},{formData:formData})
 
     result.then(resp=>{
       res.send({
         msg:'支付中',
         paymentUrl:resp
       })
+
     })
   })
 
   router.post('/paymentStatus',(req,res)=>{
     const paramsObj = JSON.parse(JSON.stringify(req.body))
-
+    console.log(paramsObj,64)
     let out_trade_no = paramsObj.out_trade_no
     let trade_no = paramsObj.trade_no
-    console.log(paramsObj)
+
     const formData = new AlipayFormData()
 
     formData.setMethod('get')
@@ -78,11 +79,12 @@ module.exports = app =>{
 
     result.then(resp =>{
       const axios = require('axios')
-
+      console.log(resp,85)
       axios({
         method:'GET',
         url:resp
       }).then(response=>{
+        console.log(response,90)
         let data = response.data['alipay_trade_query_response']
         if (data.code === '10000'){
           if (data['trade_status'] === 'TRADE_SUCCESS'){

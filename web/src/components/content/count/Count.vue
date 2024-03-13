@@ -51,30 +51,17 @@ export default {
 <style scoped>
 .button-box{
   display: flex;
-  width: 6rem;
-  height: 1.5rem;
-  min-width: 5rem;
-  text-align: center;
-  border: 1px solid #a9a9a9;
-  border-radius: .75rem;
-  line-height: 1.5rem;
-}
-.button-box>button,.button-box>span{
-  flex: 1;
-}
-.button-box button{
-  font-size: 1.2rem;
-  line-height: 0;
-}
-.button-box button:first-child{
-
+  justify-content: space-evenly;
+  align-items: center;
+  border: 1px solid #8a8a8a;
+  border-radius: 1rem;
 }
 .button-box span{
-  height: 100%;
-  border: 1px solid #a9a9a9;
-  border-bottom: transparent;
-  border-top: transparent;
-  font-size: .9rem;
-
+  padding: 0 .4rem;
+  border-left: 1px solid #8a8a8a;
+  border-right: 1px solid #8a8a8a;
+}
+.button-box .add,.button-box .reduce{
+  color: #000;
 }
 </style>

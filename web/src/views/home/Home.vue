@@ -19,7 +19,7 @@
       </div>
     </nav-bar>
     <div v-show="isIndex" class="index-content">
-      <tab-control v-show="isTabFixed" ref="tabControlOne" class="tab-control" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
+      <tab-control v-show="isTabFixed" ref="tabControlOne" class="tab-control-box" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
       <Scroll class="content" ref="scroll"  :probe-type="3" @scroll="contentScroll"
               :pull-up-load="true" @pullingUp="loadMore">
         <div class="swiper-box">
@@ -50,7 +50,7 @@
             </ul>
           </div>
         </div>
-        <tab-control class="tab-control" :class="{fixed: isTabFixed}" ref="tabControlTwo" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
+        <tab-control class="tab-control-box" :class="{fixed: isTabFixed}" ref="tabControlTwo" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
         <goods-data :goods="goods[currentType].list"></goods-data>
         <div class="no-more" v-show="noMore"><p>没有更多了哦!</p></div>
       </Scroll>
@@ -420,6 +420,17 @@
 		},
     activated() {
       this.refreshGoodsData()
+      let url = new URL(window.location.href)
+      let pathName = url.pathname
+      //当从支付页面跳转回来时，让其跳转到支付结果页
+      if(pathName === '/paymentStatus'){
+        let params = new URLSearchParams(url.search)
+
+        this.$router.push({path:'/paymentStatus',query:{
+            out_trade_no:params.get('out_trade_no'),
+            trade_no:params.get('trade_no')
+          }})
+      }
     }
   }
 </script>
@@ -437,7 +448,10 @@
     background-color: #e92e2e;
   }
 	.nav-left{
-		width: 60px;
+		display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 4rem;
 	}
 	.nav-title button{
     width: 4.6rem;
@@ -454,8 +468,7 @@
     background-color: rgba(42, 41, 41, 0.21);
   }
 	.nav-right{
-		position: relative;
-		right: 1rem;
+		margin-right: 1rem;
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -467,6 +480,9 @@
 		align-items: center;
 		height: 44px;
 	}
+  .calendar{
+    margin-left: .5rem;
+  }
   .lightning-word{
     display: inline-block;
     color: #fff;
@@ -573,9 +589,8 @@
     color: #fd001e;
     font-size: .9rem;
   }
-  .tab-control{
+  .tab-control-box{
     position: relative;
-    z-index: 9;
   }
   .fixed{
     position: fixed;
@@ -585,7 +600,7 @@
   }
   .content{
     width: 100vw;
-    height: calc(100vh - 44px - 4rem);
+    height: calc(100vh - 48px - 5rem);
     overflow: hidden;
     max-width: 500px;
   }

@@ -113,13 +113,13 @@
    .previous,.next{
     position: absolute;
     top:50%;
+     mix-blend-mode: screen;
   }
   .previous {
     transform: translateY(-50%);
     left: 0;
   }
   .next {
-
     left: 100%;
     transform: translateX(-100%) translateY(-50%);
   }

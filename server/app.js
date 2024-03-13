@@ -63,7 +63,8 @@ app.use((req, res, next) => {
     '/home/api/cart',
     `/home/api/search?keyword=${encodeURI(keyword)}`,
     '/home/api/hotSearch',
-    `/home/api/searchProduct?keyword=${encodeURI(keyword)}`
+    `/home/api/searchProduct?keyword=${encodeURI(keyword)}`,
+    '/refreshToken'
   ]
   if (urlWhiteList.indexOf(req.url) >= 0) {
     next()
@@ -72,13 +73,10 @@ app.use((req, res, next) => {
     //请求地址不在白名单内，获取请求头中的token
     const token = req.headers.authorization
     if (!token) {
-      res.send({err: 401, msg: 'token信息错误，不存在或已过期！'})
+      res.send({err_code: 401, msg: 'token信息错误，不存在！'})
     } else {
       verifyToken(token, (err, decode) => {
-        if (err) throw err
-        else {
-          !decode ? res.send({err: 401, msg: 'token信息错误，不存在或已过期！'}) : next()
-        }
+        !decode ? res.send({err_code: 4011, msg: 'token信息错误，已过期！'}) : next()
       })
     }
   }

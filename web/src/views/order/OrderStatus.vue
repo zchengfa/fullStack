@@ -84,24 +84,8 @@ export default {
   },
   methods:{
     showGoods(index){
-      this.currentIndex = index
-      switch (index) {
-        case 0:
-          this.showOrderData = this.userAllOrderData
-          break;
-        case 1:
-          this.pushSpecialData(0)
-          break;
-        case 2:
-          this.pushSpecialData(1)
-          break;
-        case 3:
-          this.pushSpecialData(2)
-          break;
-        case 4:
-          this.pushSpecialData(4)
-          break;
-      }
+      this.currentIndex = index;
+      index === 0 ? this.showOrderData = this.userAllOrderData : this.pushSpecialData(index -1)
     },
     getAllOrder(){
       getUserAllOrder(this.$store.state.userInfo.user_id).then(res=>{
@@ -205,12 +189,13 @@ export default {
   z-index: 12;
 }
 .back{
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100%;
 }
 .back img{
-  position: relative;
-  margin-top: 25%;
-  transform: translateY(-25%);
+  transform: scale(.8);
 }
 input{
   width: 100%;
@@ -250,6 +235,7 @@ input{
 .content{
   position: relative;
   width: 100vw;
+  max-width: var(--app-max-width);
   height: calc(100vh - 44px - 3rem);
   background-color: #f6f3f3;
   z-index: 11;

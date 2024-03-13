@@ -1,6 +1,14 @@
 <script lang="ts" setup>
 import { userStore } from "../pinia/pinia";
-import { reactive, onBeforeMount, onMounted, ref,getCurrentInstance,ComponentInternalInstance } from "vue";
+import {
+  reactive,
+  onBeforeMount,
+  onMounted,
+  ref,
+  getCurrentInstance,
+  ComponentInternalInstance,
+  onBeforeUpdate, onUpdated, onBeforeUnmount, onUnmounted, onActivated, onDeactivated
+} from "vue";
 import { getTime, getWeek, getYear } from "../common/utils";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
@@ -99,7 +107,6 @@ function closeSkew(name:string){
 
   })
 }
-
 onBeforeMount(()=> {
   getTime(navLogic.time.currentTime)
 })

@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import {createRouter, createWebHashHistory, createWebHistory} from "vue-router";
 import { userStore } from "../pinia/pinia";
 
 const admin = () => import('../views/Admin.vue')
@@ -49,7 +49,7 @@ const routes = [
 
 const router = createRouter({
     routes,
-    history:createWebHistory()
+    history:createWebHashHistory()
 })
 
 //根据后端返回的菜单权限数据来给index页面动态添加路由

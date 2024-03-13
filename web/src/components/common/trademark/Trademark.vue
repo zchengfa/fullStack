@@ -19,6 +19,7 @@ export default {
   height:1.2rem;
   color: #fff;
   background-color: #ff5825;
+  z-index: 9;
 }
 .trademark{
   display: inline-block;

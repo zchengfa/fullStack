@@ -59,7 +59,7 @@ export default {
 }
 table{
   margin: .2rem auto;
-  width: 94vw;
+  width: 94%;
   border: 1px solid #c2bdbd;
   text-indent: .2rem;
   color: #8a8686;

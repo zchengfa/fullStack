@@ -7,8 +7,13 @@ module.exports = app => {
 
     router.get('/category_list', (req, res) => {
         categoryListModel.find({}, (err, docs) => {
-            if (err) throw err
-            res.send({"list":docs[0].list})
+            if (err) console.log(err)
+            try{
+                res.send({"list":docs[0].list})
+            }
+            catch (e) {
+                res.send({"list":[]})
+            }
         })
     })
 

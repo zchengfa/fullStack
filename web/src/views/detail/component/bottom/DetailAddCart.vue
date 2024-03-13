@@ -78,10 +78,11 @@ export default {
 
 <style scoped>
   .add-cart{
-    position: fixed;
+    position: absolute;
     bottom:0;
     right: 0;
     left: 0;
+    max-width: var(--app-max-width);
     min-height: 30vh;
     max-height: 70vh;
     background-color: #fff;
@@ -119,16 +120,14 @@ export default {
   }
   .submit{
     margin: 1rem auto;
-    width: 100vw;
     height: 3rem;
+    text-align: center;
   }
   .submit button{
-    margin-left: 50%;
     width: 86%;
     height: 90%;
     color: #fff;
     border-radius: 2rem;
     background-color: #fd001e;
-    transform: translateX(-50%);
   }
 </style>

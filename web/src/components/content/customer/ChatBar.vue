@@ -98,7 +98,7 @@ export default {
 
 <style scoped>
 .chat-bar {
-  width: 100vw;
+  width: 100%;
   background-color: #f8f5f5;
 }
 .chat-bar div.chat-controller{

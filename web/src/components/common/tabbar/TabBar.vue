@@ -18,13 +18,14 @@
 	#tab-bar{
 		display: flex;
 		position: fixed;
-		left: 0;
-		right: 0;
+		left: 50%;
+    right: 0;
 		bottom: 0;
-    margin: 0 auto;
-    max-width: 500px;
+    width: 100%;
+    max-width: var(--app-max-width);
 		text-align: center;
+    transform: translateX(-50%);
 		background-color: #eeeeee;
-    z-index: 9;
+    z-index: 999;
 	}
 </style>

@@ -1,7 +1,7 @@
 <template>
 	<div class="category">
     <nav-bar class="nav-bar">
-      <div slot="left" @click="openCamera"><img src="~assets/image/category/scan.svg" alt="scan_image"></div>
+      <div class="category-left" slot="left" @click="openCamera"><img src="~assets/image/category/scan.svg" alt="scan_image"></div>
       <div slot="center">
         <div class="search-box">
           <img src="~assets/image/category/search.svg" alt="search_image">
@@ -9,21 +9,25 @@
           <img src="~assets/image/category/camera.svg" alt="camera_mage">
         </div>
       </div>
-      <div slot="right"><img src="~assets/image/category/message.svg" alt="message_image"></div>
+      <div  class="category-right" slot="right"><img src="~assets/image/category/message.svg" alt="message_image"></div>
     </nav-bar>
     <div class="main">
       <Scroll ref="scrollOne" class="scroll-list content" :probe-type="3">
-        <ul class="category-list-left">
+        <ul class="category-list-left" v-if="categoryList.length">
           <li class="list-item" v-for="(item,index) in categoryList"
               :key="index">
             <a :class="{active:currentIndex===index}" @click="showListDetail(index)" :href="item.location">{{item}}</a>
           </li>
         </ul>
       </Scroll>
-      <Scroll ref="scrollTwo" class="scroll-list-detail content" :probe-type="3">
+      <Scroll ref="scrollTwo" class="scroll-list-detail content" :probe-type="3" v-if="categoryListDetail.length">
         <category-list-detail v-show="!isEmpty" :category-list-detail="categoryListDetail" @imageLoad="imageLoadOver" ></category-list-detail>
         <div class="empty" v-show="isEmpty">{{emptyMessage}}</div>
       </Scroll>
+      <div class="none">
+        <img src="~assets/image/none.png" alt="none">
+        <span>暂未获取到数据！</span>
+      </div>
     </div>
   </div>
 </template>
@@ -141,17 +145,20 @@ export default {
 .nav-bar{
   background-color: #e5dede;
 }
+.category-left,.category-right{
+  width: 3rem;
+}
 .nav-bar div{
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100%;
 }
-img{
-  position: relative;
-  top:50%;
-  transform: translateY(-50%);
-  z-index: 2;
-}
+
 .search-box{
   position: relative;
+  width: 100%;
+  height: 100%;
 }
 .search-box img:first-child{
   position: absolute;
@@ -162,7 +169,7 @@ img{
   right: 1rem;
 }
 .search-box input{
-  width:96%;
+  width: 15rem;
   height: 70%;
   border-radius: 1rem;
   text-indent: 2rem;

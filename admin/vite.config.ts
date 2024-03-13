@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-const { resolve } = require('path')
+import { resolve } from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -10,7 +10,6 @@ export default defineConfig({
     port:3001
     /**
      * @description proxy正向代理解决跨域问题，当请求地址中有/api时，代理会将地址拼接[target][/api],最后通过rewrite重写地址，将地址中的/api去除变成真实请求的地址，
-     * 本项目的后端已经开启了cors跨域，所以前端无需启用proxy代理
     */
     // proxy:{
     //   '/api':{

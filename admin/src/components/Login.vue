@@ -50,10 +50,13 @@
 </template>
 
 <script lang="ts">
-import {encrypt} from "../common/crypt";
-import {defineComponent} from "vue";
-import {useRouter} from "vue-router";
-import {loginAdministrator} from "../network/request";
+import { encrypt } from "../common/crypt";
+import { defineComponent } from "vue";
+import { useRouter } from "vue-router";
+import { getAdministratorInfo, loginAdministrator } from "../network/request";
+import { userStore } from "../pinia/pinia";
+import { storeToRefs } from "pinia";
+import { addDynamicRoutes } from "../router";
 
 export default defineComponent( {
   name: "login",
@@ -65,8 +68,13 @@ export default defineComponent( {
       router.push('/resetPassword')
     }
 
+    let userStorePinia = userStore()
+    const { token } = storeToRefs(userStorePinia)
+
+
     return {
-      enterResetPage
+        enterResetPage, userStorePinia,token,addDynamicRoutes
+
     }
   },
   data() {
@@ -116,21 +124,33 @@ export default defineComponent( {
           loginAdministrator(account,encrypt(password)).then(result => {
             //登录成功进入管理页面
             if (result.data['success']){
+              this.userStorePinia.setToken(result.data['token'])
+              this.userStorePinia.setRights(JSON.stringify(result.data['rights']))
+              this.addDynamicRoutes()
 
-              //将token储存在sessionStorage中
-              sessionStorage.setItem('token',result.data['token'])
               this.$router.push('/')
             }
             else {
               alert(result.data['failed'])
             }
 
+            //登录成功后获取用户信息
+            getAdministratorInfo(this.token).then(result =>{
+              if (result.data.info){
+
+                this.userStorePinia.setUserInfo(JSON.stringify(result.data.info))
+              }
+              //console.log(result)
+            }).catch(err =>{
+              console.log(err)
+            })
+
           }).catch(err => {
             console.log(err)
           })
         }
         else {
-          console.log('err submit')
+          // console.log('err submit')
           return false
         }
       })

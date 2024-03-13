@@ -81,6 +81,7 @@ export default {
    margin-left: auto;
    margin-right: auto;
    width: 96vw;
+   max-width: 500px;
    font-size: .8rem;
    text-align: center;
    border-radius: .5rem;

@@ -36,7 +36,20 @@ function timeFormatting (fm,time){
 
 }
 
+/**
+ * 获取间隔的天数
+ * @param firstTime { Date } 时间
+ * @param secondTime { Date } 时间
+ * @return { number } 返回天数
+ */
+function getIntervalDays (firstTime,secondTime) {
+
+    return Math.ceil((secondTime.getTime() - firstTime.getTime()) / (1000*60*60*24))
+}
+
+
 module.exports = {
-    timeFormatting
+    timeFormatting,
+    getIntervalDays
 }
 

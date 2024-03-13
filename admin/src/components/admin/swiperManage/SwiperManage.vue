@@ -1,10 +1,10 @@
 <template>
   <swiper :key="swiperKey" :modules="[EffectCoverflow]" effect="coverflow" class="swiper" autoplay>
-    <swiper-slide v-for="(item,index) in table.data" :key="index" v-show="item.isShow">
+    <swiper-slide v-for="(item,index) in table.manageData" :key="index" v-show="item.isShow">
       <img :src="item.banner_image" alt="banner">
     </swiper-slide>
   </swiper>
-  <el-table :data="table.tableData" class="swiper-table" :header-cell-style="headerStyle" :cell-style="rowStyle" border empty-text="用户数据为空">
+  <el-table :data="table.currentPageData" class="swiper-table" max-height="450"   :header-cell-style="headerStyle" :cell-style="rowStyle" border empty-text="用户数据为空">
     <el-table-column prop="id" label="序号" align="center"></el-table-column>
     <el-table-column width="414" prop="banner_image" label="图片链接" align="center">
       <template #default="scope">
@@ -20,12 +20,12 @@
     </el-table-column>
     <el-table-column  prop="isShow" label="操作" align="center">
       <template #default="scope">
-        <el-button size="small" type="success" v-show="!scope.row.isShow" @click="operationBanner(scope.row)">开启轮播</el-button>
-        <el-button size="small" type="danger" v-show="scope.row.isShow" @click="operationBanner(scope.row)">关闭轮播</el-button>
+        <el-button size="small" type="success" v-show="!scope.row.isShow" @click="operationBanner(scope.row)" v-permission="{permission:'open',effect:'disabled'}">开启轮播</el-button>
+        <el-button size="small" type="danger" v-show="scope.row.isShow" @click="operationBanner(scope.row)" v-permission="{permission:'close',effect:'disabled'}">关闭轮播</el-button>
       </template>
     </el-table-column>
   </el-table>
-  <el-pagination class="pagination" :page-size="table.pageSize" :total="table.data.length" @current-change="currentPageChange"></el-pagination>
+  <pagination :total="table.tableData.length" @currentPageChange="currentPageChange"></pagination>
 </template>
 
 <script lang="ts">
@@ -37,10 +37,12 @@ import useTable from "../../../common/useTable";
 
 import 'swiper/css';
 import 'swiper/css/effect-fade';
+import Pagination from "../../common/Pagination.vue";
 
 export default defineComponent({
   name:'SwiperManage',
   components: {
+    Pagination,
     Swiper,
     SwiperSlide,
   },
@@ -65,8 +67,8 @@ export default defineComponent({
 
     const getBanner = ()=>{
       getBannerData().then(res=>{
-        table.data.push(...res.data)
-        table.tableData.push(...table.data)
+        table.manageData.push(...res.data)
+        table.tableData.push(...table.manageData)
       })
     }
     getBanner()

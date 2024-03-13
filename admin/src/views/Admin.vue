@@ -130,11 +130,12 @@ import SwiperManage from '../components/admin/swiperManage/SwiperManage.vue'
 import StocksManage from '../components/admin/stocksManage/StocksManage.vue'
 import SeckillManage from '../components/admin/seckillManage/SeckillManage.vue'
 import GroundManage from "../components/admin/groundManage/GroundManage.vue";
-import {addProduct, addSeckill, getAdministratorInfo, getMemberManageData, getShopManageData} from "../network/request";
+import {addProduct, getAdministratorInfo, getMemberManageData, getShopManageData} from "../network/request";
 import DataStatistics from "../components/admin/dataStatistics/DataStatistics.vue";
 import AddProduct from '../components/admin/shopManage/AddProduct.vue';
 
 import useTable from "../common/useTable";
+import { getTime,getYear,getWeek } from '../common/utils'
 
 export default defineComponent({
       name: "admin",
@@ -157,7 +158,7 @@ export default defineComponent({
             getSMData()
             getAdminInfo()
             getMMData()
-            getTime()
+            getTime(navLogic.time.currentTime)
           }
 
         })
@@ -174,47 +175,48 @@ export default defineComponent({
           }
         })
 
-        function getYear(){
-          let year = new Date().getFullYear()
-          let month = (new Date().getMonth())+1
-          let date = new Date().getDate()
-          return year+'-'+month+'-'+date
-        }
-
-        function getTime(){
-          setInterval(()=>{
-            let hour = new Date().getHours()
-            let minutes = new Date().getMinutes().toString()
-            let seconds = new Date().getSeconds().toString()
-            if (Number(minutes) < 10){
-              minutes = '0' + minutes
-            }
-            if (Number(seconds) < 10){
-              seconds = '0' + seconds
-            }
-            navLogic.time.currentTime = hour+':'+minutes+':'+seconds
-          },1000)
-        }
-
-        function getWeek(){
-          let day = new Date().getDay()
-          switch (day) {
-            case 0:
-              return '星期天';
-            case 1:
-              return '星期一';
-            case 2:
-              return '星期二';
-            case 3:
-              return '星期三';
-            case 4:
-              return '星期四';
-            case 5:
-              return '星期五';
-            case 6:
-              return '星期六';
-          }
-        }
+        // function getYear(){
+        //   let year = new Date().getFullYear()
+        //   let month = (new Date().getMonth())+1
+        //   let date = new Date().getDate()
+        //   return year+'-'+month+'-'+date
+        // }
+        //
+        //
+        // function getTime(targetTime:any){
+        //   setInterval(()=>{
+        //     let hour = new Date().getHours()
+        //     let minutes = new Date().getMinutes().toString()
+        //     let seconds = new Date().getSeconds().toString()
+        //     if (Number(minutes) < 10){
+        //       minutes = '0' + minutes
+        //     }
+        //     if (Number(seconds) < 10){
+        //       seconds = '0' + seconds
+        //     }
+        //     targetTime = hour+':'+minutes+':'+seconds
+        //   },1000)
+        // }
+        //
+        // function getWeek(){
+        //   let day = new Date().getDay()
+        //   switch (day) {
+        //     case 0:
+        //       return '星期天';
+        //     case 1:
+        //       return '星期一';
+        //     case 2:
+        //       return '星期二';
+        //     case 3:
+        //       return '星期三';
+        //     case 4:
+        //       return '星期四';
+        //     case 5:
+        //       return '星期五';
+        //     case 6:
+        //       return '星期六';
+        //   }
+        // }
 
         /**
          * @param administrator 用管理员页面展示管理员信息
@@ -296,6 +298,7 @@ export default defineComponent({
         })
 
         /**
+         * 获取商品管理数据
          *@function getShopManageData 获取商品管理数据
          */
         function getSMData (){

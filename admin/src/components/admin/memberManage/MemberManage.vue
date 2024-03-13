@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="currentPageData.pageData" class="member-table" border :header-cell-style="headerStyle" :cell-style="rowStyle" empty-text="用户数据为空">
+  <el-table :data="table.currentPageData" class="member-table mall-table" max-height="450"   border :header-cell-style="headerStyle" :cell-style="rowStyle" empty-text="用户数据为空">
     <el-table-column prop="user_id" label="用户ID" align="center">
 		<template #default="scope">
 			<span class="user-id">{{scope.row.user_id}}</span>
@@ -20,22 +20,25 @@
 		</el-table-column>
     <el-table-column label="操作">
       <template #default="scope">
-        <el-button class="delete-btn" size="small" @click.prevent="deleteMember(scope.$index,tableData)">删除</el-button>
+        <el-button class="delete-btn" size="small" @click.prevent="deleteMember(scope.$index,table.tableData)">删除</el-button>
       </template>
     </el-table-column>
   </el-table>
-  <el-pagination class="pagination" :page-size="currentPageData.pageSize" :total="tableData.length" @current-change="currentPageChange"></el-pagination>
+  <pagination :total="table.tableData.length" @currentPageChange="currentPageChange"></pagination>
 </template>
 
 <script lang="ts">
-import {defineComponent, reactive, watchEffect} from "vue";
-import {deleteUser} from "../../../network/request";
+import {defineComponent, onBeforeMount, reactive, watchEffect} from "vue";
+import useTable from "../../../common/useTable";
+import {deleteUser, getMemberManageData} from "../../../network/request";
+import Pagination from "../../common/Pagination.vue";
+import { timeFormatting } from '../../../common/utils'
 
 export default defineComponent({
   name: "MemberManage",
-  props:['tableData'],
-  setup(props){
-		
+  components: {Pagination},
+  setup(){
+    const {table,currentPageChange,search} = useTable(6)
 		/**
 		 *@function headerStyle 自定义设置表头的样式 
 		 *@function cellStyle 自定义设置表格行的样式 
@@ -54,7 +57,7 @@ export default defineComponent({
 		}
 		
 		function deleteMember(index:any,rows:any){
-			//console.log(index,rows[index])
+
 			deleteUser(rows[index].user_id).then(result =>{
 				if(result.data.success){
 					if(rows.splice(index,1)){
@@ -62,45 +65,50 @@ export default defineComponent({
 					}
 					
 				}
-				//console.log(result)
+
 			}).catch((err:any) =>{
 				console.log(err)
 			})
 		}
 
-    /**
-     * @param currentPageData 存储当前数据变量的对象
-     * @param pageData 存储当前需要显示的数据数组
-     * @function currentPageChange该方法通过获取到的页码值来控制对应页面需要显示的数据
-     */
-    let currentPageData = reactive({
-      pageData:<any[]>[],
-      pageSize:<number>10
-    })
+    function getMMData(){
+      getMemberManageData().then(result => {
+        table.manageData = result.data
+        table.manageData.filter(item => {
 
-    watchEffect(()=>{
-      currentPageData.pageData = sliceTableData(0,currentPageData.pageSize)
-    })
-
-    function currentPageChange(val:any){
-      if (val===1){
-        currentPageData.pageData = sliceTableData(val-1,currentPageData.pageSize)
-      }
-      else {
-        currentPageData.pageData = sliceTableData((val-1)*currentPageData.pageSize,((val-1)*currentPageData.pageSize)+currentPageData.pageSize)
-      }
+          !item.username?item.username = '暂未设置昵称': item.username
+          !item.last_login_time?item.last_login_time = '暂未登录过': item.last_login_time
+          item.last_login_time = timeFormatting(new Date(item.last_login_time))
+          switch (item.identity){
+            case 0:
+              item.identity = '普通用户';
+              break;
+            case 999:
+              item.identity = '客服';
+              break;
+            case 1000:
+              item.identity = 'VIP';
+              break;
+            default:
+              item.identity = '未知身份'
+          }
+        })
+        table.tableData = table.manageData
+        //console.log(result.data)
+      }).catch(err =>{
+        console.log(err)
+      })
     }
 
-    function sliceTableData(start:number,end:number) {
-      return props.tableData.slice(start,end)
-    }
+    onBeforeMount(()=>{
+      getMMData()
+    })
 		
     return {
 			headerStyle,
 			rowStyle,
 			deleteMember,
-      currentPageChange,
-      currentPageData
+      table,currentPageChange,search
     }
   }
 })

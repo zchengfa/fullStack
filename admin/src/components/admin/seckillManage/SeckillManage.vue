@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="$props.seckillData" border>
+  <el-table :data="table.currentPageData" max-height="450"   class="mall-table" border>
     <el-table-column label="商品描述"  align="center">
       <template #default="scope">
         <span>{{scope.row.product_title}}</span>
@@ -36,23 +36,29 @@
   </el-table>
   <el-button v-show="seckill.changed.length" @click="saveChanged" type="success" size="small" class="save-button">保存编辑</el-button>
   <el-button class="add-seckill-button" @click="addSeckill" type="danger" size="small">添加秒杀商品</el-button>
-  <add-seckill @close-add-seckill="closeAddSeckill" :no-seckill-data="$props.noSeckillData" class="add-seckill-box"></add-seckill>
+  <add-seckill @close-add-seckill="closeAddSeckill" :no-seckill-data="seckill.noSeckillData" class="add-seckill-box"></add-seckill>
+  <pagination :total="table.tableData.length" @currentPageChange="currentPageChange"></pagination>
 </template>
 
 <script lang="ts">
-import {defineComponent, reactive,getCurrentInstance,ComponentInternalInstance} from "vue";
-import {saveFlashTime,removeSeckill} from "../../../network/request";
+import {defineComponent, reactive,getCurrentInstance,ComponentInternalInstance, onBeforeUnmount} from "vue";
+import { saveFlashTime,removeSeckill,addSeckillRequest } from "../../../network/request";
 import AddSeckill from './AddSeckill.vue'
-
+import Pagination from "../../common/Pagination.vue";
+import useTable from '../../../common/useTable'
+import { shopStore } from "../../../pinia/pinia";
 
 export default defineComponent({
   name: "SeckillManage",
   props:['seckillData','noSeckillData'],
   components:{
+    Pagination,
     AddSeckill
   },
   setup(props){
-    const {appContext} = getCurrentInstance() as ComponentInternalInstance
+    const { appContext } = getCurrentInstance() as ComponentInternalInstance
+    const { table,currentPageChange } = useTable(7)
+    const { data } = shopStore()
 
     interface changed {
       id:string,
@@ -61,10 +67,24 @@ export default defineComponent({
     }
 
     let seckill = reactive({
-      time:<string[]>[],
-      changed:<changed[]>[],
-      isShowAddSeckill:<boolean>false
+      time:<Array<string>>[],
+      changed:<Array<changed>>[],
+      isShowAddSeckill:<boolean>false,
+      noSeckillData:<Array<any>>[],
     })
+
+    let preferentialData:Array<any> = []
+
+    data.forEach((item)=>{
+      if(item.preferential_type === '秒杀'){
+        preferentialData.push(item)
+      }
+      else{
+        seckill.noSeckillData.push(item)
+      }
+    })
+    //table.manageData = data
+    table.tableData = preferentialData
 
     //点击时间按钮，控制el-select-time组件的显示与隐藏
     const changeFlashSaleTime = function (index:number) {
@@ -95,7 +115,7 @@ export default defineComponent({
             let changeTime:HTMLElement = <HTMLElement> document.getElementsByClassName('change-time').item(item.index)
             changeTime.style.display = 'none'
 
-            props.seckillData.map((seckillItem:{product_id:string,flash_sale_time:number})=>{
+            table.tableData.map((seckillItem:{product_id:string,flash_sale_time:number})=>{
               if (seckillItem.product_id===item.id){
                 seckillItem.flash_sale_time = item.time
               }
@@ -151,14 +171,38 @@ export default defineComponent({
     const removeSeckillData = function (id:string,index:number){
       removeSeckill(id).then(res=>{
         if (res.data.removeResult){
-          props.seckillData.splice(index,1)
+          table.tableData.splice(index,1)
         }
       })
     }
 
-    //监听AddSeckill子组件发出的confirmAddSeckill事件
-    appContext.config.globalProperties.$bus.on('confirmAddSeckill',()=>{
-      closeAddSeckill()
+
+    // })
+    //监听事件总线发出的confirmAddSeckill事件
+    appContext.config.globalProperties.$bus.on('confirmAddSeckill',(obj:{data:string[],time:string})=>{
+
+      //获得添加到秒杀活动的商品数据，向后端发起请求将对应商品一一更改为秒杀商品
+      addSeckillRequest(obj.data,parseInt(obj.time.replace(':00',''))).then(res=>{
+        if (res.data.addResult){
+
+          obj.data.map((item:any)=>{
+            seckill.noSeckillData.map((noItem:any,index:number)=>{
+              if (item.product_id===noItem.product_id){
+                seckill.noSeckillData.splice(index,1)
+                table.tableData.push(item)
+                //seckill.key++
+              }
+            })
+          })
+          alert('已将您选择的商品加入到秒杀活动中')
+          closeAddSeckill()
+        }
+      })
+
+    })
+
+    onBeforeUnmount(()=>{
+      appContext.config.globalProperties.$bus.off('confirmAddSeckill')
     })
 
     return {
@@ -168,7 +212,8 @@ export default defineComponent({
       saveChanged,
       addSeckill,
       closeAddSeckill,
-      removeSeckillData
+      removeSeckillData,
+      table,currentPageChange
     }
   }
 })
@@ -185,9 +230,9 @@ img{
   margin: 5vh auto;
 }
 .add-seckill-button{
-  margin-top: 5vh;
+  margin-top: 20px;
 
-  margin-bottom: 5vh;
+
 }
 .add-seckill-box{
   position: fixed;

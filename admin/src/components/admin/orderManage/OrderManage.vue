@@ -2,17 +2,24 @@
   <div class="search-box">
     <div>
       <span>订单搜索：</span>
-      <el-input placeholder="请输入订单编号、买家昵称、订单状态" v-model="statusLabel.searchConfident" @keyup="searchDataByKeyUp($event)" class="search-input"></el-input>
-      <el-button @click="searchData(statusLabel.searchConfident,'')">搜索</el-button>
-      <span v-show="statusLabel.showEmptyTip" class="empty-tip">请输入搜索条件</span>
-      <el-button size="small" class="refresh-button" @click="refreshTable"><el-icon class="refresh" :class="{'rotate-icon':order.isRotate}"><refresh></refresh></el-icon>重置</el-button>
+      <el-input :placeholder="!statusLabel.showEmptyTip ? '请输入订单编号、买家昵称、订单状态' :'请输入搜索条件' " v-model="statusLabel.searchConfident" @keyup="searchDataByKeyUp($event)" class="search-input"></el-input>
+      <el-button size="small" type="success" @click="searchData(statusLabel.searchConfident,'')"><el-icon class="search"><Search></Search></el-icon>搜索</el-button>
+<!--      <span v-show="statusLabel.showEmptyTip" class="empty-tip">请输入搜索条件</span>-->
+      <el-button size="small" type="danger" class="refresh-button" @click="refreshTable"><el-icon class="refresh" :class="{'rotate-icon':order.isRotate}"><refresh></refresh></el-icon>重置</el-button>
     </div>
     <div class="search-for-label">
       <span>标签查询：</span>
-      <el-button size="small" v-for="(label,index) in statusLabel.data" :type="statusLabel.buttonType[index]" @click="showLabelData(label['title'],index)" :key="index">{{label['title']}}<span v-show="label['isChecked']">√</span></el-button>
+      <el-button size="small" v-for="(label,index) in statusLabel.data" :type="statusLabel.buttonType[index]" @click="showLabelData(label['title'],index)" :key="index">
+          <template #default>
+              <div  class="label-btn">
+                  <span>{{label['title']}}</span>
+                  <el-icon class="check-icon" v-show="label['isChecked']"><Check /></el-icon>
+              </div>
+          </template>
+      </el-button>
     </div>
   </div>
-  <el-table class="mall-table" :data="order.data"  border empty-text="商品数据为空" :key="order.tableKey">
+  <el-table class="mall-table" :data="table.currentPageData" max-height="450"  border empty-text="商品数据为空">
     <el-table-column prop="order_id" label="订单编号">
       <template #default="scope">
         <span class="order-id">{{scope.row.order_id}}</span>
@@ -51,26 +58,30 @@
       </template>
     </el-table-column>
   </el-table>
-  <el-pagination class="pagination" :page-size="order.pageSize" :total="order.tableData.length" @current-change="currentPageChange"></el-pagination>
+
+  <pagination :total="table.tableData.length" @currentPageChange="currentPageChange"></pagination>
 </template>
 
 <script lang="ts">
 import {defineComponent, nextTick, onMounted, reactive, watchEffect} from "vue";
 import { getOrderData } from "../../../network/request";
-import {Refresh} from "@element-plus/icons-vue";
+import {Check, Refresh, Search} from "@element-plus/icons-vue";
+import Pagination from "../../common/Pagination.vue";
+import useTable from "../../../common/useTable";
+import {ElMessage} from "element-plus";
 
 export default defineComponent( {
   name: "OrderManage",
   components:{
+      Search,
+      Check,
+    Pagination,
     Refresh
   },
   setup(){
+    const { table,currentPageChange } = useTable(8)
+
     let order = reactive({
-      data:<string[]>[],
-      tableData:<string[]>[],
-      allData:<string[]>[],
-      pageSize:<number>8,
-      tableKey:0,
       isRotate:false
     })
     interface status {
@@ -97,26 +108,14 @@ export default defineComponent( {
               }
             })
           })
-          order.data.push(...orderData)
-          order.tableData.push(...orderData)
-          order.allData.push(...orderData)
+
+          table.tableData.push(...orderData)
+          table.manageData.push(...orderData)
+          table.dataCopy.push(...orderData)
         }
       })
     }
     getOrder()
-
-    const currentPageChange = (val:number)=>{
-      if (val===1){
-        order.data = sliceTableData(val-1,order.pageSize)
-      }
-      else {
-        order.data = sliceTableData((val-1)*order.pageSize,((val-1)*order.pageSize)+order.pageSize)
-      }
-    }
-
-    const sliceTableData = (start:number,end:number)=>{
-      return order.tableData.slice(start,end)
-    }
 
     //点击标签显示对应的数据
     const showLabelData = (title:string,index:number)=>{
@@ -158,6 +157,10 @@ export default defineComponent( {
 
       if (!searchConfident.toString().length){
         statusLabel.showEmptyTip = true
+          ElMessage({
+              type:'error',
+              message:'请输入搜索条件'
+          })
         return null
       }
       else{
@@ -184,13 +187,13 @@ export default defineComponent( {
     //点击搜索按钮搜索订单
     const searchData = (confident:string | RegExp,target:string)=>{
 
-      let regExpArr:string[] | null = findData(order.allData,confident,target)
+      let regExpArr:string[] | null = findData(table.dataCopy,confident,target)
       if (regExpArr!==null){
-        order.data = []
-        order.tableData = []
-        order.data.push(...regExpArr)
-        order.tableData.push(...regExpArr)
-        order.tableKey++
+
+        table.manageData = []
+        table.tableData = []
+        table.manageData.push(...regExpArr)
+        table.tableData.push(...regExpArr)
       }
     }
 
@@ -203,10 +206,10 @@ export default defineComponent( {
     //点击重置按钮，刷新表格显示全部订单数据，重置输入框
     const refreshTable = ()=>{
       order.isRotate = true
-      order.data = []
-      order.tableData = []
-      order.data.push(...order.allData)
-      order.tableData.push(...order.allData)
+      table.manageData = []
+      table.tableData = []
+      table.manageData.push(...table.dataCopy)
+      table.tableData.push(...table.dataCopy)
       statusLabel.searchConfident = ''
 
       //清除标签按钮的选中状态
@@ -226,36 +229,40 @@ export default defineComponent( {
       })
     }
 
-    onMounted(()=>{
-      watchEffect(()=>{
-        order.data = sliceTableData(0,order.pageSize)
-      })
-    })
-
     return{
       order,
-      currentPageChange,
       statusLabel,
       showLabelData,
       searchData,
       searchDataByKeyUp,
-      refreshTable
+      refreshTable,
+      table,currentPageChange
     }
   }
 })
 </script>
 
 <style scoped>
+.search-box .label-btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
 
+}
+.check-icon{
+    font-size: 12px;
+
+}
 .mall-table,.search-box{
   margin: 0 auto;
   width: 90%;
 }
 .mall-table{
-  height: 55vh;
+  height: 55vh !important;
 }
 .search-box{
-  margin: 0 auto 5vh;
+  margin: 20px auto;
   text-align: left;
   border: 1px solid #eee7e7;
   font-size: 14px;
@@ -265,11 +272,7 @@ export default defineComponent( {
   margin-left: 0;
   width: 40%;
 }
-.empty-tip{
-  margin-left: 1rem;
-  color: #ee4444;
-  font-weight: normal;
-}
+
 .search-box div{
   margin: 1rem;
 }
@@ -332,15 +335,17 @@ export default defineComponent( {
   width: 60%;
   transform: translateX(-50%);
 }
-.refresh{
+.refresh,.search{
   position: relative;
-  top: 1px;
+  top: 2px;
   padding-right: .2rem;
+  font-size: 12px;
 }
 .refresh-button{
   margin-left: 1rem;
 }
 .rotate-icon{
+    transform-origin: 50% 50%;
   animation: rotateIcon 1s linear;
 }
 @keyframes rotateIcon {

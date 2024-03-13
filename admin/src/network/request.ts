@@ -12,6 +12,31 @@ export function loginAdministrator (account:string,password:string){
     })
 }
 
+export function getPreferential (){
+    return Get({
+        url:'/preferential',
+
+    })
+}
+
+export function releasePreferential(status:boolean,id:number){
+    return Post({
+        url:'/releasePreferential',
+        data:{
+            status,id
+        }
+    })
+}
+
+export function addPreferentialRequest(formData: any){
+    return Post({
+        url:'/addPreferential',
+        data:{
+            formData
+        }
+    })
+}
+
 export function getShopManageData(){
     return Get({
         url:'/shopManage'
@@ -44,7 +69,7 @@ export function alterProduct (product_id:string,alterData:any){
     })
 }
 
-export function getAdministratorInfo(token:string | null){
+export function getAdministratorInfo(token:string | null ){
     return Post({
         url:'/administratorInfo',
         data:{
@@ -107,7 +132,7 @@ export function saveFlashTime(data:any){
     })
 }
 
-export function addSeckill(data:string[],time:number){
+export function addSeckillRequest(data:string[],time:number){
     return Post({
         url:'/addSeckill',
         data:{

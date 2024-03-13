@@ -1,3 +1,5 @@
+import {ElMessageBox} from "element-plus";
+
 export const URL:string = 'http:'+ '//' + window.location.host.toString().split(':')[0] + ':3000'
 
 
@@ -12,6 +14,207 @@ export function getPropertyArray (array:any){
         _propertyArray.push(arrayKey)
     }
     return _propertyArray
+}
+
+/**
+ * 获取当前时间（xxxx年-xx月-xx日）
+ * @return { string } 返回年月日字符串
+ */
+export function getYear(){
+    let year = new Date().getFullYear()
+    let month = (new Date().getMonth())+1
+    let date = new Date().getDate()
+    return year+'-'+month+'-'+date
+}
+
+/**
+ * 获取星期信息
+ * @return { string } 返回星期
+ */
+export function getWeek(){
+    let day = new Date().getDay()
+    switch (day) {
+        case 0:
+            return '星期天';
+        case 1:
+            return '星期一';
+        case 2:
+            return '星期二';
+        case 3:
+            return '星期三';
+        case 4:
+            return '星期四';
+        case 5:
+            return '星期五';
+        case 6:
+            return '星期六';
+        default:
+            return null;
+    }
+}
+
+/**
+ * 实时获取当前时间
+ * @param targetTime
+ */
+export function getTime(targetTime:any){
+    setInterval(()=>{
+        let hour = new Date().getHours()
+        let minutes = new Date().getMinutes().toString()
+        let seconds = new Date().getSeconds().toString()
+        if (Number(minutes) < 10){
+            minutes = '0' + minutes
+        }
+        if (Number(seconds) < 10){
+            seconds = '0' + seconds
+        }
+        targetTime = hour+':'+minutes+':'+seconds
+    },1000)
+}
+
+export function createFormRule (propertyArr:any[]){
+    let obj:any = {}
+    propertyArr.forEach((item:any)=>{
+        if(typeof item === 'string'){
+            obj[`${item}`] = {
+                required:true,
+                message:'该项内容不能为空',
+                trigger:'blur'
+            }
+        }
+        else{
+            obj[`${item.name}`] = {
+                required:true,
+                message:item.message,
+                trigger:'blur'
+            }
+        }
+    })
+    return obj
+}
+
+
+ export function tableToExcel(data:any[]){
+
+     ElMessageBox.alert('确定将当前数据导出为Excel文件？','操作确认',{
+         cancelButtonText:'取消',
+         confirmButtonText:'确认导出',
+         callback:(value, action)=>{
+             if(value === 'confirm'){
+                 //列标题
+                 let head = `<tr class="table-header"><td>商品id</td><td>商品标题</td><td>图片</td><td>价格</td><td>库存</td></tr>`;
+                 let tbody="";//内容
+                 for (let item in data) {
+                     tbody+=
+                       `<tr class="product">
+                                     <td class="id">${data[item]['id'] + '\t'}</td>
+                                     <td class="title">${data[item]['title'] + '\t'}</td>
+                                     <td class="path">${data[item]['imagePath'] + '\t'}</td>
+                                     <td class="price">￥${data[item]['price'] + '\t'}</td>
+                                     <td class="stocks">${data[item]['count'] + '\t'}</td>
+                                 </tr>`
+                 }
+                 let str = head+tbody;//头部跟身体内容连接
+
+                 //Worksheet名
+                 let worksheet = '商品数据'
+                 let uri = 'data:application/vnd.ms-excel;base64,';
+
+                 //下载的表格模板数据(需要设置编码格式utf-8，不设置会在打开Excel文件时会乱码)
+                 let template = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
+                               xmlns:x="urn:schemas-microsoft-com:office:excel"
+                               xmlns="http://www.w3.org/TR/REC-html40" lang="en">
+                               <head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+                                 <x:Name>${worksheet}</x:Name>
+                                 <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+                                 </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+                                 <meta charset="UTF-8">
+                                 <style type="text/css">
+                                    .table-header td{
+                                         padding: 16px;
+                                         height: 60px;
+                                         text-align: center;
+                                         color: #FFFFFF;
+                                         background-color: #1e8efc;
+                                         border: 1px solid #8a8a8a;
+                                    }
+                                    .product{
+                                         text-align: center;
+                                    }
+                                    td{
+                                         padding: 16px;
+                                    }
+
+                                    .id{
+                                         color: #1e8efc;
+                                    }
+                                    .title{
+                                         color: #d91868;
+                                    }
+                                    .path{
+                                         color: orchid;
+                                         font-weight: bold;
+                                    }
+                                    .price{
+                                         width: 100px;
+                                         color: red;
+                                    }
+                                    .stocks{
+                                         width: 100px;
+
+                                    }
+                                 </style><title></title>
+                                 </head><body><table>${str}</table></body></html>`;
+                 //下载模板
+                 window.location.href = uri + base64(template)
+             }
+         }
+     })
+
+}
+//输出base64编码
+export function base64 (s:any) {
+    return window.btoa(unescape(encodeURIComponent(s)))
+}
+
+export function timeFormatting (time:any,fm:string = 'YYYY-MM-DD hh:mm:ss',){
+    //拓展Date的时间格式化函数
+    //@ts-ignore
+    Date.prototype.format = function (fmt:string){
+        let formatObject = {
+            "M+": this.getMonth() + 1,                   //月份
+            "d+": this.getDate(),                        //日
+            "h+": this.getHours(),                       //小时
+            "m+": this.getMinutes(),                     //分
+            "s+": this.getSeconds(),                     //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds()                  //毫秒
+        };
+
+        //  获取年份
+        // ①
+        if (/(y+)/i.test(fmt)) {
+            fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        }
+
+        for (let k in formatObject) {
+            // ②
+            if (new RegExp("(" + k + ")", "i").test(fmt)) {
+                fmt = fmt.replace(
+                    //@ts-ignore
+                    RegExp.$1, (RegExp.$1.length === 1) ? (formatObject[k]) : (("00" + formatObject[k]).substr(("" + formatObject[k]).length)));
+            }
+        }
+        return fmt;
+    }
+    if (time){
+        return time.format(fm)
+    }
+    else {
+        //@ts-ignore
+        return new Date().format(fm)
+    }
+
 }
 
 /**

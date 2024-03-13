@@ -1,162 +1,166 @@
 <template>
-  <div class="data-summary">
-    <div class="item visitor-summary">
-      <h5>项目流量统计</h5>
-      <div class="visitor-box">
-        <div class="today-visitor">
-          <p>今日访客</p>
-          <span>{{total_visC.todayVis}}人</span>
-        </div>
-        <div class="total-visitor">
-          <p>累计访客</p>
-          <span>{{rank.visitorCount}}人</span>
-        </div>
-        <div class="total-visC">
-          <p>总访问次数</p>
-          <span>{{rank.totalVisCount}}次</span>
-        </div>
-      </div>
-    </div>
-    <div class="item info-summary">
-      <h5>平台信息数据统计</h5>
-      <div class="info-data">
-        <div class="member data-item">
-          <div class="image-box">
-            <img src="../../../assets/image/member.png" alt="image">
-          </div>
-          <div class="data">
-            <p>会员数量</p>
-            <span>{{ rank.users }}人</span>
+  <el-row>
+    <el-col class="monitor-col">
+      <div class="data-summary">
+        <div class="item visitor-summary">
+          <h5>项目流量统计</h5>
+          <div class="visitor-box">
+            <div class="today-visitor">
+              <p>今日访客</p>
+              <span>{{total_visC.todayVis}}人</span>
+            </div>
+            <div class="total-visitor">
+              <p>累计访客</p>
+              <span>{{rank.visitorCount}}人</span>
+            </div>
+            <div class="total-visC">
+              <p>总访问次数</p>
+              <span>{{rank.totalVisCount}}次</span>
+            </div>
           </div>
         </div>
-        <div class="goods data-item">
-          <div class="image-box">
-            <img src="../../../assets/image/goods.png" alt="image">
+        <div class="item info-summary">
+          <h5>平台信息数据统计</h5>
+          <div class="info-data">
+            <div class="member data-item">
+              <div class="image-box">
+                <img src="../../../assets/image/member.png" alt="image">
+              </div>
+              <div class="data">
+                <p>会员数量</p>
+                <span>{{ rank.users }}人</span>
+              </div>
+            </div>
+            <div class="goods data-item">
+              <div class="image-box">
+                <img src="../../../assets/image/goods.png" alt="image">
+              </div>
+              <div class="data">
+                <p>商品数量</p>
+                <span>{{ rank.goods }}件</span>
+              </div>
+            </div>
+            <div class="store data-item">
+              <div class="image-box">
+                <img src="../../../assets/image/store.png" alt="image">
+              </div>
+              <div class="data">
+                <p>店铺数量</p>
+                <span>1家</span>
+              </div>
+            </div>
           </div>
-          <div class="data">
-            <p>商品数量</p>
-            <span>{{ rank.goods }}件</span>
+        </div>
+        <div class="item delivery">
+          <h5>物流运营状态</h5>
+          <div class="status-box">
+            <p>订单统计</p>
+            <div>
+              <p>{{rank.order_not_finish}}</p>
+              <span>未完成的订单</span>
+            </div>
+            <div>
+              <p  class="finish-count">{{rank.order_finished}}</p>
+              <span class="finish">已完成的订单</span>
+            </div>
+          </div>
+          <div class="status-box">
+            <p>仓库统计</p>
+            <div>
+              <p>0</p>
+              <span>已开通海外仓卖家</span>
+            </div>
+            <div>
+              <p  class="finish-count">0</p>
+              <span class="finish">海外仓总数</span>
+            </div>
           </div>
         </div>
-        <div class="store data-item">
-          <div class="image-box">
-            <img src="../../../assets/image/store.png" alt="image">
-          </div>
-          <div class="data">
-            <p>店铺数量</p>
-            <span>1家</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="item delivery">
-      <h5>物流运营状态</h5>
-      <div class="status-box">
-        <p>订单统计</p>
-        <div>
-          <p>{{rank.order_not_finish}}</p>
-          <span>未完成的订单</span>
-        </div>
-        <div>
-          <p  class="finish-count">{{rank.order_finished}}</p>
-          <span class="finish">已完成的订单</span>
-        </div>
-      </div>
-      <div class="status-box">
-        <p>仓库统计</p>
-        <div>
-          <p>0</p>
-          <span>已开通海外仓卖家</span>
-        </div>
-        <div>
-          <p  class="finish-count">0</p>
-          <span class="finish">海外仓总数</span>
-        </div>
-      </div>
-    </div>
-    <div class="item pie-summary">
-<!--      添加v-if判断，当数据请求完之后在去渲染图表-->
-      <PieChartStatistics v-if="rank.salesData.length" class="pie" :sales-data="rank.salesData"></PieChartStatistics>
-      <div class="circle-box">
-<!--        添加v-if在百分比计算完成后并且不等于0时渲染-->
-        <progress-bar v-if="rank.percent" class="circle-bar" bar-type="circle" label="用户转化率" :progress="rank.percent"  :item="0"
-                      circle-border-color="#cd9cf2"
-                      circle-text-color="red"
-                      mask-color="pink"
-                      circle-progress-color="#8a8686">
+        <div class="item pie-summary">
+          <!--      添加v-if判断，当数据请求完之后在去渲染图表-->
+          <PieChartStatistics v-if="rank.salesData.length" class="pie" :sales-data="rank.salesData"></PieChartStatistics>
+          <div class="circle-box">
+            <!--        添加v-if在百分比计算完成后并且不等于0时渲染-->
+            <progress-bar v-if="rank.percent" class="circle-bar" bar-type="circle" label="用户转化率" :progress="rank.percent"  :item="0"
+                          circle-border-color="#cd9cf2"
+                          circle-text-color="red"
+                          mask-color="pink"
+                          circle-progress-color="#8a8686">
 
-        </progress-bar>
-      </div>
-    </div>
-    <div class="item bar-summary">
-      <BarChartStatistics></BarChartStatistics>
-    </div>
-<!--    <div class="item">-->
-<!--      <UserLocationChartStatistics></UserLocationChartStatistics>-->
-<!--    </div>-->
-  </div>
-  <div class="rank">
-    <div class="gold-user-rank">
-      <h5>用户消费排行榜</h5>
-      <div class="title">
-        <span>排名</span>
-        <span>用户</span>
-        <span>消费</span>
-      </div>
-      <div class="consumption rank-box" v-if="rank.userConsumption.length">
-        <div class="rank-item" v-for="(item,index) in rank.userConsumption" :key="index">
-          <div>
-            <span>{{index+1}}</span>
-            <span v-show="item['username']">{{item['username']}}</span>
-            <span v-show="!item['username']">{{dealUserPhoneNumber(item['account'])}}</span>
-            <span>{{dealBigNumber(item['totalConsumption'])}}</span>
+            </progress-bar>
           </div>
-          <progress-bar class="rank-bar" :progress="item['percent']" :item='index'></progress-bar>
+        </div>
+        <div class="item bar-summary">
+          <BarChartStatistics></BarChartStatistics>
+        </div>
+        <!--    <div class="item">-->
+        <!--      <UserLocationChartStatistics></UserLocationChartStatistics>-->
+        <!--    </div>-->
+      </div>
+      <div class="rank">
+        <div class="gold-user-rank">
+          <h5>用户消费排行榜</h5>
+          <div class="title">
+            <span>排名</span>
+            <span>用户</span>
+            <span>消费</span>
+          </div>
+          <div class="consumption rank-box" v-if="rank.userConsumption.length">
+            <div class="rank-item" v-for="(item,index) in rank.userConsumption" :key="index">
+              <div>
+                <span>{{index+1}}</span>
+                <span v-show="item['username']">{{item['username']}}</span>
+                <span v-show="!item['username']">{{dealUserPhoneNumber(item['account'])}}</span>
+                <span>{{dealBigNumber(item['totalConsumption'])}}</span>
+              </div>
+              <progress-bar class="rank-bar" :progress="item['percent']" :item='index'></progress-bar>
+            </div>
+          </div>
+          <div class="none-rank" v-else>暂无用户上榜</div>
+        </div>
+        <div class="product-sales-rank">
+          <h5>商品销量排行榜</h5>
+          <div class="title">
+            <span>排名</span>
+            <span>商品类型</span>
+            <span>销量</span>
+            <span>总金额</span>
+          </div>
+          <div class="sales rank-box" v-if="rank.productSales.length">
+            <div class="rank-item" v-for="(item,index) in rank.productSales" :key="index">
+              <div>
+                <span>{{index+1}}</span>
+                <span>{{item['type']}}</span>
+                <span>{{dealBigNumber(item['sales'])}}</span>
+                <span>{{dealBigNumber(item['consumption'])}}</span>
+              </div>
+              <progress-bar class="rank-bar" :progress="item['percent']" :item='index+rank.userConsumption.length'></progress-bar>
+            </div>
+          </div>
+          <div class="none-rank" v-else>暂无用户上榜</div>
+        </div>
+        <div class="keyword-search-rank">
+          <h5>关键词搜索排行榜</h5>
+          <div class="title">
+            <span>排名</span>
+            <span>关键词</span>
+            <span>搜索次数</span>
+          </div>
+          <div class="keywords rank-box" v-if="rank.words.length">
+            <div class="rank-item" v-for="(item,index) in rank.words" :key="index">
+              <div>
+                <span>{{index+1}}</span>
+                <span>{{item['word']}}</span>
+                <span>{{dealBigNumber(item['search_count'])}}</span>
+              </div>
+              <progress-bar class="rank-bar" :progress="item['percent']" :item='index+rank.userConsumption.length+rank.productSales.length'></progress-bar>
+            </div>
+          </div>
+          <div class="none-rank" v-else>暂无用户上榜</div>
         </div>
       </div>
-      <div class="none-rank" v-else>暂无用户上榜</div>
-    </div>
-    <div class="product-sales-rank">
-      <h5>商品销量排行榜</h5>
-      <div class="title">
-        <span>排名</span>
-        <span>商品类型</span>
-        <span>销量</span>
-        <span>总金额</span>
-      </div>
-      <div class="sales rank-box" v-if="rank.productSales.length">
-        <div class="rank-item" v-for="(item,index) in rank.productSales" :key="index">
-          <div>
-            <span>{{index+1}}</span>
-            <span>{{item['type']}}</span>
-            <span>{{dealBigNumber(item['sales'])}}</span>
-            <span>{{dealBigNumber(item['consumption'])}}</span>
-          </div>
-          <progress-bar class="rank-bar" :progress="item['percent']" :item='index+rank.userConsumption.length'></progress-bar>
-        </div>
-      </div>
-      <div class="none-rank" v-else>暂无用户上榜</div>
-    </div>
-    <div class="keyword-search-rank">
-      <h5>关键词搜索排行榜</h5>
-      <div class="title">
-        <span>排名</span>
-        <span>关键词</span>
-        <span>搜索次数</span>
-      </div>
-      <div class="keywords rank-box" v-if="rank.words.length">
-        <div class="rank-item" v-for="(item,index) in rank.words" :key="index">
-          <div>
-            <span>{{index+1}}</span>
-            <span>{{item['word']}}</span>
-            <span>{{dealBigNumber(item['search_count'])}}</span>
-          </div>
-          <progress-bar class="rank-bar" :progress="item['percent']" :item='index+rank.userConsumption.length+rank.productSales.length'></progress-bar>
-        </div>
-      </div>
-      <div class="none-rank" v-else>暂无用户上榜</div>
-    </div>
-  </div>
+    </el-col>
+  </el-row>
 </template>
 
 <script lang="ts">
@@ -310,6 +314,9 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.monitor-col{
+  height: calc(100vh - 3rem);
+}
 .data-summary{
   position: relative;
   display: flex;
@@ -317,7 +324,7 @@ export default defineComponent({
   align-items: center;
   flex-wrap: wrap;
   float: left;
-  width: 80%;
+  width: 79%;
   height: 100%;
   overflow-y: scroll;
 }
@@ -481,6 +488,7 @@ export default defineComponent({
   float: right;
   width: 20%;
   height: 100%;
+  border-left: 10px solid rgb(242, 236, 247);
   background-color: #fff;
   overflow-y: scroll;
 }

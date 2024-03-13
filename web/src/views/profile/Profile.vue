@@ -141,6 +141,7 @@ export default {
 .profile{
   width: 100vw;
   height: 100vh;
+  max-width: 500px;
   background-color: #efecec;
 }
 .profile div{

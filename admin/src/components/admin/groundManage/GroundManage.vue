@@ -6,12 +6,12 @@
         <input id="search" v-model="groundingUnder.searchKeyword" type="text" placeholder="请输入搜索条件" @keyup="searchGrounding($event)">
       </div> 
       <div class="filter-button">
-        <el-button size="small" @click="groundUnderMany('上架',1)">批量上架</el-button>
-        <el-button size="small" @click="groundUnderMany('下架',0)">批量下架</el-button>
+        <el-button size="small" @click="groundUnderMany('上架',1)" v-permission="{permission:'up',effect:'disabled'}">批量上架</el-button>
+        <el-button size="small" @click="groundUnderMany('下架',0)" v-permission="{permission:'down',effect:'disabled'}">批量下架</el-button>
       </div>   
     </el-col>
   </el-row>
-  <el-table :data="table.tableData" border class="table" @selection-change="handleSelection">
+  <el-table :data="table.currentPageData" max-height="450"   border class="table mall-table" @selection-change="handleSelection">
     <el-table-column type="selection" width="55" />
       <el-table-column label="id" prop="product_id"></el-table-column>
       <el-table-column label="描述" prop="product_title" align="center"></el-table-column>
@@ -29,33 +29,37 @@
       <el-table-column label="操作"  align="center" >
         <template #default="scope">
           <div class="operation-btn">
-            <el-button class="ground-btn" size="small" type="danger" v-show="scope.row.isGrounding" @click.prevent="underPro(scope.row.product_id)">下架</el-button>
-            <el-button class="under-btn" size="small" type="primary" v-show="!scope.row.isGrounding" @click.prevent="groundPro(scope.row.product_id)">上架</el-button>
+            <el-button class="ground-btn" size="small" type="danger" v-show="scope.row.isGrounding" v-permission="{permission:'down',effect:'disabled'}" @click.prevent="underPro(scope.row.product_id)">下架</el-button>
+            <el-button class="under-btn" size="small" type="primary" v-show="!scope.row.isGrounding" v-permission="{permission:'up',effect:'disabled'}" @click.prevent="groundPro(scope.row.product_id)">上架</el-button>
           </div>
         </template>
       </el-table-column>
   </el-table>
-  <el-pagination class="pagination" :page-size="table.pageSize" :total="table.data.length" @current-change="currentPageChange"></el-pagination>
+  <pagination :total="table.tableData.length" @currentPageChange="currentPageChange"></pagination>
 </template>
 
 <script lang="ts">
 import {defineComponent, getCurrentInstance, ComponentInternalInstance, reactive,nextTick, toRaw} from "vue";
 import useTable from '../../../common/useTable'
 import {groundProduct} from '../../../network/request'
+import Pagination from "../../common/Pagination.vue";
+import { shopStore } from "../../../pinia/pinia";
 
 export default defineComponent({
   name:'GroundManage',
-  props:['groundData'],
   components:{
-    
+    Pagination
+
   },
   setup(props){
     const {appContext} = getCurrentInstance() as ComponentInternalInstance
 
     const {table,currentPageChange,search} = useTable(6)
-
-    table.data = props.groundData
-    table.dataCopy = props.groundData
+    const { data } = shopStore()
+    table.manageData = data
+    table.tableData = data
+    // table.manageData = props.groundData
+    // table.dataCopy = props.groundData
     
 
     let groundingUnder = reactive({
@@ -73,9 +77,10 @@ export default defineComponent({
 
     const groundUnderGoods = (id:string | string[],status:number,response:string)=>{
       groundProduct({id,status}).then(res=>{
+        console.log(res)
         res.data.grounding_result?(()=>{
           //获得反馈后弹出提示框，并更新表中的数据
-          appContext.config.globalProperties.$toast.showToast(response,3000,'结果：')
+          appContext.config.globalProperties.$toast.showToast(response,3000,'操作结果')
           nextTick(()=>{
             if (Array.isArray(id)){
               table.tableData.map((item:any)=>{
@@ -128,18 +133,18 @@ export default defineComponent({
       if (e.keyCode===13){
         if(groundingUnder.searchKeyword==='已上架' || groundingUnder.searchKeyword==='上架'){
           let arr = returnGrounding(table.dataCopy,1)
-          table.data = arr
+          table.manageData = arr
         }
         else if(groundingUnder.searchKeyword==='已下架' || groundingUnder.searchKeyword==='下架'){
           let arr = returnGrounding(table.dataCopy,0)
-          table.data = arr
+          table.manageData = arr
         }
         else{
-          let arr = search(table.data,table.tableData,groundingUnder.searchKeyword,e.keyCode,['product_title','product_id','isGrounding'])
+          let arr = search(table.manageData,table.tableData,groundingUnder.searchKeyword,e.keyCode,['product_title','product_id','isGrounding'])
           table.tableData = arr
-          table.data = arr
+          table.manageData = arr
         if (!groundingUnder.searchKeyword.length){
-          table.data = props.groundData
+          table.manageData = table.tableData
         }
         }
 
@@ -204,7 +209,7 @@ export default defineComponent({
 }
 .table{
   width: 100%;
-  height:66%;
+
 }
 .shop-status{
   display: inline-block;
@@ -224,5 +229,8 @@ img{
 .pagination{
   margin-top: 2rem;
   width: 60%;
+}
+.under-btn{
+  margin-left: 0;
 }
 </style>

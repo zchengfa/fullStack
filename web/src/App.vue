@@ -26,9 +26,10 @@
   @import url("assets/css/reset.css");
   #app{
     position: relative;
-    margin: 0;
+    margin: 0 auto;
     width: 100vw;
     height: 100vh;
+    max-width: 500px;
   }
 
 </style>

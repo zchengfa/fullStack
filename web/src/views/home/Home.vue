@@ -587,6 +587,7 @@
     width: 100vw;
     height: calc(100vh - 44px - 4rem);
     overflow: hidden;
+    max-width: 500px;
   }
   .swiper-box{
     padding-top: 1rem;

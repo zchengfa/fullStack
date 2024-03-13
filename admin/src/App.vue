@@ -19,4 +19,9 @@ body{
   margin: 0;
   width: 100vw;
 }
+.mall-table{
+  height: 70vh !important;
+
+}
+
 </style>

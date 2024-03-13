@@ -189,12 +189,13 @@ export default {
   z-index: 12;
 }
 .back{
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100%;
 }
 .back img{
-  position: relative;
-  margin-top: 25%;
-  transform: translateY(-25%) scale(.8);
+  transform: scale(.8);
 }
 input{
   width: 100%;

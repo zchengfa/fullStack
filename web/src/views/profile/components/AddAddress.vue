@@ -113,9 +113,7 @@ export default {
   background-color: #fff;
 }
 .nav img{
-  width: 2rem;
-  margin-top: 25%;
-  transform: translateY(-25%);
+  transform: scale(.7);
 }
 .add-address .content div{
   margin-top: 1rem;
@@ -128,18 +126,19 @@ export default {
   border-bottom: 1px solid #d7d3d3;
 }
 .confirm-add{
-  position: fixed;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   bottom: 0;
-  width: 100vw;
+  width: 100%;
   height: 3rem;
   z-index: 12;
 }
 .confirm-add button{
-  margin-left: 5%;
-  margin-top: .5rem;
-  width: 90%;
-  height: 2.4rem;
-  border-radius: .2rem;
+  width: 80%;
+  height: 2rem;
+  border-radius: 1rem;
   background-color: #fd001e;
   color: #fff;
 }

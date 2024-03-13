@@ -451,6 +451,7 @@
 		display: flex;
     justify-content: center;
     align-items: center;
+    width: 4rem;
 	}
 	.nav-title button{
     width: 4.6rem;
@@ -467,8 +468,7 @@
     background-color: rgba(42, 41, 41, 0.21);
   }
 	.nav-right{
-		position: relative;
-		right: 1rem;
+		margin-right: 1rem;
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -480,6 +480,9 @@
 		align-items: center;
 		height: 44px;
 	}
+  .calendar{
+    margin-left: .5rem;
+  }
   .lightning-word{
     display: inline-block;
     color: #fff;

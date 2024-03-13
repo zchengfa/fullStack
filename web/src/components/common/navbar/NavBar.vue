@@ -46,8 +46,7 @@
     height: 100%;
   }
   .left,.right{
-    width: 44px;
-    height: 44px;
+    min-width: 44px;
   }
   .bottom{
     display: block;

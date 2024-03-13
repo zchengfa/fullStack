@@ -19,7 +19,7 @@
       </div>
     </nav-bar>
     <div v-show="isIndex" class="index-content">
-      <tab-control v-show="isTabFixed" ref="tabControlOne" class="tab-control" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
+      <tab-control v-show="isTabFixed" ref="tabControlOne" class="tab-control-box" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
       <Scroll class="content" ref="scroll"  :probe-type="3" @scroll="contentScroll"
               :pull-up-load="true" @pullingUp="loadMore">
         <div class="swiper-box">
@@ -50,7 +50,7 @@
             </ul>
           </div>
         </div>
-        <tab-control class="tab-control" :class="{fixed: isTabFixed}" ref="tabControlTwo" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
+        <tab-control class="tab-control-box" :class="{fixed: isTabFixed}" ref="tabControlTwo" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
         <goods-data :goods="goods[currentType].list"></goods-data>
         <div class="no-more" v-show="noMore"><p>没有更多了哦!</p></div>
       </Scroll>
@@ -589,9 +589,8 @@
     color: #fd001e;
     font-size: .9rem;
   }
-  .tab-control{
+  .tab-control-box{
     position: relative;
-    z-index: 9;
   }
   .fixed{
     position: fixed;

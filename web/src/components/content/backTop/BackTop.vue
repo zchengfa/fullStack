@@ -16,7 +16,7 @@ name: "BackTop"
   .back-top{
     position: absolute;
     right: 1rem;
-    bottom: 4rem;
+    bottom: 20%;
     width: 3rem;
     height: 3rem;
     border-radius: 50%;

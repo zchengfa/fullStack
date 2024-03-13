@@ -26,6 +26,6 @@
 		text-align: center;
     transform: translateX(-50%);
 		background-color: #eeeeee;
-    z-index: 9;
+    z-index: 999;
 	}
 </style>

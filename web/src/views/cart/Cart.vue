@@ -471,12 +471,10 @@
   }
   .nav-button-box{
     margin-right: 1rem;
-    width: 3rem;
     height: 100%;
   }
   .manage,.complete{
-    width: 3rem;
-    height: 44px;
+    padding: 10px;
   }
   .cart-nav-bar{
     background-color: #db7093;

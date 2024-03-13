@@ -18,7 +18,10 @@
 		components: {
 			MainTabBar,
       Loading
-		}
+		},
+    mounted() {
+      console.log(navigator.userAgent)
+    }
   }
 </script>
 <style >
@@ -28,7 +31,7 @@
     position: relative;
     margin: 0 auto;
     width: 100vw;
-    height: 100vh;
+    height: 100%;
     max-width: var(--app-max-width);
     scroll-behavior: smooth;
   }

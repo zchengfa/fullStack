@@ -89,67 +89,45 @@ export default {
 <style scoped>
 .settle-cart{
   position: fixed;
+  bottom: 3rem;
   display: flex;
   width: 100%;
-  max-width: var(--app-max-width);
-  height: 3rem;
-  bottom: 3rem;
-  line-height: 3rem;
+  padding: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
   background-color: #fff;
+  z-index: 99;
 }
-.check{
+.settle-cart div{
   display: flex;
-  flex: 1;
-  justify-items: center;
+  justify-content: center;
   align-items: center;
 }
-#check-button{
-  margin-left: .8rem;
+.check-button{
+  margin-right: .5rem;
 }
-label{
-  flex: 1;
-  font-size: .8rem;
-  text-align: center;
-}
-
 .total-price{
-  flex: 1.5;
-}
-.total-price span{
-  display: inline-block;
-  height: 100%;
-}
-.price{
-  font-weight: bold;
-  color: #f00;
+  color: #ee0c2e;
 }
 .settle{
-  flex: 1.2;
+  padding: .3rem;
+  background-color: #e5580d;
+  border-radius: 1rem;
 }
-.settle button{
-  width: 70%;
-  height: 70%;
+.settle button,.delete button{
   color: #fff;
-  border-radius: 2rem;
-  background-color: #f00;
-}
-.delete{
-  flex: 3;
-  text-align: right;
 }
 .delete button{
-  width: 30%;
-  height: 64%;
-  border-radius: 2rem;
-  border: 1px solid #faa201;
-  font-size: small;
-  color: #faa201;
+  padding: .3rem .5rem;
+  border-radius: 1rem;
+  font-size: 14px;
 }
-.delete .remove{
-  margin-right: .8rem;
+.delete button:first-child{
+  background-color: red;
+}
+.delete button:last-child{
   margin-left: 1rem;
-  width: 20%;
-  border: 1px solid #f10a39;
-  color: #f10a39;
+  background-color: #d48a1b;
 }
 </style>

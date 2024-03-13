@@ -71,13 +71,14 @@ export default {
 
 <style scoped>
   .detail-bottom-bar{
-    position: absolute;
+    position: fixed;
     bottom:0;
-    left: 0;
+    left: 50%;
     width: 100%;
     max-width: var(--app-max-width);
     background-color: #fff;
     z-index: 10;
+    transform: translateX(-50%);
   }
   .content{
     display: flex;
@@ -114,6 +115,9 @@ export default {
   }
   .buy button{
     background-color: #f00;
+  }
+  .button-box button{
+    color: #000;
   }
   .join-cart button{
     background-color: #FFA500;

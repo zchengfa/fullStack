@@ -18,10 +18,7 @@
 		components: {
 			MainTabBar,
       Loading
-		},
-    mounted() {
-      console.log(navigator.userAgent)
-    }
+		}
   }
 </script>
 <style >
@@ -31,7 +28,7 @@
     position: relative;
     margin: 0 auto;
     width: 100vw;
-    height: 100%;
+    height: 100vh;
     max-width: var(--app-max-width);
     scroll-behavior: smooth;
   }
@@ -41,22 +38,6 @@
   }
   .nav-bar .left img{
     transform: scale(.8);
-  }
-  .none{
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    transform: translate(-50%,-50%);
-    z-index: 10;
-  }
-  .none span{
-    margin-top: 1.5rem;
-    color: #8a8a8a;
-    font-size: 14px;
   }
 
 </style>

@@ -24,10 +24,7 @@
         <category-list-detail v-show="!isEmpty" :category-list-detail="categoryListDetail" @imageLoad="imageLoadOver" ></category-list-detail>
         <div class="empty" v-show="isEmpty">{{emptyMessage}}</div>
       </Scroll>
-      <div class="none">
-        <img src="~assets/image/none.png" alt="none">
-        <span>暂未获取到数据！</span>
-      </div>
+      <NoneData class="none-com"></NoneData>
     </div>
   </div>
 </template>
@@ -40,6 +37,7 @@ import CategoryListDetail from "./components/CategoryListDetail";
 import {getCategoryList,getCategoryDetail} from "@/network/category";
 
 import {debounce} from "@/common/utils";
+import NoneData from "../../components/content/NoneData/NoneData.vue";
 
 export default {
   name:"Category",
@@ -53,6 +51,7 @@ export default {
     }
   },
   components:{
+    NoneData,
     NavBar,
     Scroll,
     CategoryListDetail
@@ -137,8 +136,9 @@ export default {
   border-left: 2px solid #e02929;
 }
 .category{
+  position: relative;
   width: 100vw;
-  height: 100vh;
+  height: 100%;
   text-align: center;
   overflow: hidden;
 }
@@ -196,7 +196,6 @@ a{
   line-height: 3rem;
   text-align: center;
   font-size: .9rem;
-  font-min-size: 14px;
   color: #8a8686;
 }
 .scroll-list-detail{

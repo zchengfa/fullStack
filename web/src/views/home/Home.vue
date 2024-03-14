@@ -256,78 +256,81 @@
         this.getGoodsData("sell")
       },
       contentScroll(position){
-        //根据position位置来控制backTop组件的显示或隐藏(position时负数，需先转成正数再做比较)
-        this.isShowBackTop = (- position.y)>1000
+        window.requestAnimationFrame(()=>{
+          //根据position位置来控制backTop组件的显示或隐藏(position时负数，需先转成正数再做比较)
+          this.isShowBackTop = (- position.y)>1000
 
-        //根据position的位置控制tabControl是否吸顶
-        this.isTabFixed = (- position.y) > (this.tabOffsetTop - 48)
+          //根据position的位置控制tabControl是否吸顶
+          this.isTabFixed = (- position.y) > (this.tabOffsetTop - 48)
 
-        this.$store.dispatch('savePosition',JSON.parse(JSON.stringify(position))).then()
+          this.$store.dispatch('savePosition',JSON.parse(JSON.stringify(position))).then()
 
-        this.scrollHeight = this.$store.state.position.y
-				
-				let searchEl = document.getElementsByClassName('search').item(0)
-				let navEl = document.getElementsByClassName('nav').item(0)
-        let titleBoxEl = document.getElementsByClassName('title-box').item(0)
-        //当前搜索部分的宽度
-				let searchClWidth = this.$refs.search.$el.clientWidth
+          this.scrollHeight = this.$store.state.position.y
 
-        //当前搜索部分的高度
-				let searchClHeight = this.$refs.search.$el.clientHeight
+          let searchEl = document.getElementsByClassName('search').item(0)
+          let navEl = document.getElementsByClassName('nav').item(0)
+          let titleBoxEl = document.getElementsByClassName('title-box').item(0)
+          //当前搜索部分的宽度
+          let searchClWidth = this.$refs.search.$el.clientWidth
 
-        //当前导航栏的高度
-				let navClHeight = this.$refs.nav.$el.clientHeight
+          //当前搜索部分的高度
+          let searchClHeight = this.$refs.search.$el.clientHeight
 
-        //搜索部分的最小宽度
-        let searchMinWidth = 240
-				
-				//滚动的Y值小于0，页面一直页面初始位置的上方滚动
-				if(this.scrollHeight < 0) {
-					
-					//通过监听this,scrollHeight的值得到当前用户在做向下滚动
-					if(this.isUp){
-						
-						//且滚动距离小于导航栏高度
-						if(this.scrollHeight > - this.navHeightDefault){
-							
-							//导航栏当前高度小于初始状态下的高度时，将导航栏高度变大，输入框部分宽度保持最小值状态,导航栏按钮透明度变大
-							if(navClHeight < this.navHeightDefault){
-                this.changeElStyle(navEl,searchEl,navClHeight + 1,navClHeight - (searchClHeight+6),searchMinWidth)
-                titleBoxEl.style.opacity =  navClHeight/this.navHeightDefault
-							}
-							
-							//导航栏当前高度等于初始状态下的高度时，保持高度为初始状态高度，输入框部分宽度变大
-							else{
-								navEl.style.height = this.navHeightDefault +'px'
-								searchEl.style.width = (searchClWidth + searchClWidth/10) + 'px'
-							}
-							
-						}
-						//滚动距离大于导航栏高度时，将导航栏高度保持为特定高度，并且输入框部分距离顶部3px，position:absolute ，水平垂直居中
-						else{
-              this.changeElStyle(navEl,searchEl,this.searchOffsetTop,3,searchMinWidth)
-              titleBoxEl.style.opacity = 1
-						}
-					}
-					//通过监听this,scrollHeight的值得到当前用户在做向上滚动
-					else{
-						//用户向上滚动，缩短输入框部分的宽度
-						searchEl.style.width = (searchClWidth - searchClWidth/20) +'px'
-						
-						//当输入框部分缩短到最小值时，保持宽度不变，缩小导航栏高度，输入框部分水平垂直居中，,导航栏按钮透明度变小
-						if(searchClWidth ===searchMinWidth){
-							if(navClHeight > 48){
-                this.changeElStyle(navEl,searchEl,navClHeight -1,navClHeight - (searchClHeight+6),searchMinWidth)
-                titleBoxEl.style.opacity =  navClHeight/searchClWidth
-							}
-						}
-					}
-				}
-				//滚动的Y值大于0，用户在做下拉操作，需将导航栏上的元素保持与初始状态一致
-				else{
-          this.changeElStyle(navEl,searchEl,this.navHeightDefault,this.searchOffsetTop,this.searchWidthDefault)
-          titleBoxEl?titleBoxEl.style.opacity = 1:null
-				}	
+          //当前导航栏的高度
+          let navClHeight = this.$refs.nav.$el.clientHeight
+
+          //搜索部分的最小宽度
+          let searchMinWidth = 180
+
+          //滚动的Y值小于0，页面一直页面初始位置的上方滚动
+          if(this.scrollHeight < 0) {
+
+            //通过监听this,scrollHeight的值得到当前用户在做向下滚动
+            if(this.isUp){
+
+              //且滚动距离小于导航栏高度
+              if(this.scrollHeight > - this.navHeightDefault){
+
+                //导航栏当前高度小于初始状态下的高度时，将导航栏高度变大，输入框部分宽度保持最小值状态,导航栏按钮透明度变大
+                if(navClHeight < this.navHeightDefault){
+                  this.changeElStyle(navEl,searchEl,navClHeight + 1,navClHeight - (searchClHeight+6),searchMinWidth)
+                  titleBoxEl.style.opacity =  navClHeight/this.navHeightDefault
+                }
+
+                //导航栏当前高度等于初始状态下的高度时，保持高度为初始状态高度，输入框部分宽度变大
+                else{
+                  navEl.style.height = this.navHeightDefault +'px'
+                  searchEl.style.width = (searchClWidth + searchClWidth/10) + 'px'
+                }
+
+              }
+              //滚动距离大于导航栏高度时，将导航栏高度保持为特定高度，并且输入框部分距离顶部3px，position:absolute ，水平垂直居中
+              else{
+                this.changeElStyle(navEl,searchEl,this.searchOffsetTop,3,searchMinWidth)
+                titleBoxEl.style.opacity = 1
+              }
+            }
+            //通过监听this,scrollHeight的值得到当前用户在做向上滚动
+            else{
+              //用户向上滚动，缩短输入框部分的宽度
+              searchEl.style.width = (searchClWidth - searchClWidth/20) +'px'
+
+              //当输入框部分缩短到最小值时，保持宽度不变，缩小导航栏高度，输入框部分水平垂直居中，,导航栏按钮透明度变小
+              if(searchClWidth ===searchMinWidth){
+                if(navClHeight > 48){
+                  this.changeElStyle(navEl,searchEl,navClHeight -1,navClHeight - (searchClHeight+6),searchMinWidth)
+                  titleBoxEl.style.opacity =  navClHeight/searchClWidth
+                }
+              }
+            }
+          }
+          //滚动的Y值大于0，用户在做下拉操作，需将导航栏上的元素保持与初始状态一致
+          else{
+            this.changeElStyle(navEl,searchEl,this.navHeightDefault,this.searchOffsetTop,this.searchWidthDefault)
+            titleBoxEl?titleBoxEl.style.opacity = 1:null
+          }
+        })
+
       },
       //改变导航栏与搜索部分元素的样式
       changeElStyle(navEl,searchEl,navHeight,searchTop,searchWidth){

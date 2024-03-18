@@ -29,12 +29,14 @@ export default defineComponent( {
       toast.message = message
       toast.title = title
       toast.time = duration/1000
+      //@ts-ignore
       toast.timerInterval = setInterval(()=>{
         toast.time --
         if (toast.time <= 0){
           clearInterval(toast.timerInterval)
         }
       },1000)
+      //@ts-ignore
       toast.timerTimeOut = setTimeout(() => {
         toast.isShow = false
         toast.message = ''

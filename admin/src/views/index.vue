@@ -95,7 +95,6 @@ function closeSkew(name:string){
   userPinia.closeSkewMenu(name).then(path=>{
     router.push('/index'+path)
     navLogic.defaultPath =<string>path
-
   }).catch(err=>{
     if(err.msg){
       appContext.config.globalProperties.$toast.showToast(err.msg,3000,'操作错误')
@@ -137,7 +136,7 @@ onMounted(()=>{
           </div>
         </li>
         <li>
-          <a href="/">支持我们</a>
+          <a href="javascript:void(0)">支持我们</a>
         </li>
         <li>
           <a href="/">联系开发者</a>
@@ -157,7 +156,7 @@ onMounted(()=>{
     </el-col>
   </el-row>
   <el-row style="flex-wrap: nowrap">
-    <el-col :span="3" class="menu-col">
+    <el-col :span="4" class="menu-col">
       <el-menu
           active-text-color="#ffd04b"
           background-color="#fff"
@@ -186,7 +185,7 @@ onMounted(()=>{
         </el-sub-menu>
       </el-menu>
     </el-col>
-    <el-col :span="21" class="router-view-col">
+    <el-col :span="20" class="router-view-col">
       <skew-arrow :menu="userPinia.routesSkewMenu" @close-skew="closeSkew"></skew-arrow>
       <router-view></router-view>
     </el-col>

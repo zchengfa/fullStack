@@ -9,6 +9,7 @@ import locale from 'element-plus/lib/locale/lang/zh-cn'
 import 'element-plus/theme-chalk/index.css'
 
 import toast from "./components/common/toast";
+import loading from "./components/common/loading";
 
 import mitt from "mitt";
 
@@ -35,6 +36,7 @@ app.use(router)
 
 //安装自定义插件
 app.use(toast)
+app.use(loading)
 
 //全局的路由守卫，进入所有路由前，检测是否需要登录后才能进入
 router.beforeEach((to,from,next)=>{

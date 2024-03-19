@@ -151,7 +151,11 @@ require('./router/order/order')(app)
 start(server)
 
 //测试mysql数据库是否正常
-connectSqlTest('mall_user')
+connectSqlTest('mall_user').then(res=>{
+  console.log(res)
+}).catch(e=>{
+  console.log(e)
+})
 
 //用于作者提交商品数据至数据库的api
 app.post('/submitDataApi', (req, res) => {
@@ -273,11 +277,13 @@ function start(server) {
 
 //查询一次数据库，以保证mysql数据库正常
 function connectSqlTest(table) {
-  connection.query(mysql_query.selectAll(table), (err) => {
-    if (err) {
-      throw Error('mysql数据库出现异常，请检查是否开启sql服务')
-    } else {
-      console.log('mysql数据库运行正常')
-    }
-  })
+ return new Promise((resolve, reject)=>{
+   connection.query(mysql_query.selectAll(table), (err) => {
+     if (err) {
+       reject('mysql数据库出现异常，请检查是否开启sql服务')
+     } else {
+       resolve('mysql数据库运行正常')
+     }
+   })
+ })
 }

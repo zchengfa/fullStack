@@ -18,7 +18,7 @@ defineExpose({
 
 <template>
   <div class="loading-container" v-show="store.isLoading">
-    <el-icon size="30" class="is-loading"><Loading class="loading-icon"></Loading></el-icon>
+    <el-icon class="is-loading"><Loading class="loading-icon"></Loading></el-icon>
     <span class="loading-text">数据加载中...</span>
   </div>
 </template>
@@ -47,5 +47,13 @@ $height:2rem;
     padding-top: .5rem;
     font-size: 12px;
   }
+  .is-loading{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: $width;
+    @include iconSize
+  }
 }
+
 </style>

@@ -17,16 +17,20 @@ module.exports = app =>{
           userArr.push(item.user_id)
         })
         userArr = deDuplication(userArr)
+
         let finishCount = 0
         userArr.map(user=>{
           const selectUser = selectFields('mall_user','username,account',`user_id = ${user}`)
           connection.query(selectUser,(err,userR)=>{
             if (err) throw err
-            if (userR.length){
-              userR[0]['user_id'] = user
-              userArr[finishCount] = userR[0]
+            if (userR){
+              if(userR.length){
+                userR[0]['user_id'] = user
+                userArr[finishCount] = userR[0]
+              }
               finishCount++
             }
+
             finishCount===userArr.length?(()=>{
               res.send({
                 'order':result,
@@ -36,6 +40,9 @@ module.exports = app =>{
           })
         })
 
+      }
+      else{
+        res.send([])
       }
     })
   })

@@ -19,7 +19,7 @@
       </el-button>
     </div>
   </div>
-  <el-table class="mall-table" :data="table.currentPageData" max-height="450"  border empty-text="商品数据为空">
+  <el-table class="mall-table" :data="table.currentPageData" max-height="450"  border empty-text="暂无订单数据">
     <el-table-column prop="order_id" label="订单编号">
       <template #default="scope">
         <span class="order-id">{{scope.row.order_id}}</span>
@@ -98,6 +98,7 @@ export default defineComponent( {
 
     const getOrder = ()=>{
       getOrderData().then(res=>{
+        console.log(res)
         let orderData = res.data['order'],info = res.data['user_info']
         if (orderData&&info){
           orderData.map((o:any)=>{

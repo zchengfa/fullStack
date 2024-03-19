@@ -56,6 +56,9 @@ function axiosInterceptors(instance:any){
         }
         return response
     }, (err:any) => {
+        if(store.isLoading || err){
+            store.changeLoadingStatus(false)
+        }
         return Promise.reject(err)
     })
 }

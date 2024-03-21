@@ -4,16 +4,16 @@
       <div class="data-summary">
         <div class="item visitor-summary">
           <h5>项目流量统计</h5>
-          <div class="visitor-box">
-            <div class="today-visitor">
+          <div class="visitor-boxes item-content">
+            <div class="today-visitor visitor-box">
               <p>今日访客</p>
               <span>{{total_visC.todayVis}}人</span>
             </div>
-            <div class="total-visitor">
+            <div class="total-visitor visitor-box">
               <p>累计访客</p>
               <span>{{rank.visitorCount}}人</span>
             </div>
-            <div class="total-visC">
+            <div class="total-visC visitor-box">
               <p>总访问次数</p>
               <span>{{rank.totalVisCount}}次</span>
             </div>
@@ -21,7 +21,7 @@
         </div>
         <div class="item info-summary">
           <h5>平台信息数据统计</h5>
-          <div class="info-data">
+          <div class="info-data item-content">
             <div class="member data-item">
               <div class="image-box">
                 <img src="../../../assets/image/member.png" alt="image">
@@ -51,7 +51,7 @@
             </div>
           </div>
         </div>
-        <div class="item delivery">
+        <div class="item delivery clearfix">
           <h5>物流运营状态</h5>
           <div class="status-box">
             <p>订单统计</p>
@@ -81,17 +81,24 @@
           <PieChartStatistics v-if="rank.salesData.length" class="pie" :sales-data="rank.salesData"></PieChartStatistics>
           <div class="circle-box">
             <!--        添加v-if在百分比计算完成后并且不等于0时渲染-->
-            <progress-bar v-if="rank.percent" class="circle-bar" bar-type="circle" label="用户转化率" :progress="rank.percent"  :item="0"
-                          circle-border-color="#cd9cf2"
-                          circle-text-color="red"
-                          mask-color="pink"
-                          circle-progress-color="#8a8686">
+<!--            <progress-bar v-if="rank.percent" class="circle-bar" bar-type="circle" label="用户转化率" :progress="rank.percent"  :item="0"-->
+<!--                          circle-border-color="#cd9cf2"-->
+<!--                          circle-text-color="red"-->
+<!--                          mask-color="pink"-->
+<!--                          circle-progress-color="#8a8686">-->
 
-            </progress-bar>
+<!--            </progress-bar>-->
+            <circle-progress v-if="rank.percent" label="用户转化率" class="circle-pro" :percent="rank.percent"></circle-progress>
+            <circle-progress v-if="rank.percent" label="成交率" class="circle-pro" container-b-g="#bababa" center-b-g="#000" semicircle-b-g="#fff" item="1" :percent="90"></circle-progress>
           </div>
         </div>
         <div class="item bar-summary">
           <BarChartStatistics></BarChartStatistics>
+          <div class="circle-pro-boxes">
+            <circle-progress v-if="rank.percent" label="退货率" container-b-g="#bababa" center-b-g="#000" semicircle-b-g="#fff" item="2" class="circle-pro-two circle-boxes-item" :percent="30"></circle-progress>
+            <circle-progress v-if="rank.percent" label="售后率" container-b-g="rgb(215 215 71)" center-b-g="rgb(33 171 192)" semicircle-b-g="#fff" item="3" class="circle-pro-three circle-boxes-item" :percent="65"></circle-progress>
+            <circle-progress v-if="rank.percent" label="满意率" container-b-g="rgb(217 106 132)" center-b-g="rgb(121 106 217)" semicircle-b-g="#fff" item="4" class="circle-pro-four circle-boxes-item" :percent="79"></circle-progress>
+          </div>
         </div>
         <!--    <div class="item">-->
         <!--      <UserLocationChartStatistics></UserLocationChartStatistics>-->
@@ -107,7 +114,7 @@
           </div>
           <div class="consumption rank-box" v-if="rank.userConsumption.length">
             <div class="rank-item" v-for="(item,index) in rank.userConsumption" :key="index">
-              <div>
+              <div class="rank-other">
                 <span>{{index+1}}</span>
                 <span v-show="item['username']">{{item['username']}}</span>
                 <span v-show="!item['username']">{{dealUserPhoneNumber(item['account'])}}</span>
@@ -128,7 +135,7 @@
           </div>
           <div class="sales rank-box" v-if="rank.productSales.length">
             <div class="rank-item" v-for="(item,index) in rank.productSales" :key="index">
-              <div>
+              <div class="rank-other">
                 <span>{{index+1}}</span>
                 <span>{{item['type']}}</span>
                 <span>{{dealBigNumber(item['sales'])}}</span>
@@ -148,7 +155,7 @@
           </div>
           <div class="keywords rank-box" v-if="rank.words.length">
             <div class="rank-item" v-for="(item,index) in rank.words" :key="index">
-              <div>
+              <div class="rank-other">
                 <span>{{index+1}}</span>
                 <span>{{item['word']}}</span>
                 <span>{{dealBigNumber(item['search_count'])}}</span>
@@ -172,6 +179,7 @@ import {ElIcon,ElButton} from 'element-plus'
 import {Warning} from '@element-plus/icons-vue'
 import ProgressBar from '../../common/ProgressBar.vue'
 import {getStatisticsData} from '../../../network/request'
+import CircleProgress from "../../common/CircleProgress.vue";
 
 export default defineComponent({
   name: "DataStatistics",
@@ -181,7 +189,8 @@ export default defineComponent({
     PieChartStatistics,
     BarChartStatistics,
     UserLocationChartStatistics,
-    ProgressBar
+    ProgressBar,
+    CircleProgress
   },
   setup(){
 
@@ -313,276 +322,176 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.clearfix::after{
+  display: block;
+  content: '';
+  height: 0;
+  clear: both;
+}
 .monitor-col{
-  height: calc(100vh - 3rem);
-}
-.data-summary{
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  float: left;
-  width: 79%;
-  height: 100%;
-  overflow-y: scroll;
-}
-.data-summary div{
-  border-radius: .2rem;
-}
-.data-summary::-webkit-scrollbar{
-  display: none;
-}
-.data-summary .item{
-  margin: 0 auto 2vh;
-  width: 98%;
-  height: 40vh;
-  text-align: center;
-}
-.data-summary .item.visitor-summary{
-  height: auto;
-}
-.data-summary .item.visitor-summary .visitor-box{
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  color: #fff;
-}
-.visitor-box div{
-  flex: 1;
-  max-width: 25%;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-}
-.visitor-box div.total-visitor{
-  background: linear-gradient(to right , #a100ff, #aa56ee);
-}
-.visitor-box div.today-visitor{
-  background: linear-gradient(to right , #002aff, #135ade);
-}
-.visitor-box div.total-visC{
-  background: linear-gradient(to right , #06c9f5, #20ade1);
-}
-.data-summary .item.info-summary{
-  height: auto;
-  background-color: #fff;
-  letter-spacing: .1rem;
-}
-.item h5{
-  padding: 1rem .5rem;
-  margin: 0;
-  text-align: left;
-}
-.data-summary .bar-summary{
-  width: 40vw;
-  height: 40vh;
-}
-.item.info-summary h5{
-  background-color: rgb(242, 236, 247);
-}
-.info-data{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 80%;
-}
-.info-data div{
-  margin: 0 auto;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  width: 30%;
-
-}
-.info-data .data-item{
-  display: flex;
-  justify-items: center;
-  align-items: center;
-}
-.info-data .data-item:nth-child(2){
-  border-left: 2px solid #e51313;
-  border-right: 2px solid #ea1414;
-}
-.data-item div:first-child{
-  margin-right: 0;
-}
-.data-item div:last-child{
-  margin-left: 0;
-}
-.data-item div p{
-  margin: 0 auto 1rem;
-}
-.info-data .image-box{
-  width: 4rem;
-  height: 4rem;
-  line-height: 4rem;
-  border-radius: 50%;
-}
-.info-data img{
-  position: relative;
-  margin-top: 50%;
-  width: 2rem;
-  transform: translateY(-50%);
-}
-
-.data-summary .delivery{
-  height: 30vh;
-}
-.delivery .status-box{
-  position: relative;
-  width: 48%;
-  height: 80%;
-  float: left;
-  background-color: #fff;
-}
-.delivery .status-box:last-child{
-  float: right;
-}
-.pie-summary .pie{
-  float: left;
-}
-.pie-summary .circle-bar{
-  float: right;
-}
-
-.status-box div{
-  display: inline-block;
-  width: 48%;
-}
-.status-box div:last-child{
-  border-left: 1px solid #fff;
-}
-.status-box p{
-  text-indent: 1rem;
-  text-align: left;
-}
-.status-box span{
-  display: inline-block;
-}
-.status-box span::before{
-  display: inline-block;
-  margin-right: 1rem;
-  content: '';
-  width: .5rem;
-  height: .5rem;
-  background-color: red;
-  border-radius: 50%;
-}
-.status-box .finish::before{
-  background-color: #578314;
-}
-.status-box div p{
-  margin-bottom: .5rem;
-  font-weight: bold;
-  font-size: 1.4rem;
-  color: red;
-  text-align: center;
-  text-indent: unset;
-}
-.status-box .finish-count{
-  color: #507020;
-}
-.rank{
-  float: right;
-  width: 20%;
-  height: 100%;
-  border-left: 10px solid rgb(242, 236, 247);
-  background-color: #fff;
+  align-items: flex-start;
+  height: calc(100vh - 140px);
   overflow-y: scroll;
-}
-.rank .gold-user-rank,
-.rank .product-sales-rank,
-.rank .keyword-search-rank{
-  position: relative;
-  margin: 0 auto 2vh;
-  width: 96%;
-  height: 50%;
-}
-.rank-box{
-  height: 80%;
-  overflow-y: scroll;
-}
-.rank h5{
-  margin: 0 auto;
-  padding: 4%;
-  background-color: rgb(242, 236, 247);
-}
-.rank::-webkit-scrollbar,
-.rank div::-webkit-scrollbar{
-  display: none;
-}
-.rank .title{
-  width: 100%;
-  height: 10%;
-  min-height: 32px;
-  background-color: #fff;
-}
-.product-sales-rank .title span{
-  width: 25%;
-}
-.title span{
-  position: relative;
-  top: 50%;
-  display: inline-block;
-  width: 33%;
-  font-size: xx-small;
-  font-weight: bold;
-  text-align: center;
-  transform: translateY(-50%);
-}
-.rank-item{
-  margin: 2vh auto;
-}
-.rank-item .rank-bar{
-  width: 86%;
-  margin: 1vh auto;
-}
-.rank-item span{
-  display: inline-block;
-  text-align: center;
-  width: 25%;
-  font-size: 12px;
-  color: #8a8686;
-}
-.rank-item:first-child div:first-child span:first-child{
-  font-size: 20px;
-  color: #ea1f1f;
-  font-weight: bolder;
-}
-.rank-item:nth-child(2) div:first-child span:first-child{
-  font-size: 18px;
-  color: #2121d2;
-  font-weight: bold;
-}
-.rank-item:nth-child(3) div:first-child span:first-child{
-  font-size: 16px;
-  color: #cc5a1d;
-}
-.consumption .rank-item span,
-.keywords .rank-item span{
-  width: 33%;
-}
-.none-rank{
-  position: absolute;
-  left: 50%;
-  top:50%;
-  transform: translate(-50%, -50%);
-  font-size: 13px;
-  color: #8a8686;
-}
-.item.pie-summary div{
-  display: inline-block;
-}
-.circle-box{
-  height: 100%;
-}
-.circle-bar{
-  position: relative;
-  top:50%;
-  width: 10vw;
-  height: 10vw;
-  transform: translateY(-50%);
+  .data-summary{
+    padding: 1rem;
+    flex: 1;
+    .item h5{
+      padding: 1rem 0;
+      text-align: left;
+      border-radius: .2rem;
+      background-color: rgb(242, 236, 247);
+      box-shadow: rgb(174, 172, 176) 4px 4px 2px 2px;
+    }
+    .item .item-content{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .visitor-box,.data-item{
+      flex:1;
+      padding: 2rem 0;
+      border-radius: .5rem;
+      color: #fff;
+    }
+    .data-item{
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      color: #000;
+      .image-box{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 2rem;
+        height: 2rem;
+        img{
+          width: 2rem;
+          height: 2rem;
+        }
+      }
+    }
+    .goods{
+      border-left: 2px solid #c54ce7;
+      border-right: 2px solid #c54ce7;
+    }
+    .today-visitor{
+      background-color: red;
+      box-shadow: #e58f8f 10px 10px 3px 3px;
+    }
+    .total-visitor{
+      margin: 0 1rem;
+      background-color: #0d84ff;
+      box-shadow: #85bfe5 10px 10px 3px 3px;
+    }
+    .total-visC{
+      background-color: #d48a1b;
+      box-shadow: #e0c6a3 10px 10px 3px 3px;
+    }
+  .status-box{
+    box-sizing: border-box;
+    padding: 1rem;
+    float: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 50%;
+    div{
+      padding: 2rem;
+    }
+  }
+    .pie-summary{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 0;
+      .pie{
+        width: 100%;
+        height: 100%;
+      }
+      .circle-box{
+        position: relative;
+        flex: 1;
+        height: 20rem;
+      }
+      .circle-pro{
+        width: 7rem;
+        height: 7rem;
+      }
+      .circle-pro:first-child{
+        position: absolute;
+        left: 2rem;
+        top: 2rem;
+      }
+      .circle-pro:last-child{
+        position: absolute;
+        bottom: 0;
+        right: 0;
+      }
+    }
+    .item{
+      position: relative;
+    }
+    .bar-summary{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      .circle-pro-boxes{
+        flex: 1;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        .circle-boxes-item{
+          width: 6rem;
+          height: 6rem;
+          margin-left: 3rem;
+          margin-top: 3rem;
+        }
+      }
+    }
+  }
+  .rank{
+    padding: 1rem;
+    min-width: 200px;
+    font-size: .8rem;
+    height: 100%;
+    border-radius: .2rem;
+    background-color: rgb(242, 236, 247);
+    overflow-y: scroll;
+    h5{
+      font-size: .9rem;
+      border-radius: .1rem;
+      box-shadow: rgb(174, 172, 176) 4px 4px 2px 2px;
+    }
+    .title,.rank-other{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: .8rem;
+    }
+    .title{
+      font-weight: bold;
+      span{
+        min-width: 2rem;
+      }
+    }
+    .rank-other{
+      span{
+        min-width: 2rem;
+      }
+    }
+    .rank-other{
+      padding: 1rem 0;
+    }
+    .none-rank{
+      padding: 2rem;
+      color: #8a8a8a;
+    }
+  }
 }
 </style>

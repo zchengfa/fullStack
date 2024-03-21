@@ -23,5 +23,21 @@ body{
   height: 70vh !important;
 
 }
+/* 隐藏水平滚动条 */
+::-webkit-scrollbar {
+  width: 0; /* 设置滚动条的宽度为0.5em（根据需求调整）*/
+  height: 0;
+}
 
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* 设置滚动条的背景色 */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888; /* 设置滚动条的前景色 */
+}
+
+:root{
+  --percent:0;
+}
 </style>

@@ -92,8 +92,8 @@ export default defineComponent({
 
 <style scoped>
 #pie-chart-statistics{
-  width: 40vw;
-  height: 40vh;
+  width: 40rem;
+  height: 20rem;
   border: 1px solid #a29d9d;
   background-color: #FFFFFF;
 }

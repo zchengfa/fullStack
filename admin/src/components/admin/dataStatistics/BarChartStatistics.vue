@@ -229,9 +229,8 @@ export default defineComponent({
 
 <style scoped>
 #bar-chart-statistics{
-  float: right;
-  width: 100%;
-  height: 100%;
+  width: 40rem;
+  height: 20rem;
   border: 1px solid #a9a9a9;
   background-color: #FFFFFF;
 }

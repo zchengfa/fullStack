@@ -115,7 +115,10 @@
           <div class="consumption rank-box" v-if="rank.userConsumption.length">
             <div class="rank-item" v-for="(item,index) in rank.userConsumption" :key="index">
               <div class="rank-other">
-                <span>{{index+1}}</span>
+                <div class="No-box">
+                  <span :class="{'rank-no':index<3}">{{index+1}}</span>
+                  <img v-if="index < 3" :src="rankMedal(index)" class="rank-medal"  alt="奖牌"/>
+                </div>
                 <span v-show="item['username']">{{item['username']}}</span>
                 <span v-show="!item['username']">{{dealUserPhoneNumber(item['account'])}}</span>
                 <span>{{dealBigNumber(item['totalConsumption'])}}</span>
@@ -136,7 +139,10 @@
           <div class="sales rank-box" v-if="rank.productSales.length">
             <div class="rank-item" v-for="(item,index) in rank.productSales" :key="index">
               <div class="rank-other">
-                <span>{{index+1}}</span>
+                <div class="No-box">
+                  <span :class="{'rank-no':index<3}">{{index+1}}</span>
+                  <img v-if="index < 3" :src="rankMedal(index)" class="rank-medal"  alt="奖牌"/>
+                </div>
                 <span>{{item['type']}}</span>
                 <span>{{dealBigNumber(item['sales'])}}</span>
                 <span>{{dealBigNumber(item['consumption'])}}</span>
@@ -156,7 +162,10 @@
           <div class="keywords rank-box" v-if="rank.words.length">
             <div class="rank-item" v-for="(item,index) in rank.words" :key="index">
               <div class="rank-other">
-                <span>{{index+1}}</span>
+                <div class="No-box">
+                  <span :class="{'rank-no':index<3}">{{index+1}}</span>
+                  <img v-if="index < 3" :src="rankMedal(index)" class="rank-medal"  alt="奖牌"/>
+                </div>
                 <span>{{item['word']}}</span>
                 <span>{{dealBigNumber(item['search_count'])}}</span>
               </div>
@@ -233,6 +242,11 @@ export default defineComponent({
       }
     })
 
+    //返回对应的奖牌
+    const rankMedal = (index:number)=>{
+      const src = ['/src/assets/image/admin/gold_medal.png','/src/assets/image/admin/silver_medal.png','/src/assets/image/admin/bronze_medal.png']
+      return src[index]
+    }
 
     //获取统计所需要的数据
     function getSData(){
@@ -316,7 +330,8 @@ export default defineComponent({
       rank,
       dealBigNumber,
       dealUserPhoneNumber,
-      total_visC
+      total_visC,
+      rankMedal
     }
   }
 })
@@ -483,6 +498,29 @@ export default defineComponent({
     .rank-other{
       span{
         min-width: 2rem;
+        font-size: .8rem;
+      }
+      span:first-child{
+        font-weight: bold;
+      }
+    }
+    .No-box{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      span.rank-no{
+        position: absolute;
+        height: 100%;
+        line-height: 1.6rem;
+        z-index:1;
+        color: #fff;
+        transform: scale(.8);
+      }
+      .rank-medal{
+        width: 2rem;
+        height: 2rem;
+        transform: scale(.8);
       }
     }
     .rank-other{

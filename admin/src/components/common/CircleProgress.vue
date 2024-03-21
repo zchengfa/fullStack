@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, ref, getCurrentInstance, ComponentInternalInstance, computed, onBeforeUnmount} from "vue";
+import {onMounted,UnwrapRef,Ref, ref, getCurrentInstance, ComponentInternalInstance, computed, onBeforeUnmount} from "vue";
 const {props} = getCurrentInstance() as ComponentInternalInstance
 //定义默认颜色
 defineProps({
@@ -35,20 +35,22 @@ defineProps({
   }
 })
 
-let animateId:any= ref(0)
-let currentAngle:any = ref(undefined)
-let el = ref()
+let animateId:Ref<UnwrapRef<number> >= ref(0)
+let currentAngle:Ref<UnwrapRef<any> > = ref(undefined)
+let el:Ref<UnwrapRef<any> > = ref()
 
 const animate = ()=>{
   //获取元素旋转角度
   currentAngle.value = getRotateAngle(el.value)
   //旋转超过180度
   if(currentAngle.value>180){
-    let maskEl:any = document.getElementsByClassName('semicircle-mask').item(((props.item) as number))
-    let semicircleOneEl:any = document.getElementsByClassName('semicircle-one').item((props.item) as number)
+    let maskEl =<HTMLElement> document.getElementsByClassName('semicircle-mask').item(((props.item) as number))
+    let semicircleOneEl:any =<HTMLElement> document.getElementsByClassName('semicircle-one').item((props.item) as number)
     maskEl.style.zIndex = '3'
-    semicircleOneEl.style.zIndex = '-1'
-    semicircleOneEl.style.backgroundColor = props.containerBG
+    semicircleOneEl.style = {
+      zIndex:'-1',
+      backgroundColor:props.containerBG
+    }
   }
   animateId.value = window.requestAnimationFrame(animate)
 }
@@ -71,7 +73,7 @@ const getRotateAngle = (element:any)=>{
 //设置元素某些样式
 const setStyle = (el:string[],style:number[],attr:any[])=>{
   el.forEach((item:any,index:number)=>{
-    const itemEl:any = document.getElementsByClassName(item).item((props.item) as number)
+    const itemEl =<HTMLElement> document.getElementsByClassName(item).item((props.item) as number)
     if(style[index] === 0){
       itemEl.style.backgroundColor = attr[index]
     }
@@ -93,7 +95,7 @@ const currentProgress = computed(()=>{
 
 onMounted(()=>{
   //挂载后拿到旋转元素
-  el.value = document.getElementsByClassName('semicircle-two').item((props.item) as number)
+  el.value =<HTMLElement> document.getElementsByClassName('semicircle-two').item((props.item) as number)
 
   //为元素设置颜色
   setStyle(['progress-box','progress-center','semicircle-one','semicircle-two','semicircle-mask','progress-text','character'],

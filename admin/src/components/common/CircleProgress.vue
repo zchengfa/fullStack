@@ -1,11 +1,21 @@
 <script setup lang="ts">
-import {onMounted,UnwrapRef,Ref, ref, getCurrentInstance, ComponentInternalInstance, computed, onBeforeUnmount} from "vue";
+import {
+  onMounted,
+  UnwrapRef,
+  Ref,
+  ref,
+  getCurrentInstance,
+  ComponentInternalInstance,
+  computed,
+  onBeforeUnmount,
+  reactive
+} from "vue";
 const {props} = getCurrentInstance() as ComponentInternalInstance
 //定义默认颜色
 defineProps({
   containerBG:{
     default(){
-      return '#3054c7'
+      return '#ded9d9'
     }
   },
   centerBG:{
@@ -32,6 +42,11 @@ defineProps({
     default(){
       return undefined
     }
+  },
+  progressType:{
+    default(){
+      return 'circle'
+    }
   }
 })
 
@@ -39,20 +54,42 @@ let animateId:Ref<UnwrapRef<number> >= ref(0)
 let currentAngle:Ref<UnwrapRef<any> > = ref(undefined)
 let el:Ref<UnwrapRef<any> > = ref()
 
+//条形进度条相关元素变量
+let barEl:Ref<UnwrapRef<any> > = ref()
+let normalEl:Ref<UnwrapRef<any> > = ref()
+let barStyleObj = reactive({
+  "--bar-color":`rgb(${Math.floor(Math.random()*255)},${Math.floor(Math.random()*255)},${Math.floor(Math.random()*255)})`,
+  "--progress": props.percent + '%',
+})
+
 const animate = ()=>{
-  //获取元素旋转角度
-  currentAngle.value = getRotateAngle(el.value)
-  //旋转超过180度
-  if(currentAngle.value>180){
-    let maskEl =<HTMLElement> document.getElementsByClassName('semicircle-mask').item(((props.item) as number))
-    let semicircleOneEl:any =<HTMLElement> document.getElementsByClassName('semicircle-one').item((props.item) as number)
-    maskEl.style.zIndex = '3'
-    semicircleOneEl.style = {
-      zIndex:'-1',
-      backgroundColor:props.containerBG
+  animateId.value = window.requestAnimationFrame(animate)
+  if(props.progressType === 'circle'){
+    //获取元素旋转角度
+    currentAngle.value = getRotateAngle(el.value)
+    //旋转超过180度
+    if(currentAngle.value>180){
+      let maskEl =<HTMLElement> document.getElementsByClassName('semicircle-mask').item(((props.item) as number))
+      let semicircleOneEl:any =<HTMLElement> document.getElementsByClassName('semicircle-one').item((props.item) as number)
+      maskEl.style.zIndex = '3'
+      semicircleOneEl.style = {
+        zIndex:'-1',
+        backgroundColor:props.containerBG
+      }
     }
   }
-  animateId.value = window.requestAnimationFrame(animate)
+  else if(props.progressType === 'normal'){
+    //条形进度条元素
+    let percent = Math.round((barEl.value.clientWidth/normalEl.value.clientWidth)*100)
+    //设置伪元素content内容
+    barEl.value.attributes[1].value = percent + '%'
+
+    //值相等，动画可以结束了
+    if(Number(percent)=== Number(props.percent)){
+      window.cancelAnimationFrame(animateId.value)
+    }
+  }
+
 }
 
 //获取目标元素的旋转角度
@@ -94,19 +131,26 @@ const currentProgress = computed(()=>{
 })
 
 onMounted(()=>{
-  //挂载后拿到旋转元素
-  el.value =<HTMLElement> document.getElementsByClassName('semicircle-two').item((props.item) as number)
+  if(props.progressType === 'circle'){
+    //挂载后拿到旋转元素
+    el.value =<HTMLElement> document.getElementsByClassName('semicircle-two').item((props.item) as number)
 
-  //为元素设置颜色
-  setStyle(['progress-box','progress-center','semicircle-one','semicircle-two','semicircle-mask','progress-text','character'],
-    [0,0,0,0,0,1,1],
-    [props.containerBG,props.centerBG,props.semicircleBG,props.semicircleBG,props.containerBG,props.containerBG,props.containerBG])
+    //为元素设置颜色
+    setStyle(['progress-box','progress-center','semicircle-one','semicircle-two','semicircle-mask','progress-text','character'],
+      [0,0,0,0,0,1,1],
+      [props.containerBG,props.centerBG,props.semicircleBG,props.semicircleBG,props.containerBG,props.containerBG,props.containerBG])
+    window.addEventListener('animationend',()=>{
+      //动画结束，关闭关键帧动画
+      window.cancelAnimationFrame(animateId.value)
+    })
 
+  }
+  else if(props.progressType === 'normal'){
+    barEl.value = <HTMLElement> document.getElementsByClassName('progress-bar-normal').item((props.item) as number)
+    normalEl.value = <HTMLElement> document.getElementsByClassName('normal-progress').item((props.item) as number)
+  }
   animateId.value = window.requestAnimationFrame(animate)
-  window.addEventListener('animationend',()=>{
-    //动画结束，关闭关键帧动画
-    window.cancelAnimationFrame(animateId.value)
-  })
+
 })
 
 onBeforeUnmount(()=>{
@@ -118,15 +162,20 @@ onBeforeUnmount(()=>{
 
 <template>
   <div class="progress-container">
-    <label class="progress-title" v-if="props.label">{{props.label}}</label>
-    <div class="progress-box">
-      <div class="progress-center">
-        <span class="progress-text">{{currentProgress}}</span>
-        <span class="character">%</span>
+    <div class="circle-progress" v-if="props.progressType === 'circle'">
+      <label class="progress-title" v-if="props.label">{{props.label}}</label>
+      <div class="progress-box">
+        <div class="progress-center">
+          <span class="progress-text">{{currentProgress}}</span>
+          <span class="character">%</span>
+        </div>
+        <div class="semicircle-one"></div>
+        <div class="semicircle-two" :style="rotateAngle"></div>
+        <div class="semicircle-mask"></div>
       </div>
-      <div class="semicircle-one"></div>
-      <div class="semicircle-two" :style="rotateAngle"></div>
-      <div class="semicircle-mask"></div>
+    </div>
+    <div class="normal-progress" v-else-if="props.progressType === 'normal'" :style="{'--bar-bg-color':props.containerBG}">
+      <div class="progress-bar-normal" data-content-after="0%" :style="barStyleObj"></div>
     </div>
   </div>
 </template>
@@ -137,6 +186,7 @@ onBeforeUnmount(()=>{
 }
 .progress-container{
   position: relative;
+  cursor: pointer;
   .progress-title{
     display: inline-block;
     position: absolute;
@@ -146,7 +196,12 @@ onBeforeUnmount(()=>{
     font-size: .8rem;
     font-weight: bold;
   }
+  .circle-progress,.normal-progress{
+    width: 100%;
+    height: 100%;
+  }
 }
+/*圆形进度条相关样式*/
 .progress-box{
   position: relative;
   margin: 0 auto;
@@ -204,6 +259,45 @@ onBeforeUnmount(()=>{
   }
   100%{
     transform: rotate(var(--percent));
+  }
+}
+/*条形进度条相关样式*/
+.normal-progress{
+  position: relative;
+  min-width: 1rem;
+  min-height: 4px;
+  border-radius: 3rem;
+  background-color: var(--bar-bg-color);
+  &:hover{
+    transform: scale(1.1);
+    box-shadow: #dcd8d8 0 0 2px 2px;
+    transition: transform .5s;
+  }
+  .progress-bar-normal{
+    position: relative;
+    width: 0;
+    height: 100%;
+    background-color: var(--bar-color);
+    border-radius: inherit;
+    animation: beLong 1s ease-in;
+    animation-fill-mode: forwards;
+  }
+  .progress-bar-normal::after{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    left: 100%;
+    height: 100%;
+    content:attr(data-content-after);
+  }
+}
+@keyframes beLong {
+  0%{
+    width:0;
+  }
+  100%{
+    width: var(--progress);
   }
 }
 </style>

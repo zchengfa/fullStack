@@ -123,7 +123,9 @@
                 <span v-show="!item['username']">{{dealUserPhoneNumber(item['account'])}}</span>
                 <span>{{dealBigNumber(item['totalConsumption'])}}</span>
               </div>
-              <progress-bar class="rank-bar" :progress="item['percent']" :item='index'></progress-bar>
+              <circle-progress class="rank-bar" progress-type="normal" :percent="item['percent']" :item='index'></circle-progress>
+
+              <!--              <progress-bar class="rank-bar" :progress="item['percent']" :item='index'></progress-bar>-->
             </div>
           </div>
           <div class="none-rank" v-else>暂无用户上榜</div>
@@ -147,7 +149,8 @@
                 <span>{{dealBigNumber(item['sales'])}}</span>
                 <span>{{dealBigNumber(item['consumption'])}}</span>
               </div>
-              <progress-bar class="rank-bar" :progress="item['percent']" :item='index+rank.userConsumption.length'></progress-bar>
+              <circle-progress class="rank-bar" progress-type="normal" :percent="item['percent']" :item='index+rank.userConsumption.length'></circle-progress>
+<!--              <progress-bar class="rank-bar" :progress="item['percent']" :item='index+rank.userConsumption.length'></progress-bar>-->
             </div>
           </div>
           <div class="none-rank" v-else>暂无用户上榜</div>
@@ -169,7 +172,8 @@
                 <span>{{item['word']}}</span>
                 <span>{{dealBigNumber(item['search_count'])}}</span>
               </div>
-              <progress-bar class="rank-bar" :progress="item['percent']" :item='index+rank.userConsumption.length+rank.productSales.length'></progress-bar>
+              <circle-progress class="rank-bar" progress-type="normal" :percent="item['percent']" :item='index+rank.userConsumption.length+rank.productSales.length'></circle-progress>
+<!--              <progress-bar class="rank-bar" :progress="item['percent']" :item='index+rank.userConsumption.length+rank.productSales.length'></progress-bar>-->
             </div>
           </div>
           <div class="none-rank" v-else>暂无用户上榜</div>
@@ -478,6 +482,10 @@ export default defineComponent({
     border-radius: .2rem;
     background-color: rgb(242, 236, 247);
     overflow-y: scroll;
+    .rank-bar{
+      width: 100%;
+      height: .6rem;
+    }
     h5{
       font-size: .9rem;
       border-radius: .1rem;

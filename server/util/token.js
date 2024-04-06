@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-let secretOrPrivateKey = 'mallSecretOrPrivateKey'
+let secretOrPrivateKey = process.env.JWT_PRIVATE_KEY
 function createToken (params,expiresTime) {
 
 

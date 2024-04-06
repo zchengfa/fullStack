@@ -1,9 +1,9 @@
 const config = {
-    host:'smtp.qq.com',
-    port:'465',
+    host:process.env.MAILER_HOST,
+    port:process.env.MAILER_PORT,
     auth: {
-        user:'3398210751@qq.com',
-        pass:'wzxwnawnknsfdafc'
+        user:process.env.MAILER_USER,
+        pass:process.env.MAILER_PASS
     }
 }
 

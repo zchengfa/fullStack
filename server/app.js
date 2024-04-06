@@ -1,3 +1,4 @@
+require('dotenv').config()
 //导入express模块
 const express = require('express')
 const http = require('http')
@@ -280,6 +281,7 @@ function connectSqlTest(table) {
  return new Promise((resolve, reject)=>{
    connection.query(mysql_query.selectAll(table), (err) => {
      if (err) {
+       console.log(err,process.env.MYSQL_USER)
        reject('mysql数据库出现异常，请检查是否开启sql服务')
      } else {
        resolve('mysql数据库运行正常')

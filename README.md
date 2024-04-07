@@ -1,13 +1,12 @@
 # mall
 
 #### 介绍
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
-
-#### 软件架构
-软件架构说明
-
+mall是关于商城的一个项目，该项目中具有前端（web）、后端（server）以及后台管理（admin）三个子项目，分别对应了商城页面、商城接口以及商城后台管理。
+该项目实现了商品的详情、收藏、加入购物车、购物车的管理，目前已对接了支付宝沙盒环境支付，可以使用qq邮箱进行注册账号，商城后台可以对商品进行管理，如：上下架、编辑、删除、添加、轮播图管理、数据统计
+#### 项目目录结构
+1. [web目录结构](./web/directoryList.md)
+2. [server目录结构](./server/directoryList.md)
+3. [admin目录结构](./admin/directoryList.md)
 
 #### 安装教程
 
@@ -39,15 +38,40 @@ Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN�
 4.  新建 Pull Request
 
 
-#### 特技
+#### 技术栈
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+1. 前端（web）：<span style="margin:.5rem 0;display:inline-block;padding:.5rem;background-color: #4158D0; background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%); color:#fff;font-weight:bold;text-decoration: underline;">vue2 + vue-router + vuex + socket.io-client</span>
+2. 后端（server）：<span style="margin:.5rem 0;display:inline-block;padding:.5rem;background-color: #85FFBD;background-image: linear-gradient(45deg, #85FFBD 0%, #FFFB7D 100%);color:blue;font-weight:bold;text-decoration: underline;">node + express + mysql + mongoose + nodemailer + socket.io + Alipay</span>
+3. 后台管理（admin）：<span style="margin:.5rem 0;display:inline-block;padding:.5rem;background-color: #FA8BFF; background-image: linear-gradient(135deg, #FA8BFF 0%, #2BD2FF 52%, #2BFF88 90%); color:yellow;font-weight:bold;text-decoration: underline;">vue3 + vue-router + pinia + Element-plus + Echart</span>
 
+#### 项目预览图
+1. <h6 style="color:orange">商城预览图</h6>
+   <div style="display: flex;flex-wrap: wrap;justify-content: flex-start;align-items: center;">
+    <img style="margin: 1rem;width: 200px;" src="./ScreenShot/web/home.png" alt="首页"/>
+    <img style="margin: 1rem;width: 200px;" src="./ScreenShot/web/hot_event.png" alt="热点事件"/>
+    <img style="margin: 1rem;width: 200px;" src="./ScreenShot/web/detail.png" alt="详情"/>
+    <img style="margin: 1rem;width: 200px;" src="./ScreenShot/web/login.png" alt="登录"/>
+    <img style="margin: 1rem;width: 200px;" src="./ScreenShot/web/register.png" alt="注册"/>
+    <img style="margin: 1rem;width: 200px;" src="./ScreenShot/web/cart.png" alt="购物车"/>
+    <img style="margin: 1rem;width: 200px;" src="./ScreenShot/web/mine.png" alt="我的"/>
+    <img style="margin: 1rem;width: 200px;" src="./ScreenShot/web/order_detail.png" alt="订单详情"/>
+    <img style="margin: 1rem;width: 200px;" src="./ScreenShot/web/order_result.png" alt="订单结果"/>
+    <img style="margin: 1rem;width: 200px;" src="./ScreenShot/web/pay.png" alt="支付"/>
+    <img style="margin: 1rem;width: 200px;" src="./ScreenShot/web/pay1.png" alt="支付"/>
+    <img style="margin: 1rem;width: 200px;" src="./ScreenShot/web/pay2.png" alt="支付"/>
+    <img style="margin: 1rem;width: 200px;" src="./ScreenShot/web/pay3.png" alt="支付"/>
+   </div>
+
+2. <h6 style="color:orange">商城后台管理预览图</h6>
+   ![登录](./ScreenShot/admin/login.png)
+   ![登录](./ScreenShot/admin/shop.png)
+   ![登录](./ScreenShot/admin/order.png)
+   ![登录](./ScreenShot/admin/preferent.png)
+   ![登录](./ScreenShot/admin/seckill.png)
+   ![登录](./ScreenShot/admin/user.png)
+   ![登录](./ScreenShot/admin/banner.png)
+   ![登录](./ScreenShot/admin/data.png)
+   ![登录](./ScreenShot/admin/data2.png)
 
 #### 项目中遇到的问题
 

@@ -42,17 +42,17 @@ mall是关于商城的一个项目，该项目中具有前端（web）、后端�
 
 <div>
    <h6>1. 前端（web）：</h6>
-   <div style="margin:.5rem 0;padding:.5rem;background-color: #4158D0; background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%); color:#fff;font-weight:bold;text-decoration: underline;">vue2 + vue-router + vuex + socket.io-client</div>
+   <span style="margin:.5rem 0;display:inline-block;padding:.5rem;background-color: #4158D0; background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%); color:#fff;font-weight:bold;text-decoration: underline;">vue2 + vue-router + vuex + socket.io-client</span>
 </div>
 
 <div>
    <h6>2. 后端（server）：</h6>
-   <div style="margin:.5rem 0;padding:.5rem;background-color: #85FFBD;background-image: linear-gradient(45deg, #85FFBD 0%, #FFFB7D 100%);color:blue;font-weight:bold;text-decoration: underline;">node + express + mysql + mongoose + nodemailer + socket.io + Alipay</div>
+   <span style="margin:.5rem 0;display:inline-block;padding:.5rem;background-color: #85FFBD;background-image: linear-gradient(45deg, #85FFBD 0%, #FFFB7D 100%);color:blue;font-weight:bold;text-decoration: underline;">node + express + mysql + mongoose + nodemailer + socket.io + Alipay</span>
 </div>
 
 <div>
    <h6>3. 后台管理（admin）：</h6>
-   <div style="margin:.5rem 0;padding:.5rem;background-color: #FA8BFF; background-image: linear-gradient(135deg, #FA8BFF 0%, #2BD2FF 52%, #2BFF88 90%); color:yellow;font-weight:bold;text-decoration: underline;">vue3 + vue-router + pinia + Element-plus + Echart</div>
+   <span style="margin:.5rem 0;display:inline-block;padding:.5rem;background-color: #FA8BFF; background-image: linear-gradient(135deg, #FA8BFF 0%, #2BD2FF 52%, #2BFF88 90%); color:yellow;font-weight:bold;text-decoration: underline;">vue3 + vue-router + pinia + Element-plus + Echart</span>
 </div>
 
 #### 项目预览图

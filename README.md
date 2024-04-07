@@ -63,15 +63,17 @@ mall是关于商城的一个项目，该项目中具有前端（web）、后端�
    </div>
 
 2. <h6 style="color:orange">商城后台管理预览图</h6>
-   ![登录](./ScreenShot/admin/login.png)
-   ![登录](./ScreenShot/admin/shop.png)
-   ![登录](./ScreenShot/admin/order.png)
-   ![登录](./ScreenShot/admin/preferent.png)
-   ![登录](./ScreenShot/admin/seckill.png)
-   ![登录](./ScreenShot/admin/user.png)
-   ![登录](./ScreenShot/admin/banner.png)
-   ![登录](./ScreenShot/admin/data.png)
-   ![登录](./ScreenShot/admin/data2.png)
+  <div >
+    <img src="./ScreenShot/admin/login.png" alt="登录"/>
+    <img src="./ScreenShot/admin/shop.png" alt="商品管理"/>
+    <img src="./ScreenShot/admin/banner.png" alt="轮播图管理"/>
+    <img src="./ScreenShot/admin/preferent.png" alt="优惠管理"/>
+    <img src="./ScreenShot/admin/seckill.png" alt="秒杀管理"/>
+    <img src="./ScreenShot/admin/user.png" alt="用户管理"/>
+    <img src="./ScreenShot/admin/order.png" alt="订单管理"/>
+    <img src="./ScreenShot/admin/data.png" alt="统计"/>
+    <img src="./ScreenShot/admin/data2.png" alt="统计"/>
+   </div>
 
 #### 项目中遇到的问题
 

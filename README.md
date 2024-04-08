@@ -2,7 +2,7 @@
 
 #### 介绍
 mall是关于商城的一个项目，该项目中具有`前端（web）、后端（server）以及后台管理（admin）`三个子项目，分别对应了商城页面、商城接口以及商城后台管理。
-该项目实现了`商品的详情、收藏、加入购物车、购物车的管理`，目前已对接了支付宝沙盒环境支付，可以使用qq邮箱进行注册账号，商城后台可以对商品进行管理，如：上下架、编辑、删除、添加、轮播图管理、数据统计
+该项目实现了`商品的详情、收藏、加入购物车、购物车的管理`，目前已对接了支付宝沙盒环境支付，可以使用qq邮箱进行注册账号，商城后台可以对商品进行管理，如：`上下架、编辑、删除、添加、轮播图管理、数据统计`
 #### 项目目录结构
 1. [web目录结构](./web/directoryList.md)
 2. [server目录结构](./server/directoryList.md)
@@ -16,17 +16,39 @@ mall是关于商城的一个项目，该项目中具有`前端（web）、后端
 #### 使用说明
 
 1. web(前端)
-* 1.1 通过终端进入项目中的 &nbsp; web&nbsp; 文件夹
+* 1.1 通过终端进入项目中的 `web` 文件夹
 * 1.2 执行`npm install`命令安装项目依赖
 * 1.3 执行`npm run serve`命令启动项目
 
 2. server(后端node)
-* 2.1 通过终端进入项目中的 &nbsp; server&nbsp; 文件夹
+* 2.1 通过终端进入项目中的 `server` 文件夹
 * 2.2 执行`npm install`命令安装项目依赖
 * 2.3 执行`npm run serve`命令启动项目
 
+<h6 style="color:red;" > 注：启动服务前，请在项目的根目录中创建一个.env文件，并设置好一下几个变量</h6>
+<div style="margin-left:1rem;padding:.5rem;width:15rem;display: flex;flex-wrap: wrap;justify-content: space-evenly;align-items: center;background-image: linear-gradient(43deg, #dc5b4f 0%, #C850C0 46%, #2a5ed2 100%);">
+   <a style="color: #41e1d4;text-decoration: underline;" href="https://note.youdao.com/s/M99mvkbQ">支付宝沙箱支付配置教程</a>
+</div>
+<div style="padding: 1rem;display: flex;flex-wrap:wrap;justify-content: space-between;align-items: flex-start;background-color: #282c34;color: #cb56f1;" >
+   <span style="margin-top:1rem;padding:.5rem;background-color: #000">ALIPAY_APP_ID（支付宝沙箱应用APP_ID）</span>
+   <span style="margin-top:1rem;padding:.5rem;background-color: #000">ALIPAY_SIGN_TYPE（支付宝开放平台助手中的签名算法类型）</span>
+   <span style="margin-top:1rem;padding:.5rem;background-color: #000">ALIPAY_GATEWAY（支付宝沙箱支付网关）</span>
+   <span style="margin-top:1rem;padding:.5rem;background-color: #000">ALIPAY_PUBLIC_KEY（支付宝开发助手里生成的公钥）</span>
+   <span style="margin-top:1rem;padding:.5rem;background-color: #000">ALIPAY_PRIVATE_KEY（支付宝开发助手里生成的私钥）</span>
+   <span style="margin-top:1rem;padding:.5rem;background-color: #000">MYSQL_HOST（MYSQL数据库的host）</span>
+   <span style="margin-top:1rem;padding:.5rem;background-color: #000">MYSQL_USER（MYSQL数据库的账户名）</span>
+   <span style="margin-top:1rem;padding:.5rem;background-color: #000">MYSQL_PASSWORD（MYSQL数据库的密码）</span>
+   <span style="margin-top:1rem;padding:.5rem;background-color: #000">MYSQL_DATABASE（MYSQL数据库的数据库名）</span>
+   <span style="margin-top:1rem;padding:.5rem;background-color: #000">MONGODB_ADDRESS（mongodb数据库的地址）</span>
+   <span style="margin-top:1rem;padding:.5rem;background-color: #000">JWT_PRIVATE_KEY（生成验证token所需的密钥）</span>
+   <span style="margin-top:1rem;padding:.5rem;background-color: #000">MAILER_HOST（邮箱host）</span>
+   <span style="margin-top:1rem;padding:.5rem;background-color: #000">MAILER_PORT（邮箱端口）</span>
+   <span style="margin-top:1rem;padding:.5rem;background-color: #000">MAILER_USER（邮箱用户）</span>
+   <span style="margin-top:1rem;padding:.5rem;background-color: #000">MAILER_PASS（邮箱密码）</span>
+</div>
+
 3. admin(后台管理)
-* 3.1 通过终端进入项目中的 &nbsp; admin&nbsp; 文件夹
+* 3.1 通过终端进入项目中的 `admin` 文件夹
 * 3.2 执行`npm install`命令安装项目依赖
 * 3.3 执行`npm run vite`命令启动项目
 

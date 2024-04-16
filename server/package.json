@@ -5,8 +5,11 @@
   "main": "index.js",
   "scripts": {
     "serve": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pkgwin": "pkg . --t node18-win-x64 -d --output mall-win",
+    "pkglinux": "pkg . --t node18-win-x64 -d --output mall-linux",
+    "pkgmacos": "pkg . --t node18-win-x64 -d --output mall-macos"
   },
+  "bin": "app.js",
   "author": "ZCF",
   "license": "MIT",
   "dependencies": {

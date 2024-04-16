@@ -24,6 +24,7 @@ mall是关于商城的一个项目，该项目中具有`前端（web）、后端
 * 2.1 通过终端进入项目中的 `server` 文件夹
 * 2.2 执行`npm install`命令安装项目依赖
 * 2.3 执行`npm run serve`命令启动项目
+* 2.4 通过运行`.exe`文件也可启动项目（若您是在`windows`环境可直接运行`mall-win.exe`文件启动，`linux`环境请先执行`npm run pkglinux`指令，再运行`mall-linux.exe`文件，`macos`环境先执行`npm run pkgmacos`指令，再运行`mall-macos.exe`文件）
 
 <h6 style="color:red;" > 注：启动服务前，请在项目的根目录中创建一个.env文件，并设置好一下几个变量</h6>
 <div style="margin-left:1rem;padding:.5rem;width:15rem;display: flex;flex-wrap: wrap;justify-content: space-evenly;align-items: center;background-image: linear-gradient(43deg, #dc5b4f 0%, #C850C0 46%, #2a5ed2 100%);">

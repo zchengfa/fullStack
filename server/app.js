@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config({path:'.env.development.local'})
 //导入express模块
 const express = require('express')
 const http = require('http')

@@ -11,6 +11,8 @@ import 'element-plus/theme-chalk/index.css'
 import toast from "./components/common/toast";
 import loading from "./components/common/loading";
 
+import dataV from '@dataview/datav-vue3'
+
 import mitt from "mitt";
 
 const app = createApp(App)
@@ -18,6 +20,9 @@ const app = createApp(App)
 //将事件总线注册为全局属性
 app.config.globalProperties.$bus = mitt()
 
+//安装dataV
+// @ts-ignore
+app.use(dataV)
 
 //安装ElementPlus
 app.use(ElementPlus,{})
@@ -87,7 +92,7 @@ router.beforeEach((to,from,next)=>{
 
 //全局自定义指令
 app.directive('permission',{
-    mounted(el,binding){
+    mounted(el:any,binding: any){
         let permission = binding.value.permission
         let effect = binding.value.effect
         //判断当前用户在当前路由中是否具备对应权限

@@ -56,6 +56,7 @@ export default defineComponent({
       return "background-color: #88da0b;color:#fff"
     }
 
+    //@ts-ignore
     const rowStyle = ({rowIndex})=>{
       if(rowIndex%2===0){
         return "background:#dddddd;"

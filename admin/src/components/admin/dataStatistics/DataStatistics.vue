@@ -188,11 +188,12 @@ import {defineComponent, reactive,computed} from "vue";
 import PieChartStatistics from "./PieChartStatistics.vue";
 import BarChartStatistics from "./BarChartStatistics.vue";
 import UserLocationChartStatistics from "./UserLocationChartStatistics.vue";
-import {ElIcon,ElButton} from 'element-plus'
+import {ElButton} from 'element-plus'
 import {Warning} from '@element-plus/icons-vue'
 import ProgressBar from '../../common/ProgressBar.vue'
 import {getStatisticsData} from '../../../network/request'
 import CircleProgress from "../../common/CircleProgress.vue";
+import { shopStore } from "../../../pinia/pinia";
 
 export default defineComponent({
   name: "DataStatistics",
@@ -255,7 +256,6 @@ export default defineComponent({
     //获取统计所需要的数据
     function getSData(){
       getStatisticsData().then(res=>{
-        //console.log(res.data)
         rank.userConsumption = dealPercent(res.data[0].userConsumption,'totalConsumption')
         rank.productSales = dealPercent(res.data[1].productSales,'sales')
         rank.words = dealPercent(res.data[2].words,'search_count')
@@ -270,7 +270,6 @@ export default defineComponent({
         })
         rank.percent = Math.round((rank.visitorCount/rank.totalVisCount)*100)
         rank.salesData = res.data[4].sales
-
       })
     }
     getSData()

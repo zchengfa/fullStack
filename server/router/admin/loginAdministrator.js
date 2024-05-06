@@ -189,6 +189,12 @@ module.exports = app => {
                                   children_name:'数据监控',
                                   path:'/dataMonitor',
                                   rights:['delete']
+                                },
+                                {
+                                  id:index + new Date().getTime(),
+                                  children_name:'数据可视化',
+                                  path:'/dataVisualization',
+                                  rights:[]
                                 }
                               ]
                               break;

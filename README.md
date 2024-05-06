@@ -496,8 +496,50 @@ Vue.use(VueLazyload)
 <img v-lazy="address" alt="picture">
 ```
 
+##### 十五、在admin中安装@dataview/datav-vue3后报错
+###### 报错1：`Failed to resolve entry for package "@dataview/datav-vue3". The package may have incorrect main/module/exports specified in its package.json.`
+   
+    解决：修改@dataview/datav-vue3文件夹中的package.json文件
+    将`"module": "./es/index.js"`修改成`"module": "./es/index.mjs"`, 
 
+###### 报错2：`does not provide an export named 'default' `
 
+    解决：修改@dataview/datav-vue3文件夹中的index.mjs文件
+ ```javascript
+//添加下列方法
+export default {
+  install: (app, options) => {
+    const components = [
+	  D,
+	  E,
+	  G,
+	  I,
+	  K,
+	  g,
+	  C,
+	  P,
+	  h,
+	  k,
+	  u,
+	  w,
+	  z,
+	  N,
+	  Q,
+	  S,
+	  U,
+	  W,
+	  Y,
+	  _,
+	  oo,
+	  eo,
+	];
+	components.map((component) => {
+		app.component(component.name, component);
+	});
+  }
+}
+
+ ```
 
 
 

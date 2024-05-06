@@ -13,6 +13,12 @@ import {
 const {props} = getCurrentInstance() as ComponentInternalInstance
 //定义默认颜色
 defineProps({
+  breathe:{
+    type:Boolean,
+    default(){
+      return false
+    }
+  },
   containerBG:{
     default(){
       return '#ded9d9'
@@ -164,7 +170,7 @@ onBeforeUnmount(()=>{
   <div class="progress-container">
     <div class="circle-progress" v-if="props.progressType === 'circle'">
       <label class="progress-title" v-if="props.label">{{props.label}}</label>
-      <div class="progress-box">
+      <div class="progress-box" :class="{'breathe':props.breathe}">
         <div class="progress-center">
           <span class="progress-text">{{currentProgress}}</span>
           <span class="character">%</span>
@@ -206,8 +212,8 @@ onBeforeUnmount(()=>{
   position: relative;
   margin: 0 auto;
   width: 100%;
-  min-width: 4rem;
-  min-height: 4rem;
+  min-width: 3rem;
+  min-height: 3rem;
   height: 100%;
   border-radius: 50%;
   overflow: hidden;
@@ -216,6 +222,9 @@ onBeforeUnmount(()=>{
     box-shadow: #dcd8d8 0 0 10px 10px;
     transition: transform .5s;
   }
+}
+.breathe{
+  animation: breathe 2s ease-out infinite;
 }
 
 .progress-center{
@@ -259,6 +268,20 @@ onBeforeUnmount(()=>{
   }
   100%{
     transform: rotate(var(--percent));
+  }
+}
+@keyframes breathe {
+  0% {
+    box-shadow: 0 0 10px rgba(212, 202, 202, 0.3);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(233, 218, 218, 0.6);
+    transform: scale(1.1);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(228, 221, 221, 0.3);
+    transform: scale(1);
   }
 }
 /*条形进度条相关样式*/

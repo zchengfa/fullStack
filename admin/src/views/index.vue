@@ -6,8 +6,7 @@ import {
   onMounted,
   ref,
   getCurrentInstance,
-  ComponentInternalInstance,
-  onBeforeUpdate, onUpdated, onBeforeUnmount, onUnmounted, onActivated, onDeactivated
+  ComponentInternalInstance
 } from "vue";
 import { getTime, getWeek, getYear } from "../common/utils";
 import { storeToRefs } from "pinia";

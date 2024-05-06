@@ -1,7 +1,7 @@
 import {createRouter, createWebHashHistory, createWebHistory} from "vue-router";
 import { userStore } from "../pinia/pinia";
 
-const admin = () => import('../views/Admin.vue')
+//const admin = () => import('../views/Admin.vue')
 const login = () => import('../components/Login.vue')
 
 const index = () => import('../views/index.vue')
@@ -16,7 +16,8 @@ const routeMapping:any = {
     '/seckill':{path:'seckill',component: () => import('../components/admin/seckillManage/SeckillManage.vue')},
     '/order':{path:'order',component: () => import('../components/admin/orderManage/OrderManage.vue')},
     '/dataMonitor':{path:'dataMonitor',component: () => import('../components/admin/dataStatistics/DataStatistics.vue')},
-    '/preferential':{path:'preferential',component: () => import('../components/admin/preferentialManage/PreferentialManage.vue')}
+    '/preferential':{path:'preferential',component: () => import('../components/admin/preferentialManage/PreferentialManage.vue')},
+    '/dataVisualization':{path:'dataVisualization',component: () => import('../components/admin/dataStatistics/LargeScreenVisualization.vue')},
 }
 
 const routes = [

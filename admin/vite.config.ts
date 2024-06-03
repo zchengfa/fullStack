@@ -1,10 +1,25 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { resolve } from 'path'
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+// @ts-ignore
+import path from 'path'
+
 
 // https://vitejs.dev/config/
+// @ts-ignore
+// @ts-ignore
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    AutoImport({
+      resolvers: [ElementPlusResolver()],
+    }),
+    Components({
+      resolvers: [ElementPlusResolver()],
+    }),
+  ],
   server:{
     host:'0.0.0.0',
     port:3001
@@ -21,6 +36,18 @@ export default defineConfig({
     //   }
     // }
   },
+  build: {
+    rollupOptions:{
+      output:{
+        manualChunks(id){
+          if(id.includes('node_modules')){
+            // 通过文件路径分割 node_modules 依赖
+            return id.toString().split("node_modules/")[1].split("/")[0].toString()
+          }
+        }
+      }
+    }
+  }
   /**
    * @description resolve设置别名，当引入路径中出现了@表示从src文件夹开始查找
   */

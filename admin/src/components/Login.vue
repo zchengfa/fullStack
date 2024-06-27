@@ -1,8 +1,12 @@
 <template>
   <el-container class="mall-login-container">
     <el-header class="mall-login-header">mall商城管理平台</el-header>
+    <el-header class="mall-login-header-phone" :class="{'mall-login-header-phone-trans' : showFormPhone}">
+      <span>WELCOME</span>
+      <span>欢迎使用mall管理平台</span>
+    </el-header>
     <el-main class="mall-login-main">
-      <el-row class="mall-login-content">
+      <el-row class="mall-login-content" :class="{'mall-login-con-phone': showFormPhone}">
         <el-col :span="5" class="content-col">
           <el-form
               :model="ruleForm"
@@ -29,8 +33,8 @@
               ></el-input>
             </el-form-item>
             <el-form-item class="form-item">
-              <el-button class="login-button" type="primary" @click="loginAdmin($refs.ruleForm,ruleForm.account,ruleForm.pass)">登录</el-button>
-              <el-button class="forget-password" @click="enterResetPage()">忘记密码？</el-button>
+              <el-button class="login-button form-item-btn" type="primary" @click="loginAdmin($refs.ruleForm,ruleForm.account,ruleForm.pass)">登录</el-button>
+              <el-button class="forget-password form-item-btn" @click="enterResetPage()">忘记密码？</el-button>
             </el-form-item>
           </el-form>
         </el-col>
@@ -51,7 +55,7 @@
 
 <script lang="ts">
 import { encrypt } from "../common/crypt";
-import { defineComponent } from "vue";
+import {defineComponent, ref} from "vue";
 import { useRouter } from "vue-router";
 import { getAdministratorInfo, loginAdministrator } from "../network/request";
 import { userStore } from "../pinia/pinia";
@@ -71,10 +75,11 @@ export default defineComponent( {
     let userStorePinia = userStore()
     const { token } = storeToRefs(userStorePinia)
 
+    let showFormPhone = ref(false)
 
     return {
-        enterResetPage, userStorePinia,token,addDynamicRoutes
-
+        enterResetPage, userStorePinia,token,addDynamicRoutes,
+        showFormPhone
     }
   },
   data() {
@@ -161,14 +166,27 @@ export default defineComponent( {
         this.loginAdmin(this.$refs.ruleForm,this.ruleForm.account,this.ruleForm.pass)
       }
 
+    },
+    isMobile(){
+      let w = window.innerWidth;
+      this.showFormPhone = w < 500;
     }
   },
+  mounted() {
+    this.isMobile()
+    window.onresize = ()=>{
+      this.isMobile()
+    }
+  }
 })
 </script>
 
 <style scoped>
 .mall-login-container{
   margin: 0 auto;
+}
+.mall-login-header-phone{
+  display: none;
 }
 .mall-login-header{
   width: 100%;
@@ -220,19 +238,44 @@ export default defineComponent( {
   margin: 8vh auto 0;
 }
 @media screen and (max-width: 500px){
+  .mall-login-header-phone{
+    position: absolute;
+    left: -50%;
+    width: 200px;
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    transform: translateY(100%) translateX(-50%);
+  }
+  .mall-login-header-phone-trans{
+    left: 50%;
+    transition: left .5s ease-in-out;
+  }
   .mall-login-header{
     display: none;
 
   }
   .mall-login-main{
+    padding: 0;
     height:100vh;
-    background-image: url("../assets/image/login/bg.jpeg");
+    background-image: url("../assets/image/login/bg.jpg");
   }
   .mall-login-main .mall-login-content{
     position: relative;
-    top: 50%;
-    background-color: rgba(75, 72, 72, 0.4 );
-    transform: translateY(-50%);
+    top: 24%;
+    width: 100vw;
+    height: calc(100vh - 24vh);
+    background-color: #fff;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    transform: translateY(100%);
+  }
+  .mall-login-main .mall-login-con-phone{
+    transform: translateY(0);
+    transition: transform .5s ease-in-out;
   }
   .mall-login-content .content-col{
     margin:  0 auto;
@@ -242,6 +285,11 @@ export default defineComponent( {
   }
   .mall-login-footer{
     display: none;
+  }
+  .form-item-btn{
+    margin-right: 0;
+    width: 80%;
+    border-radius: 1rem;
   }
 }
 </style>

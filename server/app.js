@@ -275,7 +275,21 @@ function start(server) {
     console.log(`server服务已启动，端口号：(${port})`)
   })
 }
+const os = require('os');
 
+function getLocalIP() {
+  const interfaces = os.networkInterfaces();
+  for (const iface of Object.values(interfaces)) {
+    for (const config of iface) {
+      if (config.family === 'IPv4' && !config.internal) {
+        return config.address;
+      }
+    }
+  }
+  return '127.0.0.1'; // 如果没有找到，返回本地回环地址
+}
+
+console.log('Local IP Address:', getLocalIP());
 //查询一次数据库，以保证mysql数据库正常
 function connectSqlTest(table) {
  return new Promise((resolve, reject)=>{

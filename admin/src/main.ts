@@ -11,18 +11,12 @@ import 'element-plus/theme-chalk/index.css'
 import toast from "./components/common/toast";
 import loading from "./components/common/loading";
 
-import dataV from '@dataview/datav-vue3'
-
 import mitt from "mitt";
 
 const app = createApp(App)
 
 //将事件总线注册为全局属性
 app.config.globalProperties.$bus = mitt()
-
-//安装dataV
-// @ts-ignore
-app.use(dataV)
 
 //安装ElementPlus
 app.use(ElementPlus,{})

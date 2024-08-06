@@ -101,12 +101,12 @@ app.directive('permission',{
         // @ts-ignore
         if(metaArr.indexOf(permission) === -1){
 
-           //没有该权限
+           //没有该权限,disabled表示禁用状态，remove则表示删除当前按钮
             if(effect === 'disabled'){
                 el.disabled = true
                 el.classList.add('is-disabled')
             }
-            else{
+            else if(effect === 'remove'){
                 el.parentNode.removeChild(el)
             }
         }

@@ -9,20 +9,21 @@ const resetPassword = () => import('../components/ResetPassword.vue')
 const L = ()=> import('../components/admin/dataStatistics/UserLocationChartStatistics.vue')
 
 const routeMapping:any = {
-    '/goods':{path:'goods',component: () => import('../components/admin/shopManage/ShopManage.vue')},
-    '/user':{path:'user',component: () => import('../components/admin/memberManage/MemberManage.vue')},
-    '/banner':{path:'banner',component: () => import('../components/admin/swiperManage/SwiperManage.vue')},
-    '/grounding':{path:'grounding',component: () => import('../components/admin/groundManage/GroundManage.vue')},
-    '/seckill':{path:'seckill',component: () => import('../components/admin/seckillManage/SeckillManage.vue')},
-    '/order':{path:'order',component: () => import('../components/admin/orderManage/OrderManage.vue')},
-    '/dataMonitor':{path:'dataMonitor',component: () => import('../components/admin/dataStatistics/DataStatistics.vue')},
-    '/preferential':{path:'preferential',component: () => import('../components/admin/preferentialManage/PreferentialManage.vue')},
-    '/dataVisualization':{path:'dataVisualization',component: () => import('../components/admin/dataStatistics/LargeScreenVisualization.vue')},
+    '/goods':{path:'goods',name:'goods',component: () => import('../components/admin/shopManage/ShopManage.vue')},
+    '/user':{path:'user',name:'user',component: () => import('../components/admin/memberManage/MemberManage.vue')},
+    '/banner':{path:'banner',name:'banner',component: () => import('../components/admin/swiperManage/SwiperManage.vue')},
+    '/grounding':{path:'grounding',name:'grounding',component: () => import('../components/admin/groundManage/GroundManage.vue')},
+    '/seckill':{path:'seckill',name:'seckill',component: () => import('../components/admin/seckillManage/SeckillManage.vue')},
+    '/order':{path:'order',name:'order',component: () => import('../components/admin/orderManage/OrderManage.vue')},
+    '/dataMonitor':{path:'dataMonitor',name:'dataMonitor',component: () => import('../components/admin/dataStatistics/DataStatistics.vue')},
+    '/preferential':{path:'preferential',name:'preferential',component: () => import('../components/admin/preferentialManage/PreferentialManage.vue')},
+    '/dataVisualization':{path:'dataVisualization',name:'dataVisualization',component: () => import('../components/admin/dataStatistics/LargeScreenVisualization.vue')},
 }
 
 const routes = [
     {
         path:'/',
+        name:'/',
         redirect:'/index'
     },
     {
@@ -34,15 +35,18 @@ const routes = [
         },
     },
     {
+        name: 'login',
         path:'/login',
         component: login
     },
     {
         path: '/resetPassword',
+        name: 'resetPassword',
         component: resetPassword
     },
     {
         path: '/l',
+        name: 'l',
         component:L
     }
 ]

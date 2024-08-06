@@ -20,6 +20,11 @@ let router = useRouter()
 let userPinia = userStore()
 const { userInfo } = storeToRefs(userPinia)
 const { appContext } = getCurrentInstance() as ComponentInternalInstance
+const routesArr = router.getRoutes()
+const pathArr:any[] = []
+routesArr.forEach((item:any)=>{
+  pathArr.push(item.path)
+})
 
 const centerDialogVisible = ref(false)
 let navLogic = reactive({
@@ -47,11 +52,6 @@ const activeItem = (data:activePath)=>{
   })() :(()=>{
 
       //若该路由下的组件没有实现，提示用户
-      const routesArr = router.getRoutes() , pathArr:any[] = []
-      routesArr.forEach((item:any)=>{
-          pathArr.push(item.path)
-      })
-
       if(pathArr.indexOf('/index'+ data.index) === -1){
           ElMessage({
               type:'error',
@@ -83,6 +83,20 @@ const activeItem = (data:activePath)=>{
 }
 
 function confirmDialog(){
+  //删除动态添加的路由
+  let rights = userPinia.rights,targetsArr:string[] = []
+  routesArr.forEach((item:any)=>{
+    targetsArr.push(item.name)
+  })
+  rights.forEach((item:any)=>{
+    item.children?.forEach((child:any)=>{
+      let childName = child.path.replace('/','')
+      if(targetsArr.indexOf(childName) !== -1){
+        router.removeRoute(childName)
+      }
+    })
+  })
+
   //删除浏览器中存储的登录信息
   userPinia.setToken('')
   userPinia.setUserInfo(JSON.stringify({}))

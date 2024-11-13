@@ -1,5 +1,5 @@
 <template>
-  <div class="toast" v-show="isShow">
+  <div class="toast" id="MessageToast" v-show="isShow">
     <div class="message-box">
         <span class="tip">{{title}}</span>
       <span class="msg">{{message}}</span>

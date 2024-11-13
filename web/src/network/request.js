@@ -3,6 +3,7 @@ import axios from 'axios'
 import {URL} from "@/common/utils";
 import router from "../router";
 import store from "../store";
+import Vue from "vue";
 
 //导出获取热点视频数据函数
 export function getHotVideo(){
@@ -66,6 +67,12 @@ function axiosInterceptors(instance){
 
     return response
   }, (err) => {
+    if (store.state.loading){
+      //请求超时，关闭loading组件，并弹出提示框告知用户
+      store.dispatch('hideLoading').then(()=>{
+        Vue.prototype.$toast.showToast('请检查您的服务器是否出现错误',3000,'请求超时')
+      })
+    }
     return Promise.reject(err)
   })
 }

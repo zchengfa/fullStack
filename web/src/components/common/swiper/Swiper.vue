@@ -4,7 +4,8 @@
       <ul class="swiper-list">
         <li v-for="(item, index) in banner" v-show="index===mark" :key="index">
           <router-link :to="{name:'bannerDetail',query:{brand_id:item.brand_id,brand:item.brand,banner_image:item.banner_image}}" class="item">
-            <img :src="item.banner_image" alt="itemImage" @load="imageLoad">
+<!--            <img :src="item.banner_image" alt="itemImage" @load="imageLoad">-->
+            <image-loader :src="item.banner_image" @load="imageLoad" height="190px"></image-loader>
           </router-link>
         </li>
       </ul>
@@ -17,6 +18,7 @@
 
 <script>
   import SwiperItem from "@/components/common/swiper/SwiperItem"
+  import ImageLoader from "../imageLoader/ImageLoader.vue";
 
   export default {
     name: "Swiper",
@@ -35,7 +37,8 @@
       }
     },
     components:{
-      SwiperItem
+      SwiperItem,
+      ImageLoader
     },
     methods:{
       play(){

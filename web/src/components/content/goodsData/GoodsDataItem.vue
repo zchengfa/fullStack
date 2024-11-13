@@ -3,7 +3,8 @@
     <div class="list-box">
       <trademark></trademark>
       <div class="list-image" @click="itemClick">
-        <img v-lazy="list['imagePath'] || list['product_image']" alt="itemImage" class="image-data" @load="imageLoad">
+        <image-loader :src="list['imagePath'] || list['product_image']" @load="imageLoad" height="180px"></image-loader>
+<!--        <img v-lazy="list['imagePath'] || list['product_image']" alt="itemImage" class="image-data" @load="imageLoad">-->
         <!--      售罄-->
         <div class="sell-out" v-if="list['stocks']===0">
           <div class="sell-out-content">
@@ -43,6 +44,7 @@
 <script>
   import {changeUserProductCollectionStatus} from "@/network/home";
   import Trademark from "@/components/common/trademark/Trademark";
+  import ImageLoader from "../../common/imageLoader/ImageLoader.vue";
 
   export default {
     name: "GoodsDtaItem",
@@ -61,6 +63,7 @@
       }
     },
     components:{
+      ImageLoader,
       Trademark
     },
     computed:{
@@ -155,6 +158,7 @@
   }
   .price-box{
     width:70%;
+    text-align: left;
   }
   .love-box span:first-child{
     font-size: 1.01rem;

@@ -85,7 +85,7 @@ export default {
 
 <style scoped>
 .video-content{
-  width: 100vw;
+  width: 100%;
   height: calc(100vh - 44px - 6rem);
   overflow: hidden;
 }

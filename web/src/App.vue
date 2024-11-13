@@ -39,5 +39,9 @@
   .nav-bar .left img{
     transform: scale(.8);
   }
-
+  .back{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 </style>

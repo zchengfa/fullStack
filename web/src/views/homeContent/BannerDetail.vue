@@ -131,11 +131,7 @@ export default {
 .nav-bar{
   border-bottom: 1px solid #e1dcdc;
 }
-.nav-bar img{
-  margin-top: 25%;
-  width: 2rem;
-  transform: translateY(-25%);
-}
+
 .center-nav{
   font-size: 1.2rem;
 }

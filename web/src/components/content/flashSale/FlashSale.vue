@@ -1,9 +1,7 @@
 <template>
 <div class="flash-sale">
   <nav-bar class="nav">
-    <div slot="left" @click="goBack">
-      <img src="~assets/image/detail/back.svg" alt="back_icon">
-    </div>
+    <img src="~assets/image/detail/back.svg" alt="back_icon" slot="left" @click="goBack">
     <div slot="center">mall秒杀</div>
   </nav-bar>
   <Scroll ref="scroll" class="content">
@@ -135,13 +133,10 @@ span.active{
 }
 .nav div{
   height: 100%;
+  line-height: 44px;
   overflow: hidden;
 }
-.nav div img{
-  position: relative;
-  margin-top:25%;
-  transform: translateY(-25%);
-}
+
 .content{
   width: 100%;
   height: calc(100% - 44px);

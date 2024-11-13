@@ -42,7 +42,7 @@
     </el-main>
     <el-footer class="mall-login-footer">
       <el-row class="footer-row">
-        <el-col :span="10">版权所有 zcf 公司地址：广东省深圳市宝安区</el-col>
+        <el-col :span="10">版权所有 zcf 公司地址：**********</el-col>
       </el-row>
       <el-row class="footer-row">
         <el-col :span="10">

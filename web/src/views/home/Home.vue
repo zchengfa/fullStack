@@ -38,7 +38,7 @@
             <div class="zero-sale-time" v-else>
               <span class="sale-time-item">00:00:00</span>
             </div>
-            <div class="more-sale"><button @click="toMoreSale(flashSaleData[0]['product_id'])">更多秒杀></button></div>
+            <div class="more-sale"><button @click="toMoreSale()">更多秒杀></button></div>
           </div>
           <div class="sale-list" ref="sale">
             <ul ref="saleUl">
@@ -244,10 +244,10 @@
           //this.flashSaleData.length?this.$refs.saleUl.style.width = this.flashSaleData.length * 4 *19 +'px':null
         })
       },
-      toMoreSale(product_id){
+      toMoreSale(){
         //根据product_id来判断当前时间是否有秒杀商品，没有时提示用户，有有就直接进入指定页面
-        if(product_id){
-          this.$router.push({path:'/flashSale',query:{'product_id':product_id}})
+        if(this.flashSaleData.length){
+          this.$router.push({path:'/flashSale',query:{'product_id':this.flashSaleData[0]['product_id']}})
         }
         else{
           this.$toast.showToast('当前时间没有秒杀商品，请等待下一次秒杀活动的开启',3000,'操作提示：');

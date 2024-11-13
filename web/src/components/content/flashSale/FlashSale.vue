@@ -14,7 +14,7 @@
         </li>
       </ul>
     </div>
-    <div class="sale-goods">
+    <div class="sale-goods" v-if="flashSaleData.length">
       <div v-for="(sale,saleIndex) in flashSaleData" :key="saleIndex" class="goods-item" @click="detail(sale['product_id'],sale['product_type'],sale['sell_type'],saleIndex)">
         <div class="image-box">
           <img :src="sale['product_image']" @load="imageLoadOver" alt="product_image">
@@ -31,6 +31,7 @@
         </div>
       </div>
     </div>
+    <empty v-else class="flash-sale-empty" empty-message="当前时间没有可秒杀的商品"></empty>
   </Scroll>
 </div>
 </template>
@@ -41,11 +42,13 @@ import NavBar from "@/components/common/navbar/NavBar.vue";
 import Scroll from "@/components/common/scroll/Scroll.vue";
 import {getFlashSaleData} from "@/network/home";
 import {debounce} from "@/common/utils";
+import Empty from "../../common/empty/Empty.vue";
 
 export default {
   name: "FlashSale",
   mixins:[backPreviousPageMixins],
   components:{
+    Empty,
     NavBar,
     Scroll
   },
@@ -112,6 +115,12 @@ export default {
 </script>
 
 <style scoped>
+.flash-sale-empty{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: transparent;
+}
 .active{
   font-size: 1.1rem;
   font-weight: bold;

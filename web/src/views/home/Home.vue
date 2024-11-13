@@ -18,7 +18,7 @@
         <Search class="search" ref="search"></Search>
       </div>
     </nav-bar>
-    <div v-show="isIndex" class="index-content">
+    <div v-show="isIndex && !hasError" class="index-content">
       <tab-control v-show="isTabFixed" ref="tabControlOne" class="tab-control-box" :title="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
       <Scroll class="content" ref="scroll"  :probe-type="3" @scroll="contentScroll"
               :pull-up-load="true" @pullingUp="loadMore">
@@ -57,6 +57,7 @@
     </div>
     <hot-video v-if="!isIndex"></hot-video>
     <back-top v-show="isShowBackTop" @click.native="backTop"></back-top>
+    <empty class="home-empty" empty-message="请求超时，请检查您的服务器" v-show="hasError && !$store.state.loading"></empty>
 	</div>
 </template>
 
@@ -72,6 +73,7 @@
   import Search from '@/components/content/search/Search.vue'
   import ColorMenu from "components/content/colorMenu/ColorMenu.vue";
   import HotVideo from "components/content/hotVideo/HotVideo.vue";
+  import Empty from "../../components/common/empty/Empty.vue";
 
   import {home_menu} from '@/assets/JSON/data'
   import {backTopMixins,refreshScrollMixins,contactCustomerMixins} from "@/common/mixins/mixins";
@@ -116,7 +118,8 @@
         isFinishFlashSale:false,
         flashSaleHour:null,
         flashSaleData:[],
-        saleKey:0
+        saleKey:0,
+        hasError:true,
       }
     },
     components:{
@@ -128,7 +131,8 @@
       GoodsData,
       Search,
       ColorMenu,
-      HotVideo
+      HotVideo,
+      Empty
     },
 		watch:{
 			scrollHeight(new_height,old_height){
@@ -194,11 +198,12 @@
       getHomeMultiData(){
         getHomeMultiData().then(res =>{
           this.banner =res.data
+          this.hasError = false
           //let result = res.data[0].multiData[0]['iconList']
           // result ? this.menuList = result : null
           // result ? this.hasMenuData = true : this.hasMenuData = false
-        }).catch(err => {
-          console.log(err)
+        }).catch(() => {
+          this.hasError = true;
         })
       },
       getGoodsData(type){
@@ -240,7 +245,13 @@
         })
       },
       toMoreSale(product_id){
-        this.$router.push({path:'/flashSale',query:{'product_id':product_id}})
+        //根据product_id来判断当前时间是否有秒杀商品，没有时提示用户，有有就直接进入指定页面
+        if(product_id){
+          this.$router.push({path:'/flashSale',query:{'product_id':product_id}})
+        }
+        else{
+          this.$toast.showToast('当前时间没有秒杀商品，请等待下一次秒杀活动的开启',3000,'操作提示：');
+        }
       },
       refreshGoodsData(){
         this.goods = {
@@ -437,6 +448,12 @@
 </script>
 
 <style scoped>
+.home-empty{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: transparent;
+}
   .nav-title .active{
     background-color: #fff;
     color: #fd001e;

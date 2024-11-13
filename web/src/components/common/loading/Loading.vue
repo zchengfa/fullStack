@@ -3,7 +3,7 @@
   <div class="loader">
     <div class="loader-child"></div>
   </div>
-  <span>加载中...</span>
+  <span class="loading-text">加载中...</span>
 </div>
 </template>
 
@@ -43,9 +43,11 @@ export default {
   border-radius: 50%;
   background-color: #fff;
 }
-span{
+.loading-text{
+  display: block;
+  margin-top: 1rem;
   font-size: .9rem;
-  color: #fff;
+  color: #5c5858;
 }
 @keyframes circle {
   0%{

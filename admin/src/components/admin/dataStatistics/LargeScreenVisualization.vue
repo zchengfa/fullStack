@@ -147,8 +147,8 @@ div{
   }
 }
 .data-visualization-container{
-    position: absolute;
-    top: -3rem;
+    position: fixed;
+    top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
@@ -167,13 +167,13 @@ div{
       position: relative;
       flex: 0 1 28%;
       height: 90%;
-      
+
     }
     .visualization-center{
       flex: 0 1 44%;
       .charts-box{
         width: 100%;
-        height: 370px;
+        height: 40%;
       }
     }
     .left-top{

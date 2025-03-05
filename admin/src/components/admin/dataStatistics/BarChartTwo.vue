@@ -42,11 +42,6 @@ const resizeEcharts = (target:HTMLElement)=>{
   target.style.width = target.parentElement?.clientWidth + 'px'
   target.style.height = target.parentElement?.clientHeight + 'px'
 }
-
-const listener = ()=>{
-  resizeEcharts((document.getElementById('earth')) as HTMLElement)
-}
-
 onMounted(() => {
     let chartDom = document.getElementById('bar-chart-two')!;
     resizeEcharts(chartDom)
@@ -63,10 +58,10 @@ onMounted(() => {
         }
         return result
       })()
-    let seriesOneData:any[] = []  
-    let seriesTwoData:any[] = [] 
+    let seriesOneData:any[] = []
+    let seriesTwoData:any[] = []
     for (var i = 0; i < 100; i++) {
-       
+
         seriesOneData.push((Math.sin(i / 5) * (i / 5 - 10) + i / 6) * 5);
         seriesTwoData.push((Math.cos(i / 5) * (i / 5 - 10) + i / 6) * 5);
     }
@@ -165,11 +160,20 @@ onMounted(() => {
       },2100)
       myChart.setOption(option)
 
-  window.addEventListener('resize',listener)
+  window.addEventListener('resize',()=>{
+    myChart.resize({
+      width: document.getElementById('bar-chart-two')?.parentElement?.clientWidth,
+      height: document.getElementById('bar-chart-two')?.parentElement?.clientHeight,
+      animation: {
+        duration: 300,
+        easing: 'linear',
+      }
+    })
+  })
 })
 
 onBeforeUnmount(()=>{
-  window.removeEventListener('resize',listener)
+  window.onresize = null;
 })
 </script>
 

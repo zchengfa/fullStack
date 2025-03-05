@@ -11,10 +11,6 @@ const resizeEcharts = (target)=>{
   target.style.height = target.parentElement?.clientHeight + 'px'
 }
 
-const listener = ()=>{
-  resizeEcharts(document.getElementById('earth'))
-}
-
 onMounted(()=>{
 
   let chartDom = document.getElementById('earth');
@@ -51,11 +47,20 @@ onMounted(()=>{
 
   option && myChart.setOption(option);
 
-  window.addEventListener('resize',listener)
+  window.addEventListener('resize',()=>{
+    myChart.resize({
+      width: document.getElementById('earth').parentElement?.offsetWidth,
+      height: document.getElementById('earth').parentElement?.offsetHeight,
+      animation: {
+        duration: 300,
+        easing: 'linear',
+      }
+    })
+  })
 })
 
 onBeforeUnmount(()=>{
-  window.removeEventListener('resize',listener)
+  window.onresize = null;
 })
 </script>
 

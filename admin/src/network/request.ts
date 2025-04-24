@@ -2,6 +2,22 @@ import {Post,Get} from "./network";
 // @ts-ignore
 import {stringify} from "qs";
 
+//文件上传请求
+export function uploadFile(data:FormData){
+    return Post({
+        url:'/upload',
+        data
+    })
+}
+
+//文件合并请求
+export function mergeFile(data:{hash:string,totalChunks: number}){
+    return Post({
+        url:'/mergeFile',
+        data:stringify(data)
+    })
+}
+
 export function loginAdministrator (account:string,password:string){
     return Post({
         url:'/loginAdministrator',

@@ -11,7 +11,19 @@ import {
 import { getTime, getWeek, getYear } from "../common/utils";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
-import { Goods, Grape, Management, Setting, Timer, TrendCharts, Unlock, User, Van, Watch } from '@element-plus/icons-vue'
+import {
+  Goods,
+  Grape,
+  Management,
+  Setting,
+  Timer,
+  TrendCharts,
+  Unlock,
+  User,
+  Van,
+  VideoPlay,
+  Watch
+} from '@element-plus/icons-vue'
 import SkewArrow from "../components/common/SkewArrow.vue";
 import {ElIcon,ElMessage} from "element-plus";
 
@@ -181,6 +193,7 @@ onMounted(()=>{
 
           <template #title>
             <el-icon class="menu-title-icon" v-if="item.icon==='Goods'"><Goods></Goods></el-icon>
+            <el-icon class="menu-title-icon" v-else-if="item.icon==='Video'"><VideoPlay></VideoPlay></el-icon>
             <el-icon class="menu-title-icon" v-else-if="item.icon==='User'"><User></User></el-icon>
             <el-icon class="menu-title-icon" v-else-if="item.icon==='Timer'"><Timer></Timer></el-icon>
             <el-icon class="menu-title-icon" v-else-if="item.icon==='Van'"><Van></Van></el-icon>

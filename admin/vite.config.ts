@@ -84,9 +84,9 @@ export default defineConfig({
   /**
    * @description resolve设置别名，当引入路径中出现了@表示从src文件夹开始查找
    */
-  // resolve:{
-  //   alias:{
-  //     '@':resolve(__dirname,'./src')
-  //   }
-  // }
+  resolve:{
+    alias:{
+      '@':resolve(__dirname,'./src')
+    }
+  }
 })

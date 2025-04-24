@@ -11,6 +11,7 @@ const L = ()=> import('../components/admin/dataStatistics/UserLocationChartStati
 const routeMapping:any = {
     '/goods':{path:'goods',name:'goods',component: () => import('../components/admin/shopManage/ShopManage.vue')},
     '/user':{path:'user',name:'user',component: () => import('../components/admin/memberManage/MemberManage.vue')},
+    '/video':{path:'video',name:'video',component: () => import('../components/admin/videoManage/VideoManage.vue')},
     '/banner':{path:'banner',name:'banner',component: () => import('../components/admin/swiperManage/SwiperManage.vue')},
     '/grounding':{path:'grounding',name:'grounding',component: () => import('../components/admin/groundManage/GroundManage.vue')},
     '/seckill':{path:'seckill',name:'seckill',component: () => import('../components/admin/seckillManage/SeckillManage.vue')},

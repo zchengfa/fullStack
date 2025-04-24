@@ -52,7 +52,7 @@ module.exports = app => {
 
                   if (e) throw e
                   else {
-                    let  rights =[{name:'商品管理'},{name:'用户管理'},{name:'轮播管理'},{name:'库存管理'},{name:'秒杀管理'},{name:'优惠管理'},{name:'订单管理'},{name:'数据统计'},{name:'系统设置'}]
+                    let  rights =[{name:'商品管理'},{name:'视频管理'},{name:'用户管理'},{name:'轮播管理'},{name:'库存管理'},{name:'秒杀管理'},{name:'优惠管理'},{name:'订单管理'},{name:'数据统计'},{name:'系统设置'}]
                     rights.forEach((item,index)=>{
                       switch (item.name) {
                         case '商品管理':
@@ -69,6 +69,17 @@ module.exports = app => {
                               children_name:'商品上下架',
                               path:'/grounding',
                               rights:['up','down']
+                            }
+                          ]
+                          break;
+                        case '视频管理':
+                          item.icon = 'Video'
+                          item.children = [
+                            {
+                              id:index + new Date().getTime(),
+                              children_name:'视频列表',
+                              path:'/video',
+                              rights:['delete','add']
                             }
                           ]
                           break;

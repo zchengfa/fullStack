@@ -19,6 +19,9 @@ app.use(bodyParser.urlencoded({extended: false}))
 //允许跨域
 app.use(cors())
 
+//将前端上传的文件保存后，配置静态资源服务，使得前端可以直接访问盖目录下的资源
+app.use(express.static('uploads'))
+
 //除了白名单内的请求，其他请求都必须先进行token验证，验证通过后才能进行当次请求
 app.use((req, res, next) => {
   //查询数据库中是否已存储了该ip，若有则不存储，
@@ -67,6 +70,7 @@ app.use((req, res, next) => {
     `/home/api/searchProduct?keyword=${encodeURI(keyword)}`,
     '/refreshToken'
   ]
+
   if (urlWhiteList.indexOf(req.url) >= 0) {
     next()
     return false
@@ -108,6 +112,9 @@ require('./router/register/register')(app)
 
 //导入管理员登录模块
 require('./router/admin/loginAdministrator')(app)
+
+//导入文件上传模块
+require('./router/admin/uploadFile')(app)
 
 //导入商品管理模块
 require('./router/admin/shopManage')(app)

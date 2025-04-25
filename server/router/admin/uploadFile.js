@@ -1,6 +1,8 @@
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
+const {getFileExtName} = require('../../util/util')
+
 module.exports = function (app) {
     const router = express.Router()
     //使用multer中间件来解析formData
@@ -22,26 +24,42 @@ module.exports = function (app) {
         if(!fs.existsSync(chunkDir)) fs.mkdirSync(chunkDir);
 
         fs.renameSync(req.file.path,path.join(chunkDir,index));
-
-        res.send({code:200})
+        try{
+           fs.readdirSync(chunkDir)
+           res.send({code:200})
+        }
+        catch (e) {
+            res.send({code:500,error: e});
+        }
     })
 
     //文件合并接口
     router.post('/mergeFile',(req,res)=>{
-        const { hash, totalChunks } = req.body;
+        const { hash, totalChunks,file_info } = req.body;
         const chunkDir = path.join(__dirname, 'chunks', hash);
+        //文件后缀名
+        let file_ext_name = getFileExtName(file_info.type)
+        //文件的最终存储路径
+        const file_save_path = `./uploads/${hash}${file_ext_name}`
 
-        const writeStream = fs.createWriteStream(`./uploads/${hash}`);
+        try {
+            //创建文件写入流
+            const writeStream = fs.createWriteStream(file_save_path);
+            for (let i = 0; i < totalChunks; i++) {
+                const chunkPath = path.join(chunkDir, i.toString());
+                writeStream.write(fs.readFileSync(chunkPath));
+                //写入后删除分片文件
+                fs.unlinkSync(chunkPath);
+            }
+            //写入完成，关闭写入流
+            writeStream.end();
+            //
 
-        for (let i = 0; i < totalChunks; i++) {
-            const chunkPath = path.join(chunkDir, i.toString());
-            writeStream.write(fs.readFileSync(chunkPath));
-            fs.unlinkSync(chunkPath);
+            res.send({ code: 200, url: file_save_path });
         }
-
-        writeStream.end();
-
-        res.send({ code: 200, url: `/uploads/${hash}` });
+        catch (e) {
+            res.send({code:500,error: e});
+        }
     })
 
     app.use('/admin', router)

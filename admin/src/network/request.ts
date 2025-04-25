@@ -3,18 +3,25 @@ import {Post,Get} from "./network";
 import {stringify} from "qs";
 
 //文件上传请求
-export function uploadFile(data:FormData){
+export function uploadFile(data:FormData,callback:Function){
     return Post({
         url:'/upload',
-        data
+        data,
+        timeout: 1000000
     })
 }
 
+interface FileInfo {
+    uid?:bigint,
+    name?: string,
+    lastModified?:bigint,
+    type?: string,
+}
 //文件合并请求
-export function mergeFile(data:{hash:string,totalChunks: number}){
+export function mergeFile(data:{hash:string,totalChunks: number,file_info:FileInfo}){
     return Post({
         url:'/mergeFile',
-        data:stringify(data)
+        data
     })
 }
 

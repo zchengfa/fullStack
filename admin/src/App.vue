@@ -36,7 +36,14 @@ body{
 ::-webkit-scrollbar-thumb {
   background-color: #888; /* 设置滚动条的前景色 */
 }
-
+/* 多行文本溢出 */
+.text-ellipsis-multiline{
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 :root{
   --percent:0;
 }

@@ -324,6 +324,7 @@ li .administrator,.avatar-box{
   display: none;
 }
 .router-view-col{
+  position: relative;
   max-height: calc(100vh - 4rem);
   overflow-y: scroll;
 }

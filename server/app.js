@@ -9,8 +9,10 @@ const connection = require('./plugins/connectMysql')()
 const mysql_query = require('./plugins/mysql_query')
 
 const bodyParser = require("body-parser");
+const {getLocalIP} = require("./util/util");
 const app = express()
 const server = http.createServer(app)
+let port = process.env.PORT | 3000
 
 //用于解析post请求体中传递过来的参数
 app.use(bodyParser.json())
@@ -19,7 +21,7 @@ app.use(bodyParser.urlencoded({extended: false}))
 //允许跨域
 app.use(cors())
 
-//将前端上传的文件保存后，配置静态资源服务，使得前端可以直接访问盖目录下的资源
+//将前端上传的文件保存后，配置静态资源服务，使得前端可以直接访问该目录下的资源
 app.use(express.static('uploads'))
 
 //除了白名单内的请求，其他请求都必须先进行token验证，验证通过后才能进行当次请求
@@ -114,7 +116,7 @@ require('./router/register/register')(app)
 require('./router/admin/loginAdministrator')(app)
 
 //导入文件上传模块
-require('./router/admin/uploadFile')(app)
+require('./router/admin/uploadFile')(app,port)
 
 //导入商品管理模块
 require('./router/admin/shopManage')(app)
@@ -268,7 +270,6 @@ app.post('/submitDataApi', (req, res) => {
 
 function start(server) {
   //启动服务
-  let port = 3000
   server.listen(port)
   server.on('error', err => {
     if (err.code === 'EADDRINUSE') {
@@ -279,24 +280,9 @@ function start(server) {
     }
   })
   server.on('listening', () => {
-    console.log(`server服务已启动，端口号：(${port})`)
+    console.log(`server服务已启动，地址为：${getLocalIP()}:${port}`)
   })
 }
-const os = require('os');
-
-function getLocalIP() {
-  const interfaces = os.networkInterfaces();
-  for (const iface of Object.values(interfaces)) {
-    for (const config of iface) {
-      if (config.family === 'IPv4' && !config.internal) {
-        return config.address;
-      }
-    }
-  }
-  return '127.0.0.1'; // 如果没有找到，返回本地回环地址
-}
-
-console.log('Local IP Address:', getLocalIP());
 //查询一次数据库，以保证mysql数据库正常
 function connectSqlTest(table) {
  return new Promise((resolve, reject)=>{

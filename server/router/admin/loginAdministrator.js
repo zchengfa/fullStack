@@ -13,7 +13,7 @@ module.exports = app => {
   router.post('/loginAdministrator',(req,res)=> {
     //接受请求参数
     const paramsObj = JSON.parse(JSON.stringify(req.body))
-    console.log(paramsObj)
+    //console.log(paramsObj)
     //连接数据库
     const connection = require('../../plugins/connectMysql')()
     const mysql_query = require('../../plugins/mysql_query')
@@ -45,7 +45,7 @@ module.exports = app => {
             connection.query(updateQuery,(err,l)=>{
               if(err) throw err
               else{
-                console.log('用户登录时间已保存至数据库',l)
+                //console.log('用户登录时间已保存至数据库',l)
                 //res.send({'success':'登录成功','token':token})
                 const selectIdentity = mysql_query.selectFields('mall_administrator','identity',`account = "${results[0]['account']}"`)
                 connection.query(selectIdentity,(e,r)=>{

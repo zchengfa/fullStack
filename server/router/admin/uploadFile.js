@@ -1,9 +1,12 @@
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
-const {getFileExtName} = require('../../util/util')
+const {getFileExtName, getLocalIP} = require('../../util/util');
+const mysql_query = require('../../plugins/mysql_query')
+const {timeFormatting} = require("../../util/timeFormatting");
+const connection = require('../../plugins/connectMysql')()
 
-module.exports = function (app) {
+module.exports = function (app,port) {
     const router = express.Router()
     //使用multer中间件来解析formData
     const multer = require("multer");
@@ -23,13 +26,13 @@ module.exports = function (app) {
 
         if(!fs.existsSync(chunkDir)) fs.mkdirSync(chunkDir);
 
-        fs.renameSync(req.file.path,path.join(chunkDir,index));
         try{
-           fs.readdirSync(chunkDir)
-           res.send({code:200})
+            fs.renameSync(req.file.path,path.join(chunkDir,index));
+            res.send({code:200})
         }
         catch (e) {
-            res.send({code:500,error: e});
+            //分片接收失败、需告诉前端那个文件的哪个分片接受失败、让前端重试上传对应分片
+            res.send({code:500,error: '服务器接收文件分片失败',file:{hash,index}});
         }
     })
 
@@ -53,13 +56,73 @@ module.exports = function (app) {
             }
             //写入完成，关闭写入流
             writeStream.end();
-            //
+
+            //删除对应文件夹
+            fs.rmdirSync(chunkDir);
 
             res.send({ code: 200, url: file_save_path });
         }
         catch (e) {
+            //需优化、合并失败
             res.send({code:500,error: e});
         }
+    })
+
+    router.post('/checkFile',(req,res)=>{
+        const { hashArray,file_title} = req.body;
+        let existsFileNum = 0
+        const data = {
+            title:file_title
+        }
+        hashArray.forEach((item)=>{
+            const file_path = `./uploads/${item.file}`;
+            try {
+                fs.existsSync(file_path);
+                existsFileNum ++;
+                const type = item.type + '_url';
+                //生成文件地址http://ip:port/****
+                data[type] = `${req.protocol}://${getLocalIP()}:${port}/${item.file}`;
+                data.name = item.name;
+                data.last_modified = item.lastModified;
+                data.uid = item.uid;
+            }
+            catch (e){
+                console.log(item.name+'文件不存在');
+            }
+            //文件都存在，可以将视频信息存储到数据库了
+            if (existsFileNum === hashArray.length) {
+                const upload_time = timeFormatting('yyyy-MM-dd hh:mm:ss');
+                data.upload_time = upload_time;
+
+                const saveFileInfo = mysql_query.insert('mall_video',
+                    'id,video_url,image_url,title,name,upload_time,last_modified',
+                    `${data.uid},"${data.video_url}","${data.image_url}","${data.title}","${data.name}","${upload_time}",${data.last_modified}`,
+                    )
+                connection.query(saveFileInfo,(err,result)=>{
+                    if (err){
+                        console.log('文件信息保存失败：'+err)
+                        res.send({code:500,error:'文件信息保存失败'})
+                    }
+                    else{
+                        res.send({code:200,file:data})
+                    }
+                })
+
+            }
+        })
+    })
+
+    router.get('/getVideos',(req,res)=>{
+        //获取视频数据
+        const selectVideo = mysql_query.selectAll('mall_video')
+        connection.query(selectVideo,(err,result)=>{
+            if (err) {
+                res.send({code:500,error:'获取视频数据失败'});
+            }
+            else {
+                res.send({code:200,videos:result})
+            }
+        })
     })
 
     app.use('/admin', router)

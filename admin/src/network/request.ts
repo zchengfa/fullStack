@@ -11,17 +11,32 @@ export function uploadFile(data:FormData,callback:Function){
     })
 }
 
+//检查文件完整性
+export function checkFileComplete(file_info:{hashArray:string[],file_title:string}){
+    return Post({
+        url:'/checkFile',
+        data:file_info,
+    })
+}
+
 interface FileInfo {
     uid?:bigint,
     name?: string,
     lastModified?:bigint,
     type?: string,
 }
+
 //文件合并请求
 export function mergeFile(data:{hash:string,totalChunks: number,file_info:FileInfo}){
     return Post({
         url:'/mergeFile',
         data
+    })
+}
+//获取视频数据
+export function getVideo(){
+    return Get({
+        url:'/getVideos'
     })
 }
 

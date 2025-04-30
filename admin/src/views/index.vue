@@ -152,21 +152,15 @@ onMounted(()=>{
 <template>
   <el-row class="nav-row">
     <el-col class="nav-col">
-      <ul>
-        <li class="time">
-          <div>
+      <ul class="nav-ul">
+        <li class="time nav-item">
+          <div class="time-box">
             <span>{{navLogic.time.year}}</span>
             <span class="current-time">{{navLogic.time.currentTime}}</span>
-            <span>{{navLogic.time.week}}</span>
+            <span class="week-span">{{navLogic.time.week}}</span>
           </div>
         </li>
-        <li>
-          <a href="javascript:void(0)">支持我们</a>
-        </li>
-        <li>
-          <a href="/">联系开发者</a>
-        </li>
-        <li>
+        <li class="nav-item">
           <div class="administrator">
             <div class="avatar-box">
               <el-avatar v-if="!userInfo.avatar" icon="el-icon-user-solid"></el-avatar>
@@ -246,51 +240,26 @@ onMounted(()=>{
 .nav-col{
   box-shadow:0 .2rem .2rem 0 #96979a;
 }
-.nav-col ul{
+.nav-ul{
   display: flex;
-  justify-items: center;
+  justify-content: space-between;
   align-items: center;
-  float: right;
-  margin: 0;
-  height: 3rem;
-  min-width: 1000px;
+  padding: .2rem 4rem;
+  margin: unset;
 }
-ul .time span{
-  display: inline-block;
-  padding-left: 1rem;
-  padding-right: 1rem;
+.nav-item{
+  width: fit-content;
 }
-ul .time .current-time{
-  width: 6rem;
-}
-.nav-col ul li{
-  list-style-type: none;
-  padding: 0 2rem;
-  height: 3rem;
-  line-height: 3rem;
-}
-a{
-  display: block;
-  height: 100%;
-  text-decoration: none;
-}
-a::after{
-  display: inline-block;
-  padding-left: 2rem;
-  content: '|';
-  height: 2rem;
-  color: black;
-}
-li .administrator,.avatar-box{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-.administrator .user-name span{
+.week-span{
   margin-left: 1rem;
 }
-
+.administrator{
+  display: flex;
+  align-items: center;
+}
+.avatar-box{
+  margin-right: 1rem;
+}
 /**
 *侧边菜单栏
  */

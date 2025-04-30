@@ -11,6 +11,10 @@ body{
   margin: 0 auto;
   scroll-behavior: smooth;
 }
+ul{
+  padding: 0;
+  list-style: none;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

@@ -31,6 +31,18 @@ export function Post (config:Object){
     return instance(config)
 }
 
+export function Delete (config:Object){
+    const instance = axios.create({
+        baseURL,
+        method:"delete",
+        timeout
+    })
+
+    axiosInterceptors(instance)
+
+    return instance(config)
+}
+
 function axiosInterceptors(instance:any){
     //axios请求拦截器
     instance.interceptors.request.use(function (config:AxiosRequestConfig){

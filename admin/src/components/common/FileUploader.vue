@@ -110,6 +110,17 @@ const validateForm = ({url,title,files}:any)=> {
   return url.length ===2 && title.length && files.length === 2
 }
 
+const queuePush = (uploadQueue:any[],file:any,i:number,fileHash:string)=>{
+  const chunk = file.slice(i * props.chunkSize , (i+1) * props.chunkSize)
+  const formData = new FormData()
+  formData.append('chunk', chunk)
+  formData.append('hash', fileHash as any)
+  formData.append('index', i as any)
+
+  //将上传任务push到上传队列中
+  uploadQueue.push((callback:Function)=> uploadFile(formData,callback))
+}
+
 //文件上传
 const customUpload =async ({file}:any)=>{
   if(!props.justUpload){
@@ -161,14 +172,7 @@ const customUpload =async ({file}:any)=>{
           const uploadQueue = [] as any[]
 
           for (let i = 0; i < totalChunks; i++) {
-            const chunk = file.slice(i * props.chunkSize , (i+1) * props.chunkSize)
-            const formData = new FormData()
-            formData.append('chunk', chunk)
-            formData.append('hash', fileHash as any)
-            formData.append('index', i as any)
-
-            //将上传任务push到上传队列中
-            uploadQueue.push((callback:Function)=> uploadFile(formData,callback))
+            queuePush(uploadQueue,file,i,fileHash);
           }
 
           //分批执行上传任务
@@ -187,7 +191,7 @@ const customUpload =async ({file}:any)=>{
                 })
 
                 //需再次上传服务器接收失败的对应分片
-                //code here
+                queuePush(uploadQueue,file,item.data.file.index,fileHash);
               }
             })
           }

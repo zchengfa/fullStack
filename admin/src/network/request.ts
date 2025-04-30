@@ -1,6 +1,13 @@
-import {Post,Get} from "./network";
+import {Post,Get,Delete} from "./network";
 // @ts-ignore
 import {stringify} from "qs";
+
+//文件删除请求
+export function deleteFile(params:any){
+    return Delete({
+        url:`/deleteFile/${params.uid}/${params.file_video_name}/${params.file_image_name}`,
+    })
+}
 
 //文件上传请求
 export function uploadFile(data:FormData,callback:Function){

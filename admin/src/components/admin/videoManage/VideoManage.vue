@@ -1,32 +1,82 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref} from 'vue'
+import {nextTick, onBeforeUnmount, onMounted, onUnmounted, ref} from 'vue'
 import FileUploader from "@/components/common/FileUploader.vue";
-import {UploadFilled} from "@element-plus/icons-vue";
-import {getVideo} from "@/network/request";
-import {ElMessage} from "element-plus";
+import {Close, UploadFilled} from "@element-plus/icons-vue";
+import {deleteFile, getVideo} from "@/network/request";
+import {ElMessage, ElMessageBox} from "element-plus";
 const isShowUploadComponent = ref<boolean>(false)
-const formData = ref<any>({
-  url:[],
-  title:'',
-  files:[]
-})
+const formData = ref<any>({url:[], title:'', files:[]})
 const videoData = ref<any[]>([])
 const videoBoxRef = ref<any[]>([])
+const videoCurrentTime = ref<any>(0)
+const isShowSwingCloseBtn = ref<boolean>(false)
+
+const editVideo = ()=>{
+  isShowSwingCloseBtn.value = !isShowSwingCloseBtn.value
+}
+
+const deleteVideo = (e:any,item:any)=>{
+  //阻止事件冒泡
+  e.stopPropagation();
+  ElMessageBox.confirm(
+      '您是否真的要删除当前视频',
+      'Warning',
+      {
+        confirmButtonText:'删除',
+        cancelButtonText:'取消',
+        type: 'warning',
+        center:true
+      }
+  ).then(async ()=>{
+    const result = await deleteFile({
+      uid:item.uid,
+      file_video_name:item.video_url.slice(item.video_url.lastIndexOf('/')+1),
+      file_image_name:item.image_url.slice(item.image_url.lastIndexOf('/')+1)
+    });
+    if(result.data.code === 200){
+      ElMessage({
+        type: 'success',
+        message: result.data.message
+      })
+      videoData.value.map((it:any,index:number)=>{
+        if(it.uid === item.uid){
+          videoData.value.splice(index,1)
+          videoBoxRef.value.splice(index,1)
+          //删除后判断视频列表是否为空
+          nextTick(()=>{
+            if(videoData.value.length === 0){
+              videoBoxRef.value = []
+            }
+          })
+        }
+      })
+    }
+    else if(result.data.code === 500){
+      ElMessage({
+        type: 'error',
+        message: result.data.error
+      })
+    }
+    //关闭删除按钮
+    editVideo();
+  }).catch(()=>{
+    ElMessage({
+      type:'error',
+      message:`您已取消了视频的删除操作`
+    })
+  })
+}
 
 const openUploadComponent = ()=>{
   isShowUploadComponent.value = !isShowUploadComponent.value;
   //清空formData数据
-  formData.value = {
-    url:[],
-    title:'',
-    files:[]
-  }
+  formData.value = {url:[], title:'', files:[]};
 }
 
 const hideElements = (data:any)=>{
   changeTargetStyle(data.targetClass);
-  formData.value.url.push(data.url)
-  formData.value.files.push(data.file)
+  formData.value.url.push(data.url);
+  formData.value.files.push(data.file);
 }
 
 const changeTargetStyle = (targetClass:any)=>{
@@ -66,11 +116,7 @@ const uploadSuccess = (data:any)=>{
   openUploadComponent();
   videoData.value.push(data);
   //清空formData数据
-  formData.value = {
-    url:[],
-    title:'',
-    files:[]
-  }
+  formData.value = {url:[], title:'', files:[]};
 }
 
 //鼠标移入，视频开始播放
@@ -86,12 +132,9 @@ const videoPause = (index:number)=>{
   changeVideoStatus(false,index)
 }
 
-const onPlay = (e:any)=>{
-
-}
-
 const onTimeUpdate = (e:any)=>{
   setVideoTime(e,'video-current-time','currentTime')
+  videoCurrentTime.value = e.target.currentTime;
 }
 
 const onPause = (e:any)=>{
@@ -110,26 +153,93 @@ const setVideoTime = (event:any,target:string,time:string)=>{
   //获取秒数
   const seconds = Math.ceil(event.target[time] % 60);
   //时间整合并自动补0
-  durationEl.innerText = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+  if(durationEl){
+    durationEl.innerText = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+  }
 }
 
-onMounted(()=> {
-  //获取视频数据
-  getVideo().then((result:any)=>{
-    if(result.data.code === 500){
-      ElMessage({
-        type: 'error',
-        message: result.data.error
-      })
+//使用IntersectionObserver监听元素视口，控制元素显示隐藏，提高性能
+let observer:any = new IntersectionObserver((entries)=> {
+  entries.forEach((entry:any) => {
+    if(entry.isIntersecting){
+      //显示元素
+      entry.target.className = 'video-display-li video-display-li-show'
     }
-    else {
-      videoData.value.push(...result.data.videos);
+    else{
+      //隐藏元素
+      entry.target.className = 'video-display-li video-display-li-hidden'
+    }
+  })
+},{rootMargin:'0px 0px 50px 0px'});
+
+const changeBigVideoStatus = (isShow:boolean,url:string)=>{
+  const bigScreenVideoEl:any = document.querySelector(isShow ? '.video-big-screen' : '.video-big-screen-show');
+  bigScreenVideoEl.className = isShow ? 'video-big-screen-show' : 'video-big-screen';
+
+  const setVideoUrl = ()=>{
+    const videoEl = bigScreenVideoEl.querySelector('#big-screen-video');
+    videoEl.setAttribute('src',url);
+    videoEl.currentTime = videoCurrentTime.value;
+  }
+  if(isShow){
+    setVideoUrl();
+  }
+  else{
+    //关闭时，先移走，再改变视频播放地址
+    let timer = setTimeout(()=>{
+      setVideoUrl();
+      clearTimeout(timer);
+    },500)
+  }
+
+}
+
+const watchVideo = (e:any,url:string)=>{
+  e.stopPropagation();
+  changeBigVideoStatus(true,url)
+}
+
+const closeBigVideo = ()=>{
+  changeBigVideoStatus(false,'/')
+}
+
+onMounted(async ()=> {
+  //获取视频数据
+  const result = await getVideo()
+  if (result.data.code === 500) {
+    ElMessage({
+      type: 'error',
+      message: result.data.error
+    })
+  } else {
+    videoData.value.push(...result.data.videos);
+  }
+
+  await nextTick(()=>{
+    //监听元素视口
+    const observerEls:any = document.getElementsByClassName('video-display-li');
+    if(observerEls.length){
+      Array.from(observerEls).forEach((el:any)=>{
+        observer.observe(el);
+      })
     }
   })
   window.addEventListener('resize', resizeHandler)
 })
+onBeforeUnmount(()=>{
+  //组件卸载前，移除视频监听事件
+  if(videoData.value.length){
+    videoBoxRef.value.forEach((item:any)=>{
+      const video = item.getElementsByTagName('video')[0];
+      video.removeEventListener('pause', onPause);
+      video.removeEventListener('timeupdate', onTimeUpdate);
+      video.removeEventListener('loadedmetadata', onLoadedMetaData);
+    })
+  }
+})
 onUnmounted(()=>{
-  window.removeEventListener('resize',resizeHandler)
+  window.removeEventListener('resize',resizeHandler);
+  observer.disconnect();
 })
 </script>
 
@@ -137,16 +247,17 @@ onUnmounted(()=>{
   <div class="video-list-container">
     <!-- 展示视频列表 -->
     <div class="video-display-container">
-      <ul class="video-display-ul">
+      <ul class="video-display-ul" v-if="videoData.length">
         <li class="video-display-li" v-for="(item,index) in videoData" :key="item.uid">
           <div class="video-display-item">
-            <div class="video-thumbnail-video" :ref="(el:any)=> videoBoxRef[index] = el" @mouseenter="videoPlay(index)" @mouseleave="videoPause(index)">
+            <div class="video-thumbnail-video" @click="(event:any)=> watchVideo(event,item.video_url)" :ref="(el:any)=> videoBoxRef[index] = el" @mouseenter="videoPlay(index)" @mouseleave="videoPause(index)">
               <img class="video-thumbnail" :src="item.image_url" alt='video_image_preview'>
-              <video class="video-display" loop :data-video-index="index" @loadedmetadata="onLoadedMetaData" @timeupdate="onTimeUpdate" @play="onPlay" @pause="onPause" :src="item.video_url" muted></video>
+              <video class="video-display" loop :data-video-index="index" @loadedmetadata.once="onLoadedMetaData" @timeupdate="onTimeUpdate" @pause="onPause" :src="item.video_url" muted></video>
               <div class="video-update-duration">
                 <span class="video-current-time">00:00</span>
                 <span class="video-duration"></span>
               </div>
+              <el-button v-show="isShowSwingCloseBtn" @click="(event:any)=> deleteVideo(event,item)" class="single-video-close" circle size="small"><el-icon><Close></Close></el-icon></el-button>
             </div>
             <div class="video-info-box">
               <p class="video-title text-ellipsis-multiline">{{item.title}}</p>
@@ -155,6 +266,7 @@ onUnmounted(()=>{
           </div>
         </li>
       </ul>
+      <span v-else class="empty-video-text">当前还没有任何视频</span>
     </div>
     <!-- 展示视频列表 -->
     <div v-if="isShowUploadComponent" class="upload-component">
@@ -188,10 +300,17 @@ onUnmounted(()=>{
     </div>
   </div>
   <div class="upload-button-box">
-    <el-button v-show="!isShowUploadComponent" class="show-upload-btn" type="success" @click="openUploadComponent">添加视频</el-button>
-    <el-button v-show="isShowUploadComponent" class="show-upload-btn" type="success" @click="openUploadComponent">取消添加</el-button>
+    <el-button v-if="isShowSwingCloseBtn" type="danger" @click="editVideo">再想一想</el-button>
+    <el-button v-else-if="!isShowSwingCloseBtn && videoData.length" type="danger" @click="editVideo" v-permission="{permission:'delete',effect:'disabled'}">删除视频</el-button>
+    <el-button v-if="!isShowUploadComponent" v-permission="{permission:'add',effect:'disabled'}" class="show-upload-btn" type="success" @click="openUploadComponent">添加视频</el-button>
+    <el-button v-else class="show-upload-btn" type="success" @click="openUploadComponent">取消添加</el-button>
   </div>
-</template>
+<!--  视频大屏播放-->
+  <div class="video-big-screen">
+    <el-button class="close-big-video-btn" @click="closeBigVideo" circle><el-icon><Close></Close></el-icon></el-button>
+    <video controls autoplay  src="/" id="big-screen-video"></video>
+  </div>
+  </template>
 
 <style scoped lang="scss">
 @mixin display_flex($justify:center,$align:center,$flexWrap:wrap) {
@@ -215,7 +334,7 @@ onUnmounted(()=>{
   overflow-y: scroll;
 }
 .show-upload-btn{
-  margin: 10px 0;
+  margin: 10px;
 }
 .upload-content{
   position: relative;
@@ -277,6 +396,11 @@ onUnmounted(()=>{
   height: calc(100% - 140px);
   overflow-y: scroll;
 }
+.video-display-container{
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
 .video-display-ul{
   margin: 0;
   padding: 0;
@@ -291,13 +415,41 @@ onUnmounted(()=>{
   border-radius: .5rem;
   overflow: hidden;
   cursor: pointer;
+  transition: opacity .7s ease-in;
+}
+.video-display-li-show{
+  opacity: 1;
+  visibility: visible;
+}
+.video-display-li-hidden{
+  opacity: 0;
+  visibility: hidden;
 }
 .video-display-item{
   padding: 1rem;
 }
+.single-video-close{
+  position: absolute;
+  right: -10px;
+  top: -10px;
+  width: 2rem;
+  height: 2rem;
+  background-color: rgba(0,0,0,.5);
+  color: #fff;
+  animation: swing 0.6s infinite;
+}
+@keyframes swing {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(15deg); }  /* 右摆 */
+  40% { transform: rotate(-10deg); } /* 左摆 */
+  60% { transform: rotate(5deg); }   /* 右摆幅度减小 */
+  80% { transform: rotate(-5deg); } /* 左摆幅度减小 */
+}
 .video-thumbnail{
   width: -webkit-fill-available;
   border-radius: .5rem;
+  opacity: 1;
+  transition: opacity .5s linear;
 }
 .video-info-box{
   position: relative;
@@ -329,6 +481,9 @@ onUnmounted(()=>{
 .video-thumbnail-video:hover .video-current-time{
   opacity: 1;
 }
+.video-thumbnail-video:hover .video-thumbnail{
+  opacity: 0;
+}
 .video-update-duration{
   position: absolute;
   right: 10px;
@@ -346,5 +501,54 @@ onUnmounted(()=>{
   display: inline-block;
   content: '/';
   width: 6px;
+}
+.empty-video-text{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--empty-text);
+}
+//大屏视频
+.video-big-screen{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+  background-color: rgba(0,0,0,.5);
+  transition: left .5s ease-in-out;
+}
+.video-big-screen-show{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+  background-color: rgba(0,0,0,.5);
+  transition: left .5s ease-in-out;
+}
+.video-big-screen-hidden{
+  display: none;
+  opacity: 0;
+}
+#big-screen-video{
+  width: 80%;
+  height: 80%;
+  background-color: #fff;
+}
+.close-big-video-btn{
+  position: absolute;
+  right: 10%;
+  top: 10%;
+  transform: translate(50% , -50%);
 }
 </style>

@@ -9,6 +9,7 @@
 <style>
 body{
   margin: 0 auto;
+  scroll-behavior: smooth;
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -46,5 +47,6 @@ body{
 }
 :root{
   --percent:0;
+  --empty-text: #a8a3a3;
 }
 </style>

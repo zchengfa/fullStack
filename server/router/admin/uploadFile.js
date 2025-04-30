@@ -4,6 +4,7 @@ const path = require("path");
 const {getFileExtName, getLocalIP} = require('../../util/util');
 const mysql_query = require('../../plugins/mysql_query')
 const {timeFormatting} = require("../../util/timeFormatting");
+const {Promise} = require("mongoose");
 const connection = require('../../plugins/connectMysql')()
 
 module.exports = function (app,port) {
@@ -95,7 +96,7 @@ module.exports = function (app,port) {
                 data.upload_time = upload_time;
 
                 const saveFileInfo = mysql_query.insert('mall_video',
-                    'id,video_url,image_url,title,name,upload_time,last_modified',
+                    'uid,video_url,image_url,title,name,upload_time,last_modified',
                     `${data.uid},"${data.video_url}","${data.image_url}","${data.title}","${data.name}","${upload_time}",${data.last_modified}`,
                     )
                 connection.query(saveFileInfo,(err,result)=>{
@@ -123,6 +124,41 @@ module.exports = function (app,port) {
                 res.send({code:200,videos:result})
             }
         })
+    })
+
+    //删除视频
+    router.delete('/deleteFile/:uid/:file_video_name/:file_image_name',(req,res)=>{
+        const {uid,file_video_name,file_image_name} = req.params;
+        try{
+            const deleteFileFromDatabase = mysql_query.deleteOperation('mall_video',`uid=${uid}`)
+            connection.query(deleteFileFromDatabase,()=>{
+                try{
+                    fs.unlinkSync('./uploads/'+file_video_name);
+                    fs.unlinkSync('./uploads/'+file_image_name);
+                    res.send({code:200,message:'视频删除成功'});
+                }
+                catch(err){
+                    res.send({code: 500 ,error: '服务器错误，视频删除失败'});
+                }
+            })
+        }
+        catch(err){
+            console.log(err)
+            res.send({code: 500 ,error: '服务器错误，视频删除失败'});
+        }
+
+
+
+
+        //  const p = Promise.all([promise_one]);
+        //
+        // p.then((r)=>{
+        //     console.log(r)
+        //    // res.send({code:200,message:'视频删除成功'});
+        // }).catch(err=>{
+        //     //console.log(err);
+        //    // res.send({code:500,message:'出错了，视频删除失败！'});
+        // })
     })
 
     app.use('/admin', router)

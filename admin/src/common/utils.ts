@@ -1,4 +1,5 @@
 import {ElMessageBox} from "element-plus";
+import {number} from "echarts";
 
 export const URL:string = 'http:'+ '//' + window.location.host.toString().split(':')[0] + ':3000'
 
@@ -299,3 +300,14 @@ export function timeFormatting (time:any,fm:string = 'YYYY-MM-DD hh:mm:ss',){
     async:true
 }).then()
  */
+
+export function debounce (fn:Function, delay:number = 500) {
+    let timer:any = null
+    return function(...args:any){
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(()=>{
+            //@ts-ignore
+           fn.apply(this, args)
+        }, delay)
+    }
+}

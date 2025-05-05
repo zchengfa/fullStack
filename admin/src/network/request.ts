@@ -41,9 +41,12 @@ export function mergeFile(data:{hash:string,totalChunks: number,file_info:FileIn
     })
 }
 //获取视频数据
-export function getVideo(){
+export function getVideo(loadedNum:number = 0,showLoading:boolean = true ,limit:number = 12){
     return Get({
-        url:'/getVideos'
+        url:`/getVideos?index=${loadedNum}&limit=${limit}`,
+        headers: {
+            showLoading: showLoading
+        }
     })
 }
 

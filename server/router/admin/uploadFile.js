@@ -115,13 +115,14 @@ module.exports = function (app,port) {
 
     router.get('/getVideos',(req,res)=>{
         //获取视频数据
+        const {index,limit} = req.query;
         const selectVideo = mysql_query.selectAll('mall_video')
         connection.query(selectVideo,(err,result)=>{
             if (err) {
                 res.send({code:500,error:'获取视频数据失败'});
             }
             else {
-                res.send({code:200,videos:result})
+                res.send({code:200,videos:result.slice(index,limit)})
             }
         })
     })
@@ -146,20 +147,9 @@ module.exports = function (app,port) {
             console.log(err)
             res.send({code: 500 ,error: '服务器错误，视频删除失败'});
         }
-
-
-
-
-        //  const p = Promise.all([promise_one]);
-        //
-        // p.then((r)=>{
-        //     console.log(r)
-        //    // res.send({code:200,message:'视频删除成功'});
-        // }).catch(err=>{
-        //     //console.log(err);
-        //    // res.send({code:500,message:'出错了，视频删除失败！'});
-        // })
     })
+
+
 
     app.use('/admin', router)
 }

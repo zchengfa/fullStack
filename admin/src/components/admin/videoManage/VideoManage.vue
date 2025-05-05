@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {nextTick, onBeforeUnmount, onMounted, onUnmounted, ref} from 'vue'
 import FileUploader from "@/components/common/FileUploader.vue";
-import {Close, UploadFilled} from "@element-plus/icons-vue";
+import {Close, UploadFilled,Loading} from "@element-plus/icons-vue";
 import {deleteFile, getVideo} from "@/network/request";
 import {ElMessage, ElMessageBox} from "element-plus";
 const isShowUploadComponent = ref<boolean>(false)
@@ -226,6 +226,39 @@ onMounted(async ()=> {
   })
   window.addEventListener('resize', resizeHandler)
 })
+
+//监听盒子滚动
+const scrollVideoRef = ref<any>(null)
+const loading = ref<boolean>(false);
+const oldScrollTop = ref<number>(0);
+const loadMoreVideo = ()=>{
+  loading.value = true
+  getVideo(videoData.value.length,false).then((result:any)=>{
+    if(result.data.code === 200){
+      videoData.value.push(...result.data.videos);
+      let timer = setTimeout(()=>{
+        loading.value = false;
+        if (!result.data.videos.length){
+          ElMessage({
+            type: 'warning',
+            message: '没有更多视频了喔！'
+          })
+        }
+        clearTimeout(timer);
+      },500)
+    }
+  })
+}
+const onScrollVideoContainer = ()=>{
+  const {scrollTop,clientHeight,scrollHeight} = scrollVideoRef.value;
+  const direction = scrollTop > oldScrollTop.value ? 'up' : 'down';
+  if(!loading.value && clientHeight + scrollTop >= scrollHeight - 10 && direction === 'up'){
+    loadMoreVideo()
+  }
+  oldScrollTop.value = scrollTop
+}
+
+
 onBeforeUnmount(()=>{
   //组件卸载前，移除视频监听事件
   if(videoData.value.length){
@@ -247,7 +280,7 @@ onUnmounted(()=>{
   <div class="video-list-container">
     <!-- 展示视频列表 -->
     <div class="video-display-container">
-      <ul class="video-display-ul" v-if="videoData.length">
+      <ul class="video-display-ul" v-if="videoData.length"  ref="scrollVideoRef" @scroll="onScrollVideoContainer">
         <li class="video-display-li" v-for="(item,index) in videoData" :key="item.uid">
           <div class="video-display-item">
             <div class="video-thumbnail-video" @click="(event:any)=> watchVideo(event,item.video_url)" :ref="(el:any)=> videoBoxRef[index] = el" @mouseenter="videoPlay(index)" @mouseleave="videoPause(index)">
@@ -267,6 +300,10 @@ onUnmounted(()=>{
         </li>
       </ul>
       <span v-else class="empty-video-text">当前还没有任何视频</span>
+      <div v-if="loading" class="loading-video-box">
+        <el-icon><Loading></Loading></el-icon>
+        <p class="loading-text">加载更多视频中...</p>
+      </div>
     </div>
     <!-- 展示视频列表 -->
     <div v-if="isShowUploadComponent" class="upload-component">
@@ -394,7 +431,6 @@ onUnmounted(()=>{
   padding: 0 1rem;
   width: 100%;
   height: calc(100% - 140px);
-  overflow-y: scroll;
 }
 .video-display-container{
   position: relative;
@@ -407,6 +443,7 @@ onUnmounted(()=>{
   @include display_flex(flex-start,flex-start);
   width: 100%;
   height: 100%;
+  overflow-y: scroll;
 }
 .video-display-li{
   margin-bottom: 1rem;
@@ -550,5 +587,28 @@ onUnmounted(()=>{
   right: 10%;
   top: 10%;
   transform: translate(50% , -50%);
+}
+.loading-video-box{
+  padding: .5rem;
+  background-color: #fff;
+  color: #b1aaaa;
+}
+.loading-video-box .el-icon{
+  font-size: 1.2rem;
+  animation: spin 2s linear infinite;
+}
+.loading-text{
+  margin: 0;
+  font-size: .8rem;
+  transform-origin: center center;
+  transform: scale(.8);
+}
+@keyframes spin {
+  from{
+    transform: rotate(0deg);
+  }
+  to{
+    transform: rotate(360deg);
+  }
 }
 </style>

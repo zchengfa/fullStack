@@ -12,8 +12,8 @@ const resizeEcharts = (target)=>{
 }
 
 onMounted(()=>{
-
   let chartDom = document.getElementById('earth');
+  if (echarts.getInstanceByDom(chartDom)) echarts.dispose(chartDom)
   resizeEcharts(chartDom)
   let myChart = echarts.init(chartDom);
   let option;

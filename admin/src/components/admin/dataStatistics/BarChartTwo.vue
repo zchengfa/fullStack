@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted,onBeforeUnmount } from 'vue';
+import {onMounted, onBeforeUnmount, reactive} from 'vue';
 import * as echarts from 'echarts/core';
 import {
   TitleComponent,
@@ -38,14 +38,20 @@ type EChartsOption = echarts.ComposeOption<
   | LegendComponentOption
   | BarSeriesOption
 >;
+const Charts = reactive({
+  myChart:<any>null,
+  chartDom:<any>null
+})
+
 const resizeEcharts = (target:HTMLElement)=>{
   target.style.width = target.parentElement?.clientWidth + 'px'
   target.style.height = target.parentElement?.clientHeight + 'px'
 }
 onMounted(() => {
-    let chartDom = document.getElementById('bar-chart-two')!;
-    resizeEcharts(chartDom)
-    let myChart = echarts.init(chartDom);
+    Charts.chartDom = document.getElementById('bar-chart-two')!;
+    if (echarts.getInstanceByDom(Charts.chartDom)) echarts.dispose(Charts.chartDom);
+    resizeEcharts(Charts.chartDom)
+    Charts.myChart = echarts.init(Charts.chartDom);
     let option: EChartsOption;
 
     let xAxisOneData = (()=>{
@@ -142,7 +148,7 @@ onMounted(() => {
         seriesTwoData.push((Math.cos(i / 5) * (i / 5 - 10) + i / 6) * 5);
 
         //重新配置图表数据
-        myChart.setOption({
+        Charts.myChart.setOption({
           xAxis:[
             {
               data:xAxisOneData
@@ -158,10 +164,10 @@ onMounted(() => {
           ]
         })
       },2100)
-      myChart.setOption(option)
+  Charts.myChart.setOption(option)
 
   window.addEventListener('resize',()=>{
-    myChart.resize({
+    Charts.myChart.resize({
       width: document.getElementById('bar-chart-two')?.parentElement?.clientWidth,
       height: document.getElementById('bar-chart-two')?.parentElement?.clientHeight,
       animation: {

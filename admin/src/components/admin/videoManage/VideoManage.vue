@@ -316,7 +316,7 @@ onUnmounted(()=>{
                 <file-uploader option-title="上传视频" @hide-elements="hideElements" :just-preview="true" preview-target="preview-video"></file-uploader>
               </div>
               <div class="preview-box">
-                <video controls contenteditable="true" width="100%" height="100%" id="preview-video" src="/"></video>
+                <video controls contenteditable="true" width="100%" height="100%" id="preview-video" src=""></video>
               </div>
             </div>
             <div class="image-preview-box">
@@ -325,11 +325,11 @@ onUnmounted(()=>{
                   <file-uploader :accept-file-type="{name:'图片',type:'image'}" @hide-elements="hideElements" preview-target="preview-image" :just-preview="true" option-title="上传图片"></file-uploader>
                 </div>
                 <div class="preview-box">
-                <img id="preview-image" src="/" alt="file_preview_image">
-              </div>
+                  <img id="preview-image"  alt="file_preview_image" src="">
+                </div>
             </div>
           </div>
-          <el-form-item label="视频标题:" class="file-title">
+          <el-form-item label="视频标题：" class="file-title">
             <el-input v-model="formData.title" type="textarea" size="small" placeholder="视频标题" label="视频标题"></el-input>
           </el-form-item>
           <file-uploader button-type="success" @upload-success="uploadSuccess" :form-data="formData" :just-upload="true" option-title="上传"></file-uploader>
@@ -345,9 +345,9 @@ onUnmounted(()=>{
 <!--  视频大屏播放-->
   <div class="video-big-screen">
     <el-button class="close-big-video-btn" @click="closeBigVideo" circle><el-icon><Close></Close></el-icon></el-button>
-    <video controls autoplay  src="/" id="big-screen-video"></video>
+    <video controls autoplay  src="" id="big-screen-video"></video>
   </div>
-  </template>
+</template>
 
 <style scoped lang="scss">
 @mixin display_flex($justify:center,$align:center,$flexWrap:wrap) {

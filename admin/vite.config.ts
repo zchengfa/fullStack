@@ -57,14 +57,41 @@
 //   //   }
 //   // }
 // })
-
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
+import viteCompression from 'vite-plugin-compression';
+import * as path from "node:path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+      vue(),
+      //开启Gzip压缩
+      viteCompression({ algorithm: 'gzip', ext: '.gz' }), // Gzip
+      //开启Brotli压缩
+      viteCompression({
+        algorithm: 'brotliCompress', // 指定使用 Brotli 算法
+        ext: '.br',                 // 生成 .br 后缀的压缩文件
+        threshold: 1024,            // 仅压缩大于 1KB 的文件（默认值）
+        deleteOriginFile: false,     // 保留原始文件（避免服务器未启用 Brotli 时无法回退）
+        filter: /\.(js|css|html|svg|json)$/i // 压缩指定类型的文件
+      })    //Brotli
+  ],
+  build:{
+    rollupOptions:{
+      external:['vue','vue-router'],
+      input:{
+        main: path.resolve(__dirname, './index.html'),
+      },
+      output:{
+        manualChunks: { // 手动分块第三方库
+          vue: ['vue', 'vue-router'],
+          axios: ['axios']
+        }
+      }
+    }
+  },
   server:{
     host:'0.0.0.0',
     port:3001

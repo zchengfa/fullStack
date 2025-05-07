@@ -188,7 +188,7 @@ onBeforeUnmount(()=>{
 
 <style scoped>
 .character{
-  font-size: 12px;
+  font-size: .8rem;
 }
 .progress-container{
   position: relative;
@@ -212,8 +212,8 @@ onBeforeUnmount(()=>{
   position: relative;
   margin: 0 auto;
   width: 100%;
-  min-width: 3rem;
-  min-height: 3rem;
+  min-width: 2rem;
+  min-height: 2rem;
   height: 100%;
   border-radius: 50%;
   overflow: hidden;
@@ -261,6 +261,9 @@ onBeforeUnmount(()=>{
   left: 50%;
   border-radius: 0 100% 100% 0;
   z-index:-1
+}
+.progress-text{
+  font-size: 1rem;
 }
 @keyframes rotate {
   0%{

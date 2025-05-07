@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import {onBeforeUnmount, onMounted} from 'vue';
+import {onBeforeUnmount, onMounted, onUnmounted, reactive} from 'vue';
 import * as echarts from 'echarts/core';
 import { ToolboxComponent, LegendComponent } from 'echarts/components';
 import { PieChart } from 'echarts/charts';
@@ -18,6 +18,11 @@ echarts.use([
   LabelLayout
 ]);
 
+const Charts = reactive<any>({
+  myChart:null,
+  chartDom:null
+})
+
 const resizeEcharts = (target:HTMLElement)=>{
   target.style.width = target.parentElement?.clientWidth + 'px'
   target.style.height = target.parentElement?.clientHeight + 'px'
@@ -29,9 +34,11 @@ const listener = ()=>{
 
 onMounted(() => {
 
-    let chartDom =<HTMLElement> document.getElementById('pie-rose-chart');
-    resizeEcharts(chartDom)
-    let myChart = echarts.init(chartDom);
+    Charts.chartDom =<HTMLElement> document.getElementById('pie-rose-chart');
+    if(echarts.getInstanceByDom(Charts.chartDom)) echarts.dispose(Charts.chartDom)
+
+    resizeEcharts(Charts.chartDom)
+    Charts.myChart = echarts.init(Charts.chartDom);
     let option;
 
     option = {
@@ -67,12 +74,15 @@ onMounted(() => {
         }
     ]
     };
-  myChart.setOption(option)
+  Charts.myChart.setOption(option)
   window.addEventListener('resize',listener)
 })
 
 onBeforeUnmount(()=>{
   window.removeEventListener('resize',listener)
+})
+onUnmounted(()=>{
+  Charts.myChart.dispose(Charts.chartDom);
 })
 </script>
 <style scoped>

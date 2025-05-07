@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref} from 'vue'
 import sparkMd5 from 'spark-md5'
-import {uploadFile,mergeFile,checkFileComplete} from "@/network/request";
+import {uploadFile,mergeFile,checkFileComplete} from "../../network/request";
 import {ElMessage} from "element-plus";
 
 const uploadProgress = ref<number>(0)
@@ -238,6 +238,7 @@ const customUpload =async ({file}:any)=>{
     }
   }
 </script>
+
 
 <template>
 

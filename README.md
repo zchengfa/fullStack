@@ -102,6 +102,7 @@ mall是关于商城的一个项目，该项目中具有`前端（web）、后端
   <div >
     <img src="./ScreenShot/admin/login.png" alt="登录"/>
     <img src="./ScreenShot/admin/shop.png" alt="商品管理"/>
+    <img src="./ScreenShot/admin/video.png" alt="视频管理"/>
     <img src="./ScreenShot/admin/banner.png" alt="轮播图管理"/>
     <img src="./ScreenShot/admin/preferent.png" alt="优惠管理"/>
     <img src="./ScreenShot/admin/seckill.png" alt="秒杀管理"/>

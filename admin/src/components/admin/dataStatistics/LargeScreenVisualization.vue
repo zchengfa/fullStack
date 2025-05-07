@@ -1,6 +1,6 @@
 <template>
- <div class="data-visualization-container" ref="dataVisualizationRef">
-         <div class="container">
+ <div class="data-visualization-container">
+         <div class="container" ref="dataVisualizationRef">
            <!-- 大屏左边部分 -->
            <div class="visualization-left visualization-box">
              <div class="left-top left-item">
@@ -89,8 +89,6 @@ import InfiniteScroll from "../../common/InfiniteScroll.vue";
 import {getStatisticsData} from "../../../network/request";
 import Earth from "./Earth.vue";
 
-let dataVisualizationRef = ref(null)
-
 const scrollData = ref([]);
 const headerData = ref(['排名','关键词','次数'])
 const propertyData = ref(['word','search_count'])
@@ -99,28 +97,23 @@ function getSData(){
     scrollData.value = res.data[2].words
   })
 }
-getSData()
 
-//获取缩放比例
-const getScale = (w=1440,h=720)=>{
-  let ww = window.innerWidth;
-  let wh = window.innerHeight;
-  //根据屏幕变化获得的适配比例
-  return  ww / wh < w/h ? ww / w : wh / h
+const getFontSize = ()=>{
+  const w = window.innerWidth;
+  return  w / 80;
 }
 
-//缩放
-const setTransformScreen = (el:HTMLElement)=>{
-  el.style.transform = `scale(${getScale()})`
+//设置html的fontSize
+const setFontSizeScreen = (el:HTMLElement)=>{
+  el.style.fontSize = `${getFontSize()}px`;
 }
 
 onMounted(()=>{
-  if(dataVisualizationRef.value){
-    const element = (dataVisualizationRef.value) as HTMLElement
-    setTransformScreen(element)
-    window.onresize = ()=>{
-      setTransformScreen(element)
-    }
+  getSData()
+  const element = (document.getElementsByTagName('html').item(0)) as HTMLElement
+  setFontSizeScreen(element)
+  window.onresize = ()=>{
+    setFontSizeScreen(element)
   }
 
 })
@@ -130,134 +123,116 @@ onBeforeUnmount(()=>{
 </script>
 
 <style scoped lang="scss">
-div{
-  box-sizing: border-box;
-}
-
-.modules-header{
-  padding: 1rem 0;
-  text-align: left;
-  white-space: nowrap;
-  .modules-title-en{
-    color: #959191;
-  }
-  .modules-title{
-    margin-right: .5rem;
-    font-size: 1.2rem;
-  }
+$lightBlue: #7cb9bf;
+@mixin flexLayout($direction:row,$JC:center,$AI:center,$FW:nowrap) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $JC;
+  align-items: $AI;
+  flex-wrap: $FW;
 }
 .data-visualization-container{
-    position: fixed;
-    top: 0;
+  div{
+    box-sizing: border-box;
+  }
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: url('@/assets/image/admin/big_screen_bg.png') no-repeat;
+  background-size: cover;
+  z-index: 999;
+  color: $lightBlue;
+  .container{
+    @include flexLayout();
+    position: relative;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 1000;
-    background-color: #000;
-    color: #65accd;
-    .container,.left-item{
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      width: 100%;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-image: url('@/assets/image/admin/bg2.jpg');
+    background-repeat: no-repeat;
+    background-position: center center;
+    .visualization-left,.visualization-right{
+      width: 25%;
       height: 100%;
-      padding: 0 1rem
     }
     .visualization-box{
-      position: relative;
-      flex: 0 1 28%;
-      height: 90%;
-
+      padding: 1rem;
     }
     .visualization-center{
-      flex: 0 1 44%;
+      width: 50%;
+      height: 100%;
       .charts-box{
         width: 100%;
-        height: 40%;
+        height: 50%;
       }
     }
-    .left-top{
-      height: 40%;
-    }
-    .left-bottom{
+    .visualization-left .left-bottom{
+      width: 100%;
       height: 60%;
     }
-    .left-item{
-      justify-content: flex-start;
-      flex-direction: column;
-      align-items: flex-start;
-      padding: 1rem;
+    .visualization-left .left-top{
+      width: 100%;
+      height: 40%;
+      @include flexLayout(column);
       .sell-data{
-        width: 100%;
-        font-size: 14px;
+        margin: 2rem 0;
+        font-size: 1.5rem;
       }
-      .sell-header{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        .sell-title{
-          color: #959191;
+      .percent-box{
+        width: 90%;
+        .sell-progress-bar{
+          margin-top: .5rem;
+          height: .7rem;
         }
       }
       .sell{
-        padding: 1rem 0;
-        font-size: 1.2rem;
-      }
-      .percent-box{
-        width: 100%;
-        text-align: left;
-      }
-      .sell-progress-bar{
-        margin: 2rem 0;
-        width: 100%;
-        height: .5rem;
-      }
-      .rank-box{
-        width: 100%;
-        height: calc(100% - 5rem);
+        margin-top: .5rem;
       }
     }
+    .unit{
+      font-size: 1.1rem;
+    }
+    .unit::before{
+      display: inline-block;
+      content: '/';
+      margin: 0 .2rem;
+    }
     .visualization-right{
-      position: relative;
-      .circle-pro{
-        width: 3rem;
-        height: 3rem
+      .modules-header{
+        @include flexLayout(row);
+        width: 100%;
+        height: 10%;
+        font-size: 1.5rem;
       }
       .right-top{
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-around;
-        align-items: center;
+        width: 100%;
+        height: 30%;
+        @include flexLayout(row,space-between,center,wrap);
         .right-top-item{
-          padding-left: .5rem;
-          padding-top: 1.5rem;
+          position: relative;
           width: 50%;
-          display: flex;
-          justify-content: flex-start;
-          align-items: center;
+          margin-top: 1rem;
+          @include flexLayout(column);
+          .circle-pro{
+            width: 4rem;
+            height: 4rem;
+          }
           .info{
-            flex: 1;
-            span{
-              padding: .2rem 1rem;
-              width: 100%;
-              display: block;
-              font-size: 12px;
-              text-align: left;
-            }
-            span:first-child{
-              font-size: 2rem;
-              font-weight: bold;
-              color: #fff;
-            }
+            margin-top: .5rem;
+            font-size: .8rem;
           }
         }
       }
       .right-bottom{
-        margin-top: 40%;
+        @include flexLayout();
         width: 100%;
-        height: 200px;
+        height: 60%;
       }
     }
+  }
 }
 </style>

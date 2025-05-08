@@ -45,7 +45,7 @@ onUpdated(()=>{
 <template>
 <div class="infinite-scroll-container">
   <div class="scroll-header">
-    <span v-for="(item,index) in headerData" :key="index">{{item}}</span>
+    <span class="scroll-h-item" v-for="(item,index) in headerData" :key="index">{{item}}</span>
   </div>
   <div class="scroll-container">
     <div class="container-item container-one" :class="showContainerTwo ? 'animate' : undefined" :style="{'--speed':speed+'s'}">
@@ -76,65 +76,56 @@ onUpdated(()=>{
 </div>
 </template>
 
-<style scoped>
-.infinite-scroll-container{
-  width: 100%;
-  height: 100%;
-}
-.scroll-header{
+<style scoped lang="scss">
+@mixin flexLayout(){
   display: flex;
+  flex-wrap: nowrap;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  height: 3rem;
 }
 .scroll-container{
   width: 100%;
-  height: calc(100% - 3rem);
+  height: 20rem;
   overflow: hidden;
+  .rank-medal{
+    width: 2rem;
+    height: 2rem;
+  }
+  .No-box{
+    width: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    .rank-no{
+      position: absolute;
+      left: 50%;
+      top: 35%;
+      transform: translate(-50%, -50%) scale(.8);
+    }
+  }
 }
-.container-item{
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+.scroll-header {
+  @include flexLayout();
+  .scroll-h-item{
+    width: 25%;
+  }
+  .scroll-h-item:nth-child(2){
+    width: 50%;
+  }
+}
+.scroll-item{
+  @include flexLayout();
+  height: 4rem;
+  .item-children{
+    width: 25%;
+  }
+  .item-children:nth-child(2){
+    width: 50%;
+  }
 }
 .animate{
   animation: upAnimation var(--speed) linear infinite;
-}
-.scroll-item{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  height: 3rem;
-  line-height: 2rem;
-}
-.scroll-item .item-children{
-  width: 2rem;
-  height: 2rem;
-}
-.scroll-item .item-children:not(:first-child){
-  width: auto;
-}
-.No-box{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
-.rank-no{
-  position: absolute;
-  height: 100%;
-  line-height: 1.6rem;
-  z-index:1;
-  color: #fff;
-  transform: scale(.8);
-}
-.rank-medal{
-  width: 2rem;
-  height: 2rem;
-  transform: scale(.8);
 }
 @keyframes upAnimation {
   0%{
@@ -144,4 +135,5 @@ onUpdated(()=>{
     transform: translateY(-100%);
   }
 }
+
 </style>

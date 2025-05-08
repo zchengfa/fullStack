@@ -235,4 +235,7 @@ $lightBlue: #7cb9bf;
     }
   }
 }
+.rank-box{
+  margin-top: 1rem;
+}
 </style>

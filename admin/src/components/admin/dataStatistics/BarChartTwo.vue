@@ -40,7 +40,8 @@ type EChartsOption = echarts.ComposeOption<
 >;
 const Charts = reactive({
   myChart:<any>null,
-  chartDom:<any>null
+  chartDom:<any>null,
+  timer:<any>0
 })
 
 const resizeEcharts = (target:HTMLElement)=>{
@@ -133,7 +134,7 @@ onMounted(() => {
     };
 
     //设置定时器，每过2秒就刷新一次数据并将新数据加入到图表中
-    setInterval(()=>{
+    Charts.timer = setInterval(()=>{
         let xAxisData = new Date().toLocaleTimeString().replace(/\D*/,'')
         let i = Math.round(Math.random()*100)
         //先删除原先数组中第一个数据
@@ -180,6 +181,7 @@ onMounted(() => {
 
 onBeforeUnmount(()=>{
   window.onresize = null;
+  clearInterval(Charts.timer)
 })
 </script>
 

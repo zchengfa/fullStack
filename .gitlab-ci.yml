@@ -1,0 +1,9 @@
+stages:
+  - deploy
+
+deploy_to_server:
+  stage: deploy
+  script:
+    - scp -r ./ user@your-server:/path/to/deploy
+  only:
+    - main

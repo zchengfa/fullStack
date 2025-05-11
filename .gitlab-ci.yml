@@ -1,9 +1,89 @@
+image: node:20 #统一使用node环境
 stages:
+  - install
+  - build
   - deploy
+cache: # 缓存依赖加速构建
+  key: $CI_COMMIT_REF_SLUG
+  paths:
+    - admin/node_modules
+    - web/node_modules
+    - server/node_modules
 
-deploy_to_server:
-  stage: deploy
+admin-install:
+  stage: install
   script:
-    - scp -r ./ user@your-server:/path/to/deploy
+    - cd admin
+    - npm ci #精确安装依赖
+  only:
+    - main
+
+admin-build:
+  stage: build
+  script:
+    - cd admin
+    - npm run build
+  artifacts: # 保留构建产物
+    paths:
+      - admin/dist
+  only:
+    - main
+
+web-install:
+  stage: install
+  script:
+    - cd web
+    - npm ci
+  only:
+    - main
+
+web-build:
+  stage: build
+  script:
+    - cd web
+    - npm run build
+  artifacts: # 保留构建产物
+    paths:
+      - web/dist
+  only:
+    - main
+
+server-install:
+  stage: install
+  script:
+    - cd server
+    - npm ci
+  only:
+    - main
+
+server-build:
+  stage: build
+  script:
+    - cd server
+    - npm run pkgwin
+  artifacts: # 保留构建产物
+    paths:
+      - ./server
+  only:
+    - main
+
+# 部署
+deploy-all:
+  stage: deploy
+#  before_script:
+#    - apk add --no-cache openssh-client  # 安装SSH工具
+#    - mkdir -p ~/.ssh
+#    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+#    - chmod 600 ~/.ssh/id_rsa
+  variables:
+    NGINX_ROOT: "/usr/share/nginx/html"  # 标准Nginx容器路径
+  script:
+    # 创建目录结构
+    - mkdir -p ${NGINX_ROOT}/{admin,web,server}
+
+    # 复制构建产物
+    - cp -r admin/dist/* ${NGINX_ROOT}/admin/
+    - cp -r web/dist/* ${NGINX_ROOT}/web/
+    - cp server/mall-win.exe ${NGINX_ROOT}/server/
   only:
     - main

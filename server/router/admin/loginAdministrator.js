@@ -19,22 +19,30 @@ module.exports = app => {
     const mysql_query = require('../../plugins/mysql_query')
 
     //创建查询符合请求参数的identity字段(是否为管理员)语句
-    const selectUser = mysql_query.selectFields('mall_administrator','username,account,avatar,identity',`account = '${paramsObj.account}' 
+    const selectUser = mysql_query.selectAll('mall_administrator',`account = '${paramsObj.account}' 
                                     AND password = '${paramsObj.password}'` )
 
     connection.query(selectUser,(err,results) => {
-      if (err) throw err
+      if (err) {
+        res.status(500).send({errMessage:'服务器出现问题'})
+        console.log(err)
+      }
       else {
         if (Object.keys(results).length){
           const {createToken} = require('../../util/token.js')
           const administrator = {
             username:results[0].username,
             account:results[0].account,
+            identity:results[0].identity,
             avatar:results[0].avatar,
-            identity:results[0].identity
+            id:results[0].user_id,
           }
           //生成token,当过期时间number类型时以秒计算
-          const token = createToken(administrator,'1d')
+          const token = createToken({
+            id:results[0].user_id,
+            username:results[0].username,
+            account:results[0].account,
+          },'1d')
 
           try{
 
@@ -228,7 +236,6 @@ module.exports = app => {
                         })
                       })
                     }
-
                     res.send({'success':'登录成功','token':token,'userInfo':administrator,'rights':rights})
                   }
                 })
@@ -241,7 +248,6 @@ module.exports = app => {
         else {
           res.send({'failed':'账号密码错误或不是管理员'})
         }
-        console.log(results)
       }
     })
   })

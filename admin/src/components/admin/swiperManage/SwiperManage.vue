@@ -1,5 +1,8 @@
 <template>
-  <swiper :key="swiperKey" :modules="[EffectCoverflow]" effect="coverflow" class="swiper" autoplay>
+  <swiper :key="swiperKey" direction="horizontal" :modules="[EffectCoverflow,Autoplay]" effect="coverflow" class="swiper" :autoplay="{
+    delay: 3000,
+    disableOnInteraction: false
+  }">
     <swiper-slide v-for="(item,index) in table.manageData" :key="index" v-show="item.isShow">
       <img :src="item.banner_image" alt="banner">
     </swiper-slide>
@@ -30,7 +33,7 @@
 
 <script lang="ts">
 import {defineComponent, onMounted, reactive, ref, watchEffect} from "vue";
-import {EffectCoverflow} from 'swiper'
+import {EffectCoverflow,Autoplay} from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import {getBannerData, operateBanner} from "../../../network/request";
 import useTable from "../../../common/useTable";
@@ -94,6 +97,7 @@ export default defineComponent({
 
     return {
       EffectCoverflow,
+      Autoplay,
       swiperKey,
       table,
       currentPageChange,

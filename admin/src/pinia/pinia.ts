@@ -78,6 +78,12 @@ export const userStore = defineStore('user',{
     }
 })
 
+interface MessageType {
+    time:bigint,
+    role:string,
+    message:string
+}
+
 export const shopStore = defineStore('shop',{
     state:()=>{
         return {
@@ -88,6 +94,56 @@ export const shopStore = defineStore('shop',{
         saveShopData(d:any[]){
             this.data = d
             sessionStorage.setItem('shop',JSON.stringify(d))
+        }
+    }
+})
+
+export const chatAssistantStore = defineStore('chatAssistant',{
+    state:()=>{
+        return {
+            isChatAssistant:<boolean>false,
+            isFinish:<boolean> false,
+            isShowMask: <boolean>false,
+            mainMessageBody:<MessageType[]>[],
+            owner:<bigint> JSON.parse(sessionStorage.getItem('userInfo') as string).id,
+            allMessage:<any[]>JSON.parse(localStorage.getItem('AI_ASSISTANT_MESSAGE_CACHE') as string) || []
+        }
+    },
+    actions:{
+        changeChatAssistant(status:boolean){
+            this.isChatAssistant = status;
+        },
+        changeAnswerStatus(status:boolean){
+            this.isFinish = status;
+        },
+        changeMaskStatus(status:boolean){
+            this.isShowMask = status
+        },
+        alterMainMessageBody(messageBody:MessageType){
+            this.mainMessageBody.push(messageBody)
+            if(!this.allMessage.length){
+                this.allMessage.push({
+                    user: this.owner,
+                    list: this.mainMessageBody
+                })
+            }
+            else{
+                this.allMessage?.map((item:any)=>{
+                    if(item.user === this.owner){
+                        item.list = this.mainMessageBody
+                    }
+                })
+            }
+            //持久化
+            localStorage.setItem('AI_ASSISTANT_MESSAGE_CACHE',JSON.stringify(this.allMessage))
+        },
+        initMessageBody(){
+            const cache = JSON.parse(JSON.stringify(this.allMessage))
+            cache.forEach((item:any)=>{
+                if(item.user === this.owner){
+                    this.mainMessageBody = item.list.slice(item.list.length >= 10 ? item.list.length - 10 : 0,item.list.length)
+                }
+            })
         }
     }
 })

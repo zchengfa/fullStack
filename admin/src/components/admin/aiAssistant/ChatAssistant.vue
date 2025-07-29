@@ -170,7 +170,7 @@ onBeforeUnmount(()=>{
     <div class="chat-assistant-mask" v-show="isShowMask">
       <div class="mask-top">
         <div class="ai-img-box">
-          <img class="ai-img" src="../../../assets/image/admin/ai.apng" alt="ai_assistant_img"/>
+          <img class="ai-img" src="../../../assets/image/admin/ai.png" alt="ai_assistant_img"/>
         </div>
         <h2 class="title">你好，我是</h2>
         <h2 class="title title-assistant">MM AI助理</h2>

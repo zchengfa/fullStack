@@ -17,7 +17,7 @@ const openChatAssistant = ()=>{
 <div id="ai-component" >
   <div class="ai-content" @click="openChatAssistant" :class="{'ai-content-disabled': assistantPinia.isChatAssistant}">
     <div class="ai-img-box">
-      <img class="ai-img" src="../../../assets/image/admin/ai.apng" alt="ai_assistant_img"/>
+      <img class="ai-img" src="../../../assets/image/admin/ai.png" alt="ai_assistant_img"/>
     </div>
     <div class="ai-title">AI助理</div>
   </div>

@@ -1,6 +1,8 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 
+import {initTheme} from "./common/utils";
+
 import router,{ addDynamicRoutes } from "./router";
 import { createPinia } from "pinia";
 import ElementPlus from 'element-plus/lib/index'
@@ -14,6 +16,9 @@ import loading from "./components/common/loading";
 import mitt from "mitt";
 
 const app = createApp(App)
+
+//执行初始化主题函数为项目设置主题
+initTheme()
 
 //将事件总线注册为全局属性
 app.config.globalProperties.$bus = mitt()

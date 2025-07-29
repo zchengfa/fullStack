@@ -1,6 +1,6 @@
-const mysql = require('mysql')
+const mysql = require('mysql2');
 
-module.exports = function connect(){
+module.exports = function connect() {
     return mysql.createPool({
         host: process.env.MYSQL_HOST,
         user: process.env.MYSQL_USER,

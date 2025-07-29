@@ -86,7 +86,7 @@ onMounted(()=>{
   <div v-show="isShowWaiting && isFinish" class="message-item message-item-left waiting-box">
     <div class="assistant-avatar-box avatar-box" :class="avatarShape + '-avatar'">
       <slot name="assistant-waiting">
-        <img class="ai-img" src="../../assets/image/admin/ai.apng" alt="ai_assistant_img"/>
+        <img class="ai-img" src="../../assets/image/admin/ai.png" alt="ai_assistant_img"/>
       </slot>
     </div>
     <div class="waiting-tip">正在获取资料...</div>

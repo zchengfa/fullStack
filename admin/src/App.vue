@@ -52,5 +52,13 @@ ul{
 :root{
   --percent:0;
   --empty-text: #a8a3a3;
+  --primary-color: #000;
+  --text-color: #262727;
+  --bg-color: #fff;
+}
+[data-theme = 'dark']{
+  --primary-color: #000;
+  --text-color: #fff;
+  --bg-color: #262727;
 }
 </style>

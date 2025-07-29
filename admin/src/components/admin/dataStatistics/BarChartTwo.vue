@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, onBeforeUnmount, reactive} from 'vue';
+import {onMounted, onBeforeUnmount, shallowRef,markRaw,ref} from 'vue';
 import * as echarts from 'echarts/core';
 import {
   TitleComponent,
@@ -19,6 +19,7 @@ import {
 } from 'echarts/components';
 import { BarChart, BarSeriesOption } from 'echarts/charts';
 import { CanvasRenderer } from 'echarts/renderers';
+import {debounce} from "@/common/utils";
 
 echarts.use([
   TitleComponent,
@@ -38,21 +39,30 @@ type EChartsOption = echarts.ComposeOption<
   | LegendComponentOption
   | BarSeriesOption
 >;
-const Charts = reactive({
-  myChart:<any>null,
-  chartDom:<any>null,
-  timer:<any>0
-})
+const myChart = shallowRef<any>(null)
+const chartDom = shallowRef<HTMLElement>()
+const timer = ref()
 
 const resizeEcharts = (target:HTMLElement)=>{
   target.style.width = target.parentElement?.clientWidth + 'px'
   target.style.height = target.parentElement?.clientHeight + 'px'
 }
+const debounceResize = debounce(()=>{
+  myChart.value.resize({
+    width: document.getElementById('bar-chart-two')?.parentElement?.clientWidth,
+    height: document.getElementById('bar-chart-two')?.parentElement?.clientHeight,
+    animation: {
+      duration: 300,
+      easing: 'linear',
+    }
+  })
+},300)
+
 onMounted(() => {
-    Charts.chartDom = document.getElementById('bar-chart-two')!;
-    if (echarts.getInstanceByDom(Charts.chartDom)) echarts.dispose(Charts.chartDom);
-    resizeEcharts(Charts.chartDom)
-    Charts.myChart = echarts.init(Charts.chartDom);
+    chartDom.value = document.getElementById('bar-chart-two')!;
+    if (echarts.getInstanceByDom(chartDom.value)) echarts.dispose(chartDom.value);
+    resizeEcharts(chartDom.value);
+    myChart.value = markRaw(echarts.init(chartDom.value));
     let option: EChartsOption;
 
     let xAxisOneData = (()=>{
@@ -67,7 +77,7 @@ onMounted(() => {
       })()
     let seriesOneData:any[] = []
     let seriesTwoData:any[] = []
-    for (var i = 0; i < 100; i++) {
+    for (let i = 0; i < 100; i++) {
 
         seriesOneData.push((Math.sin(i / 5) * (i / 5 - 10) + i / 6) * 5);
         seriesTwoData.push((Math.cos(i / 5) * (i / 5 - 10) + i / 6) * 5);
@@ -134,7 +144,7 @@ onMounted(() => {
     };
 
     //设置定时器，每过2秒就刷新一次数据并将新数据加入到图表中
-    Charts.timer = setInterval(()=>{
+    timer.value = setInterval(()=>{
         let xAxisData = new Date().toLocaleTimeString().replace(/\D*/,'')
         let i = Math.round(Math.random()*100)
         //先删除原先数组中第一个数据
@@ -149,7 +159,7 @@ onMounted(() => {
         seriesTwoData.push((Math.cos(i / 5) * (i / 5 - 10) + i / 6) * 5);
 
         //重新配置图表数据
-        Charts.myChart.setOption({
+        myChart.value.setOption({
           xAxis:[
             {
               data:xAxisOneData
@@ -165,23 +175,14 @@ onMounted(() => {
           ]
         })
       },2100)
-  Charts.myChart.setOption(option)
+  myChart.value.setOption(option)
 
-  window.addEventListener('resize',()=>{
-    Charts.myChart.resize({
-      width: document.getElementById('bar-chart-two')?.parentElement?.clientWidth,
-      height: document.getElementById('bar-chart-two')?.parentElement?.clientHeight,
-      animation: {
-        duration: 300,
-        easing: 'linear',
-      }
-    })
-  })
+  window.addEventListener('resize',debounceResize);
 })
 
 onBeforeUnmount(()=>{
-  window.onresize = null;
-  clearInterval(Charts.timer)
+  window.removeEventListener('resize',debounceResize);
+  clearInterval(timer.value)
 })
 </script>
 

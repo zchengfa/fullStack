@@ -311,3 +311,22 @@ export function debounce (fn:Function, delay:number = 500) {
         }, delay)
     }
 }
+
+export function throttle <T extends any[]>(fn: (...args: T) => void, delay: number) {
+    let lastExecTime = 0;
+    return (...args: T) => {
+        const now = Date.now();
+        if (now - lastExecTime >= delay) {
+            //@ts-ignore
+            fn.apply(this, args);
+            lastExecTime = now;
+        }
+    };
+}
+
+//初始化主题
+export function initTheme (){
+    const theme = localStorage.getItem("theme") as string || 'light';
+    document.documentElement.setAttribute('data-theme',theme)
+    return theme;
+}

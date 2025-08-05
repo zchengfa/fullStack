@@ -131,6 +131,7 @@ export default defineComponent( {
             if (result.data['success']){
               this.userStorePinia.setToken(result.data['token'])
               this.userStorePinia.setRights(JSON.stringify(result.data['rights']))
+              this.userStorePinia.setUserInfo(JSON.stringify(result.data.userInfo))
               this.addDynamicRoutes()
 
               this.$router.push('/')
@@ -139,16 +140,16 @@ export default defineComponent( {
               alert(result.data['failed'])
             }
 
-            //登录成功后获取用户信息
-            getAdministratorInfo(this.token).then(result =>{
-              if (result.data.info){
-
-                this.userStorePinia.setUserInfo(JSON.stringify(result.data.info))
-              }
-              //console.log(result)
-            }).catch(err =>{
-              console.log(err)
-            })
+            // //登录成功后获取用户信息
+            // getAdministratorInfo(this.token).then(result =>{
+            //   if (result.data.info){
+            //
+            //     this.userStorePinia.setUserInfo(JSON.stringify(result.data.info))
+            //   }
+            //   //console.log(result)
+            // }).catch(err =>{
+            //   console.log(err)
+            // })
 
           }).catch(err => {
             console.log(err)

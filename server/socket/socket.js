@@ -1,3 +1,5 @@
+const poll = require('../plugins/pollDatabaseLog.js');
+const openAi = require('../plugins/AI.js');
 module.exports = server => {
     const socket = require('socket.io')
     const io = socket(server,{
@@ -8,13 +10,41 @@ module.exports = server => {
 
     const {messageModel} = require('../model/model')
 
-    let users = {}
+    let users = {},clients = [];
     io.on('connection', socket => {
+        clients.push(socket);
         socket.on('online',user => {
             users[user] = socket.id
             socket.name = user
             console.log(user + '上线了',socket.id,13)
         })
+        // 大屏可视化所需数据获取
+        //poll(clients);
+        // 大屏可视化所需数据获取
+
+        //AI
+        socket.on('askAI',(question)=>{
+            openAi.chat(question).then(async (results)=>{
+                for await (const chunk of results){
+                    if(Array.isArray(chunk.choices) && chunk.choices.length > 0){
+                        socket.emit('AIResults',{
+                            time:chunk.created,
+                            isFinishAnswer:false,
+                            content:chunk.choices[0].delta.content
+                        })
+                    }
+                    else{
+                        socket.emit('AIResults',{
+                            time:chunk.created,
+                            isFinishAnswer:true,
+                            content:''
+                        })
+                    }
+                }
+            })
+
+        })
+        //AI
 
         socket.on('sendMsg',(message,sender,receiver,sendTime,avatar) => {
             console.log(message,sender,receiver,sendTime,avatar)

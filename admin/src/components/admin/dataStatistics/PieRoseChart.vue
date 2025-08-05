@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import {onBeforeUnmount, onMounted, onUnmounted, reactive} from 'vue';
+import {onBeforeUnmount, onMounted, onUnmounted, shallowRef,markRaw} from 'vue';
 import * as echarts from 'echarts/core';
 import { ToolboxComponent, LegendComponent } from 'echarts/components';
 import { PieChart } from 'echarts/charts';
@@ -18,10 +18,8 @@ echarts.use([
   LabelLayout
 ]);
 
-const Charts = reactive<any>({
-  myChart:null,
-  chartDom:null
-})
+const myChart = shallowRef<any>(null)
+const chartDom = shallowRef<HTMLElement>()
 
 const resizeEcharts = (target:HTMLElement)=>{
   target.style.width = target.parentElement?.clientWidth + 'px'
@@ -29,16 +27,16 @@ const resizeEcharts = (target:HTMLElement)=>{
 }
 
 const listener = ()=>{
-  resizeEcharts((document.getElementById('earth')) as HTMLElement)
+  resizeEcharts((document.getElementById('pie-rose-chart')) as HTMLElement)
 }
 
 onMounted(() => {
 
-    Charts.chartDom =<HTMLElement> document.getElementById('pie-rose-chart');
-    if(echarts.getInstanceByDom(Charts.chartDom)) echarts.dispose(Charts.chartDom)
+    chartDom.value =<HTMLElement> document.getElementById('pie-rose-chart');
+    if(echarts.getInstanceByDom(chartDom.value)) echarts.dispose(chartDom.value)
 
-    resizeEcharts(Charts.chartDom)
-    Charts.myChart = echarts.init(Charts.chartDom);
+    resizeEcharts(chartDom.value)
+    myChart.value = markRaw(echarts.init(chartDom.value));
     let option;
 
     option = {
@@ -74,7 +72,7 @@ onMounted(() => {
         }
     ]
     };
-  Charts.myChart.setOption(option)
+  myChart.value.setOption(option)
   window.addEventListener('resize',listener)
 })
 
@@ -82,7 +80,7 @@ onBeforeUnmount(()=>{
   window.removeEventListener('resize',listener)
 })
 onUnmounted(()=>{
-  Charts.myChart.dispose(Charts.chartDom);
+  myChart.value.dispose();
 })
 </script>
 <style scoped>

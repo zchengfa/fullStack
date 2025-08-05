@@ -22,10 +22,11 @@ import {
   User,
   Van,
   VideoPlay,
-  Watch
+  Watch,
 } from '@element-plus/icons-vue'
 import SkewArrow from "../components/common/SkewArrow.vue";
 import {ElIcon,ElMessage} from "element-plus";
+import AiAssistant from "../components/admin/aiAssistant/AiAssistant.vue";
 
 
 let router = useRouter()
@@ -37,6 +38,13 @@ const pathArr:any[] = []
 routesArr.forEach((item:any)=>{
   pathArr.push(item.path)
 })
+//主题开关状态
+const switchStatus = ref(false)
+const changeSwitch = ()=>{
+  const theme = switchStatus.value ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('theme',theme)
+}
 
 const centerDialogVisible = ref(false)
 let navLogic = reactive({
@@ -132,6 +140,11 @@ function closeSkew(name:string){
   })
 }
 onBeforeMount(()=> {
+  const theme = localStorage.getItem('theme');
+  if(!theme) switchStatus.value = false
+  else{
+    switchStatus.value = theme === 'dark'
+  }
   getTime(navLogic.time.currentTime)
 })
 
@@ -159,6 +172,7 @@ onMounted(()=>{
             <span class="current-time">{{navLogic.time.currentTime}}</span>
             <span class="week-span">{{navLogic.time.week}}</span>
           </div>
+          <el-switch class="theme-switch" @change="changeSwitch" v-model="switchStatus" ></el-switch>
         </li>
         <li class="nav-item">
           <div class="administrator">
@@ -223,6 +237,7 @@ onMounted(()=>{
       </span>
     </template>
   </el-dialog>
+  <ai-assistant></ai-assistant>
 </template>
 
 <style scoped>
@@ -249,6 +264,9 @@ onMounted(()=>{
 }
 .nav-item{
   width: fit-content;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .week-span{
   margin-left: 1rem;
@@ -299,5 +317,28 @@ onMounted(()=>{
 }
 .router-view-col::-webkit-scrollbar{
     display: none;
+}
+/*使用样式穿透改变开关的某些样式*/
+:deep(.el-switch){
+  --el-switch-on-color: var(--bg-color);
+  margin-left: 1rem;
+  font-weight: bolder;
+}
+:deep(.el-switch__label i){
+  display: none;
+}
+:deep(.el-switch .el-switch__action){
+  font-family: "element-icons","sans-serif" !important;
+}
+:deep(.el-switch.is-checked .el-switch__action){
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--text-color);
+}
+:deep(.el-switch.is-checked .el-switch__action::after){
+  content: "\e6f0"; /*moon图标unicode编码*/
+}
+:deep(.el-switch:not(.is-checked) .el-switch__action::before){
+  content: "\e6f6"; /*sunny图标unicode编码*/
 }
 </style>

@@ -33,7 +33,9 @@
            <!-- 大屏中间部分 -->
            <div class="visualization-center visualization-box">
              <div class="charts-box"><bar-chart-two class="order-chart"></bar-chart-two></div>
-             <div class="charts-box"><earth></earth></div>
+             <div class="charts-box">
+<!--               <earth></earth>-->
+             </div>
            </div>
            <!-- 大屏右边部分 -->
            <div class="visualization-right visualization-box">
@@ -87,11 +89,19 @@ import BarChartTwo from './BarChartTwo.vue'
 import PieRoseChart from './PieRoseChart.vue'
 import InfiniteScroll from "../../common/InfiniteScroll.vue";
 import {getStatisticsData} from "../../../network/request";
-import Earth from "./Earth.vue";
+//import Earth from "./Earth.vue";
+import SocketService from '../../../socket/socket';
+import { URL } from "@/common/utils";
 
 const scrollData = ref([]);
-const headerData = ref(['排名','关键词','次数'])
-const propertyData = ref(['word','search_count'])
+const headerData = ref(['排名','关键词','次数']);
+const propertyData = ref(['word','search_count']);
+const socket = new SocketService(URL,{
+  auth:{
+    token: sessionStorage.getItem("token"),
+  }
+})
+
 function getSData(){
   getStatisticsData().then(res=>{
     scrollData.value = res.data[2].words
@@ -116,9 +126,15 @@ onMounted(()=>{
     setFontSizeScreen(element)
   }
 
+  socket.connect();
+  socket.on('data_updated',(data:any)=>{
+    console.log(data);
+  })
+
 })
 onBeforeUnmount(()=>{
   window.onresize = null
+  socket.off('data_updated');
 })
 </script>
 

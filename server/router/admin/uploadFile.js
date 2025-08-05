@@ -4,7 +4,6 @@ const path = require("path");
 const {getFileExtName, getLocalIP} = require('../../util/util');
 const mysql_query = require('../../plugins/mysql_query')
 const {timeFormatting} = require("../../util/timeFormatting");
-const {Promise} = require("mongoose");
 const connection = require('../../plugins/connectMysql')()
 
 module.exports = function (app,port) {

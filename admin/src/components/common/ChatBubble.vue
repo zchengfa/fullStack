@@ -99,6 +99,7 @@ $bubbleBGC: var(--bubbleBGColor);
   flex: 1;
   .bubble-message-box{
     max-width: 80%;
+    word-break: break-all;
   }
   .bubble-arrow{
     top: 16px;

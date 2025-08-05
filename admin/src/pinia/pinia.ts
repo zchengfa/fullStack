@@ -81,7 +81,8 @@ export const userStore = defineStore('user',{
 interface MessageType {
     time:bigint,
     role:string,
-    message:string
+    message:string,
+    isFinishAnswer?:boolean
 }
 
 export const shopStore = defineStore('shop',{
@@ -104,6 +105,7 @@ export const chatAssistantStore = defineStore('chatAssistant',{
             isChatAssistant:<boolean>false,
             isFinish:<boolean> false,
             isShowMask: <boolean>false,
+            msgLoadCount:<number> 10,
             mainMessageBody:<MessageType[]>[],
             owner:<bigint> JSON.parse(sessionStorage.getItem('userInfo') as string).id,
             allMessage:<any[]>JSON.parse(localStorage.getItem('AI_ASSISTANT_MESSAGE_CACHE') as string) || []
@@ -120,29 +122,68 @@ export const chatAssistantStore = defineStore('chatAssistant',{
             this.isShowMask = status
         },
         alterMainMessageBody(messageBody:MessageType){
-            this.mainMessageBody.push(messageBody)
-            if(!this.allMessage.length){
-                this.allMessage.push({
-                    user: this.owner,
-                    list: this.mainMessageBody
-                })
+            const {isFinishAnswer,role,time,message} = messageBody
+            const msgBody = {role,time,message}
+
+            if(role === 'user'){
+                this.mainMessageBody.push(msgBody)
+                if(!this.allMessage.length){
+                    this.allMessage.push({
+                        user: this.owner,
+                        list: this.mainMessageBody
+                    })
+                }
+                else{
+                    this.allMessage?.map((item:any)=>{
+                        if(item.user === this.owner){
+                            item.list = this.mainMessageBody
+                        }
+                    })
+                }
+                //持久化
+                localStorage.setItem('AI_ASSISTANT_MESSAGE_CACHE',JSON.stringify(this.allMessage))
             }
             else{
-                this.allMessage?.map((item:any)=>{
-                    if(item.user === this.owner){
-                        item.list = this.mainMessageBody
-                    }
-                })
+                const lastMsgBody = this.mainMessageBody[this.mainMessageBody.length - 1]
+                lastMsgBody.role !== 'assistant' ? this.mainMessageBody.push(msgBody) : lastMsgBody.message += message
+                if(isFinishAnswer){
+                    this.allMessage?.map((item:any)=>{
+                        if(item.user === this.owner){
+                            item.list = this.mainMessageBody
+                        }
+                    })
+                    //持久化
+                    localStorage.setItem('AI_ASSISTANT_MESSAGE_CACHE',JSON.stringify(this.allMessage))
+                }
             }
-            //持久化
-            localStorage.setItem('AI_ASSISTANT_MESSAGE_CACHE',JSON.stringify(this.allMessage))
         },
         initMessageBody(){
+            const num = this.msgLoadCount
             const cache = JSON.parse(JSON.stringify(this.allMessage))
             cache.forEach((item:any)=>{
                 if(item.user === this.owner){
-                    this.mainMessageBody = item.list.slice(item.list.length >= 10 ? item.list.length - 10 : 0,item.list.length)
+                    this.mainMessageBody = item.list.slice(item.list.length >= num ? item.list.length - num : 0,item.list.length)
                 }
+            })
+        },
+        loadHistoryMessage(){
+            let timer:any = null
+            return new Promise((resolve)=>{
+                timer = setTimeout(()=>{
+                    let userHistoryMsg: MessageType[] = []
+                    this.allMessage.forEach((item:any)=>{
+                        if(item.user === this.owner){
+                            userHistoryMsg = item.list
+                        }
+                    })
+                    if (userHistoryMsg.length <= this.mainMessageBody.length) resolve({message:'没有更多历史消息了！'});
+                    let num = userHistoryMsg.length - this.mainMessageBody.length > this.msgLoadCount ? this.msgLoadCount : userHistoryMsg.length - this.mainMessageBody.length
+                    let start = userHistoryMsg.length - this.mainMessageBody.length - num
+                    let historyMsg: MessageType[] = userHistoryMsg.slice(start,start + num)
+                    this.mainMessageBody.unshift(...historyMsg)
+                    clearTimeout(timer)
+                    resolve({message:'加载成功'})
+                },2000)
             })
         }
     }

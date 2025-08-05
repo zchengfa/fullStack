@@ -39,7 +39,7 @@ routesArr.forEach((item:any)=>{
   pathArr.push(item.path)
 })
 //主题开关状态
-const switchStatus = ref(localStorage.getItem('theme') !== 'light')
+const switchStatus = ref(false)
 const changeSwitch = ()=>{
   const theme = switchStatus.value ? 'dark' : 'light';
   document.documentElement.setAttribute('data-theme', theme);
@@ -140,6 +140,11 @@ function closeSkew(name:string){
   })
 }
 onBeforeMount(()=> {
+  const theme = localStorage.getItem('theme');
+  if(!theme) switchStatus.value = false
+  else{
+    switchStatus.value = theme === 'dark'
+  }
   getTime(navLogic.time.currentTime)
 })
 

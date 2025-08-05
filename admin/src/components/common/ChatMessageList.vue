@@ -8,6 +8,8 @@ const chatContainerRef = ref(null)
 const assistantPinia = chatAssistantStore()
 const {isFinish} = storeToRefs(assistantPinia)
 
+const emits = defineEmits(['scrollEvent'])
+
 const props = defineProps({
   messageData:{
     type: Array,
@@ -41,6 +43,18 @@ const props = defineProps({
     default(){
       return true
     }
+  },
+  isShowBottomEl:{
+    type: Boolean as PropType< true | false >,
+    default(){
+      return false
+    }
+  },
+  isShowLoadMore:{
+    type: Boolean as PropType< true | false >,
+    default(){
+      return false
+    }
   }
 })
 
@@ -52,9 +66,17 @@ const scrollToBottom = ()=>{
   })
 }
 
+//列表滚动事件
+const scrollEvent = ()=>{
+  emits('scrollEvent',chatContainerRef.value)
+}
+
 //监听消息列表，有新消息时自动滚动到最底部
 watch(()=> props.messageData,(n,o)=>{
-  scrollToBottom()
+  //底部按钮激活时不触发自动滚动到底部
+  if(!props.isShowBottomEl){
+    scrollToBottom()
+  }
 },{deep:true,immediate:true})
 
 onMounted(()=>{
@@ -63,7 +85,13 @@ onMounted(()=>{
 </script>
 
 <template>
-<div class="chat-message-list" ref="chatContainerRef">
+<!--  加载更多消息时显示的内容-->
+  <div :class="isShowLoadMore ? 'load-more-history-s' : 'load-more-history-h'">
+    <slot name="loading">
+      <span class="load-tip">加载中...</span>
+    </slot>
+  </div>
+<div class="chat-message-list" ref="chatContainerRef" @scroll="scrollEvent">
   <div class="message-item" :class="item.role === leftRole ? 'message-item-left' : 'message-item-right'" v-for="(item,index) in messageData" :key="index">
     <div v-if="item.role === leftRole" class="assistant-avatar-box avatar-box" :class="avatarShape + '-avatar'">
       <slot name="assistant-avatar">
@@ -92,13 +120,38 @@ onMounted(()=>{
     <div class="waiting-tip">正在获取资料...</div>
   </div>
 </div>
+  <!--  至最底部按钮  -->
+  <div class="to-bottom-box" :class="isFinish ? 'multi-color-bg': ''" v-show="isShowBottomEl" @click="scrollToBottom">
+    <slot name="bottom">
+      <span class="btn-name">底部</span>
+    </slot>
+  </div>
 </template>
 
 <style scoped lang="scss">
+.load-more-history-s{
+  top: 0;
+  z-index: 10;
+}
+.load-more-history-h{
+  top: -100%;
+  z-index: -1;
+}
+.load-more-history-h,.load-more-history-s{
+  box-sizing: border-box;
+  position: absolute;
+  padding: .5rem;
+  width: 100%;
+  left: 0;
+  font-size: .8rem;
+  background-color: #fff;
+  color: var(--empty-text);
+  transition: all .5s ease-in-out;
+}
 .chat-message-list{
   box-sizing: border-box;
   position: relative;
-  padding: 0 1rem 1rem;
+  padding: 0 1rem 3rem;
   width: 100%;
   height: 100%;
   overflow-y: scroll;
@@ -149,6 +202,37 @@ onMounted(()=>{
       }
     }
   }
+}
+.to-bottom-box{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 50%;
+  bottom: .5rem;
+  width: 2rem;
+  height: 2rem;
+  font-size: .8rem;
+  background-color: #fff;
+  color: var(--primary-color);
+  transform: translateX(-50%);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 4px var(--empty-text);
+  overflow: visible;
+}
+.multi-color-bg::before{
+  content: "";
+  position: absolute;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 50%;
+  transform-origin: center;
+  background: conic-gradient(
+          #5e5ee2,#e2624d, #c15ee2, #4de2dd
+  );
+  filter: blur(8px);
+  z-index: -1;
 }
 @keyframes move {
   0%{

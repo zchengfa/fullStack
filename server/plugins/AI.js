@@ -15,7 +15,12 @@ const chat = (question)=>{
                 role: 'user',
                 content: question
             }
-        ]
+        ],
+        stream: true, //开启流式输出
+        stream_options:{
+            //返回本次请求使用的token量
+            include_usage: true
+        }
     });
 }
 

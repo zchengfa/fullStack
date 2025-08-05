@@ -24,23 +24,25 @@ module.exports = server => {
 
         //AI
         socket.on('askAI',(question)=>{
-            openAi.chat(question).then(completion =>{
-                socket.emit('AIResults',completion)
-            }).catch(err => {
-                console.log(err);
+            openAi.chat(question).then(async (results)=>{
+                for await (const chunk of results){
+                    if(Array.isArray(chunk.choices) && chunk.choices.length > 0){
+                        socket.emit('AIResults',{
+                            time:chunk.created,
+                            isFinishAnswer:false,
+                            content:chunk.choices[0].delta.content
+                        })
+                    }
+                    else{
+                        socket.emit('AIResults',{
+                            time:chunk.created,
+                            isFinishAnswer:true,
+                            content:''
+                        })
+                    }
+                }
             })
-            // setTimeout(()=>{
-            //     socket.emit('AIResults',{
-            //         choices:[
-            //             {
-            //                 message:{
-            //                     content:'我是一条测试消息',
-            //                     role: 'assistant'
-            //                 }
-            //             }
-            //         ]
-            //     })
-            // },1000)
+
         })
         //AI
 

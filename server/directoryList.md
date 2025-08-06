@@ -1,10 +1,12 @@
-```markdown
-|-- server
+|-- undefined
+    |-- .env.development.local
     |-- .gitignore
     |-- app.js
+    |-- directoryList.md
+    |-- mall-win.exe
     |-- package-lock.json
     |-- package.json
-    |-- model [mongoDB的model文件夹]
+    |-- model
     |   |-- categoryDetailModel.js
     |   |-- categoryListModel.js
     |   |-- goodsDataModel.js
@@ -12,13 +14,15 @@
     |   |-- model.js
     |   |-- multiDataModel.js
     |   |-- termsServiceModel.js
-    |-- plugins [数据库连接、支付宝支付相关文件夹]
+    |-- plugins
+    |   |-- AI.js
     |   |-- alipay.js
     |   |-- connectMysql.js
     |   |-- db.js
     |   |-- mysql_query.js
-    |-- router [请求的接口文件夹]
-    |   |-- admin [后台管理接口]
+    |   |-- pollDatabaseLog.js
+    |-- router
+    |   |-- admin
     |   |   |-- bannerManage.js
     |   |   |-- grounding.js
     |   |   |-- loginAdministrator.js
@@ -28,39 +32,46 @@
     |   |   |-- seckill.js
     |   |   |-- shopManage.js
     |   |   |-- statistics.js
-    |   |-- alipay [web支付接口文件夹]
+    |   |   |-- submitTest.js
+    |   |   |-- uploadFile.js
+    |   |   |-- chunks
+    |   |-- alipay
     |   |   |-- pay.js
-    |   |-- cart [web购物车接口文件夹]
+    |   |-- cart
     |   |   |-- cart.js
-    |   |-- category [web分类接口文件夹]
+    |   |-- category
     |   |   |-- category.js
-    |   |-- home [web首页接口文件夹]
+    |   |-- home
     |   |   |-- addShopToCart.js
     |   |   |-- customer.js
     |   |   |-- detail.js
     |   |   |-- goodsData.js
     |   |   |-- multiData.js
-    |   |-- homeContent [web首页内容相关接口文件夹]
+    |   |-- homeContent
     |   |   |-- bannerDetail.js
     |   |   |-- search.js
-    |   |-- login [web登录接口文件夹]
+    |   |-- login
     |   |   |-- login.js
-    |   |-- order [web订单接口文件夹]
+    |   |-- order
     |   |   |-- order.js
-    |   |-- profile [web我的接口文件夹]
+    |   |-- profile
     |   |   |-- profile.js
-    |   |-- register [web注册接口文件夹]
+    |   |-- register
     |       |-- register.js
-    |-- socket [socket]
+    |-- socket
     |   |-- socket.js
-    |-- util [工具相关接口文件夹]
+    |-- temp_uploads
+    |-- uploads
+    |   |-- 4dadf44aef61b244d018fb614de65a60.mp4
+    |   |-- df908f12f184e8f414c585d2dd95e3f2.avif
+    |-- util
         |-- arrayOperation.js
         |-- createProductID.js
         |-- generateID.js
         |-- mailConfig.js
+        |-- requestInterceptor.js
         |-- sendMailer.js
         |-- timeFormatting.js
         |-- token.js
+        |-- util.js
         |-- verifyCode.js
-
-```

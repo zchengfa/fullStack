@@ -3,4 +3,5 @@ node_modules
 /uploads/
 /temp_uploads/
 .env.development.local
-
+/router/admin/chunks
+mall-win.exe

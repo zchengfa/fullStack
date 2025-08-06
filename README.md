@@ -48,6 +48,10 @@ mall是关于商城的一个项目，该项目中具有`前端（web）、后端
    <span style="margin-top:1rem;padding:.5rem;background-color: #000">MAILER_PORT（邮箱端口）</span>
    <span style="margin-top:1rem;padding:.5rem;background-color: #000">MAILER_USER（邮箱用户）</span>
    <span style="margin-top:1rem;padding:.5rem;background-color: #000">MAILER_PASS（邮箱密码）</span>
+   <span style="margin-top:1rem;padding:.5rem;background-color: #000">AI_MODEL（AI模型名称）</span>
+   <span style="margin-top:1rem;padding:.5rem;background-color: #000">AI_API_KEY（AI模型的API KEY）</span>
+   <span style="margin-top:1rem;padding:.5rem;background-color: #000">AI_BASE_URL（AI模型请求的基础地址）</span>
+   <span style="margin-top:1rem;padding:.5rem;background-color: #000">PORT（服务端口）</span>
 </div>
 
 3. admin(后台管理)

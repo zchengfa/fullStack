@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {nextTick, onBeforeUnmount, onMounted, onUnmounted, ref} from 'vue'
 import FileUploader from "@/components/common/FileUploader.vue";
-import {Close, UploadFilled,Loading} from "@element-plus/icons-vue";
+import {Close, UploadFilled,Loading,Picture as IconPicture} from "@element-plus/icons-vue";
 import {deleteFile, getVideo} from "@/network/request";
 import {ElMessage, ElMessageBox} from "element-plus";
 const isShowUploadComponent = ref<boolean>(false)
@@ -10,6 +10,7 @@ const videoData = ref<any[]>([])
 const videoBoxRef = ref<any[]>([])
 const videoCurrentTime = ref<any>(0)
 const isShowSwingCloseBtn = ref<boolean>(false)
+const mouseTimer = ref<any>(null)
 
 const editVideo = ()=>{
   isShowSwingCloseBtn.value = !isShowSwingCloseBtn.value
@@ -119,17 +120,31 @@ const uploadSuccess = (data:any)=>{
   formData.value = {url:[], title:'', files:[]};
 }
 
+const videoErrorMessage = ()=>{
+  ElMessageBox.confirm(
+      '该视频无法播放，请检查资源是否存在',
+      '播放出错啦',
+      {
+        confirmButtonText:'知道了',
+        type: 'error'
+      }
+  )
+}
+
 //鼠标移入，视频开始播放
 const videoPlay = (index:number)=>{
-  changeVideoStatus(true,index)
+  mouseTimer.value = setTimeout(()=>{
+    changeVideoStatus(true,index)
+  },1000)
 }
 const changeVideoStatus = (status:boolean,index:number)=>{
   const videoEl:any = videoBoxRef.value[index].getElementsByTagName('video')[0];
-  status ? videoEl.play() : videoEl.pause();
+  status ? videoEl.play().catch(()=> videoErrorMessage()) : videoEl.pause()
 }
 //鼠标移出，视频暂停
 const videoPause = (index:number)=>{
   changeVideoStatus(false,index)
+  clearTimeout(mouseTimer.value)
 }
 
 const onTimeUpdate = (e:any)=>{
@@ -196,7 +211,10 @@ const changeBigVideoStatus = (isShow:boolean,url:string)=>{
 
 const watchVideo = (e:any,url:string)=>{
   e.stopPropagation();
-  changeBigVideoStatus(true,url)
+  const index = e.target.dataset.videoIndex;
+  const targetEl = videoBoxRef.value[index]?.getElementsByClassName('video-display')?.item(0);
+  //先判断该视频是否能播放，不能播放就给用户提示，你那个播放就切换到大屏播放
+  targetEl.play().then(()=> changeBigVideoStatus(true,url)).catch(()=> videoErrorMessage())
 }
 
 const closeBigVideo = ()=>{
@@ -224,6 +242,7 @@ onMounted(async ()=> {
       })
     }
   })
+
   window.addEventListener('resize', resizeHandler)
 })
 
@@ -231,12 +250,13 @@ onMounted(async ()=> {
 const scrollVideoRef = ref<any>(null)
 const loading = ref<boolean>(false);
 const oldScrollTop = ref<number>(0);
+const timer = ref<any>(null)
 const loadMoreVideo = ()=>{
   loading.value = true
   getVideo(videoData.value.length,false).then((result:any)=>{
     if(result.data.code === 200){
       videoData.value.push(...result.data.videos);
-      let timer = setTimeout(()=>{
+      timer.value = setTimeout(()=>{
         loading.value = false;
         if (!result.data.videos.length){
           ElMessage({
@@ -244,7 +264,6 @@ const loadMoreVideo = ()=>{
             message: '没有更多视频了喔！'
           })
         }
-        clearTimeout(timer);
       },500)
     }
   })
@@ -258,7 +277,6 @@ const onScrollVideoContainer = ()=>{
   oldScrollTop.value = scrollTop
 }
 
-
 onBeforeUnmount(()=>{
   //组件卸载前，移除视频监听事件
   if(videoData.value.length){
@@ -271,6 +289,7 @@ onBeforeUnmount(()=>{
   }
 })
 onUnmounted(()=>{
+  clearTimeout(timer.value)
   window.removeEventListener('resize',resizeHandler);
   observer.disconnect();
 })
@@ -284,8 +303,16 @@ onUnmounted(()=>{
         <li class="video-display-li" v-for="(item,index) in videoData" :key="item.uid">
           <div class="video-display-item">
             <div class="video-thumbnail-video" @click="(event:any)=> watchVideo(event,item.video_url)" :ref="(el:any)=> videoBoxRef[index] = el" @mouseenter="videoPlay(index)" @mouseleave="videoPause(index)">
-              <img class="video-thumbnail" :src="item.image_url" alt='video_image_preview'>
-              <video class="video-display" loop :data-video-index="index" @loadedmetadata.once="onLoadedMetaData" @timeupdate="onTimeUpdate" @pause="onPause" :src="item.video_url" muted></video>
+<!--              <img class="video-thumbnail" :src="item.image_url" alt='video_image_preview'>-->
+              <el-image class="video-thumbnail" :src="item.image_url" alt='video_image_preview'>
+                <template #error>
+                  <div class="image-slot">
+                    <el-icon><icon-picture /></el-icon>
+                    <span class="img-err-alt">图片加载失败</span>
+                  </div>
+                </template>
+              </el-image>
+              <video class="video-display" preload="metadata" loop :data-video-index="index" @loadedmetadata.once="onLoadedMetaData" @timeupdate="onTimeUpdate" @pause="onPause" :src="item.video_url" muted></video>
               <div class="video-update-duration">
                 <span class="video-current-time">00:00</span>
                 <span class="video-duration"></span>
@@ -484,9 +511,24 @@ onUnmounted(()=>{
 }
 .video-thumbnail{
   width: -webkit-fill-available;
+  height: 100%;
   border-radius: .5rem;
   opacity: 1;
   transition: opacity .5s linear;
+  .image-slot{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-size: .8rem;
+    background-color: #d5efef;
+    color: var(--empty-text);
+    .el-icon{
+      font-size: 3rem;
+    }
+  }
 }
 .video-info-box{
   position: relative;
@@ -501,6 +543,8 @@ onUnmounted(()=>{
 }
 .video-thumbnail-video{
   position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
 }
 .video-display{
   position: absolute;

@@ -284,7 +284,7 @@ onMounted(()=>{
 .menu-children-box{
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   width: 100%;
 
 }
@@ -299,8 +299,7 @@ onMounted(()=>{
 }
 .menu-title-icon{
   position: relative;
-  top:-3px;
-  right:10px;
+
 }
 .menu-col{
   max-height: calc(100vh - 5rem);
@@ -340,5 +339,13 @@ onMounted(()=>{
 }
 :deep(.el-switch:not(.is-checked) .el-switch__action::before){
   content: "\e6f6"; /*sunny图标unicode编码*/
+}
+
+:deep(.el-sub-menu__title){
+  align-items: center;
+  justify-content: center;
+}
+:deep(.el-menu-item){
+  left: 1.4rem;
 }
 </style>

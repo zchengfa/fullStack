@@ -1,11 +1,16 @@
 const OpenAi = require('openai');
-
-const AI = new OpenAi(
-    {
-        apiKey: process.env.AI_API_KEY,
-        baseURL: process.env.AI_BASE_URL,
-    }
-);
+let AI;
+try{
+    AI = new OpenAi(
+        {
+            apiKey: process.env.AI_API_KEY,
+            baseURL: process.env.AI_BASE_URL,
+        }
+    );
+}
+catch(err){
+    console.log('AI模块提示：该模块出现错误，请检查您的apiKey等参数是否设置正确！');
+}
 
 const chat = (question)=>{
     return AI.chat.completions.create({

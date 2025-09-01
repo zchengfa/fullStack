@@ -9,8 +9,10 @@ const cors = require('cors')
 const connection = require('./plugins/connectMysql')()
 const mysql_query = require('./plugins/mysql_query')
 
+const moduleExportsFunction = require('./util/moduleExportsFunction')
+
 const bodyParser = require("body-parser");
-const {getLocalIP} = require("./util/util");
+const {getLocalIP,checkProcessEnvParam} = require("./util/util");
 const app = express()
 const server = http.createServer(app)
 let port = process.env.PORT | 3000
@@ -25,94 +27,25 @@ app.use(cors())
 //将前端上传的文件保存后，配置静态资源服务，使得前端可以直接访问该目录下的资源
 app.use(express.static('uploads'))
 
-//导入请求拦截模块
-require('./util/requestInterceptor')(app)
-
-require('./socket/socket')(server)
-
-//导入home路由模块
-require('./router/home/multiData')(app)
-require('./router/home/goodsData')(app)
-require('./router/home/detail')(app)
-require('./router/home/addShopToCart')(app)
-
-//导入category路由模块
-require('./router/category/category')(app)
-
-//导入购物车cart路由模块
-require('./router/cart/cart')(app)
-
-//导入profile路由模块
-require('./router/profile/profile')(app)
-
-//导入login登录模块
-require('./router/login/login')(app)
-
-//导入register注册模块
-require('./router/register/register')(app)
-
-//导入管理员登录模块
-require('./router/admin/loginAdministrator')(app)
-
-//导入文件上传模块
-require('./router/admin/uploadFile')(app,port)
-
-//导入商品管理模块
-require('./router/admin/shopManage')(app)
-
-//导入用户管理模块
-require('./router/admin/memberManage')(app)
-
-//导入轮播图管理模块
-require('./router/admin/bannerManage')(app)
-
-//导入商品上下架管理模块
-require('./router/admin/grounding')(app)
-
-//导入秒杀管理模块
-require('./router/admin/seckill')(app)
-
-//导入订单管理模块
-require('./router/admin/orderManage')(app)
-
-//导入数据统计模块
-require('./router/admin/statistics')(app)
-
-//导入优惠券管理模块
-require('./router/admin/preferential')(app)
-
-//导入首页内容详情模块
-require('./router/homeContent/bannerDetail')(app)
-
-//导入搜索模块
-require('./router/homeContent/search')(app)
-
-//导入客服模块
-require('./router/home/customer')(app)
-
-//导入支付宝支付模块
-require('./router/alipay/pay')(app)
-
-//导入订单模块
-require('./router/order/order')(app)
-
-//导入提交商品数据模块
-require('./router/admin/submitTest')(app)
-
 const start = (server)=> {
+  //启动服务前对后台各个模块所需的参数进行检测，若参数未设置则给出提示
+  checkProcessEnvParam()
   //启动服务
-  server.listen(port)
-  server.on('error', err => {
-    if (err.code === 'EADDRINUSE') {
-      port += 1
-      server.listen(port)
-    } else {
-      throw err
-    }
-  })
-  server.on('listening', () => {
-    console.log(`server服务已启动，地址为：${getLocalIP()}:${port}`)
-  })
+    server.listen(port)
+    server.on('error', err => {
+      if (err.code === 'EADDRINUSE') {
+        port += 1
+        server.listen(port)
+      } else {
+        throw err
+      }
+    })
+    server.on('listening', () => {
+      console.log(`server服务已启动，地址为：${getLocalIP()}:${port}`)
+    })
+
+    //执行模块导入
+    moduleExportsFunction({app,server,port})
 }
 //查询一次数据库，以保证mysql数据库正常
 const connectSqlTest = (table)=> {
@@ -157,3 +90,4 @@ connectSqlTest('mall_user').then(res=>{
 
 //创建文件夹
 createTempDir()
+

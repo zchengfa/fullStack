@@ -2,6 +2,4 @@ node_modules
 .env.development.local
 /uploads/
 /temp_uploads/
-.env.development.local
-/router/admin/chunks
-mall-win.exe
+

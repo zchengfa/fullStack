@@ -17,7 +17,7 @@ const getFileExtName = (type) => {
 }
 
 const checkProcessEnvParam = ()=>{
-    const env = ['ALIPAY_APP_ID','ALIPAY_SIGN_TYPE','ALIPAY_GATEWAY,ALIPAY_PUBLIC_KEY','ALIPAY_PRIVATE_KEY','MYSQL_HOST','MYSQL_USER','MYSQL_PASSWORD','MYSQL_DATABASE','MONGODB_ADDRESS','JWT_PRIVATE_KEY','MAILER_HOST','MAILER_PORT','MAILER_USER','MAILER_PASS','AI_MODEL','AI_API_KEY','AI_BASE_URL','PORT'];
+    const env = ['ALIPAY_APP_ID','ALIPAY_SIGN_TYPE','ALIPAY_GATEWAY','ALIPAY_PUBLIC_KEY','ALIPAY_PRIVATE_KEY','MYSQL_HOST','MYSQL_USER','MYSQL_PASSWORD','MYSQL_DATABASE','MONGODB_ADDRESS','JWT_PRIVATE_KEY','MAILER_HOST','MAILER_PORT','MAILER_USER','MAILER_PASS','AI_MODEL','AI_API_KEY','AI_BASE_URL','PORT'];
     const emptyEnv = [];
     env.forEach(e => {
         if(!process.env[e]){
@@ -25,7 +25,9 @@ const checkProcessEnvParam = ()=>{
         }
     })
 
-    console.log(`您有未设置的env变量${emptyEnv}，请创建一个env文件来完善这些变量，否则可能会影响服务的开启`)
+    if(emptyEnv.length){
+        console.log(`您有未设置的env变量${emptyEnv}，请创建一个env文件来完善这些变量，否则可能会影响服务的开启`)
+    }
 
     return !!emptyEnv.length;
 }

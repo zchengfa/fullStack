@@ -14,8 +14,8 @@ import { useRouter } from "vue-router";
 import {
   Goods,
   Grape,
-  Management,
-  Setting,
+  Management, Moon,
+  Setting, Sunny,
   Timer,
   TrendCharts,
   Unlock,
@@ -172,7 +172,7 @@ onMounted(()=>{
             <span class="current-time">{{navLogic.time.currentTime}}</span>
             <span class="week-span">{{navLogic.time.week}}</span>
           </div>
-          <el-switch class="theme-switch" @change="changeSwitch" v-model="switchStatus" ></el-switch>
+          <el-switch class="theme-switch" :inactive-action-icon="Sunny" :active-action-icon="Moon" @change="changeSwitch" v-model="switchStatus" ></el-switch>
         </li>
         <li class="nav-item">
           <div class="administrator">
@@ -334,12 +334,15 @@ onMounted(()=>{
   color: var(--text-color);
   border: 1px solid var(--text-color);
 }
+/*
 :deep(.el-switch.is-checked .el-switch__action::after){
-  content: "\e6f0"; /*moon图标unicode编码*/
+  content: "\e6f0"; moon图标unicode编码
 }
+
 :deep(.el-switch:not(.is-checked) .el-switch__action::before){
-  content: "\e6f6"; /*sunny图标unicode编码*/
+  content: "\e6f6"; sunny图标unicode编码
 }
+*/
 
 :deep(.el-sub-menu__title){
   align-items: center;

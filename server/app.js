@@ -91,3 +91,5 @@ connectSqlTest('mall_user').then(res=>{
 //创建文件夹
 createTempDir()
 
+//导出app实例供vercel使用
+module.exports = app

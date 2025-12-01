@@ -86,9 +86,10 @@ export default defineConfig({
       output:{
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('vue')) return 'vue-vendor';
+            if (id.includes('vue') || id.includes('element-plus')) {
+              return 'vue-element-plus-vendor'; // 将vue和element-plus打包到一起
+            }
             if (id.includes('axios')) return 'axios';
-            if(id.includes('element-plus')) return 'element-plus-vendor';
             if(id.includes('echarts')) return 'echarts-vendor';
             // 通过文件路径分割 node_modules 依赖
             //return id.toString().split("node_modules/")[1].split("/")[0].toString();

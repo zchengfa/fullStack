@@ -1,8 +1,8 @@
 <script lang="ts" setup >
-import zhCn from "element-plus/dist/locale/zh-cn.js";
+// import zhCn from "element-plus/dist/locale/zh-cn.js";
 
 
-let locale = zhCn;
+//let locale = zhCn;
 
 //接收父组件传过来的值
 let props = defineProps({
@@ -24,7 +24,7 @@ const currentPageChange = (val:any)=>{
 </script>
 
 <template>
-  <el-config-provider :locale="locale">
+  <el-config-provider>
     <el-pagination class="pagination" layout=" prev, pager, next, jumper , slot ,total" :page-size="7" :total="total" @current-change="currentPageChange">
       <span class="pagination-span"></span>
     </el-pagination>

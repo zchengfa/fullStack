@@ -40,22 +40,29 @@ export default defineComponent({
   setup(){
     const {table,currentPageChange,search} = useTable(6)
 		/**
-		 *@function headerStyle 自定义设置表头的样式 
-		 *@function cellStyle 自定义设置表格行的样式 
+		 *@function headerStyle 自定义设置表头的样式
+		 *@function cellStyle 自定义设置表格行的样式
 		 */
 		function headerStyle(){
-			return "background:#606bff;color:#fff"
+      return {
+        backgroundColor:"#606bff",
+        color:"#fff"
+      }
 		}
-		
-		function rowStyle({rowIndex}){
+
+		function rowStyle({rowIndex}:{rowIndex:number}){
 			if(rowIndex%2===0){
-				return "background:#dddddd;"
+				return {
+          background:"#dddddd"
+        }
 			}
 			else{
-				return "background:#ffffff;"
+				return {
+          background: '#fff'
+        }
 			}
 		}
-		
+
 		function deleteMember(index:any,rows:any){
 
 			deleteUser(rows[index].user_id).then(result =>{
@@ -63,7 +70,7 @@ export default defineComponent({
 					if(rows.splice(index,1)){
 						alert(result.data.success)
 					}
-					
+
 				}
 
 			}).catch((err:any) =>{
@@ -103,7 +110,7 @@ export default defineComponent({
     onBeforeMount(()=>{
       getMMData()
     })
-		
+
     return {
 			headerStyle,
 			rowStyle,

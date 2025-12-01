@@ -56,16 +56,23 @@ export default defineComponent({
     let swiperKey = ref(0)
 
     const headerStyle = ()=>{
-      return "background-color: #88da0b;color:#fff"
+      return {
+        backgroundColor: '#88da0b',
+        color:'#fff'
+      }
     }
 
     //@ts-ignore
     const rowStyle = ({rowIndex})=>{
       if(rowIndex%2===0){
-        return "background:#dddddd;"
+        return {
+          background:'#dddddd'
+        }
       }
       else{
-        return "background:#ffffff;"
+        return {
+          background:'#ffffff'
+        }
       }
     }
 

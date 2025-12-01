@@ -7,7 +7,7 @@ import router,{ addDynamicRoutes } from "./router";
 import { createPinia } from "pinia";
 import ElementPlus from 'element-plus'
 //引入element-plus中文包
-import locale from 'element-plus/dist/locale/zh-cn.js'
+//import locale from 'element-plus/dist/locale/zh-cn.js'
 import 'element-plus/theme-chalk/index.css'
 
 import toast from "./components/common/toast";
@@ -27,7 +27,7 @@ app.config.globalProperties.$bus = mitt()
 app.use(ElementPlus,{})
 
 // @ts-ignore
-app.use(locale)
+//app.use(locale)
 
 //安装pinia
 app.use(createPinia())

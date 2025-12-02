@@ -1,8 +1,6 @@
 import {ElMessageBox} from "element-plus";
-import {number} from "echarts";
 
-export const URL:string = 'http:'+ '//' + window.location.host.toString().split(':')[0] + ':3000'
-
+export const URL:string = import.meta.env.VITE_BASE_URL;
 
 /**
  * @function getPropertyArray 用于获取数组或对象中需要的属性名，将属性名加入到新数组中并返回

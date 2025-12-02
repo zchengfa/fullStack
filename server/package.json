@@ -4,7 +4,8 @@
   "description": "mall server",
   "main": "index.js",
   "scripts": {
-    "serve": "nodemon app.js",
+    "serve:dev": "cross-env NODE_ENV=development nodemon app.js",
+    "serve:production": "cross-env NODE_ENV=production nodemon app.js",
     "pkgwin": "pkg . --t node18-win-x64 -d --output mall-win",
     "pkglinux": "pkg . --t node18-win-x64 -d --output mall-linux",
     "pkgmacos": "pkg . --t node18-win-x64 -d --output mall-macos"
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "body-parser": "^1.19.0",
+    "cross-env": "^10.1.0",
     "express": "^4.17.1"
   }
 }

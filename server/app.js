@@ -1,4 +1,9 @@
-require('dotenv').config({path:'.env.development.local'})
+if(process.env.NODE_ENV === 'development') {
+  require('dotenv').config({path:'.env.development'})
+}
+else if(process.env.NODE_ENV === 'production') {
+  require('dotenv').config({path:'.env.local'})
+}
 const path = require('path')
 const fs = require('fs')
 //导入express模块
@@ -12,7 +17,7 @@ const mysql_query = require('./plugins/mysql_query')
 const moduleExportsFunction = require('./util/moduleExportsFunction')
 
 const bodyParser = require("body-parser");
-const {getLocalIP,checkProcessEnvParam} = require("./util/util");
+const {getLocalIP,checkProcessEnvParam, currentFileName} = require("./util/util");
 const app = express()
 const server = http.createServer(app)
 let port = process.env.PORT | 3000
@@ -41,7 +46,7 @@ const start = (server)=> {
       }
     })
     server.on('listening', () => {
-      console.log(`server服务已启动，地址为：${getLocalIP()}:${port}`)
+      console.log(`${currentFileName(__filename,true)}server服务已启动，地址为：${getLocalIP()}:${port}`)
     })
 
     //执行模块导入
@@ -52,10 +57,9 @@ const connectSqlTest = (table)=> {
   return new Promise((resolve, reject)=>{
     connection.query(mysql_query.selectAll(table), (err) => {
       if (err) {
-        // console.log(err,process.env.MYSQL_USER)
-        reject('mysql数据库出现异常，请检查是否开启sql服务')
+        reject(`${currentFileName(__filename)}mysql数据库出现异常，请检查是否开启sql服务`)
       } else {
-        resolve('mysql数据库运行正常')
+        resolve(`${currentFileName(__filename,true)}mysql数据库运行正常`)
       }
     })
   })

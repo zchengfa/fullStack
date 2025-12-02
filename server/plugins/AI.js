@@ -1,4 +1,5 @@
 const OpenAi = require('openai');
+const {currentFileName} = require("../util/util");
 let AI;
 try{
     AI = new OpenAi(
@@ -9,7 +10,7 @@ try{
     );
 }
 catch(err){
-    console.log('AI模块提示：该模块出现错误，请检查您的apiKey等参数是否设置正确！');
+    console.log(`${currentFileName(__filename)}该模块出现错误，请检查您的apiKey等参数是否设置正确！`);
 }
 
 const chat = (question)=>{

@@ -220,7 +220,8 @@ const watchVideo = (e:any,url:string)=>{
 const closeBigVideo = ()=>{
   changeBigVideoStatus(false,'/')
 }
-
+let page = ref(0)
+let hasNext = ref(false)
 onMounted(async ()=> {
   //获取视频数据
   const result = await getVideo()
@@ -230,6 +231,8 @@ onMounted(async ()=> {
       message: result.data.error
     })
   } else {
+    page = result.data.pagination.currentPage;
+    hasNext = result.data.pagination.hasNext;
     videoData.value.push(...result.data.videos);
   }
 
@@ -252,21 +255,25 @@ const loading = ref<boolean>(false);
 const oldScrollTop = ref<number>(0);
 const timer = ref<any>(null)
 const loadMoreVideo = ()=>{
-  loading.value = true
-  getVideo(videoData.value.length,false).then((result:any)=>{
-    if(result.data.code === 200){
-      videoData.value.push(...result.data.videos);
-      timer.value = setTimeout(()=>{
-        loading.value = false;
-        if (!result.data.videos.length){
-          ElMessage({
-            type: 'warning',
-            message: '没有更多视频了喔！'
-          })
-        }
-      },500)
-    }
-  })
+  if(hasNext){
+    loading.value = true
+    getVideo(page,false).then((result:any)=>{
+      if(result.data){
+        page = result.data.pagination.currentPage;
+        hasNext = result.data.pagination.hasNext;
+        videoData.value.push(...result.data.videos);
+        timer.value = setTimeout(()=>{
+          loading.value = false;
+          if (!result.data.videos.length){
+            ElMessage({
+              type: 'warning',
+              message: '没有更多视频了喔！'
+            })
+          }
+        },500)
+      }
+    })
+  }
 }
 const onScrollVideoContainer = ()=>{
   const {scrollTop,clientHeight,scrollHeight} = scrollVideoRef.value;

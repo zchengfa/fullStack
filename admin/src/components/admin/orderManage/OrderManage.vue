@@ -27,8 +27,8 @@
     </el-table-column>
     <el-table-column label="买家昵称" align="center">
       <template #default="scope">
-        <span v-if="scope.row.username" class="username">{{scope.row.username}}</span>
-        <span v-else class="account">{{scope.row.account.replace(/(\d{3})\d*(\d{4})/,'$1*****$2')}}</span>
+        <span v-if="scope.row.user.username" class="username">{{scope.row.user.username}}</span>
+        <span v-else class="account">{{scope.row.user.account.replace(/(\d{3})\d*(\d{4})/,'$1*****$2')}}</span>
       </template>
     </el-table-column>
     <el-table-column label="订单状态" align="center">
@@ -98,22 +98,11 @@ export default defineComponent( {
 
     const getOrder = ()=>{
       getOrderData().then(res=>{
-        console.log(res)
-        let orderData = res.data['order'],info = res.data['user_info']
-        if (orderData&&info){
-          orderData.map((o:any)=>{
-            info.map((i:any)=>{
-              if (o['user_id']===i['user_id']){
-                o['account'] = i['account']
-                o['username'] = i['username']
-              }
-            })
-          })
-
+        let orderData = res.data.data['order']
           table.tableData.push(...orderData)
           table.manageData.push(...orderData)
           table.dataCopy.push(...orderData)
-        }
+
       })
     }
     getOrder()
@@ -338,7 +327,6 @@ export default defineComponent( {
 }
 .refresh,.search{
   position: relative;
-  top: 2px;
   padding-right: .2rem;
   font-size: 12px;
 }

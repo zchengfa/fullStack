@@ -1,116 +1,196 @@
-module.exports = app => {
-    const express = require('express')
-    const router = express.Router()
-    const shopManageDataModel = require('../../model/goodsDataModel')
-    const mysql_query = require('../../plugins/mysql_query')
-    const connection = require('../../plugins/connectMysql')()
-
+const express = require('express')
+const router = express.Router()
+const {verifyToken} = require('../../util/token')
+const {currentFileName} = require("../../util/util");
+module.exports = (app,prisma) => {
     //接收前端获取管理员信息请求
     router.post('/administratorInfo',(req, res) => {
         const paramObj = JSON.parse(JSON.stringify(req.body))
-        const {verifyToken} = require('../../util/token')
 
-        verifyToken(paramObj.token,(err,decode)=>{
-           if (err){
-               console.log(err)
-               res.send(err)
-           }
-            else {
-                //console.log(decode)
-               res.send({'info':decode})
-           }
-        })
-        //console.log(paramObj.token)
+        try{
+            verifyToken(paramObj.token,(err,decode)=>{
+                if (err){
+                    res.send(err)
+                }
+                else {
+                    res.send({'info':decode})
+                }
+            })
+        }
+        catch (e) {
+            console.log(currentFileName(__filename)+ e)
+            res.status(500).send({errMessage:'服务器出现错误'})
+        }
     })
 
     //接收前端获取商品数据请求
-    router.get('/shopManage',(req, res) => {
-        // shopManageDataModel.find({}, (err,doc) => {
-        //     if (err) throw err
-        //     else {
-        //         let newDoc = []
-        //         doc.map(item =>{
-        //             newDoc.push(item)
-        //             // console.log(newDoc)
-        //         })
-        //         res.send(newDoc)
-        //     }
-        // })
-        const selectGoods = mysql_query.selectAll('mall_goods')
-        connection.query(selectGoods,(err,result)=>{
-            if (err) throw err
-            res.send(result)
-
-        })
-    })
-
-    //接收前端添加商品请求
-    router.post('/addProduct',(req,res)=>{
-        const paramsObj = JSON.parse(JSON.stringify(req.body))
-        const productID = require('../../util/createProductID')()
-        let insertData = {
-            type:['pop','sell','new'][Math.round(Math.random()*2)],
-            page:Math.round(Math.random()*10),
-            shopData:[
-                {
-                    product_id:productID,
-                    title:paramsObj.description,
-                    imagePath:paramsObj.imageLink,
-                    price:'￥'+paramsObj.price,
-                    origin_price:'￥'+(paramsObj.price*1.2).toFixed(1),
-                    stocks:paramsObj.productCount.toString()
-                }
-            ]
+    router.get('/shopManage',async (req, res) => {
+        try{
+            const prismaGoodsQuery = await prisma.mall_goods.findMany()
+            const data = prismaGoodsQuery.map((product)=>{
+                product.id = product.id.toString()
+                product.brand_id = product.brand_id.toString()
+                return product
+            })
+            res.send(data)
         }
-        shopManageDataModel.insertMany([insertData],{rawResult:true}).then(result =>{
-            if (result){
-                res.send({'success':true,'product_id':productID})
-            }
-        }).catch(err =>{
-            res.send(err)
-        })
+        catch (e) {
+            console.log(currentFileName(__filename)+ e)
+            res.status(500).send({errMessage:'服务器出现错误'})
+        }
+
     })
-		
-    router.post('/alterProduct',(req,res)=>{
-				let bodyData = JSON.parse(JSON.stringify(req.body))
-				let product_id = bodyData.product_id
-				let paramsObj = bodyData.alterData
-				console.log(bodyData)
-        const updateGoods = mysql_query.update('mall_goods',`product_title = '${paramsObj.title}',
-        product_image = '${paramsObj.imagePath}',stocks = ${paramsObj.count},price = ${paramsObj.price}`,`product_id = '${product_id}'`)
-        connection.query(updateGoods,(err,updateR)=>{
-            if (err) throw err
-            console.log(updateR)
+
+    router.post('/addProduct', async (req, res) => {
+        try {
+            const paramsObj = req.body; // 无需 JSON.parse(JSON.stringify())
+            const productID = require('../../util/createProductID')();
+
+            // 参数验证
+            if (!paramsObj.description || !paramsObj.imageLink || !paramsObj.price || !paramsObj.productCount) {
+                return res.status(400).json({
+                    success: false,
+                    error: '缺少必要的商品信息参数'
+                });
+            }
+
+            // 构建插入数据 - 使用 Prisma 的类型安全结构
+            const productData = {
+                product_id: productID,
+                type: ['pop', 'sell', 'new'][Math.round(Math.random() * 2)],
+                page: Math.round(Math.random() * 10),
+                product_title: paramsObj.description,
+                product_image: paramsObj.imageLink,
+                price: `￥${paramsObj.price}`,
+                origin_price: `￥${(paramsObj.price * 1.2).toFixed(1)}`,
+                stocks: paramsObj.productCount.toString(),
+                createdAt: new Date(), // 添加时间戳
+                updatedAt: new Date()
+            };
+
+            // 使用 Prisma 创建商品
+            const newProduct = await prisma.mall_goods.create({
+                data: productData,
+                select: {
+                    product_id: true,
+                    title: true,
+                    price: true,
+                    type: true,
+                    createdAt: true
+                }
+            });
+
+            res.status(201).json({
+                success: true,
+                message: '商品添加成功',
+                product_id: productID,
+                data: newProduct
+            });
+
+        } catch (error) {
+            console.error('添加商品失败:', error);
+
+            // 处理 Prisma 特定错误
+            if (error.code === 'P2002') {
+                return res.status(409).json({
+                    success: false,
+                    error: '商品ID已存在',
+                    message: '添加商品失败，请重试'
+                });
+            }
+
+            res.status(500).json({
+                success: false,
+                err:'服务器内部错误',
+                message: '添加商品失败'
+            });
+        }
+    })
+
+    router.post('/alterProduct',async (req,res)=>{
+        const bodyData = JSON.parse(JSON.stringify(req.body))
+        const product_id = bodyData.product_id.toString()
+        const paramsObj = bodyData.alterData
+	    try{
+            await prisma.mall_goods.update({
+                where:{
+                    product_id:product_id,
+                },
+                data:{
+                    product_title: paramsObj.title,
+                    product_image: paramsObj.imagePath,
+                    stocks:paramsObj.count,
+                    price: paramsObj.price
+                }
+            })
+
             res.send({'success':'编辑成功'})
-        })
-				// shopManageDataModel.updateOne({'product_id':product_id},{'title':paramsObj.title,'imagePath':paramsObj.imagePath,
-				// 'price':paramsObj.price,'stocks':paramsObj.count},(err,result)=>{
-				// 	if(err)console.error(err)
-				// 	else{
-				// 		res.send({'success':'编辑成功'})
-				// 	}
-				// })
+
+        }
+        catch (e) {
+            console.log(currentFileName(__filename)+ e)
+            res.status(500).send({errMessage:'服务器出现错误'})
+        }
     })
 
-    //接收前端删除商品请求
-    router.post('/deleteProduct',(req,res) => {
-        let paramObj = JSON.parse(JSON.stringify(req.body))
-        //console.log(paramObj)
-        shopManageDataModel.findOneAndDelete({'product_id':paramObj.product_id},null,(err, doc)=>{
-            if (err) {
-                res.send({'error':err})
-            }
-            else {
-                if (doc){
-                    res.send({'success':'删除成功'})
-                }
-               else {
-                   res.send({'failed':'删除失败'})
-                }
-            }
-            console.log(err,doc)
-        })
-    })
+    router.post('/deleteProduct', async (req, res) => {
+        try {
+            const {product_id} = req.body;
 
+            // 参数验证
+            if (!product_id) {
+                return res.status(400).json({
+                    success: false,
+                    error: '缺少商品ID参数'
+                });
+            }
+
+            // 检查商品是否存在
+            const existingProduct = await prisma.mall_goods.findUnique({
+                where: {product_id: product_id},
+                select: {product_id: true, product_title: true}
+            });
+
+            if (!existingProduct) {
+                return res.status(404).json({
+                    success: false,
+                    error: '未找到对应的商品',
+                    message: `商品ID ${product_id} 不存在`
+                });
+            }
+
+            // 执行删除操作
+            const deletedProduct = await prisma.mall_goods.delete({
+                where: {product_id: product_id},
+                select: {
+                    product_id: true,
+                    product_title: true
+                }
+            });
+
+            res.json({
+                success: true,
+                message: '商品删除成功',
+                data: deletedProduct
+            });
+
+        } catch (error) {
+            console.error('删除商品失败:', error);
+
+            // 处理 Prisma 特定错误
+            if (error.code === 'P2025') {
+                return res.status(404).json({
+                    success: false,
+                    error: '商品不存在或已被删除',
+                    message: '删除操作失败'
+                });
+            }
+            res.status(500).json({
+                success: false,
+                error: '服务器内部错误',
+                message: '删除商品失败'
+            });
+        }
+    })
     app.use('/admin',router)
 }

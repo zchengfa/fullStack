@@ -25,7 +25,11 @@ const isShowBottomEl = ref(false)
 const isShowLoadMore = ref(false)
 const loadingCustom = ref('加载中...')
 
-const socket = new SocketService(URL);
+const socket = new SocketService(URL,{
+  auth:{
+    token: sessionStorage.getItem("token"),
+  }
+});
 
 const emits = defineEmits(['toolClickEvent','closeAssistantEvent'])
 

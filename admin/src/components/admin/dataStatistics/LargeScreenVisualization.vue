@@ -104,7 +104,7 @@ const socket = new SocketService(URL,{
 
 function getSData(){
   getStatisticsData().then(res=>{
-    scrollData.value = res.data[2].words
+    scrollData.value = res.data.data.keywords
   })
 }
 

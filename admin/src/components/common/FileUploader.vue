@@ -147,6 +147,7 @@ const customUpload =async ({file}:any)=>{
   }
   //上传
   if(props.justUpload){
+      uploadedFileNum.value = 0
       //检测文件及标题是否填写
       if(validateForm(props.formData)){
         hashArray.value = []

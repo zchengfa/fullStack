@@ -1,51 +1,80 @@
-const {deDuplication} = require("../../util/arrayOperation");
-module.exports = app =>{
-  const express = require('express')
-  const router = express.Router()
-  const {selectFields} = require('../../plugins/mysql_query')
-  const connection = require('../../plugins/connectMysql')()
-  const {deDuplication} = require('../../util/arrayOperation')
+const express = require('express')
+const {currentFileName} = require("../../util/util");
+const router = express.Router()
 
-  router.post('/getOrderData',(req, res) => {
-    //const selectUser = selectFields('mall_user','username,account',`user_id = ${id}`)
-    const selectOrder = selectFields('mall_store_order','user_id,order_id,payment_status')
-    connection.query(selectOrder,(err,result)=>{
-      if (err) throw err
-      if (result.length){
-        let userArr = []
-        result.map(item=>{
-          userArr.push(item.user_id)
-        })
-        userArr = deDuplication(userArr)
+module.exports = (app, prisma) => {
 
-        let finishCount = 0
-        userArr.map(user=>{
-          const selectUser = selectFields('mall_user','username,account',`user_id = ${user}`)
-          connection.query(selectUser,(err,userR)=>{
-            if (err) throw err
-            if (userR){
-              if(userR.length){
-                userR[0]['user_id'] = user
-                userArr[finishCount] = userR[0]
-              }
-              finishCount++
+  router.post('/getOrderData', async (req, res) => {
+    try {
+      const ordersWithUsers = await prisma.mall_store_order.findMany({
+        select: {
+          order_id: true,
+          payment_status: true,
+          user_id: true,
+          user: {  // 关联用户表
+            select: {
+              user_id: true,
+              username: true,
+              account: true
             }
+          }
+        },
+        // 可以添加排序和分页
+        orderBy: {
+          order_id: 'desc'
+        }
+      });
+      ordersWithUsers.map((item)=>{
+        item.user_id = item.user_id.toString();
+        item.user.user_id = item.user.user_id.toString();
 
-            finishCount===userArr.length?(()=>{
-              res.send({
-                'order':result,
-                'user_info':userArr
-              })
-            })():null
+        return item;
+      })
+
+      // 提取去重后的用户信息
+      const uniqueUsersMap = new Map();
+      ordersWithUsers.forEach(order => {
+        if (order.user && !uniqueUsersMap.has(order.user.user_id)) {
+          uniqueUsersMap.set(order.user.user_id.toString(), {
+            user_id: order.user.user_id.toString(),
+            username: order.user.username,
+            account: order.user.account,
           })
-        })
+        }
+      });
+      const uniqueUsers = Array.from(uniqueUsersMap.values());
 
-      }
-      else{
-        res.send([])
-      }
-    })
-  })
+      res.json({
+        success: true,
+        data: {
+          order: ordersWithUsers,
+          user_info: uniqueUsers
+        },
+        message: '获取订单数据成功',
+        stats: {
+          order_count: ordersWithUsers.length,
+          user_count: uniqueUsers.length
+        }
+      });
 
-  app.use('/admin',router)
-}
+    } catch (error) {
+      console.error(`${currentFileName(__filename)}获取订单数据失败:`, error);
+
+      // 处理 Prisma 特定错误
+      if (error.code === 'P2025') {
+        return res.status(404).json({
+          success: false,
+          error: '未找到相关数据'
+        });
+      }
+
+      res.status(500).json({
+        success: false,
+        error: '服务器内部错误',
+        message: '获取订单数据失败'
+      });
+    }
+  });
+
+  app.use('/admin', router);
+};

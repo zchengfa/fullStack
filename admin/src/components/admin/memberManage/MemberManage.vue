@@ -80,7 +80,7 @@ export default defineComponent({
 
     function getMMData(){
       getMemberManageData().then(result => {
-        table.manageData = result.data
+        table.manageData = result.data.data.users
         table.manageData.filter(item => {
 
           !item.username?item.username = '暂未设置昵称': item.username

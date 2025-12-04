@@ -10,14 +10,13 @@ const fs = require('fs')
 const express = require('express')
 const http = require('http')
 const cors = require('cors')
-//连接数据库
-const connection = require('./plugins/connectMysql')()
-const mysql_query = require('./plugins/mysql_query')
-
+const {PrismaClient} = require('./generated/prisma/client.ts')
 const moduleExportsFunction = require('./util/moduleExportsFunction')
-
 const bodyParser = require("body-parser");
 const {getLocalIP,checkProcessEnvParam, currentFileName} = require("./util/util");
+
+const prisma = new PrismaClient()
+
 const app = express()
 const server = http.createServer(app)
 let port = process.env.PORT | 3000
@@ -50,19 +49,7 @@ const start = (server)=> {
     })
 
     //执行模块导入
-    moduleExportsFunction({app,server,port})
-}
-//查询一次数据库，以保证mysql数据库正常
-const connectSqlTest = (table)=> {
-  return new Promise((resolve, reject)=>{
-    connection.query(mysql_query.selectAll(table), (err) => {
-      if (err) {
-        reject(`${currentFileName(__filename)}mysql数据库出现异常，请检查是否开启sql服务`)
-      } else {
-        resolve(`${currentFileName(__filename,true)}mysql数据库运行正常`)
-      }
-    })
-  })
+    moduleExportsFunction({app,server,port,prisma})
 }
 
 //创建temp_uploads、chunks和uploads文件夹，用于管理平台上传文件时的临时存储环境
@@ -84,13 +71,6 @@ const createTempDir = ()=>{
 
 //启动server服务
 start(server)
-
-//测试mysql数据库是否正常
-connectSqlTest('mall_user').then(res=>{
-  console.log(res)
-}).catch(e=>{
-  console.log(e)
-})
 
 //创建文件夹
 createTempDir()

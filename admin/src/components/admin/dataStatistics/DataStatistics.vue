@@ -256,36 +256,40 @@ export default defineComponent({
     //获取统计所需要的数据
     function getSData(){
       getStatisticsData().then(res=>{
-        rank.userConsumption = dealPercent(res.data[0].userConsumption,'totalConsumption')
-        rank.productSales = dealPercent(res.data[1].productSales,'sales')
-        rank.words = dealPercent(res.data[2].words,'search_count')
-        rank.goods = res.data[3].total_goods
-        rank.users = res.data[3].total_user
-        rank.visitor = res.data[3].visitor
+        const statistics = res.data.data
+        rank.userConsumption = dealPercent(statistics.userConsumption,'totalConsumption')
+        rank.productSales = dealPercent(statistics.productSales,'sales')
+        rank.words = dealPercent(statistics.keywords,'search_count')
+        rank.goods = statistics.total_goods
+        rank.users = statistics.total_user
+        rank.visitor = statistics.visitor
         rank.visitorCount = rank.visitor.length
-        rank.order_finished = res.data[3].order_finished
-        rank.order_not_finish = res.data[3].order_not_finish
+        rank.order_finished = statistics.order_finished
+        rank.order_not_finish = statistics.order_not_finish
         rank.visitor.map((item:any)=>{
           rank.totalVisCount += item.count
         })
         rank.percent = Math.round((rank.visitorCount/rank.totalVisCount)*100)
-        rank.salesData = res.data[4].sales
+        rank.salesData = statistics.salesChart
       })
     }
     getSData()
 
     //处理较大的数字
     function dealBigNumber(num:number){
-      let numString:string = num.toString()
 
-      //判断数字中是否含有小数点
-      if (numString.indexOf('.')!==-1){
-        //有小数点，截取小数点前的所有数字
-        let subStringNum:string = numString.substr(0,numString.indexOf('.'))
-        return returnNum(subStringNum)
-      }
-      else{
-        return returnNum(numString)
+      if(num){
+        let numString:string = num.toString()
+
+        //判断数字中是否含有小数点
+        if (numString.indexOf('.')!==-1){
+          //有小数点，截取小数点前的所有数字
+          let subStringNum:string = numString.substr(0,numString.indexOf('.'))
+          return returnNum(subStringNum)
+        }
+        else{
+          return returnNum(numString)
+        }
       }
 
       function returnNum(subStringNum:string){
@@ -318,11 +322,11 @@ export default defineComponent({
     //处理进度条的百分比
     function dealPercent(arr:string[],dealArg:any){
       let total:number = 0
-      arr.map(item=>{
+      arr?.map(item=>{
         total += Number(item[dealArg])
       })
 
-      arr.map((item:any)=>{
+      arr?.map((item:any)=>{
         item['percent'] = (item[dealArg]/total)*100
         item['percent'] = Math.round(Number(Number(item['percent']).toFixed(2)))
       })

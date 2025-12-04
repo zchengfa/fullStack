@@ -47,6 +47,7 @@ import AddSeckill from './AddSeckill.vue'
 import Pagination from "../../common/Pagination.vue";
 import useTable from '../../../common/useTable'
 import { shopStore } from "../../../pinia/pinia";
+import {ElMessage} from "element-plus";
 
 export default defineComponent({
   name: "SeckillManage",
@@ -167,11 +168,15 @@ export default defineComponent({
 
     }
 
-    //点击删除按钮，将商品移除秒杀活动 
+    //点击删除按钮，将商品移除秒杀活动
     const removeSeckillData = function (id:string,index:number){
       removeSeckill(id).then(res=>{
-        if (res.data.removeResult){
+        if (res.data.success){
           table.tableData.splice(index,1)
+          ElMessage({
+            type:'success',
+            message:'已移除'
+          })
         }
       })
     }
@@ -183,18 +188,19 @@ export default defineComponent({
 
       //获得添加到秒杀活动的商品数据，向后端发起请求将对应商品一一更改为秒杀商品
       addSeckillRequest(obj.data,parseInt(obj.time.replace(':00',''))).then(res=>{
-        if (res.data.addResult){
-
+        if (res.data.success){
           obj.data.map((item:any)=>{
             seckill.noSeckillData.map((noItem:any,index:number)=>{
               if (item.product_id===noItem.product_id){
                 seckill.noSeckillData.splice(index,1)
                 table.tableData.push(item)
-                //seckill.key++
               }
             })
           })
-          alert('已将您选择的商品加入到秒杀活动中')
+          ElMessage({
+            type:'success',
+            message:'添加成功'
+          })
           closeAddSeckill()
         }
       })

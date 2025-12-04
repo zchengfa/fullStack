@@ -4,16 +4,21 @@
   "description": "mall server",
   "main": "index.js",
   "scripts": {
-    "serve:dev": "cross-env NODE_ENV=development nodemon app.js",
-    "serve:production": "cross-env NODE_ENV=production nodemon app.js",
-    "pkgwin": "pkg . --t node18-win-x64 -d --output mall-win",
-    "pkglinux": "pkg . --t node18-win-x64 -d --output mall-linux",
-    "pkgmacos": "pkg . --t node18-win-x64 -d --output mall-macos"
+    "serve:dev": "dotenv -e .env.development npx prisma db push && dotenv -e .env.development npx prisma generate && cross-env NODE_ENV=development nodemon app.js",
+    "serve:production": "npm run prisma:generate && cross-env NODE_ENV=production nodemon app.js",
+    "prisma:dev": "dotenv -e .env.development npx prisma db push",
+    "prisma:prod": "dotenv -e .env.local npx prisma db pull",
+    "prisma:generate": "npx prisma generate",
+    "dev": "npm run prisma:generate && npm run serve:dev",
+    "pkgwin": "pkg . --target node18-win-x64 --output mall-win",
+    "pkglinux": "pkg . --target node18-linux-x64 --output mall-linux",
+    "pkgmacos": "pkg . --target node18-macos-x64 --output mall-macos"
   },
   "bin": "app.js",
   "author": "ZCF",
   "license": "MIT",
   "dependencies": {
+    "@prisma/client": "^6.16.3",
     "alipay-sdk": "^3.2.0",
     "axios": "^0.26.0",
     "cors": "^2.8.5",
@@ -24,6 +29,7 @@
     "mysql2": "^3.14.1",
     "nodemailer": "^6.6.0",
     "openai": "^5.10.2",
+    "prisma": "^6.16.3",
     "socket.io": "^4.1.2"
   },
   "devDependencies": {

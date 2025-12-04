@@ -16,6 +16,7 @@ const bodyParser = require("body-parser");
 const {getLocalIP,checkProcessEnvParam, currentFileName} = require("./util/util");
 
 const prisma = new PrismaClient()
+const PrismaSeed = require('./prisma/seed.js')
 
 const app = express()
 const server = http.createServer(app)
@@ -31,25 +32,31 @@ app.use(cors())
 //将前端上传的文件保存后，配置静态资源服务，使得前端可以直接访问该目录下的资源
 app.use(express.static('uploads'))
 
-const start = (server)=> {
+const start =async (server)=> {
   //启动服务前对后台各个模块所需的参数进行检测，若参数未设置则给出提示
   checkProcessEnvParam()
+  await PrismaSeed(prisma)
   //启动服务
-    server.listen(port)
-    server.on('error', err => {
-      if (err.code === 'EADDRINUSE') {
-        port += 1
-        server.listen(port)
-      } else {
-        throw err
-      }
-    })
-    server.on('listening', () => {
+  server.listen(port)
+  server.on('error', err => {
+    if (err.code === 'EADDRINUSE') {
+      port += 1
+      server.listen(port)
+    } else {
+      throw err
+    }
+  })
+  server.on('listening', () => {
+    if(process.env.NODE_ENV === 'development') {
       console.log(`${currentFileName(__filename,true)}server服务已启动，地址为：${getLocalIP()}:${port}`)
-    })
+    }
+    else{
+      console.log(`${currentFileName(__filename,true)}server服务已启动，端口为：${port}`)
+    }
+  })
 
-    //执行模块导入
-    moduleExportsFunction({app,server,port,prisma})
+  //执行模块导入
+  moduleExportsFunction({app,server,port,prisma})
 }
 
 //创建temp_uploads、chunks和uploads文件夹，用于管理平台上传文件时的临时存储环境

@@ -1,6 +1,5 @@
 // generator client {
-//   provider = "prisma-client"
-//   output   = "../generated/prisma"
+//   provider = "prisma-client-js"
 // }
 //
 // datasource db {
@@ -375,8 +374,7 @@
 
 //适配postgreSql
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {

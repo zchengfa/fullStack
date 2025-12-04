@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, reactive} from "vue";
+import {defineComponent, reactive,ref} from "vue";
 import * as echarts from 'echarts/core';
 import {
   TitleComponent,
@@ -60,13 +60,16 @@ export default defineComponent({
       chartDom:<any>null
     })
 
+    const timer = ref<number | null>(null)
+
     const handler = ()=>{
       Charts.myChart.resize()
     }
 
     return {
       Charts,
-      handler
+      handler,
+      timer
     }
   },
   mounted(){
@@ -195,7 +198,7 @@ export default defineComponent({
     }
     let count = 11
     //设置定时器，每过2秒就刷新一次数据并将新数据加入到图表中
-    setInterval(()=>{
+    this.timer = setInterval(()=>{
       let xAxisData = new Date().toLocaleTimeString().replace(/\D*/,'')
 
       //先删除原先数组中第一个数据
@@ -239,7 +242,12 @@ export default defineComponent({
   },
   unmounted() {
     window.removeEventListener('resize',this.handler)
+    clearInterval(this.timer)
     this.Charts.myChart.dispose(this.Charts.chartDom)
+    if (this.Charts.myChart.value && !this.Charts.myChart.value.isDisposed()) {
+      this.Charts.myChart.value.dispose();
+      this.Charts.myChart.value = null;
+    }
   }
 })
 </script>

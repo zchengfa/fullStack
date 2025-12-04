@@ -16,7 +16,7 @@ function preferential(){
     getPreferential().then(res=>{
 
         if(res.status === 200){
-            let data = res.data.query
+            let data = res.data.data.preferentials
             const pushPreferential = sessionStorage.getItem('pushPreferential')
 
             data.forEach((item:any)=>{
@@ -30,7 +30,7 @@ function preferential(){
                         releasePreferential(!item['release_status'],item.id).then((result)=>{
                             //消息提示
                             ElMessage({
-                                message:result.data.msg,
+                                message:result.data.message,
                                 type:'success'
                             })
                             resolve(true)

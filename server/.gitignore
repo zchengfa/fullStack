@@ -5,3 +5,9 @@ node_modules
 .vercel
 .env*.local
 /.env.development
+
+/generated/prisma
+
+/generated/prisma
+
+/generated/prisma

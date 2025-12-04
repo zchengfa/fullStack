@@ -4,14 +4,14 @@
     disableOnInteraction: false
   }">
     <swiper-slide v-for="(item,index) in table.manageData" :key="index" v-show="item.isShow">
-      <img :src="item.banner_image" alt="banner">
+      <img :src="item.image_url" alt="banner">
     </swiper-slide>
   </swiper>
   <el-table :data="table.currentPageData" class="swiper-table" max-height="450"   :header-cell-style="headerStyle" :cell-style="rowStyle" border empty-text="用户数据为空">
     <el-table-column prop="id" label="序号" align="center"></el-table-column>
     <el-table-column width="414" prop="banner_image" label="图片链接" align="center">
       <template #default="scope">
-        <div class="image-column-box"><span>{{scope.row.banner_image}}</span></div>
+        <div class="image-column-box"><span>{{scope.row.image_url}}</span></div>
       </template>
     </el-table-column>
     <el-table-column  prop="brand" label="所属品牌" align="center"></el-table-column>
@@ -78,7 +78,7 @@ export default defineComponent({
 
     const getBanner = ()=>{
       getBannerData().then(res=>{
-        table.manageData.push(...res.data)
+        table.manageData.push(...res.data.data)
         table.tableData.push(...table.manageData)
       })
     }

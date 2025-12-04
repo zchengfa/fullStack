@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken')
-const {Promise} = require("mongoose");
 let secretOrPrivateKey = process.env.JWT_PRIVATE_KEY
 function createToken (params,expiresTime) {
 

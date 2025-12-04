@@ -1,10 +1,386 @@
+// generator client {
+//   provider = "prisma-client"
+//   output   = "../generated/prisma"
+// }
+//
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
+//
+// model data_changes {
+//   id          Int      @id @default(autoincrement())
+//   table_name  String?  @db.VarChar(255)
+//   change_time DateTime @default(now()) @db.Timestamp(0)
+// }
+//
+// /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+// model mall_administrator {
+//   id              Int       @id @default(autoincrement())
+//   user_id         BigInt?   @unique
+//   account         String?   @unique @db.VarChar(50)
+//   username        String?   @db.VarChar(50)
+//   password        String?   @db.VarChar(50)
+//   avatar          String?   @db.LongText
+//   gender          Boolean   @default(false)
+//   last_login_time DateTime? @db.DateTime(0)
+//   identity        Int       @default(0) @db.UnsignedSmallInt
+// }
+//
+// /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+// model mall_banner {
+//   id         Int      @id @default(autoincrement()) @db.UnsignedInt
+//   image_url  String   @default("0") @map("banner_image") @db.VarChar(666)
+//   brand_id   BigInt   @default(0)
+//   brand      String   @default("0") @db.VarChar(20)
+//   isShow     Boolean  @default(true)
+//   created_at DateTime @default(now()) @db.DateTime(0)
+// }
+//
+// /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+// model mall_brand {
+//   brand_id   BigInt  @id @default(autoincrement()) @db.UnsignedBigInt
+//   brand      String? @db.VarChar(50)
+//   brand_logo String? @db.VarChar(255)
+// }
+//
+// /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+// model mall_category {
+//   id          Int    @id @default(autoincrement()) @db.UnsignedInt
+//   category    String @default("") @db.VarChar(50)
+//   category_id Int?
+//
+//   @@index([category_id], map: "category_id")
+// }
+//
+// /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+// model mall_category_detail {
+//   id             Int    @id @default(autoincrement())
+//   category_id    Int    @default(0)
+//   category_title String @default("0") @db.VarChar(50)
+//   category_text  String @default("0") @db.VarChar(50)
+//   imagePath      String @default("0") @db.VarChar(255)
+//
+//   @@index([category_id], map: "category_id")
+// }
+//
+// /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+// model mall_goods {
+//   id                Int      @id @unique @default(autoincrement())
+//   product_id        String?  @unique @db.VarChar(50)
+//   product_title     String   @db.VarChar(50)
+//   product_image     String   @db.VarChar(255)
+//   product_type      String   @db.VarChar(50)
+//   product_brand     String   @db.VarChar(50)
+//   price             Decimal  @default(0.00) @db.Decimal(10, 2)
+//   favorite          Int      @default(0) @db.UnsignedInt
+//   comment_number    Int      @default(0) @db.UnsignedInt
+//   stocks            Int      @default(0) @db.UnsignedInt
+//   unit              String   @default("件") @db.Char(50)
+//   isPreferential    Boolean  @default(false)
+//   preferential_type String   @db.VarChar(50)
+//   isHot             Boolean  @default(false)
+//   sales             Int      @default(0) @db.UnsignedInt
+//   sell_type         String   @db.VarChar(50)
+//   page              Int      @default(1)
+//   self_support      Boolean  @default(true)
+//   discount          Float?   @default(0.9)
+//   brand_id          BigInt?  @db.UnsignedBigInt
+//   weight            Decimal? @db.Decimal(10, 1)
+//   size_type         Int?     @default(0) @db.UnsignedInt
+//   flash_sale_time   Int?
+//   isGrounding       Int?     @default(1) @db.UnsignedInt
+//
+//   @@index([product_id], map: "product_id")
+// }
+//
+// /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+// model mall_goods_attribute {
+//   id              Int     @id @default(autoincrement()) @db.UnsignedInt
+//   product_id      String? @db.VarChar(50)
+//   attribute_title String? @default("0") @db.VarChar(50)
+//   attribute       String  @db.Text
+//
+//   @@index([product_id], map: "product_id")
+// }
+//
+// /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+// model mall_goods_gallery {
+//   id            Int     @id @default(autoincrement()) @db.UnsignedInt
+//   product_id    String? @db.VarChar(50)
+//   product_image String  @default("0") @db.VarChar(255)
+//
+//   @@index([product_id], map: "product_id")
+// }
+//
+// /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+// model mall_preferential {
+//   id              Int      @id @default(autoincrement()) @db.UnsignedInt
+//   name            String?  @db.VarChar(50)
+//   use_threshold   Int
+//   stock           Int      @default(0)
+//   expiration_time Int      @default(0)
+//   release_status  Int      @default(0) @db.UnsignedTinyInt
+//   type            String   @default("满减") @db.VarChar(50)
+//   created_at      DateTime @default(now()) @db.DateTime(0)
+//   updated_at      DateTime @default(now()) @db.DateTime(0)
+// }
+//
+// /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+// model mall_store_order {
+//   id             Int     @id @default(autoincrement())
+//   user_id        BigInt?
+//   order_id       String? @db.VarChar(50)
+//   product_ids    String? @db.VarChar(255)
+//   product_num    String? @db.VarChar(255)
+//   product_size   String? @db.VarChar(255)
+//   total_num      Int?
+//   total_price    Float?  @db.Float
+//   payment_status Int     @default(0) @db.UnsignedInt
+//   product_types  String? @db.VarChar(50)
+//   sell_types     String? @db.VarChar(50)
+//
+//   user mall_user? @relation(fields: [user_id], references: [user_id])
+// }
+//
+// /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+// model mall_user {
+//   id              Int       @id @default(autoincrement())
+//   user_id         BigInt?   @unique
+//   account         String?   @unique @db.VarChar(50)
+//   username        String?   @db.VarChar(50)
+//   password        String?   @db.VarChar(50)
+//   gender          Boolean   @default(false)
+//   avatar          String?   @db.VarChar(255)
+//   register_time   String?   @db.VarChar(50)
+//   last_login_time DateTime? @db.DateTime(0)
+//   identity        Int       @default(0) @db.SmallInt
+//
+//   orders mall_store_order[]
+// }
+//
+// /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+// model mall_user_address {
+//   id               BigInt  @id @default(0)
+//   user_id          BigInt  @default(0)
+//   region           String? @db.VarChar(255)
+//   complete_address String? @db.VarChar(255)
+//   username         String? @db.VarChar(50)
+//   phone            String? @db.VarChar(50)
+//   isDefault        Boolean @default(false)
+// }
+//
+// /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+// model mall_user_brand_collection {
+//   id      Int     @id
+//   brand   String  @default("") @db.VarChar(50)
+//   user_id BigInt?
+// }
+//
+// /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+// model mall_user_cart {
+//   id            Int     @id @default(autoincrement())
+//   user_id       BigInt  @default(0) @db.UnsignedBigInt
+//   product_id    String? @db.VarChar(50)
+//   product_title String  @default("") @db.VarChar(255)
+//   product_image String  @default("") @db.VarChar(1000)
+//   product_price Decimal @default(0.00) @db.Decimal(10, 2)
+//   quantity      Int     @default(1) @db.UnsignedSmallInt
+//   isChecked     Boolean @default(true)
+//   size          String? @db.VarChar(50)
+// }
+//
+// /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+// model mall_user_collection {
+//   id            Int     @id @default(autoincrement()) @db.UnsignedInt
+//   user_id       BigInt  @default(0) @db.UnsignedBigInt
+//   product_id    String? @db.VarChar(50)
+//   product_title String  @default("0") @db.VarChar(50)
+//   product_image String  @default("0") @db.VarChar(255)
+//   price         Decimal @default(0.00) @db.Decimal(10, 2)
+//   product_type  String? @db.VarChar(50)
+// }
+//
+// /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+// model mall_user_comments {
+//   id             Int     @id @default(autoincrement()) @db.UnsignedInt
+//   account        String  @default("0") @db.VarChar(50)
+//   username       String  @default("0") @db.VarChar(50)
+//   avatar         String  @default("0") @db.VarChar(255)
+//   product_id     String  @db.VarChar(50)
+//   comments_text  String? @db.VarChar(50)
+//   comments_image String? @db.VarChar(50)
+//   comments_video String? @db.VarChar(50)
+//   comments_time  String  @default("0") @db.VarChar(50)
+//   stars          Int     @default(5) @db.SmallInt
+//   size           String? @db.VarChar(50)
+// }
+//
+// /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+// model mall_user_history {
+//   id         Int    @id @default(autoincrement()) @db.UnsignedInt
+//   user_id    BigInt @default(0) @db.UnsignedBigInt
+//   product_id String @default("0") @db.VarChar(50)
+// }
+//
+// /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+// model mall_user_recommend_goods {
+//   id         Int     @id
+//   product_id String  @default("") @db.VarChar(50)
+//   user_id    BigInt?
+// }
+//
+// /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+// model mall_user_search_word {
+//   id           Int     @id @default(autoincrement())
+//   word         String? @db.Text
+//   search_count Int     @default(1) @db.UnsignedInt
+// }
+//
+// /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+// model mall_video {
+//   uid           BigInt   @id @unique @default(0)
+//   video_url     String   @db.LongText
+//   image_url     String   @db.LongText
+//   title         String   @db.VarChar(50)
+//   upload_time   String   @db.VarChar(50)
+//   name          String   @db.VarChar(50)
+//   last_modified DateTime @default(now()) @db.DateTime(0)
+// }
+//
+// /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+// model mall_visitor {
+//   id    Int       @id @default(autoincrement())
+//   ip    String?   @db.VarChar(50)
+//   count Int?      @default(1) @db.UnsignedInt
+//   time  DateTime? @default(now())
+// }
+//
+// model User {
+//   id         String    @id @default(uuid())
+//   username   String    @unique
+//   email      String?   @unique
+//   password   String?
+//   avatar     String?   @db.LongText
+//   is_online  Boolean   @default(false)
+//   last_seen  DateTime?
+//   created_at DateTime  @default(now())
+//   updated_at DateTime  @updatedAt
+//
+//   // 关系
+//   sent_messages     Message[]         @relation("SentMessages")
+//   received_messages Message[]         @relation("ReceivedMessages")
+//   ai_conversations  AI_conversation[]
+//   error_logs        Error_log[]
+//
+//   @@index([username])
+//   @@index([is_online])
+// }
+//
+// model Message {
+//   id          String        @id @default(uuid())
+//   content     String        @db.Text
+//   sender_id   String
+//   receiver_id String
+//   send_time   DateTime      @default(now())
+//   read_at     DateTime?
+//   avatar      String?
+//   status      MessageStatus @default(sent)
+//
+//   // 关系
+//   sender   User @relation("SentMessages", fields: [sender_id], references: [id], onDelete: Cascade)
+//   receiver User @relation("ReceivedMessages", fields: [receiver_id], references: [id], onDelete: Cascade)
+//
+//   @@index([sender_id])
+//   @@index([receiver_id])
+//   @@index([send_time])
+//   @@index([status])
+// }
+//
+// model AI_conversation {
+//   id           String    @id @default(uuid())
+//   user_id      String
+//   question     String    @db.Text
+//   response     String?   @db.Text
+//   timestamp    DateTime  @default(now())
+//   responded_at DateTime?
+//
+//   // 关系
+//   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+//
+//   @@index([user_id])
+//   @@index([timestamp])
+// }
+//
+// model Error_log {
+//   id            String   @id @default(uuid())
+//   user_id       String?
+//   error_type    String
+//   error_message String   @db.Text
+//   timestamp     DateTime @default(now())
+//
+//   // 关系
+//   user User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
+//
+//   @@index([user_id])
+//   @@index([timestamp])
+// }
+//
+// enum MessageStatus {
+//   sent
+//   delivered
+//   read
+// }
+//
+// model CategoryList {
+//   id          BigInt   @id @default(autoincrement()) @map("_id")
+//   categoryId  String   @unique
+//   name        String   @unique // 分类名称
+//   description String? // 分类描述
+//   coverImage  String? // 分类封面图
+//   sortOrder   Int      @default(0) // 排序字段
+//   isActive    Boolean  @default(true) // 是否启用
+//   createdAt   DateTime @default(now())
+//   updatedAt   DateTime @updatedAt
+//
+//   // 与分类详情的关联
+//   details CategoryDetail[]
+//
+//   @@map("category_lists")
+// }
+//
+// model CategoryDetail {
+//   id             BigInt   @id @default(autoincrement()) @map("_id")
+//   categoryId     String   @unique
+//   productName    String // 商品名称
+//   productImage   String // 商品图片
+//   price          Float // 价格
+//   originalPrice  Float? // 原价
+//   sales          Int      @default(0) // 销量
+//   rating         Float?   @default(0) // 评分
+//   tags           String?
+//   description    String? // 商品描述
+//   specifications Json? // 规格参数（如需灵活结构可保留Json）
+//   isInStock      Boolean  @default(true) // 是否有库存
+//   createdAt      DateTime @default(now())
+//
+//   // 关联关系
+//   category CategoryList? @relation(fields: [categoryId], references: [categoryId], onDelete: Cascade)
+//
+//   @@index([categoryId])
+//   @@index([sales])
+//   @@index([rating])
+//   @@map("category_details")
+// }
+
+//适配postgreSql
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -21,32 +397,32 @@ model mall_administrator {
   account         String?   @unique @db.VarChar(50)
   username        String?   @db.VarChar(50)
   password        String?   @db.VarChar(50)
-  avatar          String?   @db.LongText
+  avatar          String?   @db.Text
   gender          Boolean   @default(false)
-  last_login_time DateTime? @db.DateTime(0)
-  identity        Int       @default(0) @db.UnsignedSmallInt
+  last_login_time DateTime? @db.Timestamp(0)
+  identity        Int       @default(0) @db.SmallInt
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model mall_banner {
-  id         Int      @id @default(autoincrement()) @db.UnsignedInt
+  id         Int      @id @default(autoincrement()) @db.Integer
   image_url  String   @default("0") @map("banner_image") @db.VarChar(666)
   brand_id   BigInt   @default(0)
   brand      String   @default("0") @db.VarChar(20)
   isShow     Boolean  @default(true)
-  created_at DateTime @default(now()) @db.DateTime(0)
+  created_at DateTime @default(now()) @db.Timestamp(0)
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model mall_brand {
-  brand_id   BigInt  @id @default(autoincrement()) @db.UnsignedBigInt
+  brand_id   BigInt  @id @default(autoincrement()) @db.BigInt
   brand      String? @db.VarChar(50)
   brand_logo String? @db.VarChar(255)
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model mall_category {
-  id          Int    @id @default(autoincrement()) @db.UnsignedInt
+  id          Int    @id @default(autoincrement()) @db.Integer
   category    String @default("") @db.VarChar(50)
   category_id Int?
 
@@ -61,7 +437,7 @@ model mall_category_detail {
   category_text  String @default("0") @db.VarChar(50)
   imagePath      String @default("0") @db.VarChar(255)
 
-  @@index([category_id], map: "category_id")
+  @@index([category_id], map: "mall_category_detail_product_id")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -73,57 +449,57 @@ model mall_goods {
   product_type      String   @db.VarChar(50)
   product_brand     String   @db.VarChar(50)
   price             Decimal  @default(0.00) @db.Decimal(10, 2)
-  favorite          Int      @default(0) @db.UnsignedInt
-  comment_number    Int      @default(0) @db.UnsignedInt
-  stocks            Int      @default(0) @db.UnsignedInt
+  favorite          Int      @default(0) @db.Integer
+  comment_number    Int      @default(0) @db.Integer
+  stocks            Int      @default(0) @db.Integer
   unit              String   @default("件") @db.Char(50)
   isPreferential    Boolean  @default(false)
   preferential_type String   @db.VarChar(50)
   isHot             Boolean  @default(false)
-  sales             Int      @default(0) @db.UnsignedInt
+  sales             Int      @default(0) @db.Integer
   sell_type         String   @db.VarChar(50)
   page              Int      @default(1)
   self_support      Boolean  @default(true)
   discount          Float?   @default(0.9)
-  brand_id          BigInt?  @db.UnsignedBigInt
+  brand_id          BigInt?  @db.BigInt
   weight            Decimal? @db.Decimal(10, 1)
-  size_type         Int?     @default(0) @db.UnsignedInt
+  size_type         Int?     @default(0) @db.Integer
   flash_sale_time   Int?
-  isGrounding       Int?     @default(1) @db.UnsignedInt
+  isGrounding       Int?     @default(1) @db.Integer
 
-  @@index([product_id], map: "product_id")
+  @@index([product_id], map: "mall_goods_product_id")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model mall_goods_attribute {
-  id              Int     @id @default(autoincrement()) @db.UnsignedInt
+  id              Int     @id @default(autoincrement()) @db.Integer
   product_id      String? @db.VarChar(50)
   attribute_title String? @default("0") @db.VarChar(50)
   attribute       String  @db.Text
 
-  @@index([product_id], map: "product_id")
+  @@index([product_id], map: "mall_goods_attribute_product_id")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model mall_goods_gallery {
-  id            Int     @id @default(autoincrement()) @db.UnsignedInt
+  id            Int     @id @default(autoincrement()) @db.Integer
   product_id    String? @db.VarChar(50)
   product_image String  @default("0") @db.VarChar(255)
 
-  @@index([product_id], map: "product_id")
+  @@index([product_id], map: "mall_goods_gallery_product_id")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model mall_preferential {
-  id              Int      @id @default(autoincrement()) @db.UnsignedInt
+  id              Int      @id @default(autoincrement()) @db.Integer
   name            String?  @db.VarChar(50)
   use_threshold   Int
   stock           Int      @default(0)
   expiration_time Int      @default(0)
-  release_status  Int      @default(0) @db.UnsignedTinyInt
+  release_status  Int      @default(0) @db.SmallInt
   type            String   @default("满减") @db.VarChar(50)
-  created_at      DateTime @default(now()) @db.DateTime(0)
-  updated_at      DateTime @default(now()) @db.DateTime(0)
+  created_at      DateTime @default(now()) @db.Timestamp(0)
+  updated_at      DateTime @default(now()) @db.Timestamp(0)
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -135,8 +511,8 @@ model mall_store_order {
   product_num    String? @db.VarChar(255)
   product_size   String? @db.VarChar(255)
   total_num      Int?
-  total_price    Float?  @db.Float
-  payment_status Int     @default(0) @db.UnsignedInt
+  total_price    Float?
+  payment_status Int     @default(0) @db.Integer
   product_types  String? @db.VarChar(50)
   sell_types     String? @db.VarChar(50)
 
@@ -153,7 +529,7 @@ model mall_user {
   gender          Boolean   @default(false)
   avatar          String?   @db.VarChar(255)
   register_time   String?   @db.VarChar(50)
-  last_login_time DateTime? @db.DateTime(0)
+  last_login_time DateTime? @db.Date
   identity        Int       @default(0) @db.SmallInt
 
   orders mall_store_order[]
@@ -180,20 +556,20 @@ model mall_user_brand_collection {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model mall_user_cart {
   id            Int     @id @default(autoincrement())
-  user_id       BigInt  @default(0) @db.UnsignedBigInt
+  user_id       BigInt  @default(0) @db.BigInt
   product_id    String? @db.VarChar(50)
   product_title String  @default("") @db.VarChar(255)
   product_image String  @default("") @db.VarChar(1000)
   product_price Decimal @default(0.00) @db.Decimal(10, 2)
-  quantity      Int     @default(1) @db.UnsignedSmallInt
+  quantity      Int     @default(1) @db.SmallInt
   isChecked     Boolean @default(true)
   size          String? @db.VarChar(50)
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model mall_user_collection {
-  id            Int     @id @default(autoincrement()) @db.UnsignedInt
-  user_id       BigInt  @default(0) @db.UnsignedBigInt
+  id            Int     @id @default(autoincrement()) @db.Integer
+  user_id       BigInt  @default(0) @db.BigInt
   product_id    String? @db.VarChar(50)
   product_title String  @default("0") @db.VarChar(50)
   product_image String  @default("0") @db.VarChar(255)
@@ -203,7 +579,7 @@ model mall_user_collection {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model mall_user_comments {
-  id             Int     @id @default(autoincrement()) @db.UnsignedInt
+  id             Int     @id @default(autoincrement()) @db.Integer
   account        String  @default("0") @db.VarChar(50)
   username       String  @default("0") @db.VarChar(50)
   avatar         String  @default("0") @db.VarChar(255)
@@ -218,8 +594,8 @@ model mall_user_comments {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model mall_user_history {
-  id         Int    @id @default(autoincrement()) @db.UnsignedInt
-  user_id    BigInt @default(0) @db.UnsignedBigInt
+  id         Int    @id @default(autoincrement()) @db.Integer
+  user_id    BigInt @default(0) @db.BigInt
   product_id String @default("0") @db.VarChar(50)
 }
 
@@ -234,25 +610,25 @@ model mall_user_recommend_goods {
 model mall_user_search_word {
   id           Int     @id @default(autoincrement())
   word         String? @db.Text
-  search_count Int     @default(1) @db.UnsignedInt
+  search_count Int     @default(1) @db.Integer
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model mall_video {
   uid           BigInt   @id @unique @default(0)
-  video_url     String   @db.LongText
-  image_url     String   @db.LongText
+  video_url     String   @db.Text
+  image_url     String   @db.Text
   title         String   @db.VarChar(50)
   upload_time   String   @db.VarChar(50)
   name          String   @db.VarChar(50)
-  last_modified DateTime @default(now()) @db.DateTime(0)
+  last_modified DateTime @default(now()) @db.Date
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model mall_visitor {
   id    Int       @id @default(autoincrement())
   ip    String?   @db.VarChar(50)
-  count Int?      @default(1) @db.UnsignedInt
+  count Int?      @default(1) @db.Integer
   time  DateTime? @default(now())
 }
 
@@ -261,7 +637,7 @@ model User {
   username   String    @unique
   email      String?   @unique
   password   String?
-  avatar     String?   @db.LongText
+  avatar     String?   @db.Text
   is_online  Boolean   @default(false)
   last_seen  DateTime?
   created_at DateTime  @default(now())

@@ -4,6 +4,7 @@ import FileUploader from "@/components/common/FileUploader.vue";
 import {Close, UploadFilled,Loading,Picture as IconPicture} from "@element-plus/icons-vue";
 import {deleteFile, getVideo} from "@/network/request";
 import {ElMessage, ElMessageBox} from "element-plus";
+import {timeFormatting} from "../../../common/utils";
 const isShowUploadComponent = ref<boolean>(false)
 const formData = ref<any>({url:[], title:'', files:[]})
 const videoData = ref<any[]>([])
@@ -115,7 +116,9 @@ const resizeHandler = ()=>{
 const uploadSuccess = (data:any)=>{
   //上传成功，关闭上传组件，展示上传后的数据
   openUploadComponent();
-  videoData.value.push(data);
+  if (!data){
+    videoData.value.push(data);
+  }
   //清空formData数据
   formData.value = {url:[], title:'', files:[]};
 }
@@ -328,7 +331,7 @@ onUnmounted(()=>{
             </div>
             <div class="video-info-box">
               <p class="video-title text-ellipsis-multiline">{{item.title}}</p>
-              <span class="video-upload-time">{{item.upload_time}}</span>
+              <span class="video-upload-time">{{timeFormatting(new Date(item.upload_time))}}</span>
             </div>
           </div>
         </li>
@@ -350,7 +353,7 @@ onUnmounted(()=>{
                 <file-uploader option-title="上传视频" @hide-elements="hideElements" :just-preview="true" preview-target="preview-video"></file-uploader>
               </div>
               <div class="preview-box">
-                <video controls contenteditable="true" width="100%" height="100%" id="preview-video" src=""></video>
+                <video controls contenteditable="true" preload="auto" width="100%" height="100%" id="preview-video" src=""></video>
               </div>
             </div>
             <div class="image-preview-box">

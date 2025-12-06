@@ -9,7 +9,7 @@
     "prisma:dev": "dotenv -e .env.development npx prisma db push",
     "prisma:prod": "dotenv -e .env.local npx prisma db pull",
     "prisma:generate": "npx prisma generate",
-    "prisma:deploy": "dotenv -e .env.local npx prisma migrate deploy",
+    "prisma:deploy": "npx prisma migrate deploy",
     "dev": "npm run prisma:generate && npm run serve:dev",
     "pkgwin": "pkg . --target node18-win-x64 --output mall-win",
     "pkglinux": "pkg . --target node18-linux-x64 --output mall-linux",

@@ -147,7 +147,7 @@ export default defineComponent({
     }
 
     /**
-     * @function editProduct该方法控制这当前所选商品是否编辑
+     * @function editProductLogic 该方法控制这当前所选商品是否编辑
      * @param index 当前行的索引
      * @param rows 当前行的商品数据
      */
@@ -207,7 +207,7 @@ export default defineComponent({
 
     }
     /**
-     * @function deleteProduct该方法控制这当前所选商品是否删除
+     * @function deletePro 该方法控制这当前所选商品是否删除
      * @param index 当前行的索引
      * @param rows 商品数据
      * 点击对应行中的删除按钮即可删除该行的商品数据

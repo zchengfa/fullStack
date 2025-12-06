@@ -1,9 +1,9 @@
 <template>
   <el-container class="mall-login-container">
-    <el-header class="mall-login-header">mall商城管理平台</el-header>
+    <el-header class="mall-login-header">Zray Magento商城管理平台</el-header>
     <el-header class="mall-login-header-phone" :class="{'mall-login-header-phone-trans' : showFormPhone}">
       <span>WELCOME</span>
-      <span>欢迎使用mall管理平台</span>
+      <span>欢迎使用Zray Magento管理平台</span>
     </el-header>
     <el-main class="mall-login-main">
       <el-row class="mall-login-content" :class="{'mall-login-con-phone': showFormPhone}">
@@ -32,7 +32,7 @@
                   placeholder="密码"
               ></el-input>
             </el-form-item>
-            <el-form-item class="form-item">
+            <el-form-item class="form-item form-item-btn-box">
               <el-button class="login-button form-item-btn" type="primary" @click="loginAdmin($refs.ruleForm,ruleForm.account,ruleForm.pass)">登录</el-button>
               <el-button class="forget-password form-item-btn" @click="enterResetPage()">忘记密码？</el-button>
             </el-form-item>
@@ -42,7 +42,7 @@
     </el-main>
     <el-footer class="mall-login-footer">
       <el-row class="footer-row">
-        <el-col :span="10">版权所有 zcf 公司地址：**********</el-col>
+        <el-col :span="10">版权所有 zraylin 公司地址：**********</el-col>
       </el-row>
       <el-row class="footer-row">
         <el-col :span="10">
@@ -61,6 +61,7 @@ import { getAdministratorInfo, loginAdministrator } from "../network/request";
 import { userStore } from "../pinia/pinia";
 import { storeToRefs } from "pinia";
 import { addDynamicRoutes } from "../router";
+import {ElMessage, ElMessageBox} from "element-plus";
 
 export default defineComponent( {
   name: "login",
@@ -69,7 +70,12 @@ export default defineComponent( {
     //忘记密码，引导管理员进入重置密码页面
     let router = useRouter()
     function enterResetPage (){
-      router.push('/resetPassword')
+      //router.push('/resetPassword')
+      ElMessageBox.confirm('账号：13333333333，密码：123456','提示：',{
+        confirmButtonText: '知道了',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
     }
 
     let userStorePinia = userStore()
@@ -133,11 +139,17 @@ export default defineComponent( {
               this.userStorePinia.setRights(JSON.stringify(result.data['rights']))
               this.userStorePinia.setUserInfo(JSON.stringify(result.data.userInfo))
               this.addDynamicRoutes()
-
+              ElMessage({
+                type: 'success',
+                message: result.data.success
+              })
               this.$router.push('/')
             }
             else {
-              alert(result.data['failed'])
+              ElMessage({
+                type: 'error',
+                message: result.data.faild
+              })
             }
 
             // //登录成功后获取用户信息
@@ -213,14 +225,25 @@ export default defineComponent( {
 .content-col{
   margin-left: 60%;
   min-width: 22rem;
+  border-radius: .5rem;
   background-color: #fff;
 }
 .content-form{
-  width: 100%;
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  border-radius: .5rem;
+}
+:deep(.el-form-item--default){
+  padding: 1rem;
+  margin-bottom: 0;
+}
+.form-item-btn-box :deep(.el-form-item__content){
+  justify-content: center;
 }
 .form-item{
-  margin: 10% auto;
   width: 90%;
 }
 .login-button{
@@ -288,6 +311,7 @@ export default defineComponent( {
     display: none;
   }
   .form-item-btn{
+    margin-top: 1rem;
     margin-right: 0;
     width: 80%;
     border-radius: 1rem;

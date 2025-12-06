@@ -239,6 +239,7 @@
 // /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 // model mall_video {
 //   uid           BigInt   @id @unique @default(0)
+//   user_id       BigInt?
 //   video_url     String   @db.LongText
 //   image_url     String   @db.LongText
 //   title         String   @db.VarChar(50)
@@ -614,11 +615,12 @@ model mall_user_search_word {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model mall_video {
   uid           BigInt   @id @unique @default(0)
-  video_url     String   @db.Text
-  image_url     String   @db.Text
-  title         String   @db.VarChar(50)
-  upload_time   String   @db.VarChar(50)
-  name          String   @db.VarChar(50)
+  user_id       BigInt?
+  video_url     String?  @db.Text
+  image_url     String?  @db.Text
+  title         String?  @db.VarChar(255)
+  upload_time   DateTime @default(now()) @db.Date
+  name          String?  @db.VarChar(255)
   last_modified DateTime @default(now()) @db.Date
 }
 

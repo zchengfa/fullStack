@@ -260,11 +260,12 @@ CREATE TABLE "mall_user_search_word" (
 -- CreateTable
 CREATE TABLE "mall_video" (
     "uid" BIGINT NOT NULL DEFAULT 0,
-    "video_url" TEXT NOT NULL,
-    "image_url" TEXT NOT NULL,
-    "title" VARCHAR(50) NOT NULL,
-    "upload_time" VARCHAR(50) NOT NULL,
-    "name" VARCHAR(50) NOT NULL,
+    "user_id" BIGINT,
+    "video_url" TEXT,
+    "image_url" TEXT,
+    "title" VARCHAR(255),
+    "upload_time" DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "name" VARCHAR(255),
     "last_modified" DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "mall_video_pkey" PRIMARY KEY ("uid")

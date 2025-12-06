@@ -62,12 +62,15 @@ const start =async (server)=> {
 //创建temp_uploads、chunks和uploads文件夹，用于管理平台上传文件时的临时存储环境
 const createTempDir = ()=>{
   const directoryArray = ['temp_uploads','uploads','/router/admin/chunks']
-  directoryArray.map((item)=>{
+  directoryArray.map(async (item)=>{
     try{
       const resolveDir = path.join(__dirname, item)
-      if(!fs.existsSync(resolveDir)){
-        fs.mkdirSync(resolveDir);
-        console.log(`${item}文件夹创建成功`)
+      try{
+        await fs.promises.access(resolveDir)
+      }
+      catch (err) {
+        //没有文件夹会被捕获为错误
+        await fs.promises.mkdir(resolveDir)
       }
     }catch (e) {
       console.log(`${item}文件夹创建失败，失败提示：${e}`)
@@ -80,7 +83,9 @@ const createTempDir = ()=>{
 start(server)
 
 //创建文件夹
-createTempDir()
+if(process.env.NODE_ENV === 'development'){
+  createTempDir()
+}
 
 //导出app实例供vercel使用
 module.exports = app

@@ -106,7 +106,6 @@ const calculateFileHash = async (file:any)=>{
 }
 
 const validateForm = ({url,title,files}:any)=> {
-
   return url.length ===2 && title.length && files.length === 2
 }
 
@@ -114,9 +113,9 @@ const queuePush = (uploadQueue:any[],file:any,i:number,fileHash:string)=>{
   const chunk = file.slice(i * props.chunkSize , (i+1) * props.chunkSize)
   const formData = new FormData()
   formData.append('chunk', chunk)
-  formData.append('hash', fileHash as any)
+  formData.append('hash', fileHash as string)
   formData.append('index', i as any)
-
+  formData.append('mimetype',file.type as string)
   //将上传任务push到上传队列中
   uploadQueue.push((callback:Function)=> uploadFile(formData,callback))
 }
@@ -151,6 +150,7 @@ const customUpload =async ({file}:any)=>{
       //检测文件及标题是否填写
       if(validateForm(props.formData)){
         hashArray.value = []
+        const user_id = JSON.parse(sessionStorage.getItem('userInfo') as string).id
         props.formData.files.map(async (file:any)=>{
           //得到文件hash值
           const fileHash:any = await calculateFileHash(file)
@@ -160,9 +160,10 @@ const customUpload =async ({file}:any)=>{
           hashArray.value.push({
             type: file_type,
             file: fileHash + file_ext,
-            uid:file.uid,
+            uid: file.uid,
             lastModified: file.lastModified,
             name: file.name,
+            user_id
           })
 
           //计算总分片数量
@@ -183,6 +184,10 @@ const customUpload =async ({file}:any)=>{
               if(item.data.code === 200){
                 uploadChunks ++
                 uploadProgress.value = (uploadChunks/totalChunks)*100
+                ElMessage({
+                  type: "success",
+                  message: item.data.message
+                })
               }
               else if(item.data.code === 500){
                 //分片接收失败，提示用户
@@ -199,30 +204,50 @@ const customUpload =async ({file}:any)=>{
 
           if(uploadChunks === totalChunks){
             //通知服务器，所有文件上传完了，可以进行合并了
-            await mergeFile({
-              hash:fileHash,
-              totalChunks:totalChunks,
-              file_info:{
-                uid:file.uid,
-                name: file.name,
-                lastModified:file.lastModified,
-                type: file.type,
-              },
-            })
-
-            uploadedFileNum.value ++
+            try{
+              await mergeFile({
+                hash:fileHash,
+                totalChunks:totalChunks,
+                file_info:{
+                  uid:file.uid,
+                  name: file.name,
+                  lastModified:file.lastModified,
+                  type: file.type,
+                  title: props.formData.title,
+                  user_id
+                },
+              })
+              uploadedFileNum.value ++
+            }
+            catch (e) {
+              ElMessage({
+                type: 'error',
+                message: `请求超时或服务器错误！`
+              })
+              emits('uploadSuccess',null)
+            }
 
             //检查所有文件是否上传完成
             if(props.formData.files.length === uploadedFileNum.value){
               const result = await checkFileComplete({hashArray:[...hashArray.value],file_title:props.formData.title})
+              emits('uploadSuccess',result.data.file)
               if(result.data.code === 200){
                 //给父组件发送事件，让父组件关闭上传组件，并将数据进行展示
-                emits('uploadSuccess',result.data.file)
+                ElMessage({
+                  type: 'success',
+                  message: result.data.message
+                })
               }
               if(result.data.code === 500){
                 ElMessage({
                   type: 'error',
                   message: result.data.error
+                })
+              }
+              if(result.data.code === 409){
+                ElMessage({
+                  type: 'warning',
+                  message: result.data.message
                 })
               }
             }

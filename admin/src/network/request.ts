@@ -27,15 +27,18 @@ export function checkFileComplete(file_info:{hashArray:string[],file_title:strin
 }
 
 interface FileInfo {
-    uid?:bigint,
+    uid?:bigint | number,
     name?: string,
     lastModified?:bigint,
     type?: string,
+    title?:string,
+    user_id?: string
 }
 
 //文件合并请求
 export function mergeFile(data:{hash:string,totalChunks: number,file_info:FileInfo}){
     return Post({
+        timeout: 10000 ,
         url:'/mergeFile',
         data
     })

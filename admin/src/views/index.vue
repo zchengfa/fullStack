@@ -242,7 +242,7 @@ onMounted(()=>{
 
 <style scoped>
 .nav-row{
-  height: 3rem;
+  height: 4rem;
 }
 .nav-col{
   position: fixed;

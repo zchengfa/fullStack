@@ -7,7 +7,7 @@ class SocketService {
     private socket: Socket | null = null;
     private eventListeners: Map<string, EventCallback[]> = new Map();
 
-    // 单例模式确保全局唯一连接[1](@ref)
+    // 单例模式确保全局唯一连接
     public static getInstance(url: string, opts?: Partial<ManagerOptions & SocketOptions>): SocketService {
         if (!SocketService.instance) {
             SocketService.instance = new SocketService(url, opts);
@@ -17,7 +17,7 @@ class SocketService {
 
     constructor(url: string, opts?: Partial<ManagerOptions & SocketOptions>) {
         this.socket = io(url, {
-            autoConnect: false, // 手动控制连接时机[7](@ref)
+            autoConnect: false, // 手动控制连接时机
             transports: ["websocket"], // 强制使用WebSocket协议
             ...opts,
         });
@@ -42,7 +42,7 @@ class SocketService {
         }
     }
 
-    // 订阅事件（自动管理监听器）[6](@ref)
+    // 订阅事件（自动管理监听器）
     public on<T>(event: string, callback: EventCallback<T>) {
         const listeners = this.eventListeners.get(event) || [];
         listeners.push(callback);
@@ -63,7 +63,7 @@ class SocketService {
         }
     }
 
-    // 发送事件（支持泛型约束）[1](@ref)
+    // 发送事件（支持泛型约束
     public emit<T>(event: string, payload?: T) {
         this.socket?.emit(event, payload);
     }

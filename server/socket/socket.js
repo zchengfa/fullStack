@@ -9,7 +9,8 @@ module.exports = (server,prisma) => {
         cors: {
             origin: process.env.CORS_ORIGIN,
             methods: ['GET', 'POST'],
-            credentials: true
+            credentials: true,
+            transport:['websocket','polling'],
         },
         // 连接配置优化
         Timeout: 60000,

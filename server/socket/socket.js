@@ -7,7 +7,7 @@ module.exports = (server,prisma) => {
 
     const io = socket(server, {
         cors: {
-            origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3001'],
+            origin: process.env.CORS_ORIGIN,
             methods: ['GET', 'POST'],
             credentials: true
         },

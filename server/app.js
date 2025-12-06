@@ -27,7 +27,9 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
 
 //允许跨域
-app.use(cors())
+app.use(cors({
+  origin:process.env.CORS_ORIGIN
+}))
 
 //将前端上传的文件保存后，配置静态资源服务，使得前端可以直接访问该目录下的资源
 app.use(express.static('uploads'))

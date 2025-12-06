@@ -34,6 +34,9 @@ app.use(cors({
 //将前端上传的文件保存后，配置静态资源服务，使得前端可以直接访问该目录下的资源
 app.use(express.static('uploads'))
 
+//执行模块导入
+moduleExportsFunction({app,server,port,prisma})
+
 const start =async (server)=> {
   //启动服务前对后台各个模块所需的参数进行检测，若参数未设置则给出提示
   checkProcessEnvParam()
@@ -56,9 +59,6 @@ const start =async (server)=> {
       console.log(`${currentFileName(__filename,true)}server服务已启动，端口为：${port}`)
     }
   })
-
-  //执行模块导入
-  moduleExportsFunction({app,server,port,prisma})
 }
 
 //创建temp_uploads、chunks和uploads文件夹，用于管理平台上传文件时的临时存储环境
@@ -82,7 +82,7 @@ const createTempDir = ()=>{
 }
 
 //启动server服务
-start(server)
+await start(server)
 
 //创建文件夹
 if(process.env.NODE_ENV === 'development'){

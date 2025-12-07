@@ -82,7 +82,7 @@ const createTempDir = ()=>{
 }
 
 //启动server服务
-await start(server)
+start(server)
 
 //创建文件夹
 if(process.env.NODE_ENV === 'development'){

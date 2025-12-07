@@ -2,7 +2,7 @@
 import { chatAssistantStore, userStore } from '@/pinia/pinia';
 import ChatBubble from "@/components/common/ChatBubble.vue";
 import {storeToRefs} from "pinia";
-import {debounce, throttle, URL} from '@/common/utils'
+import {debounce, throttle, SOCKET_URL} from '@/common/utils'
 import {ref, onMounted, onBeforeUnmount, nextTick, PropType,watch} from "vue";
 import SocketService from "@/socket/socket";
 import {Right, Avatar, Clock, Close, FullScreen, Plus, Setting, Download,Loading} from "@element-plus/icons-vue";
@@ -25,7 +25,7 @@ const isShowBottomEl = ref(false)
 const isShowLoadMore = ref(false)
 const loadingCustom = ref('加载中...')
 
-const socket = new SocketService(URL,{
+const socket = new SocketService(SOCKET_URL,{
   auth:{
     token: sessionStorage.getItem("token"),
   }

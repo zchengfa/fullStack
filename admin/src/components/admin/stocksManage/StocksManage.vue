@@ -180,24 +180,36 @@ export default defineComponent( {
         table.dataCopy = []
         stockLogic.selectCategoryOptions = []
 
-        let stockData = res.data.data['product'] || res.data
-        stockData.map((item:any)=>{
+        let stockData: any[] = res.data || []
+
+        stockData.forEach((item:any)=>{
+          // 验证必要字段是否存在
+          if (!item.product_id) {
+            console.warn('商品缺少product_id:', item)
+            return
+          }
+
           table.manageData.push({
-            id:<string>item.product_id,
-            title:<string>item.product_title,
-            imagePath:<string>item.product_image,
-            count:<number>item.stocks,
-            price:<string>item.price,
-            category:<string>item.product_type
+            id: item.product_id,
+            title: item.product_title || '',
+            imagePath: item.product_image || '',
+            count: Number(item.stocks) || 0,
+            price: item.price || '0',
+            category: item.product_type || '未分类'
           })
 
           //获取商品中的分类
-          if (stockLogic.selectCategoryOptions.indexOf(item['product_type'])===-1){
-            stockLogic.selectCategoryOptions.push(item['product_type'])
+          const category = item.product_type || '未分类'
+          if (stockLogic.selectCategoryOptions.indexOf(category) === -1){
+            stockLogic.selectCategoryOptions.push(category)
           }
         })
+
         table.tableData.push(...table.manageData)
         table.dataCopy.push(...table.manageData)
+
+        console.log('加载库存数据成功，共', table.manageData.length, '条记录')
+        console.log('分类列表:', stockLogic.selectCategoryOptions)
       }).catch(err=>{
         console.error('获取库存数据失败:', err)
         ElMessage({

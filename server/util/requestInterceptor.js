@@ -2,7 +2,6 @@ const {verifyToken} = require("./token");
 module.exports = (app)=>{
     //除了白名单内的请求，其他请求都必须先进行token验证，验证通过后才能进行当次请求
     app.use((req, res, next) => {
-        console.log(req.url)
         //查询数据库中是否已存储了该ip，若有则不存储，
         let requestQuery = ''
         let category_type = ''
@@ -28,6 +27,7 @@ module.exports = (app)=>{
         }
         //设置请求地址白名单，只要请求地址是白名单内的都不需要进行token验证
         const urlWhiteList = [
+            '/admin/resetPassword',
             '/admin/loginAdministrator',
             '/home/api/multiData',
             `/home/api/flashSale?flashSaleTime=${flashSaleTime}&num=${num}`,
@@ -51,7 +51,10 @@ module.exports = (app)=>{
         ]
 
         if (urlWhiteList.indexOf(req.url) >= 0) {
-            next()
+            const xRequestAdminSecret = req.headers['x-request-admin-secret']
+            if(xRequestAdminSecret === process.env.REQUEST_ADMIN_SECRET){
+                return next()
+            }
             return false
         } else {
             //请求地址不在白名单内，获取请求头中的token

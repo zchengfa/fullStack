@@ -215,3 +215,31 @@ export function groundProduct(params: params) {
         }
     })
 }
+
+// 发送验证码
+export function sendVerificationCode(account:string){
+    return Post({
+        url:'/sendVerificationCode',
+        data:{
+            account
+        }
+    })
+}
+
+// 重置密码
+export function resetPassword(params:{
+    account:string,
+    code:string,
+    newPassword:string
+}){
+    return Post({
+        url:'/resetPassword',
+        data:params
+    })
+}
+
+export function getStocksManageData(){
+    return Get({
+        url:'/stocks'
+    })
+}

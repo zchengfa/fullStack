@@ -466,6 +466,9 @@ model mall_goods {
   flash_sale_time   Int?
   isGrounding       Int?     @default(1) @db.Integer
 
+  // 关联库存
+  //stock mall_stock?
+
   @@index([product_id], map: "mall_goods_product_id")
 }
 
@@ -748,3 +751,22 @@ model CategoryDetail {
   @@index([rating])
   @@map("category_details")
 }
+
+/// 库存管理模型
+// model mall_stock {
+//   id          Int      @id @default(autoincrement())
+//   product_id  String   @unique @map("product_id") @db.VarChar(50)
+//   stock_count Int      @default(0) @db.Integer // 库存数量
+//   min_stock   Int      @default(0) @db.Integer // 最低库存预警值
+//   max_stock   Int?     @db.Integer // 最大库存限制
+//   status      Int      @default(1) @db.Integer // 库存状态: 0-缺货, 1-正常, 2-库存不足
+//   created_at  DateTime @default(now()) @db.Timestamp(0)
+//   updated_at  DateTime @updatedAt @db.Timestamp(0)
+//   remark      String?  @db.Text // 备注信息
+//
+//   // 关联商品
+//   product mall_goods @relation(fields: [product_id], references: [product_id], onDelete: Cascade)
+//
+//   @@index([product_id])
+//   @@map("mall_stock")
+// }

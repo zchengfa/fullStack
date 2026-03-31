@@ -4,7 +4,7 @@
     disableOnInteraction: false
   }">
     <swiper-slide v-for="(item,index) in table.manageData" :key="index" v-show="item.isShow">
-      <img :src="item.image_url" alt="banner">
+      <el-image :src="item.image_url" alt="banner"></el-image>
     </swiper-slide>
   </swiper>
   <el-table :data="table.currentPageData" class="swiper-table" max-height="450"   :header-cell-style="headerStyle" :cell-style="rowStyle" border empty-text="用户数据为空">

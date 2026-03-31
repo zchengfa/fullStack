@@ -70,12 +70,12 @@ export default defineComponent( {
     //忘记密码，引导管理员进入重置密码页面
     let router = useRouter()
     function enterResetPage (){
-      //router.push('/resetPassword')
-      ElMessageBox.confirm('账号：13333333333，密码：123456','提示：',{
-        confirmButtonText: '知道了',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
+      router.push('/resetPassword')
+      // ElMessageBox.confirm('账号：13333333333，密码：123456','提示：',{
+      //   confirmButtonText: '知道了',
+      //   cancelButtonText: '取消',
+      //   type: 'warning'
+      // })
     }
 
     let userStorePinia = userStore()
@@ -148,7 +148,7 @@ export default defineComponent( {
             else {
               ElMessage({
                 type: 'error',
-                message: result.data.faild
+                message: result.data.failed
               })
             }
 

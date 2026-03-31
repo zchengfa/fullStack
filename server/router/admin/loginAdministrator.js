@@ -62,5 +62,39 @@ module.exports = (app,prisma) => {
       }
   })
 
+  // 重置密码接口
+  router.post('/resetPassword', async (req, res) => {
+      const paramsObj = JSON.parse(JSON.stringify(req.body))
+      const { account, newPassword } = paramsObj
+
+      try {
+          // 验证账号是否存在
+          const administrator = await prisma.mall_administrator.findUnique({
+              where: {
+                  account: account
+              }
+          })
+
+          if (!administrator) {
+              return res.send({ failed: '账号不存在' })
+          }
+
+          // 更新密码
+          await prisma.mall_administrator.update({
+              where: {
+                  account: account
+              },
+              data: {
+                  password: newPassword
+              }
+          })
+
+          res.send({ success: '密码重置成功' })
+      } catch (e) {
+          console.log(currentFileName(__filename) + e)
+          res.status(500).send({ errMessage: '服务器出现问题' })
+      }
+  })
+
   app.use('/admin',router)
 }

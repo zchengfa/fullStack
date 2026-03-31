@@ -4,20 +4,20 @@
       <div class="filter-box">
         <label for="search">搜索：</label>
         <input id="search" v-model="groundingUnder.searchKeyword" type="text" placeholder="请输入搜索条件" @keyup="searchGrounding($event)">
-      </div> 
+      </div>
       <div class="filter-button">
         <el-button size="small" @click="groundUnderMany('上架',1)" v-permission="{permission:'up',effect:'disabled'}">批量上架</el-button>
         <el-button size="small" @click="groundUnderMany('下架',0)" v-permission="{permission:'down',effect:'disabled'}">批量下架</el-button>
-      </div>   
+      </div>
     </el-col>
   </el-row>
-  <el-table :data="table.currentPageData" max-height="450"   border class="table mall-table" @selection-change="handleSelection">
+  <el-table :data="table.currentPageData" max-height="450" empty-text="没有可上下架数据"   border class="table mall-table" @selection-change="handleSelection">
     <el-table-column type="selection" width="55" />
       <el-table-column label="id" prop="product_id"></el-table-column>
       <el-table-column label="描述" prop="product_title" align="center"></el-table-column>
       <el-table-column label="图片" align="center">
         <template #default="scope">
-          <img :src="scope.row.product_image" alt="product_image" :title="scope.row.product_title"/>
+          <el-image :src="scope.row.product_image" alt="product_image" :title="scope.row.product_title" lazy/>
         </template>
       </el-table-column>
       <el-table-column label="上下架状态" align="center">
@@ -35,7 +35,8 @@
         </template>
       </el-table-column>
   </el-table>
-  <pagination :total="table.tableData.length" @currentPageChange="currentPageChange"></pagination>
+  <pagination :total="table.tableData ? table.tableData.length : 0" @currentPageChange="currentPageChange"></pagination>
+
 </template>
 
 <script lang="ts">
@@ -60,13 +61,13 @@ export default defineComponent({
     table.tableData = data
     // table.manageData = props.groundData
     // table.dataCopy = props.groundData
-    
+
 
     let groundingUnder = reactive({
       selection:<string[]>[],
       searchKeyword:<any>''
     })
-    
+
     const underPro = (id:string)=>{
       groundUnderGoods(id,0,'下架成功')
     }
@@ -159,7 +160,7 @@ export default defineComponent({
         }
       }
     }
-  
+
     return {
       table,
       groundingUnder,

@@ -77,4 +77,9 @@ module.exports = ({app,server,port,prisma})=>{
 
 //导入提交商品数据模块
     require('../router/admin/submitTest')(app,prisma)
+
+    //导入库存数据模块
+    require('../router/admin/stocksManage')(app,prisma)
 }
+
+

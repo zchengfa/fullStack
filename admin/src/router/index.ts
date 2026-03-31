@@ -19,6 +19,7 @@ const routeMapping:any = {
     '/dataMonitor':{path:'dataMonitor',name:'dataMonitor',component: () => import('../components/admin/dataStatistics/DataStatistics.vue')},
     '/preferential':{path:'preferential',name:'preferential',component: () => import('../components/admin/preferentialManage/PreferentialManage.vue')},
     '/dataVisualization':{path:'dataVisualization',name:'dataVisualization',component: () => import('../components/admin/dataStatistics/LargeScreenVisualization.vue')},
+    '/stocksManage':{path:'stocksManage',name:'stocksManage',component: () => import('../components/admin/stocksManage/StocksManage.vue')},
 }
 
 const routes = [

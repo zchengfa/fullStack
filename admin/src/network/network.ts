@@ -9,7 +9,13 @@ let baseURL = URL + '/admin'
 let timeout = 5000
 let requestNum = 0
 
-const instance = axios.create({baseURL,timeout})
+const instance = axios.create({
+    baseURL,
+    timeout,
+    headers:{
+        'X-Request-Admin-Secret': import.meta.env.VITE_REQUEST_HEADER_SECRET
+    }
+})
 
 const hideLoadingDebounce = debounce(() => {
     if(store.isLoading){

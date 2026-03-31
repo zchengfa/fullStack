@@ -55,7 +55,12 @@ const createRight = (target,rights)=>{
             case '库存管理':
                 item.icon = 'Unlock'
                 item.children = [
-
+                    {
+                        id:index + new Date().getTime(),
+                        children_name:'库存概览',
+                        path:'/stocksManage',
+                        rights:['delete']
+                    },
                     {
                         id:index + new Date().getTime(),
                         children_name:'入库管理',

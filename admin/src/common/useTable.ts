@@ -14,22 +14,32 @@ export default function (size:number) {
      currentPageData:<any[]>[]
   })
 
-  //实现element-plus分页组件的@current-change方法(@current-change="currentPageChange")
-  const currentPageChange = (val:number)=>{
-    if (val===1){
-     table.currentPageData = sliceTableData(val-1,table.pageSize)
-   }
-   else {
-    table.currentPageData = sliceTableData((val-1)*table.pageSize,((val-1)*table.pageSize)+table.pageSize)
-   }
- }
+    const currentPageChange = (val:number)=>{
+        // 添加空值检查，防止table.tableData为null或undefined时出错
+        if (!table.tableData || !Array.isArray(table.tableData) || table.tableData.length === 0) {
+            table.currentPageData = []
+            return
+        }
+        if (val===1){
+            table.currentPageData = sliceTableData(val-1,table.pageSize)
+        }
+        else {
+            table.currentPageData = sliceTableData((val-1)*table.pageSize,((val-1)*table.pageSize)+table.pageSize)
+        }
+    }
 
-  //提取对应部分的数据
-  const sliceTableData = (start:number,end:number)=>{
-    return table.tableData.slice(start,end)
-  }
 
-  //通过搜索框搜索商品
+    //提取对应部分的数据
+    const sliceTableData = (start:number,end:number)=>{
+        // 添加空值检查，防止table.tableData为null或undefined时出错
+        if (!table.tableData || !Array.isArray(table.tableData)) {
+            return []
+        }
+        return table.tableData.slice(start, end)
+    }
+
+
+    //通过搜索框搜索商品
   const search = (parentArr:string[],showArr:string[],keyword:string,keyCode:number,confidentArr:string[])=>{
     let searchArr:any[] = parentArr
 		let regExpArr:any[] = []
@@ -50,7 +60,7 @@ export default function (size:number) {
 		  }
 		}
     return showArr
-    
+
     //根据传入的检测对象数量来生成检测条件
     function returnExpConfident (){
       let Exp:string = ''
@@ -60,17 +70,17 @@ export default function (size:number) {
         appendCount++
 
         if(appendCount===confidentArr.length){
-      
+
           Exp = Exp.substring(0,Exp.length - 3)
 
           return Exp
         }
-  
+
       })
 
       return Exp
     }
-    
+
   }
 
 
